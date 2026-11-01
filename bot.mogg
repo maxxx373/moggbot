@@ -1,0 +1,1810 @@
+<!doctype html>
+<html lang="ru" data-theme="matcha">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,maximum-scale=1">
+<title>Апгрейд</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&family=Permanent+Marker&display=swap" rel="stylesheet">
+<style>
+:root{
+  --accent:#cde59b; --on-accent:#06101c;
+  --bg:#080d14; --glow1:rgba(80,140,255,.16); --glow2:rgba(156,200,255,.08);
+  --card:rgba(255,255,255,.035); --card-b:rgba(255,255,255,.08); --solid:#0f1620;
+  --text:#eaf1f8; --hint:#8291a5; --line:rgba(255,255,255,.08);
+  --ink:#000; --ink-text:#fff;
+  --ok:#5ee6a8; --warn:#ffc35c; --danger:#ff6b6b; --gold:#ffd166;
+  --disp:'Oswald',Impact,sans-serif; --mono:'JetBrains Mono',ui-monospace,monospace;
+  --r:22px;
+  --mA:#ffffff; --mB:#cfdcea; --mC:#5d7690; --mD:#e8f0f8; --mE:#2c3f55;
+}
+[data-theme="matcha"]{
+  --bg:#141913; --glow1:rgba(168,195,140,.22); --glow2:rgba(230,200,120,.12);
+  --card:rgba(240,250,225,.05); --card-b:rgba(225,240,205,.13); --solid:#1d241b;
+  --text:#f2f6ea; --hint:#a5af9a; --line:rgba(225,240,205,.1);
+  --ink:#0c100b;
+  --mA:#f6fbe9; --mB:#c9dcae; --mC:#3b5234; --mD:#e2eecf; --mE:#223020;
+}
+[data-theme="sunset"]{
+  --bg:#211915; --glow1:rgba(255,140,90,.22); --glow2:rgba(190,90,140,.18);
+  --card:rgba(255,236,220,.05); --card-b:rgba(255,226,200,.12); --solid:#2c221d;
+  --text:#fdf4ea; --hint:#bba795; --line:rgba(255,226,200,.1);
+  --ink:#140e0c;
+  --mA:#fff0e0; --mB:#f6b893; --mC:#6b3647; --mD:#ffd1b0; --mE:#3a2131;
+}
+[data-theme="neon"]{
+  --bg:#09080f; --glow1:rgba(255,60,200,.22); --glow2:rgba(60,220,255,.16);
+  --card:rgba(255,255,255,.04); --card-b:rgba(255,160,240,.15); --solid:#141225;
+  --text:#f4f0ff; --hint:#958fb0; --line:rgba(255,255,255,.08);
+  --ink:#000;
+  --mA:#ffe0f7; --mB:#d08cff; --mC:#2a0f4a; --mD:#8af6ff; --mE:#150a2e;
+}
+[data-theme="sakura"]{
+  --bg:#fbf0f1; --glow1:rgba(255,190,205,.6); --glow2:rgba(255,220,190,.45);
+  --card:#ffffff; --card-b:rgba(90,30,50,.08); --solid:#ffffff;
+  --text:#2a1418; --hint:#8f737a; --line:rgba(90,30,50,.08);
+  --ink:#2a1418; --ink-text:#fff; --ok:#1f9d6b; --warn:#c98200;
+  --mA:#ffffff; --mB:#ffdbe3; --mC:#b2617e; --mD:#ffeef2; --mE:#8a3f5c;
+}
+[data-theme="frost"]{
+  --bg:#4e6276; --glow1:rgba(200,225,255,.22); --glow2:rgba(20,30,45,.35);
+  --card:rgba(255,255,255,.08); --card-b:rgba(255,255,255,.16); --solid:#4a5f73;
+  --text:#f4f8fc; --hint:#c3d0dd; --line:rgba(255,255,255,.16);
+  --ink:#1d2935;
+}
+[data-theme="paper"]{
+  --bg:#eef0f3; --glow1:rgba(255,255,255,.9); --glow2:rgba(0,0,0,0);
+  --card:#ffffff; --card-b:rgba(0,0,0,.06); --solid:#ffffff;
+  --text:#0b0b0c; --hint:#72767e; --line:rgba(0,0,0,.08);
+  --ink:#0b0b0c; --ok:#12a26a; --warn:#d18b00;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;color:var(--text);font:15px/1.5 'Manrope',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;-webkit-font-smoothing:antialiased}
+body{background:var(--bg);background-image:radial-gradient(120% 60% at 100% 0%,var(--glow1),transparent 60%),radial-gradient(90% 50% at 0% 100%,var(--glow2),transparent 60%);background-attachment:fixed;min-height:100vh;transition:background-color .4s}
+button{font:inherit;color:inherit;border:0;background:none;cursor:pointer;padding:0}
+input{font:inherit;color:var(--text)}
+.app{max-width:520px;margin:0 auto;min-height:100vh;padding:14px 16px 110px}
+.app.no-tabs{padding-bottom:28px}
+
+/* типографика */
+.disp{font-family:var(--disp);text-transform:uppercase;font-weight:700;letter-spacing:-.005em;line-height:.92}
+.mono{font-family:var(--mono);font-size:10.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--hint)}
+.h1{font-size:46px}
+.hint{color:var(--hint);font-size:13.5px}
+.tm{font-size:.42em;vertical-align:super;margin-left:2px;font-family:var(--mono);font-weight:500}
+
+/* базовые блоки */
+.row{display:flex;align-items:center;gap:10px}
+.between{justify-content:space-between}
+.card{background:var(--card);border:1px solid var(--card-b);border-radius:var(--r);padding:16px;margin-bottom:12px;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
+[data-theme="paper"] .card,[data-theme="sakura"] .card{box-shadow:0 1px 2px rgba(0,0,0,.03),0 10px 30px rgba(0,0,0,.04)}
+.ink{background:var(--ink);color:var(--ink-text);border-color:transparent}
+.ink .mono,.ink .hint{color:rgba(255,255,255,.55)}
+.sec{display:flex;align-items:flex-end;justify-content:space-between;margin:24px 2px 10px}
+.sec .disp{font-size:24px}
+
+.btn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;height:56px;border-radius:18px;background:var(--accent);color:var(--on-accent);font-weight:800;font-size:15px;letter-spacing:.02em;transition:transform .12s,opacity .2s,background .3s}
+.btn[disabled]{opacity:.35;pointer-events:none}
+.btn.ghost{background:var(--card);border:1px solid var(--card-b);color:var(--text)}
+.btn.sm{height:38px;width:auto;padding:0 16px;font-size:13px;border-radius:12px}
+.pillbtn{display:inline-flex;align-items:center;gap:10px;height:40px;padding:0 6px 0 16px;border-radius:40px;font-weight:700;font-size:13px}
+.pillbtn i{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font-style:normal}
+.arrow{width:40px;height:40px;border-radius:50%;border:1px solid var(--card-b);display:grid;place-items:center;flex:none;transition:transform .25s}
+.arrow svg{width:16px;height:16px}
+button:hover .arrow{transform:rotate(45deg)}
+.iconbtn{width:44px;height:44px;border-radius:14px;background:var(--card);border:1px solid var(--card-b);display:grid;place-items:center;flex:none}
+.iconbtn svg{width:20px;height:20px}
+.lock{display:inline-grid;place-items:center;width:22px;height:22px;border-radius:7px;background:var(--card);border:1px solid var(--card-b)}
+.lock svg{width:12px;height:12px}
+
+/* шапка */
+.top{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.logo{display:flex;align-items:center;gap:10px}
+.logo svg{width:30px;height:30px;color:var(--accent)}
+.logo b{font-family:var(--disp);font-size:22px;letter-spacing:.02em;text-transform:uppercase}
+.lvl{display:inline-flex;align-items:center;gap:6px;height:30px;padding:0 10px;border-radius:10px;background:var(--card);border:1px solid var(--card-b);font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;text-transform:uppercase}
+.lvl em{font-style:normal;color:var(--accent);font-weight:700}
+.lvl.gold{border-color:var(--gold);background:color-mix(in srgb,var(--gold) 14%,transparent);box-shadow:0 0 18px color-mix(in srgb,var(--gold) 35%,transparent)}
+.lvl.gold em{color:var(--gold)}
+
+/* hero */
+.hero{position:relative;border-radius:28px;overflow:hidden;min-height:300px;background:linear-gradient(180deg,#0e1a2b 0%,#22374f 55%,#6f8aa6 100%);color:#fff;border:1px solid var(--card-b);margin-bottom:12px}
+[data-theme="matcha"] .hero{background:linear-gradient(180deg,#1f2b1d 0%,#4e6a45 36%,#9fbc84 70%,#eef4d6 100%)}
+[data-theme="sunset"] .hero{background:linear-gradient(180deg,#3a2238 0%,#93475c 34%,#ef9070 62%,#ffd0a0 100%)}
+[data-theme="neon"] .hero{background:linear-gradient(180deg,#0d0b1f 0%,#3a1466 40%,#b02a8f 74%,#ff7ccf 100%)}
+[data-theme="sakura"] .hero{background:linear-gradient(180deg,#a8506f 0%,#e2869f 45%,#f7b9c6 80%,#ffe3e8 100%)}
+[data-theme="frost"] .hero{background:linear-gradient(180deg,#5a7189 0%,#8aa1b8 60%,#c9d6e2 100%)}
+[data-theme="paper"] .hero{background:linear-gradient(180deg,#d9dee5 0%,#eef1f4 60%,#ffffff 100%);color:#0b0b0c}
+.hero svg.mtn{position:absolute;left:0;right:0;bottom:0;width:100%;height:62%}
+.shade{position:absolute;left:0;right:0;bottom:0;height:52%;background:linear-gradient(transparent,rgba(8,13,20,.82));z-index:1}
+[data-theme="matcha"] .shade{height:42%;background:linear-gradient(transparent,rgba(16,24,14,.8))}
+[data-theme="sunset"] .shade{height:40%;background:linear-gradient(transparent,rgba(40,20,24,.78))}
+[data-theme="neon"] .shade{height:46%;background:linear-gradient(transparent,rgba(12,6,24,.85))}
+[data-theme="sakura"] .shade{height:40%;background:linear-gradient(transparent,rgba(80,24,44,.62))}
+[data-theme="paper"] .hero .shade{background:linear-gradient(transparent,rgba(255,255,255,.85))}
+.hero .in{position:relative;z-index:2;padding:18px 18px 16px;display:flex;flex-direction:column;min-height:300px}
+.hero .huge{font-size:92px;line-height:.95;margin-top:14px;letter-spacing:-.01em}
+.hero .mono{color:currentColor;opacity:.75}
+.hero .bot{margin-top:auto}
+.track{height:4px;border-radius:4px;background:rgba(255,255,255,.22);overflow:hidden;margin-top:10px}
+[data-theme="paper"] .track{background:rgba(0,0,0,.1)}
+.track i{display:block;height:100%;background:currentColor;border-radius:4px;transform-origin:left}
+.spark{position:absolute;bottom:20%;width:4px;height:4px;border-radius:50%;background:#fff;opacity:0;z-index:1;animation:spark 7s linear infinite;box-shadow:0 0 8px #fff}
+@keyframes spark{0%{opacity:0;transform:translateY(0)}15%{opacity:.85}100%{opacity:0;transform:translateY(-220px) translateX(20px)}}
+
+/* граффити и элементы FRZN */
+.spray{position:absolute;font-family:'Permanent Marker',cursive;color:#fff;white-space:nowrap;pointer-events:none;z-index:1;line-height:1;filter:blur(.7px);opacity:.82;text-shadow:0 0 6px rgba(255,255,255,.9),0 0 18px rgba(255,255,255,.55),0 0 40px rgba(255,255,255,.3)}
+[data-theme="sunset"] .spray{color:#fff6ec;text-shadow:0 0 6px rgba(255,240,225,.9),0 0 18px rgba(255,170,120,.65),0 0 40px rgba(255,110,90,.4)}
+[data-theme="neon"] .spray{text-shadow:0 0 6px #fff,0 0 18px #ff5fd2,0 0 42px #39e6ff}
+[data-theme="matcha"] .spray{text-shadow:0 0 6px #fff,0 0 18px rgba(220,240,180,.7),0 0 40px rgba(160,200,120,.4)}
+[data-theme="paper"] .spray{color:#0b0b0c;opacity:.12;text-shadow:none}
+.specs{display:flex;gap:18px;margin-top:12px}
+.specs .k{font-family:var(--mono);font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;opacity:.65}
+.specs .v{font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;margin-top:3px;font-weight:700}
+.octa{position:relative;width:66px;height:66px;display:grid;place-items:center;color:inherit;flex:none;transition:transform .3s}
+.octa:hover{transform:rotate(22.5deg)}
+.octa svg.o{position:absolute;inset:0;width:100%;height:100%}
+.octa .a{width:18px;height:18px}
+.chipline{font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;padding:5px 9px;border:1px solid var(--card-b);border-radius:8px;color:var(--text)}
+.coll{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.cc{--c:var(--accent);position:relative;overflow:hidden;border-radius:18px;min-height:168px;padding:13px;display:flex;flex-direction:column;border:1px solid var(--card-b);background:linear-gradient(180deg,color-mix(in srgb,var(--c) 26%,transparent),color-mix(in srgb,var(--c) 4%,transparent) 70%)}
+.cc.wide{grid-column:span 2;min-height:150px}
+.cc .gh{position:absolute;right:-6px;bottom:-14px;font-family:var(--disp);font-weight:700;font-size:92px;line-height:.8;color:transparent;-webkit-text-stroke:1px color-mix(in srgb,var(--c) 55%,transparent);pointer-events:none}
+.cc .disp{font-size:24px;margin-top:auto;position:relative}
+.cc .mono{position:relative}
+.dots{display:flex;gap:5px;margin:8px 0 6px;position:relative}
+.dots i{width:9px;height:9px;border-radius:50%;border:1px solid var(--text);opacity:.6}
+.dots i.on{background:var(--text);opacity:1}
+.outro{position:relative;overflow:hidden;border-radius:28px;min-height:360px;margin-top:22px;padding:20px;color:#fff;background:linear-gradient(180deg,#3b4d60 0%,#6b829a 55%,#b9c8d6 100%);display:flex;flex-direction:column}
+[data-theme="matcha"] .outro{background:linear-gradient(180deg,#1f2b1d,#4e6a45 55%,#b9d29c)}
+[data-theme="sunset"] .outro{background:linear-gradient(180deg,#2a1b2e,#7a3f55 50%,#e8946e 85%,#ffcf9f)}
+[data-theme="neon"] .outro{background:linear-gradient(180deg,#0d0b1f,#3a1466 50%,#c23a9c)}
+[data-theme="sakura"] .outro{background:linear-gradient(180deg,#7e3553,#d97693 55%,#f9c4cf)}
+[data-theme="ice"] .outro{background:linear-gradient(180deg,#0e1a2b,#2a4058 60%,#6f8aa6)}
+[data-theme="paper"] .outro{background:linear-gradient(180deg,#0b0b0c,#3a3d44 60%,#9aa0a8)}
+.outro svg.mtn{position:absolute;left:0;right:0;bottom:0;width:100%;height:55%}
+.outro .shade{height:70%}
+.outro .tag3{position:relative;z-index:2;font-family:var(--disp);font-weight:700;text-transform:uppercase;font-size:34px;line-height:.95;margin-top:auto}
+.outro .mono{color:rgba(255,255,255,.75);position:relative;z-index:2}
+.barcode{height:26px;color:#fff;opacity:.9}
+
+/* тинт-плитки */
+.tiles{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.tint{--c:var(--accent);border-radius:16px;padding:12px 13px;background:color-mix(in srgb,var(--c) 10%,transparent);border:1px solid color-mix(in srgb,var(--c) 32%,transparent)}
+.tint .mono{display:flex;align-items:center;gap:6px;color:color-mix(in srgb,var(--c) 70%,var(--text))}
+.tint .mono svg{width:13px;height:13px}
+.tint b{display:block;font-family:var(--disp);font-size:30px;font-weight:600;margin-top:6px;line-height:1}
+.tint small{color:var(--hint);font-size:12px}
+.flick svg{animation:flick 1.3s ease-in-out infinite;transform-origin:50% 90%}
+@keyframes flick{0%,100%{transform:scale(1) rotate(0)}30%{transform:scale(1.18) rotate(-6deg)}60%{transform:scale(.95) rotate(4deg)}}
+
+/* миссии */
+.mission{display:flex;align-items:center;gap:12px;width:100%;text-align:left;padding:14px;border-radius:18px;background:var(--card);border:1px solid var(--card-b);margin-bottom:8px;transition:background .2s,border-color .2s,transform .12s}
+.mission .box{width:28px;height:28px;border-radius:9px;border:1.5px solid var(--card-b);display:grid;place-items:center;flex:none;transition:all .2s}
+.mission.done .box{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+.mission.done .t{text-decoration:line-through;color:var(--hint)}
+.mission.just .box{animation:boxpop .5s cubic-bezier(.3,1.6,.5,1)}
+.mission.just{animation:glowpulse .7s ease-out}
+@keyframes boxpop{0%{transform:scale(.4) rotate(-20deg)}100%{transform:scale(1) rotate(0)}}
+@keyframes glowpulse{0%{box-shadow:0 0 0 0 color-mix(in srgb,var(--accent) 60%,transparent)}100%{box-shadow:0 0 0 14px transparent}}
+.mission.bonus{border-style:dashed}
+.mission.charm{border-color:color-mix(in srgb,#b79cff 45%,transparent);background:linear-gradient(120deg,color-mix(in srgb,#b79cff 14%,transparent),var(--card))}
+.mission .t{font-weight:600}
+.mission .xp{font-family:var(--mono);font-size:11px;color:var(--accent);font-weight:700;white-space:nowrap}
+.tag{font-family:var(--mono);font-size:9.5px;letter-spacing:.1em;padding:3px 6px;border-radius:6px;border:1px solid var(--card-b);color:var(--hint);text-transform:uppercase}
+
+/* сундук, тизер, фичи */
+.chest{display:flex;align-items:center;gap:14px;background:linear-gradient(120deg,color-mix(in srgb,var(--gold) 22%,transparent),var(--card));border-color:color-mix(in srgb,var(--gold) 45%,transparent)}
+.chest .ci{font-size:34px;animation:wobble 2.2s ease-in-out infinite;display:inline-block}
+@keyframes wobble{0%,70%,100%{transform:rotate(0)}75%{transform:rotate(-12deg) scale(1.08)}80%{transform:rotate(10deg) scale(1.08)}85%{transform:rotate(-8deg)}90%{transform:rotate(5deg)}}
+.teaser{position:relative;overflow:hidden}
+.teaser .bar2{height:8px;border-radius:8px;background:var(--line);overflow:hidden;margin-top:10px;position:relative}
+.teaser .bar2 i{display:block;height:100%;background:var(--accent);border-radius:8px;position:relative;overflow:hidden}
+.teaser .bar2 i:after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.55),transparent);animation:shine 2s infinite}
+@keyframes shine{from{transform:translateX(-100%)}to{transform:translateX(100%)}}
+.moods{display:flex;justify-content:space-between;gap:6px;margin-top:10px}
+.moods button{flex:1;height:52px;border-radius:14px;background:var(--card);border:1px solid var(--card-b);font-size:24px;transition:transform .2s,background .2s}
+.moods button.on{background:var(--accent);transform:translateY(-3px) scale(1.06)}
+.gin{width:100%;height:44px;border-radius:12px;border:1px solid var(--card-b);background:var(--card);padding:0 12px;outline:none;margin-top:8px}
+.gin:focus{border-color:var(--accent)}
+.chal{padding:12px 0;border-bottom:1px solid var(--line)}
+.chal:last-child{border-bottom:0;padding-bottom:0}
+
+/* дроп дня */
+.drop{position:relative;overflow:hidden}
+.drop .n{font-family:var(--disp);font-size:64px;line-height:.8;color:transparent;position:absolute;right:14px;top:12px}
+.drop p{margin:10px 0 0;font-size:16px;font-weight:600;line-height:1.4;max-width:85%}
+.drop.hot{color:#1c100b;border:0}
+.drop.hot .mono{color:rgba(28,16,11,.6)}
+.drop.hot .n{-webkit-text-stroke:1px rgba(28,16,11,.3)}
+
+/* покупки */
+.item{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--line)}
+.item:last-child{border-bottom:0;padding-bottom:0}
+.status{font-family:var(--mono);font-size:10px;letter-spacing:.06em;text-transform:uppercase;padding:7px 10px;border-radius:10px;font-weight:700;white-space:nowrap;transition:all .2s}
+.st-none{background:var(--card);border:1px solid var(--card-b);color:var(--hint)}
+.st-ordered{background:color-mix(in srgb,var(--warn) 14%,transparent);color:var(--warn);border:1px solid color-mix(in srgb,var(--warn) 35%,transparent)}
+.st-arrived{background:color-mix(in srgb,var(--ok) 14%,transparent);color:var(--ok);border:1px solid color-mix(in srgb,var(--ok) 35%,transparent)}
+
+/* таббар */
+.tabs{position:fixed;left:0;right:0;bottom:0;display:flex;justify-content:center;padding:0 12px calc(12px + env(safe-area-inset-bottom));z-index:20;pointer-events:none}
+.tabs .in{pointer-events:auto;display:flex;max-width:480px;width:100%;background:color-mix(in srgb,var(--solid) 82%,transparent);border:1px solid var(--card-b);border-radius:24px;padding:6px;backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);box-shadow:0 10px 40px rgba(0,0,0,.25)}
+.tab{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;font-size:10px;font-weight:700;letter-spacing:.03em;color:var(--hint);padding:7px 0;border-radius:18px;transition:background .3s,color .3s,transform .12s}
+.tab svg{width:22px;height:22px;transition:transform .3s cubic-bezier(.3,1.6,.5,1)}
+.tab.on{color:var(--on-accent);background:var(--accent)}
+.tab.on svg{animation:tabhop .45s cubic-bezier(.3,1.6,.5,1)}
+@keyframes tabhop{0%{transform:translateY(4px) scale(.8)}100%{transform:none}}
+
+/* журнал */
+.seg{display:flex;background:var(--card);border:1px solid var(--card-b);border-radius:14px;padding:4px;margin-bottom:14px}
+.seg button{flex:1;padding:10px 6px;border-radius:10px;font-size:13px;font-weight:700;color:var(--hint);transition:all .25s}
+.seg button.on{background:var(--text);color:var(--bg)}
+.jt{display:flex;gap:6px;overflow-x:auto;margin:0 -16px 14px;padding:2px 16px;scrollbar-width:none}
+.jt::-webkit-scrollbar{display:none}
+.jt button{flex:none;padding:9px 14px;border-radius:12px;background:var(--card);border:1px solid var(--card-b);font-weight:700;font-size:13px;color:var(--hint);transition:all .25s}
+.jt button.on{background:var(--text);color:var(--bg);border-color:var(--text)}
+.feature{position:relative;border-radius:26px;overflow:hidden;min-height:340px;color:#fff;margin-bottom:12px;display:flex;flex-direction:column;justify-content:flex-end;padding:18px;text-align:left;width:100%}
+.feature .art{position:absolute;inset:0;transition:transform .6s}
+.feature:hover .art{transform:scale(1.04)}
+.feature .in{position:relative;z-index:2}
+.feature .disp{font-size:44px}
+.feature .mono{color:rgba(255,255,255,.75)}
+.acard{display:flex;gap:14px;align-items:stretch;width:100%;text-align:left;padding:10px;border-radius:20px;background:var(--card);border:1px solid var(--card-b);margin-bottom:10px}
+.acard .thumb{width:96px;flex:none;border-radius:14px;overflow:hidden;position:relative;min-height:104px}
+.acard .t{font-weight:800;font-size:15.5px;line-height:1.25;margin:6px 0 4px}
+.lesson{display:flex;align-items:center;gap:14px;width:100%;text-align:left;padding:16px;border-radius:20px;background:var(--card);border:1px solid var(--card-b);margin-bottom:8px}
+.lesson .num{font-family:var(--disp);font-size:40px;line-height:.9;color:var(--accent);width:52px;flex:none}
+.lesson.read .num{color:var(--hint)}
+.lesson .t{font-weight:800;font-size:15.5px;line-height:1.25}
+.check{width:24px;height:24px;border-radius:50%;background:var(--ok);color:#04130b;display:grid;place-items:center;flex:none}
+.books{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.book{text-align:left;display:flex;flex-direction:column;gap:8px}
+.cover{position:relative;aspect-ratio:3/4.2;border-radius:6px 16px 16px 6px;overflow:hidden;padding:12px 12px 12px 18px;display:flex;flex-direction:column;color:#fff;box-shadow:0 10px 24px rgba(0,0,0,.25);transition:transform .3s}
+.book:hover .cover{transform:translateY(-3px) rotate(-1deg)}
+.cover:before{content:"";position:absolute;left:0;top:0;bottom:0;width:7px;background:rgba(0,0,0,.25)}
+.cover .disp{font-size:22px;margin-top:auto;position:relative}
+.cover .mono{color:rgba(255,255,255,.8);position:relative}
+.bstat{font-family:var(--mono);font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;padding:4px 7px;border-radius:7px;align-self:flex-start;font-weight:700}
+.bs-want{background:var(--card);border:1px solid var(--card-b);color:var(--hint)}
+.bs-reading{background:color-mix(in srgb,var(--accent) 20%,transparent);color:var(--accent)}
+.bs-done{background:color-mix(in srgb,var(--ok) 18%,transparent);color:var(--ok)}
+.prod{display:flex;gap:12px;align-items:center;padding:12px 0;border-bottom:1px solid var(--line)}
+.prod:last-child{border-bottom:0;padding-bottom:0}
+.prod .sq{width:46px;height:46px;border-radius:12px;flex:none;display:grid;place-items:center;font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:.06em}
+.prod .n{font-weight:700;line-height:1.25}
+.tier{font-family:var(--mono);font-size:12px;font-weight:700;white-space:nowrap}
+.tier span{opacity:.25}
+
+/* читалка */
+.reader{position:fixed;inset:0;z-index:40;background:var(--bg);overflow-y:auto;animation:up .32s cubic-bezier(.2,.8,.2,1)}
+@keyframes up{from{transform:translateY(40px);opacity:0}to{transform:none;opacity:1}}
+.reader .rcover{position:relative;min-height:300px;color:#fff;display:flex;flex-direction:column;justify-content:flex-end;padding:20px;overflow:hidden}
+.reader .rcover .art{position:absolute;inset:0}
+.reader .rcover .in{position:relative;z-index:2}
+.reader .close{position:absolute;top:14px;right:14px;z-index:3;width:42px;height:42px;border-radius:50%;background:rgba(0,0,0,.35);backdrop-filter:blur(10px);display:grid;place-items:center;color:#fff}
+.reader .body{max-width:520px;margin:0 auto;padding:20px 18px 40px;font-size:16.5px;line-height:1.65}
+.reader .body p{margin:0 0 16px}
+.reader .body h3{font-family:var(--disp);text-transform:uppercase;font-size:22px;margin:26px 0 10px;letter-spacing:.01em}
+.reader .body .quote{border-left:3px solid var(--accent);padding:4px 0 4px 14px;font-weight:700;font-size:18px;margin:20px 0}
+.reader .body > *{animation:fadeup .5s both}
+.reader .body > *:nth-child(2){animation-delay:.05s}.reader .body > *:nth-child(3){animation-delay:.1s}.reader .body > *:nth-child(4){animation-delay:.15s}.reader .body > *:nth-child(n+5){animation-delay:.2s}
+@keyframes fadeup{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+
+/* модалки */
+.modal{position:fixed;inset:0;z-index:55;background:rgba(0,0,0,.6);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);display:grid;place-items:center;padding:20px;animation:fade .25s}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+.sheet{position:relative;width:100%;max-width:400px;border-radius:30px;background:var(--solid);border:1px solid var(--card-b);padding:26px 22px 22px;text-align:center;overflow:hidden;animation:popin .5s cubic-bezier(.3,1.5,.5,1)}
+@keyframes popin{from{opacity:0;transform:scale(.8) translateY(20px)}to{opacity:1;transform:none}}
+.rays{position:absolute;left:50%;top:120px;width:560px;height:560px;margin:-280px 0 0 -280px;border-radius:50%;background:repeating-conic-gradient(color-mix(in srgb,var(--accent) 22%,transparent) 0 9deg,transparent 9deg 18deg);-webkit-mask:radial-gradient(circle,#000 20%,transparent 65%);mask:radial-gradient(circle,#000 20%,transparent 65%);animation:spin 14s linear infinite;pointer-events:none}
+@keyframes spin{to{transform:rotate(360deg)}}
+.lvnum{position:relative;font-family:var(--disp);font-size:130px;line-height:.9;color:var(--accent);animation:lvpop .8s cubic-bezier(.3,1.7,.5,1) .15s both;text-shadow:0 0 40px color-mix(in srgb,var(--accent) 50%,transparent)}
+@keyframes lvpop{from{transform:scale(0) rotate(-20deg);opacity:0}to{transform:none;opacity:1}}
+.unl{display:flex;align-items:center;gap:12px;text-align:left;padding:12px;border-radius:16px;background:var(--card);border:1px solid var(--card-b);margin-top:8px;animation:fadeup .5s both}
+.unl .ui{width:40px;height:40px;border-radius:12px;background:var(--accent);color:var(--on-accent);display:grid;place-items:center;font-size:18px;flex:none}
+.ring{width:220px;height:220px;margin:6px auto 10px;position:relative}
+.ring svg{width:100%;height:100%;transform:rotate(-90deg)}
+.ring .tt{position:absolute;inset:0;display:grid;place-items:center;font-family:var(--disp);font-size:56px}
+.share{position:relative;border-radius:24px;overflow:hidden;min-height:440px;color:#fff;text-align:left;padding:20px;display:flex;flex-direction:column}
+
+/* путь */
+.track-lv{display:flex;gap:8px;overflow-x:auto;margin:14px -16px 0;padding:4px 16px;scrollbar-width:none;scroll-behavior:smooth}
+.track-lv::-webkit-scrollbar{display:none}
+.node{flex:none;width:92px;padding:10px;border-radius:16px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);text-align:left}
+.node.past{opacity:.5}
+.node.now{background:var(--accent);color:var(--on-accent);border-color:var(--accent)}
+.node .nb{font-family:var(--disp);font-size:26px;line-height:1}
+.node .nl{font-size:10.5px;line-height:1.25;margin-top:6px;font-weight:700;min-height:26px}
+.heat{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;margin-top:12px}
+.heat i{aspect-ratio:1;border-radius:6px;background:var(--line)}
+.heat i.f{background:var(--accent)}
+.heat i.today{outline:1.5px solid var(--text);outline-offset:1px}
+.bars .b{margin:12px 0}
+.pbar{height:6px;border-radius:6px;background:var(--line);overflow:hidden;margin-top:6px}
+.pbar i{display:block;height:100%;background:var(--accent);border-radius:6px;transform-origin:left}
+.tl{position:relative;padding-left:28px}
+.tl:before{content:"";position:absolute;left:9px;top:8px;bottom:8px;width:1px;background:var(--card-b)}
+.tl .d{position:relative;margin-bottom:20px}
+.tl .d:last-child{margin-bottom:0}
+.tl .d:before{content:"";position:absolute;left:-24px;top:5px;width:11px;height:11px;border-radius:50%;background:var(--bg);border:2px solid var(--accent)}
+.tl .d.closed:before{background:var(--accent)}
+.tl .dt{font-weight:800;margin:3px 0 5px;line-height:1.3}
+.tl ul{margin:0;padding-left:16px;color:var(--hint);font-size:13.5px}
+.badges{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}
+.badge{text-align:center;padding:12px 6px;border-radius:16px;background:var(--card);border:1px solid var(--card-b)}
+.badge .bi{width:46px;height:46px;margin:0 auto 6px;border-radius:50%;display:grid;place-items:center;font-size:22px;background:color-mix(in srgb,var(--accent) 18%,transparent)}
+.badge b{display:block;font-size:12px;line-height:1.2}
+.badge small{font-size:10.5px;color:var(--hint);line-height:1.2;display:block;margin-top:2px}
+.badge.off{opacity:.35;filter:grayscale(1)}
+.mchart{display:flex;align-items:flex-end;gap:5px;height:90px;margin-top:12px}
+.mchart i{flex:1;border-radius:6px 6px 3px 3px;background:var(--line);min-height:6px;transform-origin:bottom}
+.app.enter .mchart i{animation:growY .7s cubic-bezier(.2,.8,.2,1) both}
+@keyframes growY{from{transform:scaleY(0)}to{transform:scaleY(1)}}
+.cmp{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.cmp img{width:100%;aspect-ratio:3/4;object-fit:cover;border-radius:16px;display:block}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:10px}
+.grid3 img{width:100%;aspect-ratio:3/4;object-fit:cover;border-radius:12px;display:block}
+.goal{display:flex;align-items:center;gap:10px;margin-top:10px}
+.goal .gk{width:68px;flex:none}
+.goal input{flex:1;height:42px;border-radius:12px;border:1px solid var(--card-b);background:var(--card);padding:0 12px;outline:none;min-width:0}
+.goal .box{width:30px;height:30px;border-radius:9px;border:1.5px solid var(--card-b);display:grid;place-items:center;flex:none}
+.goal .box.on{background:var(--ok);border-color:var(--ok);color:#04130b}
+
+/* чат */
+.coach-head{display:flex;align-items:center;gap:12px;margin-bottom:16px}
+.ava{width:48px;height:48px;border-radius:16px;background:var(--accent);color:var(--on-accent);display:grid;place-items:center;font-family:var(--disp);font-size:22px;flex:none}
+.chat{display:flex;flex-direction:column;gap:8px;padding-bottom:150px}
+.msg{max-width:85%;padding:11px 14px;border-radius:20px;white-space:pre-wrap;word-wrap:break-word}
+.msg.new{animation:pop .3s cubic-bezier(.3,1.4,.5,1)}
+.msg.ai{background:var(--card);border:1px solid var(--card-b);align-self:flex-start;border-bottom-left-radius:6px;transform-origin:left bottom}
+.msg.me{background:var(--accent);color:var(--on-accent);align-self:flex-end;border-bottom-right-radius:6px;font-weight:600;transform-origin:right bottom}
+.msg .mini{margin-top:12px;padding:14px;border-radius:14px;background:var(--bg);border:1px solid var(--card-b);white-space:normal}
+@keyframes pop{from{opacity:0;transform:translateY(8px) scale(.94)}to{opacity:1;transform:none}}
+.typing span{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--hint);margin:0 2px;animation:bl 1s infinite}
+.typing span:nth-child(2){animation-delay:.15s}.typing span:nth-child(3){animation-delay:.3s}
+@keyframes bl{0%,80%,100%{opacity:.25;transform:translateY(0)}40%{opacity:1;transform:translateY(-3px)}}
+.composer{position:fixed;left:0;right:0;bottom:calc(86px + env(safe-area-inset-bottom));padding:0 12px;z-index:19}
+.composer .in{max-width:520px;margin:0 auto}
+.qr{display:flex;gap:6px;overflow-x:auto;padding-bottom:8px;scrollbar-width:none}
+.qr::-webkit-scrollbar{display:none}
+.qr button{flex:none;padding:8px 13px;border-radius:20px;background:color-mix(in srgb,var(--solid) 85%,transparent);border:1px solid var(--card-b);font-size:12.5px;font-weight:700;white-space:nowrap;backdrop-filter:blur(10px)}
+.composer form{display:flex;gap:8px}
+.composer input{flex:1;height:50px;border-radius:25px;border:1px solid var(--card-b);background:color-mix(in srgb,var(--solid) 92%,transparent);padding:0 18px;outline:none;backdrop-filter:blur(10px)}
+.composer input:focus{border-color:var(--accent)}
+.send{width:50px;height:50px;border-radius:50%;background:var(--accent);color:var(--on-accent);display:grid;place-items:center;flex:none}
+
+/* настройки и онбординг */
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{padding:11px 15px;border-radius:14px;background:var(--card);border:1px solid var(--card-b);font-size:14px;font-weight:700;transition:all .2s}
+.chip.on{background:var(--accent);color:var(--on-accent);border-color:var(--accent)}
+.lbl{margin:18px 0 8px}
+.themes{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.themes button{position:relative;border-radius:16px;border:1.5px solid var(--card-b);overflow:hidden;text-align:left;transition:transform .2s,border-color .2s}
+.themes button.on{border-color:var(--accent);transform:translateY(-2px)}
+.themes button.locked .pv{filter:grayscale(.7) brightness(.6)}
+.themes .lk{position:absolute;top:6px;right:6px;font-family:var(--mono);font-size:9px;font-weight:700;padding:3px 5px;border-radius:6px;background:rgba(0,0,0,.6);color:#fff}
+.themes .pv{height:58px;position:relative}
+.themes .nm{padding:7px 9px;font-weight:700;font-size:12px}
+.sw{display:flex;gap:10px;flex-wrap:wrap}
+.sw button{width:38px;height:38px;border-radius:50%;border:3px solid var(--bg);outline:1.5px solid var(--card-b);transition:transform .2s;font-family:var(--mono);font-size:9px;font-weight:700}
+.sw button.on{outline:2px solid var(--text);transform:scale(1.1)}
+.field{width:100%;height:48px;border-radius:14px;border:1px solid var(--card-b);background:var(--card);padding:0 14px;outline:none}
+.field:focus{border-color:var(--accent)}
+.opt{display:flex;align-items:flex-start;gap:12px;width:100%;text-align:left;padding:15px;border-radius:18px;background:var(--card);border:1px solid var(--card-b);margin-bottom:8px}
+.opt .box{width:24px;height:24px;border-radius:8px;border:1.5px solid var(--card-b);display:grid;place-items:center;flex:none;margin-top:1px;transition:all .2s}
+.opt.on .box{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+.steps{display:flex;gap:5px;margin:4px 0 22px}
+.steps i{flex:1;height:3px;border-radius:3px;background:var(--line);transition:background .4s}
+.steps i.on{background:var(--accent)}
+.photo-drop{border:1.5px dashed var(--card-b);border-radius:26px;aspect-ratio:3/4;display:grid;place-items:center;text-align:center;position:relative;overflow:hidden;background:var(--card);cursor:pointer}
+.photo-drop img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.photo-drop .oval{position:absolute;inset:13% 21% 22%;border:1.5px dashed var(--accent);border-radius:50%;animation:breathe 2.4s ease-in-out infinite}
+@keyframes breathe{50%{transform:scale(1.03);opacity:.6}}
+.spin{width:64px;height:64px;border-radius:50%;border:3px solid var(--line);border-top-color:var(--accent);animation:sp .9s linear infinite;margin:60px auto 28px}
+@keyframes sp{to{transform:rotate(360deg)}}
+.check-line{opacity:.25;transition:opacity .3s,transform .3s;margin:10px 0;font-family:var(--mono);font-size:12.5px;letter-spacing:.06em;text-transform:uppercase;transform:translateX(-6px)}
+.check-line.on{opacity:1;color:var(--accent);transform:none}
+.banner{border-radius:16px;padding:12px 14px;font-size:13px;margin-bottom:12px;background:color-mix(in srgb,var(--accent) 10%,transparent);border:1px solid color-mix(in srgb,var(--accent) 30%,transparent)}
+.celebrate{border-radius:18px;padding:16px;margin-bottom:12px;background:var(--accent);color:var(--on-accent);display:flex;align-items:center;justify-content:space-between;animation:pop .4s cubic-bezier(.3,1.5,.5,1)}
+.celebrate b{font-family:var(--disp);font-size:24px;text-transform:uppercase}
+.toast{position:fixed;left:50%;top:14px;transform:translate(-50%,-90px);background:var(--text);color:var(--bg);padding:11px 16px;border-radius:14px;font-size:13.5px;font-weight:700;transition:transform .35s cubic-bezier(.3,1.4,.5,1);z-index:60;max-width:90%}
+.toast.show{transform:translate(-50%,0)}
+
+/* анимации */
+button:active,label.card:active{transform:scale(.97)}
+.app.enter{animation:screenIn .4s cubic-bezier(.2,.8,.2,1)}
+@keyframes screenIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.app.enter .track i,.app.enter .pbar i,.app.enter .bar2 i{animation:grow 1s cubic-bezier(.2,.8,.2,1)}
+@keyframes grow{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+.app.enter .heat i{animation:fadeup .4s both}
+.app.enter .hero .huge{animation:heroIn .7s cubic-bezier(.2,.8,.2,1) both}
+@keyframes heroIn{from{opacity:0;transform:translateY(30px);letter-spacing:.08em}to{opacity:1;transform:none}}
+.rv{opacity:0;transform:translateY(22px) scale(.98);transition:opacity .55s ease,transform .7s cubic-bezier(.2,.8,.2,1)!important}
+.rv.in{opacity:1;transform:none}
+.xpfloat{position:fixed;z-index:80;font-family:var(--disp);font-size:24px;color:var(--accent);text-shadow:0 2px 12px rgba(0,0,0,.45);pointer-events:none;white-space:nowrap;animation:xpf 1.1s ease-out forwards}
+@keyframes xpf{0%{opacity:0;transform:translate(-50%,-30%) scale(.5)}20%{opacity:1;transform:translate(-50%,-90%) scale(1.2)}100%{opacity:0;transform:translate(-50%,-280%) scale(1)}}
+.confetti{position:fixed;left:50%;top:42%;z-index:70;pointer-events:none}
+.confetti i{position:absolute;width:8px;height:13px;border-radius:2px;animation:conf 1.4s cubic-bezier(.2,.7,.3,1) forwards}
+@keyframes conf{0%{transform:translate(0,0) rotate(0);opacity:1}35%{transform:translate(var(--x),var(--y)) rotate(calc(var(--r) / 2));opacity:1}100%{transform:translate(calc(var(--x) * 1.3),calc(var(--y) + 560px)) rotate(var(--r));opacity:0}}
+@media (prefers-reduced-motion: reduce){*,*:before,*:after{animation:none!important;transition:none!important}.rv{opacity:1;transform:none}}
+</style>
+</head>
+<body>
+<div class="app" id="app"></div>
+<div id="overlay"></div>
+<div id="modal"></div>
+<div class="toast" id="toast"></div>
+<script>
+// Адрес бэкенда с настоящей нейросетью. Пока пусто — тренер работает на локальных правилах.
+const AI_ENDPOINT = '';
+
+const tg = window.Telegram && window.Telegram.WebApp;
+try { tg && tg.ready(); tg && tg.expand(); } catch (e) {}
+// Без этого в Telegram свайп вниз при прокрутке сворачивает приложение
+try { tg && tg.disableVerticalSwipes && tg.disableVerticalSwipes(); } catch (e) {}
+const tgUser = (() => { try { return tg.initDataUnsafe.user || null; } catch (e) { return null; } })();
+// Тестовые кнопки видны только по ссылке с ?dev=1
+const DEV = /[?&]dev=1/.test(location.search);
+const haptic = (type) => { try { if (type === 'success') tg.HapticFeedback.notificationOccurred('success'); else tg.HapticFeedback.impactOccurred(type || 'light'); } catch (e) {} };
+const reduceMotion = (() => { try { return matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) { return false; } })();
+
+const KEY = 'upgrade_v3';
+let S = load();
+function load() { try { return JSON.parse(localStorage.getItem(KEY)) || {}; } catch (e) { return {}; } }
+function save() { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) { toast('Память заполнена — удали старые фото'); } }
+
+// ---------- данные ----------
+const PILLARS = {
+  skin:    { name: 'Кожа',      code: 'SKN',  verb: 'уход за кожей', c: '#ffb07c' },
+  hair:    { name: 'Волосы',    code: 'HAIR', verb: 'волосы',        c: '#b79cff' },
+  body:    { name: 'Тело',      code: 'BODY', verb: 'упражнения',    c: '#6ee7c8' },
+  posture: { name: 'Осанка',    code: 'POST', verb: 'осанку',        c: '#ffd166' },
+  style:   { name: 'Стиль',     code: 'STYL', verb: 'стиль',         c: '#ff7a9c' },
+  sleep:   { name: 'Сон и еда', code: 'SLP',  verb: 'режим',         c: '#7dd3fc' }
+};
+const TASKS = {
+  skin: ['Умыться гелем утром и вечером', 'Нанести увлажняющий крем', 'Нанести SPF перед выходом', 'Выпить 2 литра воды', 'Сменить наволочку'],
+  hair: ['Уложить волосы глиной или пастой', 'Сохранить 3 фото стрижек, которые нравятся', 'Помыть голову шампунем под свой тип', 'Подровнять линию шеи и бороду'],
+  body: ['20 отжиманий + 30 приседаний', 'Пройти 8 000 шагов', 'Планка 3 × 40 секунд', '3 подхода подтягиваний или австралийских'],
+  posture: ['2 минуты у стены: лопатки и затылок прижаты', 'Растяжка грудных мышц 2 × 30 секунд', '5 раз за день проверить осанку'],
+  style: ['Убрать из шкафа 3 вещи, которые плохо сидят', 'Отпарить одежду на завтра', 'Собрать один образ и сфоткать', 'Почистить обувь'],
+  sleep: ['Лечь спать до 00:00', 'Убрать телефон за 30 минут до сна', 'Белок в каждом приёме пищи', 'День без сладкой газировки']
+};
+// Миссии характера и общения — по одной в день, поверх основных трёх
+const CHAR_MISSIONS = [
+  ['soc', 'Сделай одному человеку искренний комплимент'],
+  ['mind', 'Выполни одно обещание, которое давно откладывал'],
+  ['soc', 'Задай собеседнику три открытых вопроса'],
+  ['mind', 'Проживи день без жалоб — ни вслух, ни в чатах'],
+  ['soc', 'Позвони или напиши родным просто так'],
+  ['mind', 'Помоги кому-то, не дожидаясь просьбы'],
+  ['soc', 'Убери телефон, когда с кем-то разговариваешь'],
+  ['mind', 'Признай вслух одну свою ошибку'],
+  ['soc', 'Заговори с человеком, с которым обычно молчишь'],
+  ['mind', 'Скажи «нет» тому, чего на самом деле не хочешь'],
+  ['soc', 'Поблагодари кого-то лично — и скажи, за что именно'],
+  ['mind', 'Сделай дело, которое откладывал больше недели'],
+  ['soc', 'Запомни имя нового человека и назови его в разговоре'],
+  ['mind', 'Вечером запиши один вывод, который сделал за день']
+];
+const ISSUES = [
+  ['acne', 'Прыщи, чёрные точки', 'skin'], ['oily', 'Жирная кожа', 'skin'], ['dry', 'Сухая кожа', 'skin'],
+  ['haircut', 'Не знаю, какая стрижка', 'hair'], ['slouch', 'Сутулюсь', 'posture'], ['inactive', 'Мало двигаюсь', 'body'],
+  ['latesleep', 'Ложусь поздно', 'sleep'], ['messy', 'Одеваюсь как попало', 'style']
+];
+const SHOP = [
+  { n: 'Гель для умывания', p: 350, pl: 'skin' },
+  { n: 'Увлажняющий крем', p: 450, pl: 'skin' },
+  { n: 'Гель с салициловой кислотой', p: 500, pl: 'skin', need: 'acne' },
+  { n: 'Крем с SPF 30+', p: 600, pl: 'skin' },
+  { n: 'Паста или глина для укладки', p: 500, pl: 'hair' },
+  { n: 'Турник в дверной проём', p: 1200, pl: 'body' },
+  { n: 'Две базовые однотонные футболки', p: 1200, pl: 'style' }
+];
+const DROPS = [
+  'Свежая стрижка раз в 3–4 недели даёт больше, чем любая новая вещь.',
+  'Сутулость визуально съедает 3–5 см роста. Плечи назад — прямо сейчас.',
+  'SPF — единственный крем, который реально замедляет старение кожи.',
+  'Вещь по размеру за 1 000 ₽ выглядит дороже, чем мешковатая за 10 000 ₽.',
+  'Держи слово в мелочах: сказал «перезвоню» — перезвони.',
+  'Чистая обувь — первое, что замечают. И последнее, что чистят.',
+  'Прогресс-фото делай с 1–1,5 метра и зумом ×2: близкая камера искажает нос.',
+  'Задай собеседнику на один вопрос больше, чем обычно. Люди это помнят.',
+  'Однотонная база (белый, чёрный, серый, тёмно-синий) сочетается со всем.',
+  '10 страниц в день — это примерно 12 книг в год.',
+  'Улыбка и зрительный контакт меняют впечатление сильнее любой одежды.',
+  'Новое средство вводи по одному и раз в 3–4 дня, чтобы видеть реакцию.'
+];
+
+const LESSONS = [
+  { id: 'l1', t: 'Внешность — это не лицо', min: 3, art: 'a1', body: [
+    'Когда говорят «внешность», обычно думают о чертах лица. Но первое впечатление складывается из десятков сигналов: осанка, кожа, волосы, одежда, запах, походка, голос, взгляд.',
+    'Черты лица — лишь часть картины, и как раз её мы не трогаем. Зато почти всё остальное в твоих руках, и это не мелочи: именно они делают человека «приятным», «собранным» и «стильным».',
+    { q: 'Мы не меняем то, что дала природа. Мы выжимаем максимум из всего остального.' },
+    { h: 'Что это значит на практике' },
+    'Вместо вопроса «красивый ли я?» задавай вопрос «что я сегодня сделал для себя?». На первый ответить нельзя, на второй — каждый день.'
+  ] },
+  { id: 'l2', t: 'Почему ты не нравишься себе на фото', min: 3, art: 'a2', body: [
+    'В зеркале ты видишь отражённую версию себя — и привык именно к ней. На фото лицо развёрнуто так, как его видят другие, и мозгу это кажется «неправильным». Психологи называют это эффектом знакомства: нам больше нравится то, что мы видим чаще.',
+    'Вторая причина — фронтальная камера. С расстояния 30 см широкоугольный объектив искажает пропорции: нос кажется крупнее, лицо — уже.',
+    { h: 'Как снимать прогресс' },
+    'Расстояние 1–1,5 метра, зум ×2, дневной свет из окна, лицо прямо. Одни и те же условия каждую неделю — иначе сравнивать бессмысленно.'
+  ] },
+  { id: 'l3', t: 'Эффект ореола', min: 2, art: 'a3', body: [
+    'Эффект ореола — это когда одна заметная черта влияет на оценку всего человека. Опрятный вид люди бессознательно связывают с дисциплиной, надёжностью и уверенностью.',
+    { q: 'Базовая ухоженность даёт непропорционально много.' },
+    'Чистая кожа, свежая стрижка, вещи по размеру и прямая спина почти ничего не стоят, но меняют то, как тебя воспринимают с первых секунд.'
+  ] },
+  { id: 'l4', t: 'Перестань сравнивать', min: 2, art: 'a4', body: [
+    'В соцсетях ты видишь лучший кадр из сотни: с правильным светом, ракурсом и фильтрами. Сравнивать с этим свою обычную жизнь — заведомо проигрышная игра.',
+    'Единственное честное сравнение — ты сегодня и ты месяц назад. Для этого в приложении есть фото прогресса.',
+    { h: 'Правило' },
+    'Если после ленты тебе хуже, чем до неё, — это не мотивация, а шум. Отписывайся без жалости.'
+  ] },
+  { id: 'l5', t: 'Система сильнее мотивации', min: 3, art: 'a5', body: [
+    'Мотивация скачет: сегодня горишь, завтра лень. Привычки работают, даже когда настроения нет.',
+    'Поэтому здесь три маленьких задания в день вместо часа раз в неделю. Маленькое действие легко повторить, а повторение и даёт результат.',
+    { q: 'Не разрывай цепочку. Серия — твой главный инструмент.' },
+    'Пропустил день — не страшно. Пропустил два подряд — это уже начало новой привычки, только плохой.'
+  ] },
+  { id: 'l6', t: 'С чего начать прямо сегодня', min: 2, art: 'a6', body: [
+    'Пять вещей с максимальной отдачей и минимальными затратами:',
+    { h: '01 · Сон 7–8 часов' }, 'Без этого остальное работает вполсилы.',
+    { h: '02 · Умывание, крем, SPF' }, 'Три шага ухода — база на годы вперёд.',
+    { h: '03 · Свежая стрижка' }, 'Найди мастера и стригись регулярно.',
+    { h: '04 · Вещи по размеру' }, 'Посадка важнее бренда.',
+    { h: '05 · Осанка' }, 'Две минуты у стены в день.'
+  ] }
+];
+const MIND = [
+  { id: 'm1', t: 'Держи слово', min: 2, art: 'a12', body: [
+    'Самый недооценённый навык — просто делать то, что сказал. Люди редко помнят, что ты обещал, но всегда помнят, сделал ли ты это.',
+    { q: 'Репутация — это сумма выполненных маленьких обещаний.' },
+    { h: 'Практика' },
+    'Начни с мелочей: сказал «перезвоню через час» — перезвони. Сказал «приду к семи» — будь в 18:55. Обещай меньше, делай больше.'
+  ] },
+  { id: 'm2', t: 'Без оправданий', min: 2, art: 'a5', body: [
+    'Ответственность — это не чувство вины. Это вопрос «что я могу сделать?» вместо «кто виноват?».',
+    'Оправдание звучит как объяснение, но на деле снимает с тебя контроль. Если виноваты обстоятельства, то и изменить ничего нельзя.',
+    { h: 'Челлендж на неделю' },
+    'Убери из речи «не успел, потому что…». Замени на «не сделал. Сделаю к…». Звучит жёстче — и работает лучше.'
+  ] },
+  { id: 'm3', t: 'Сила — в уважении', min: 2, art: 'a3', body: [
+    'Уверенным людям не нужно унижать других. Подколы в адрес слабых — почти всегда признак неуверенности.',
+    'Лучший тест характера — как ты общаешься с официантом, курьером, младшими. Это видят все, даже если молчат.',
+    { q: 'Вежливость ничего не стоит, а впечатление производит сильнее любого образа.' }
+  ] },
+  { id: 'm4', t: 'Как переживать провалы', min: 3, art: 'a2', body: [
+    'Неудача — это данные, а не приговор. Ошибаются все; разница в том, что человек делает дальше.',
+    { h: 'Разбор в три вопроса' },
+    'Что произошло? Что из этого зависело от меня? Что я сделаю иначе в следующий раз?',
+    { h: 'Правило 24 часов' },
+    'Сутки можно злиться и расстраиваться. Потом — разбор и следующий шаг.'
+  ] },
+  { id: 'm5', t: 'Замечай хорошее', min: 2, art: 'a4', body: [
+    'Мозг лучше запоминает плохое — так устроено внимание. Поэтому хорошее приходится замечать специально.',
+    'Психологи связывают привычку благодарности с более высоким уровнем удовлетворённости жизнью.',
+    { h: 'Практика' },
+    'Каждый вечер — три вещи, которые сегодня получились или порадовали. Для этого на втором уровне открывается дневник благодарности.'
+  ] }
+];
+const SOCIAL = [
+  { id: 's1', t: 'Взгляд и улыбка', min: 2, art: 'a13', body: [
+    'Первое впечатление складывается за секунды, и до слов дело ещё не дошло. Работают взгляд, улыбка и поза.',
+    { h: 'Как смотреть' },
+    'Держи зрительный контакт, пока говорит собеседник. Когда говоришь сам — можно чаще отводить взгляд. Не сверли и не бегай глазами.',
+    { q: 'Улыбнись при приветствии. Это самый дешёвый апгрейд образа.' }
+  ] },
+  { id: 's2', t: 'Как начать разговор', min: 3, art: 'a1', body: [
+    'Лучший повод — общий контекст: место, событие, ситуация. Комментарий о ней плюс открытый вопрос.',
+    'Открытые вопросы начинаются с «как», «что», «почему» — на них не ответишь «да» или «нет».',
+    { h: 'Примеры' },
+    '«Ты уже был здесь раньше? Что посоветуешь?» · «Как ты вообще попал в эту тему?» · «Что из этого тебе больше всего понравилось?»'
+  ] },
+  { id: 's3', t: 'Слушать, а не ждать очереди', min: 2, art: 'a4', body: [
+    'Большинство людей слушают, чтобы ответить. Сильный собеседник слушает, чтобы понять.',
+    { h: 'Активное слушание' },
+    'Не перебивай. Уточняй: «то есть ты имеешь в виду…?». Возвращайся к деталям: «ты говорил про…».',
+    { q: 'Люди забывают, что ты сказал, но помнят, как ты дал им себя почувствовать.' }
+  ] },
+  { id: 's4', t: 'Страх отказа', min: 3, art: 'a5', body: [
+    'Отказ — это реакция на предложение, а не оценка тебя как человека. У собеседника тысяча своих причин.',
+    'Страх уходит через практику маленькими шагами: спроси дорогу, сделай комплимент бариста, задай вопрос на паре.',
+    { h: 'Челлендж' },
+    'Одно маленькое «социальное» действие в день. Через пару недель станет заметно легче.'
+  ] },
+  { id: 's5', t: 'Язык тела', min: 2, art: 'a6', body: [
+    'Открытая поза: руки не скрещены, телефон в кармане, корпус развёрнут к собеседнику.',
+    'Ровная спина и спокойный темп речи читаются как уверенность. Тут помогает и работа над осанкой.',
+    { q: 'Говори чуть медленнее, чем хочется. Спешка читается как волнение.' }
+  ] }
+];
+const COURSES = {
+  basics: { name: 'Основы', title: 'Что такое<br>внешность', word: 'BASICS', art: 'a6', lessons: LESSONS },
+  mind:   { name: 'Характер', title: 'Сильный<br>характер', word: 'MIND', art: 'a12', lessons: MIND },
+  social: { name: 'Общение', title: 'Сила<br>общения', word: 'SOCIAL', art: 'a13', lessons: SOCIAL }
+};
+const ALL_LESSONS = [...LESSONS, ...MIND, ...SOCIAL];
+
+const BOOKS = [
+  { id: 'b1', a: 'Джеймс Клир', t: 'Атомные привычки', cat: 'Привычки', c: ['#ff7a6b', '#ffb07c'], why: ['Как маленькие ежедневные изменения складываются в большой результат.', 'Ровно на этой идее построено приложение: небольшие миссии каждый день вместо подвигов раз в месяц.'] },
+  { id: 'b2', a: 'Дейл Карнеги', t: 'Как завоёвывать друзей', cat: 'Общение', c: ['#2f8f7a', '#6ee7c8'], why: ['Классика про общение: интерес к людям, умение слушать, как избегать споров.', 'Книге почти сто лет, но базовые принципы работают до сих пор.'] },
+  { id: 'b3', a: 'Виктор Франкл', t: 'Сказать жизни «Да!»', cat: 'Характер', c: ['#3a2a5c', '#b79cff'], why: ['Психолог, прошедший концлагерь, о том, как человеку находить смысл даже в самых тяжёлых условиях.', 'Короткая и очень сильная книга.'] },
+  { id: 'b4', a: 'Райан Холидей', t: 'Препятствие — это путь', cat: 'Характер', c: ['#1d2a3a', '#7dd3fc'], why: ['Стоицизм простым языком: как превращать проблемы в возможности.', 'Хороший старт, если интересна философия, но тяжёлые трактаты пугают.'] },
+  { id: 'b5', a: 'Марк Аврелий', t: 'Размышления', cat: 'Характер', c: ['#4a3420', '#ffd166'], why: ['Личные записи римского императора самому себе — о дисциплине, спокойствии и долге.', 'Читается небольшими фрагментами: по паре страниц в день.'] },
+  { id: 'b6', a: 'Келли Макгонигал', t: 'Сила воли', cat: 'Привычки', c: ['#7a2848', '#ff7a9c'], why: ['Как работает самоконтроль с точки зрения психологии и почему мы срываемся.', 'С практическими упражнениями в каждой главе.'] },
+  { id: 'b7', a: 'Мэттью Уолкер', t: 'Зачем мы спим', cat: 'Здоровье', c: ['#141a3a', '#7d8bfc'], why: ['Нейробиолог о том, как сон влияет на внешность, настроение, память и здоровье.', 'После неё сложно снова ложиться в три ночи.'] },
+  { id: 'b8', a: 'Роберт Чалдини', t: 'Психология влияния', cat: 'Общение', c: ['#5c3a1a', '#ffb07c'], why: ['Шесть принципов, через которые на нас влияют реклама, продавцы и окружающие.', 'Помогает и самому убеждать, и не попадаться на манипуляции.'] },
+  { id: 'b9', a: 'Марк Мэнсон', t: 'Тонкое искусство пофигизма', cat: 'Характер', c: ['#c2410c', '#fb923c'], why: ['Дерзкая книга о том, как выбирать, что действительно важно, и не тратить силы на остальное.'] },
+  { id: 'b10', a: 'Стивен Кови', t: '7 навыков высокоэффективных людей', cat: 'Привычки', c: ['#1f3d2b', '#86efac'], why: ['Системный взгляд на ответственность, приоритеты и отношения с людьми.', 'Плотная, но одна из самых влиятельных книг в жанре.'] }
+];
+const PRODUCTS = [
+  { cat: 'Уход', code: 'SKN', c: '#ffb07c', items: [
+    ['CeraVe Увлажняющий очищающий гель', 'Мягкое умывание для нормальной и сухой кожи, не стягивает', 2],
+    ['CeraVe Пенящийся очищающий гель', 'Умывание для нормальной и жирной кожи', 2],
+    ['The Ordinary Niacinamide 10% + Zinc 1%', 'Сыворотка для жирной кожи и расширенных пор', 1],
+    ['Beauty of Joseon Relief Sun SPF 50+', 'Лёгкий SPF на каждый день без белых разводов', 2],
+    ['La Roche-Posay Effaclar Duo+', 'Крем для кожи, склонной к воспалениям', 3],
+    ['Paula\'s Choice 2% BHA Liquid Exfoliant', 'Салициловая кислота против чёрных точек, 2–3 раза в неделю', 3]
+  ] },
+  { cat: 'Волосы', code: 'HAIR', c: '#b79cff', items: [
+    ['Reuzel Clay Matte Pomade', 'Матовая укладка с естественным видом', 2],
+    ['Schwarzkopf OSiS+ Dust It', 'Пудра для объёма у корней', 2],
+    ['Сухой шампунь Batiste', 'Освежить волосы, когда некогда мыть', 1]
+  ] },
+  { cat: 'Спорт дома', code: 'BODY', c: '#6ee7c8', items: [
+    ['Турник в дверной проём', 'Подтягивания без зала', 1],
+    ['Набор резиновых лент-эспандеров', 'Полноценная тренировка на всё тело дома', 1],
+    ['Разборные гантели', 'База для силовых упражнений', 2]
+  ] },
+  { cat: 'Гардероб', code: 'STYL', c: '#ff7a9c', items: [
+    ['Плотные однотонные футболки (от 200 г/м²)', 'Не просвечивают и держат форму. Плотность важнее бренда', 1],
+    ['Прямые тёмные джинсы без потёртостей', 'Универсальный низ под любой верх', 2],
+    ['Минималистичные белые кеды', 'Подходят почти ко всему', 2]
+  ] },
+  { cat: 'Сон', code: 'SLP', c: '#7dd3fc', items: [
+    ['Маска для сна', 'Полная темнота даже летом', 1],
+    ['Беруши', 'Если шумные соседи или улица', 1],
+    ['Лампа с тёплым светом', 'Вечером меньше яркого холодного света — легче заснуть', 1]
+  ] }
+];
+const ARTICLES = [
+  { id: 'f1', tag: 'Мода', t: 'Как устроены недели моды', min: 4, art: 'a7', body: [
+    'Главные недели моды — «большая четвёрка»: Нью-Йорк, Лондон, Милан и Париж. Они идут друг за другом дважды в год.',
+    'Хитрость в том, что показывают на сезон вперёд: коллекции осень-зима выходят на подиум в феврале–марте, весна-лето — в сентябре–октябре. То, что ты видишь на показе сегодня, попадёт в магазины через полгода.',
+    { h: 'Зачем тебе это' },
+    'Показы задают направление: силуэты, цвета, настроение. Через год-два эти идеи доходят до масс-маркета. Кто следит за показами, видит тренды раньше остальных.'
+  ] },
+  { id: 'f2', tag: 'Тренд', t: 'Gorpcore: почему все носят походные куртки', min: 3, art: 'a8', body: [
+    'Gorpcore — стиль, в котором вещи для гор и походов носят в городе: флиски, ветровки, трекинговые кроссовки, карго-штаны.',
+    'Спортивно-технические бренды стали модными, потому что их вещи практичные, долговечные и выглядят «как будто ты только что с вершины».',
+    { q: 'Функция стала эстетикой.' },
+    'Как носить: одна техническая вещь плюс спокойная база. Полный комплект «как на Эверест» в метро выглядит костюмом.'
+  ] },
+  { id: 'f3', tag: 'Стиль', t: 'Тихая роскошь без денег', min: 3, art: 'a9', body: [
+    'Тихая роскошь — это вещи без логотипов, в спокойных цветах, хорошего качества и идеальной посадки. Дорого выглядит не бренд, а аккуратность.',
+    { h: 'Как собрать на бюджете' },
+    'Приглушённые цвета: бежевый, серый, тёмно-синий, белый. Ткани без катышков. Вещи строго по размеру — при необходимости ушить у портного, это недорого. Минимум принтов и надписей.'
+  ] },
+  { id: 'f4', tag: 'Стиль', t: 'Посадка решает: 5 правил', min: 2, art: 'a10', body: [
+    'Шов плеча футболки или рубашки должен лежать на краю плеча, не ниже.',
+    'Длина рукава рубашки — до основания большого пальца.',
+    'Брюки не собираются гармошкой на обуви: максимум одна лёгкая складка.',
+    'Футболка заканчивается примерно на середине ширинки.',
+    'Куртка застёгивается без натяжения и не висит мешком.'
+  ] },
+  { id: 'f5', tag: 'Уход', t: 'Почему SPF — главный продукт ухода', min: 2, art: 'a11', body: [
+    'Ультрафиолет — одна из главных причин раннего старения кожи: морщин, пигментных пятен, потери упругости. И он действует даже в пасмурную погоду.',
+    { q: 'Лучший антивозрастной крем — тот, что защищает от солнца.' },
+    'Выбирай SPF 30 или выше, наноси утром последним шагом ухода. Если долго на улице — обновляй каждые 2–3 часа.'
+  ] }
+];
+
+// ---------- уровни и награды ----------
+const MAX_LVL = 20;
+const LV = (n) => 50 * (n - 1) * n; // сколько всего XP нужно для уровня n
+const TITLES = [[1, 'Новичок'], [3, 'В процессе'], [5, 'Заметный'], [8, 'Стильный'], [12, 'Харизма'], [16, 'Легенда'], [20, 'Икона']];
+const UNLOCKS = [
+  { lvl: 2, id: 'grat', ic: '✍️', name: 'Дневник благодарности', d: 'Три хороших момента дня · +10 XP' },
+  { lvl: 3, id: 't-sunset', ic: '🌅', name: 'Тема «Закат»', d: 'Тёплое оформление', theme: 'sunset' },
+  { lvl: 4, id: 'week', ic: '🏆', name: 'Челленджи недели', d: 'Три задания на неделю · +60 XP за каждое' },
+  { lvl: 5, id: 't-neon', ic: '🌌', name: 'Тема «Неон»', d: 'Ночной неон', theme: 'neon' },
+  { lvl: 6, id: 'mood', ic: '🙂', name: 'Трекер настроения', d: 'Отмечай настроение и смотри график' },
+  { lvl: 7, id: 't-sakura', ic: '🌸', name: 'Тема «Сакура»', d: 'Светлая розовая тема', theme: 'sakura' },
+  { lvl: 8, id: 'share', ic: '📲', name: 'Карточка для сторис', d: 'Покажи свой прогресс друзьям' },
+  { lvl: 9, id: 'focus', ic: '⏱', name: 'Фокус-таймер', d: '25 минут без отвлечений · +10 XP' },
+  { lvl: 10, id: 'goals', ic: '🎯', name: 'Цели сезона', d: 'Учёба, деньги, спорт, отношения · +100 XP' },
+  { lvl: 12, id: 't-frost', ic: '🏔', name: 'Тема «Иней»', d: 'Холодный стиль FRZN', theme: 'frost' },
+  { lvl: 14, id: 't-ice', ic: '🧊', name: 'Тема «Лёд»', d: 'Тёмная ледяная тема', theme: 'ice' },
+  { lvl: 16, id: 'gold', ic: '👑', name: 'Золотой профиль', d: 'Золотой значок уровня' },
+  { lvl: 20, id: 's2', ic: '🚀', name: 'Сезон 02', d: 'Новый сезон и новые миссии' }
+];
+const BADGES = [
+  ['🔥', 'Первый шаг', 'Закрыть день', () => closedDays() >= 1],
+  ['⚡', 'Разгон', 'Серия 3 дня', () => bestStreak() >= 3],
+  ['🏔', 'Неделя', 'Серия 7 дней', () => bestStreak() >= 7],
+  ['🛡', 'Железный', 'Серия 30 дней', () => bestStreak() >= 30],
+  ['🤝', 'Человек слова', '7 миссий характера', () => charCount() >= 7],
+  ['🎓', 'Ученик', 'Пройти 5 уроков', () => (S.lessons || []).length >= 5],
+  ['📖', 'Читатель', 'Дочитать книгу', () => booksDone() >= 1],
+  ['📚', 'Книжный червь', '300 страниц', () => totalPages() >= 300],
+  ['📸', 'Летописец', '4 фото прогресса', () => (S.photos || []).length >= 4],
+  ['⭐', 'Заметный', 'Уровень 5', () => rank().lvl >= 5],
+  ['💎', 'Стильный', 'Уровень 8', () => rank().lvl >= 8],
+  ['👑', 'Легенда', 'Уровень 16', () => rank().lvl >= 16]
+];
+const ACCENTS = ['auto', '#cde59b', '#ffb07c', '#ff7a6b', '#ffd166', '#6ee7c8', '#b79cff', '#ff7ccf', '#9cc8ff', '#4d7cff', '#ffffff'];
+const THEME_ACCENT = { matcha: '#cde59b', sunset: '#ffb07c', neon: '#ff7ccf', sakura: '#d94f7a', frost: '#9cc8ff', ice: '#9cc8ff', paper: '#0b0b0c' };
+const PALETTE = ['#ffb07c', '#6ee7c8', '#b79cff', '#ffd166', '#ff7a9c', '#7dd3fc'];
+const DROP_BG = ['linear-gradient(135deg,#ff7a6b,#ffb07c 55%,#ffd166)', 'linear-gradient(135deg,#6ee7c8,#b5f5d9 60%,#fff1c9)', 'linear-gradient(135deg,#b79cff,#ffb3d1 60%,#ffd9b8)', 'linear-gradient(135deg,#7dd3fc,#c7f0ff 55%,#ffe8c2)'];
+const TAG_C = { 'Мода': '#b79cff', 'Тренд': '#6ee7c8', 'Стиль': '#ff7a9c', 'Уход': '#ffd166' };
+const THEMES = [
+  ['matcha', 'Матча', 'linear-gradient(160deg,#eef4d6,#7d9a68 45%,#141913)'],
+  ['paper', 'Бумага', 'linear-gradient(160deg,#ffffff,#e6e9ee)'],
+  ['sunset', 'Закат', 'linear-gradient(160deg,#ffc89a,#d9806a 40%,#2a1b2e)'],
+  ['neon', 'Неон', 'linear-gradient(160deg,#ff7ccf,#6a1fb0 45%,#09080f)'],
+  ['sakura', 'Сакура', 'linear-gradient(160deg,#ffffff,#ffd3dd 45%,#e2869f)'],
+  ['frost', 'Иней', 'linear-gradient(160deg,#7e95ac,#4e6276)'],
+  ['ice', 'Лёд', 'linear-gradient(160deg,#0e1a2b,#080d14)']
+];
+const THEME_BG = { matcha: '#141913', sunset: '#211915', neon: '#09080f', sakura: '#fbf0f1', frost: '#4e6276', ice: '#080d14', paper: '#eef0f3' };
+const LIGHT_ACCENT = { paper: '#0b0b0c', sakura: '#d94f7a' };
+const GOAL_AREAS = [['Учёба', 'Например: закрыть сессию без долгов'], ['Деньги', 'Например: первые 10 000 ₽ своими силами'], ['Спорт', 'Например: 15 подтягиваний'], ['Люди', 'Например: новый круг общения']];
+const MONTHS = ['янв', 'фев', 'мар', 'апр', 'мая', 'июн', 'июл', 'авг', 'сен', 'окт', 'ноя', 'дек'];
+
+// ---------- даты ----------
+const DAY = 86400000;
+const z = (n) => String(n).padStart(2, '0');
+function fmt(d) { return d.getFullYear() + '-' + z(d.getMonth() + 1) + '-' + z(d.getDate()); }
+function parse(s) { const [y, m, d] = s.split('-').map(Number); return new Date(y, m - 1, d); }
+function now() { return new Date(Date.now() + (S.dayOffset || 0) * DAY); }
+function today() { return fmt(now()); }
+function addDays(s, n) { const d = parse(s); d.setDate(d.getDate() + n); return fmt(d); }
+function dayNum(s) { return Math.round((parse(s) - parse(S.startDate)) / DAY) + 1; }
+function human(s) { const d = parse(s); return d.getDate() + ' ' + MONTHS[d.getMonth()]; }
+function weekStart(s) { const d = parse(s); d.setDate(d.getDate() - (d.getDay() + 6) % 7); return fmt(d); }
+function weekDates() { const s = weekStart(today()); return [0, 1, 2, 3, 4, 5, 6].map((i) => addDays(s, i)).filter((d) => d <= today()); }
+
+// ---------- утилиты ----------
+const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const pick = (a) => a[Math.floor(Math.random() * a.length)];
+const cap = (s) => s.charAt(0).toUpperCase() + s.slice(1);
+const sumObj = (o) => Object.values(o || {}).reduce((a, x) => a + (+x || 0), 0);
+function plural(n, one, few, many) { const a = n % 10, b = n % 100; return a === 1 && b !== 11 ? one : a >= 2 && a <= 4 && (b < 12 || b > 14) ? few : many; }
+function lum(hex) { const n = parseInt(hex.slice(1), 16); return (0.299 * (n >> 16) + 0.587 * ((n >> 8) & 255) + 0.114 * (n & 255)) / 255; }
+let toastT;
+function toast(t) { const el = document.getElementById('toast'); el.textContent = t; el.classList.add('show'); clearTimeout(toastT); toastT = setTimeout(() => el.classList.remove('show'), 2200); }
+
+// ---------- тема ----------
+const themeLvl = (k) => { const u = UNLOCKS.find((x) => x.theme === k); return u ? u.lvl : 1; };
+function applyTheme() {
+  let theme = S.theme || 'matcha';
+  if (S.onboarded && rank().lvl < themeLvl(theme)) theme = 'matcha';
+  let accent = !S.accent || S.accent === 'auto' ? THEME_ACCENT[theme] : S.accent;
+  if (LIGHT_ACCENT[theme] && lum(accent) > 0.7) accent = LIGHT_ACCENT[theme];
+  const r = document.documentElement;
+  r.dataset.theme = theme;
+  r.style.setProperty('--accent', accent);
+  r.style.setProperty('--on-accent', lum(accent) > 0.6 ? '#06101c' : '#ffffff');
+  try { tg.setHeaderColor(THEME_BG[theme]); tg.setBackgroundColor(THEME_BG[theme]); } catch (e) {}
+}
+
+// ---------- графика ----------
+const ARTS = {
+  a1: ['#0e1a2b', '#4d7cff', '#9cc8ff'], a2: ['#1b1530', '#a78bfa', '#e9d5ff'], a3: ['#2b1a0e', '#ffc35c', '#fff1c7'],
+  a4: ['#0d2622', '#5ee6a8', '#d1fae5'], a5: ['#2a0f17', '#ff6a3d', '#ffd2c2'], a6: ['#1f2b1d', '#9fbc84', '#eef4d6'],
+  a7: ['#0b0b0c', '#3a3a40', '#d9d9de'], a8: ['#1d2a1e', '#6b8f5a', '#e2ead8'], a9: ['#2a241c', '#b49b7a', '#efe6d8'],
+  a10: ['#141a24', '#5b6b82', '#dfe6ef'], a11: ['#2b1f0b', '#ffb347', '#fff3d6'],
+  a12: ['#1b1530', '#b79cff', '#ffd1e8'], a13: ['#0d2622', '#6ee7c8', '#fff1c9']
+};
+function mountains(id) {
+  return `<svg class="mtn" viewBox="0 0 400 200" preserveAspectRatio="none" aria-hidden="true">
+    <defs>
+      <linearGradient id="m1${id}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" style="stop-color:var(--mA)" stop-opacity=".95"/><stop offset=".35" style="stop-color:var(--mB)" stop-opacity=".85"/><stop offset="1" style="stop-color:var(--mC)" stop-opacity=".9"/></linearGradient>
+      <linearGradient id="m2${id}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" style="stop-color:var(--mD)" stop-opacity=".7"/><stop offset="1" style="stop-color:var(--mE)" stop-opacity=".95"/></linearGradient>
+    </defs>
+    <path d="M0 150 L60 95 L95 118 L150 60 L190 92 L230 40 L262 70 L300 52 L345 98 L400 80 L400 200 L0 200Z" fill="url(#m2${id})" opacity=".55"/>
+    <path d="M0 175 L70 120 L120 150 L200 72 L240 104 L268 92 L330 140 L400 118 L400 200 L0 200Z" fill="url(#m1${id})"/>
+    <path d="M200 72 L222 93 L212 90 L204 99 L194 88 L186 92Z" style="fill:var(--mA)"/>
+  </svg><div class="shade"></div>`;
+}
+function sparks(n) {
+  return [...Array(n)].map((_, i) => `<i class="spark" style="left:${(i * 37 + 11) % 95}%;animation-delay:${(i * 0.9) % 7}s;animation-duration:${6 + (i % 3)}s"></i>`).join('');
+}
+function barcode() {
+  let x = 0, s = '';
+  for (let i = 0; i < 46; i++) { const w = [1, 2, 1, 3, 1, 2][i % 6]; if (i % 2 === 0) s += `<rect x="${x}" y="0" width="${w}" height="26"/>`; x += w + (i % 5 === 0 ? 1 : 0); }
+  return `<svg class="barcode" viewBox="0 0 ${x} 26" width="${x * 1.2}" fill="currentColor" aria-hidden="true">${s}</svg>`;
+}
+function octa(act, label) {
+  return `<button class="octa" data-act="${act}" aria-label="${label}"><svg class="o" viewBox="0 0 66 66" fill="none" stroke="currentColor" stroke-width="1.2"><polygon points="20,1 46,1 65,20 65,46 46,65 20,65 1,46 1,20"/></svg><span class="a">${IC.arrow}</span></button>`;
+}
+function art(key, word) {
+  const [a, b, c] = ARTS[key] || ARTS.a1;
+  return `<div class="art" style="background:radial-gradient(120% 80% at 80% 10%,${b}cc,transparent 60%),radial-gradient(90% 70% at 10% 90%,${c}55,transparent 60%),linear-gradient(160deg,${a},#000)">
+    ${word ? `<div style="position:absolute;left:-6px;bottom:30%;font-family:var(--disp);font-weight:700;font-size:150px;line-height:.8;color:transparent;-webkit-text-stroke:1px rgba(255,255,255,.22);text-transform:uppercase;white-space:nowrap">${word}</div>` : ''}
+    <div style="position:absolute;inset:0;background:linear-gradient(180deg,transparent 30%,rgba(0,0,0,.65))"></div>
+  </div>`;
+}
+const IC = {
+  logo: '<svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round"><path d="M16 3l11 4v8c0 7-4.6 11.6-11 14C9.6 26.6 5 22 5 15V7z"/><path d="M11 19l5-7 5 7" stroke-linecap="round"/></svg>',
+  home: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 20l6-9 4 5 3-4 5 8z"/><circle cx="17" cy="6" r="2"/></svg>',
+  coach: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/></svg>',
+  journal: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="3"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>',
+  path: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 20h18"/><path d="M6 16V11M11 16V7M16 16V4"/></svg>',
+  me: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg>',
+  arrow: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg>',
+  check: '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>',
+  send: '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>',
+  close: '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>',
+  fire: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2c1 3 4 4.5 4 8.5a4 4 0 0 1-8 0c0-1.5.5-2.5 1.5-3.5C9 9 10 10 11 10c0-3 1-6 1-8z"/><path d="M6 15a6 6 0 0 0 12 0"/></svg>',
+  bolt: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L4 14h7l-1 8 9-12h-7z"/></svg>',
+  target: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/></svg>',
+  box: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M3 7l9-4 9 4-9 4z"/><path d="M3 7v10l9 4 9-4V7"/></svg>',
+  book: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2z"/><path d="M4 21V5"/></svg>',
+  lock: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>',
+  cam: '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="14" rx="3"/><circle cx="12" cy="13" r="3.5"/><path d="M8 6l1.5-2h5L16 6"/></svg>'
+};
+
+// ---------- счётчики ----------
+function addEvent(type, text, date) { S.events = S.events || []; S.events.push({ date: date || today(), type, text }); }
+function tasksFor(n) {
+  const f = S.plan.focus, out = [];
+  for (let i = 0; i < 3; i++) {
+    const p = f[(n + i) % f.length], lib = TASKS[p];
+    let k = (n + i * 2) % lib.length, id = p + ':' + k;
+    while (out.some((t) => t.id === id)) { k = (k + 1) % lib.length; id = p + ':' + k; }
+    out.push({ id, p, text: lib[k] });
+  }
+  return out;
+}
+const charFor = (n) => CHAR_MISSIONS[(n - 1) % CHAR_MISSIONS.length];
+const doneOn = (d) => (S.done && S.done[d]) || [];
+const closed = (d) => doneOn(d).length >= 3;
+function streak() {
+  let d = today(), n = 0;
+  if (!closed(d)) d = addDays(d, -1);
+  while (closed(d) && d >= S.startDate) { n++; d = addDays(d, -1); }
+  return n;
+}
+function bestStreak() {
+  let best = 0, cur = 0;
+  for (let d = S.startDate; d <= today(); d = addDays(d, 1)) { cur = closed(d) ? cur + 1 : 0; best = Math.max(best, cur); }
+  return best;
+}
+const totalTasks = () => Object.values(S.done || {}).reduce((a, x) => a + x.length, 0);
+const closedDays = () => Object.keys(S.done || {}).filter(closed).length;
+const totalPages = () => sumObj(S.pages);
+const booksDone = () => Object.values(S.books || {}).filter((x) => x === 'done').length;
+const readingBook = () => BOOKS.find((b) => (S.books || {})[b.id] === 'reading');
+const charCount = (kind) => Object.entries(S.char || {}).filter(([d, v]) => v && (!kind || charFor(dayNum(d))[0] === kind)).length;
+const evCount = (ds, type) => (S.events || []).filter((e) => ds.includes(e.date) && e.type === type).length;
+const lessonsIn = (list) => list.filter((l) => (S.lessons || []).includes(l.id)).length;
+
+function branches() {
+  return [
+    { n: 'Внешность', c: '#ffb07c', x: totalTasks() * 10 + (S.photos || []).length * 15 },
+    { n: 'Характер', c: '#b79cff', x: charCount('mind') * 15 + lessonsIn(MIND) * 25 + Object.keys(S.grat || {}).length * 10 + (S.sgoals || []).filter((g) => g && g.done).length * 100 },
+    { n: 'Общение', c: '#6ee7c8', x: charCount('soc') * 15 + lessonsIn(SOCIAL) * 25 },
+    { n: 'Разум', c: '#7dd3fc', x: Math.floor(totalPages() / 10) * 5 + booksDone() * 50 + lessonsIn(LESSONS) * 25 + (S.articles || []).length * 5 + sumObj(S.focus) * 10 }
+  ];
+}
+function xp() {
+  return branches().reduce((a, b) => a + b.x, 0) + closedDays() * 20 + Object.keys(S.mood || {}).length * 3 + sumObj(S.chest) + Object.keys(S.claims || {}).length * 60 + (S.bonus || 0);
+}
+function rank() {
+  const x = xp();
+  let lvl = 1;
+  while (lvl < MAX_LVL && x >= LV(lvl + 1)) lvl++;
+  const name = TITLES.filter((t) => lvl >= t[0]).pop()[1];
+  return { lvl, name, x, cur: LV(lvl), next: lvl < MAX_LVL ? LV(lvl + 1) : null };
+}
+const isOpen = (id) => { const u = UNLOCKS.find((x) => x.id === id); return !u || rank().lvl >= u.lvl; };
+const blv = (x) => Math.floor(Math.sqrt(x / 30)) + 1;
+
+// ---------- анимации ----------
+let lastScreen = '', justDone = null, newMsgs = 0, modal = null;
+let ptr = { x: innerWidth / 2, y: innerHeight / 2 };
+addEventListener('pointerdown', (e) => { ptr = { x: e.clientX, y: e.clientY }; }, true);
+function floatXP(text) {
+  if (reduceMotion) return;
+  const s = document.createElement('div');
+  s.className = 'xpfloat'; s.textContent = text;
+  s.style.left = ptr.x + 'px'; s.style.top = ptr.y + 'px';
+  document.body.appendChild(s);
+  setTimeout(() => s.remove(), 1200);
+}
+function confetti() {
+  if (reduceMotion) return;
+  const box = document.createElement('div');
+  box.className = 'confetti';
+  for (let i = 0; i < 48; i++) {
+    const s = document.createElement('i');
+    s.style.setProperty('--x', ((Math.random() * 2 - 1) * 170).toFixed(0) + 'px');
+    s.style.setProperty('--y', (-80 - Math.random() * 240).toFixed(0) + 'px');
+    s.style.setProperty('--r', (Math.random() * 900 - 450).toFixed(0) + 'deg');
+    s.style.background = PALETTE[i % PALETTE.length];
+    s.style.animationDelay = (Math.random() * 90).toFixed(0) + 'ms';
+    box.appendChild(s);
+  }
+  document.body.appendChild(box);
+  setTimeout(() => box.remove(), 1700);
+}
+function countUp(el) {
+  const target = +el.dataset.count;
+  if (!target) return;
+  const t0 = performance.now(), dur = 800;
+  const step = (t) => { const k = Math.min(1, (t - t0) / dur); el.textContent = Math.round(target * (1 - Math.pow(1 - k, 3))); if (k < 1) requestAnimationFrame(step); };
+  el.textContent = '0';
+  requestAnimationFrame(step);
+}
+function afterRender(key) {
+  if (key === lastScreen || reduceMotion) { lastScreen = key; return; }
+  lastScreen = key;
+  const app = document.getElementById('app');
+  app.classList.remove('enter'); void app.offsetWidth; app.classList.add('enter');
+  const els = [...app.querySelectorAll('.card,.tint,.mission,.lesson,.acard,.cc,.feature,.book,.outro,.sec,.badge')];
+  let batch = 0, timer;
+  const io = new IntersectionObserver((ents) => {
+    ents.forEach((e) => {
+      if (!e.isIntersecting) return;
+      const el = e.target;
+      el.style.transitionDelay = Math.min(batch++, 7) * 45 + 'ms';
+      el.classList.add('in');
+      io.unobserve(el);
+      setTimeout(() => { el.classList.remove('rv', 'in'); el.style.transitionDelay = ''; }, 900 + batch * 45);
+    });
+    clearTimeout(timer); timer = setTimeout(() => { batch = 0; }, 120);
+  }, { threshold: 0.06 });
+  els.forEach((el) => { el.classList.add('rv'); io.observe(el); });
+  app.querySelectorAll('[data-count]').forEach(countUp);
+}
+let ticking = false;
+addEventListener('scroll', () => {
+  if (ticking || reduceMotion) return;
+  ticking = true;
+  requestAnimationFrame(() => {
+    const y = scrollY;
+    document.querySelectorAll('#app .hero .spray').forEach((s) => { s.style.translate = `0 ${(y * 0.28).toFixed(1)}px`; });
+    document.querySelectorAll('#app .hero svg.mtn').forEach((m) => { m.style.translate = `0 ${(y * 0.1).toFixed(1)}px`; });
+    document.querySelectorAll('#app .hero .huge').forEach((h) => { h.style.translate = `0 ${(y * -0.06).toFixed(1)}px`; });
+    ticking = false;
+  });
+}, { passive: true });
+
+// Любое действие, дающее XP, оборачиваем: если вырос уровень — показываем окно уровня
+function withRankCheck(fn) {
+  const before = rank().lvl;
+  fn();
+  const after = rank().lvl;
+  if (after > before) {
+    addEvent('rank', `Уровень ${after}: ${rank().name}`);
+    modal = { kind: 'levelup', lvl: after, from: before };
+    setTimeout(confetti, 250);
+    haptic('success');
+  }
+}
+
+// ---------- действия с прогрессом ----------
+function toggleTask(id) {
+  const d = today();
+  S.done = S.done || {};
+  const arr = S.done[d] = S.done[d] || [];
+  withRankCheck(() => {
+    const i = arr.indexOf(id);
+    if (i >= 0) {
+      arr.splice(i, 1);
+      S.events = (S.events || []).filter((e) => !(e.date === d && (e.type === 'closed' || e.type === 'streak')));
+      haptic('light');
+    } else {
+      arr.push(id);
+      justDone = id;
+      haptic('medium');
+      floatXP(arr.length === 3 ? '+30 XP' : '+10 XP');
+      if (arr.length === 3) {
+        addEvent('closed', 'Закрыли все задания дня');
+        const s = streak();
+        if ([3, 7, 14, 21, 30, 60, 90].includes(s)) addEvent('streak', `Серия ${s} ${plural(s, 'день', 'дня', 'дней')} подряд`);
+        haptic('success');
+        celebrate = true;
+        confetti();
+      }
+    }
+  });
+  save(); render();
+}
+function toggleChar() {
+  const d = today();
+  S.char = S.char || {};
+  withRankCheck(() => {
+    if (S.char[d]) { delete S.char[d]; S.events = (S.events || []).filter((e) => !(e.date === d && e.type === 'char')); }
+    else { S.char[d] = true; addEvent('char', charFor(dayNum(d))[1]); floatXP('+15 XP'); haptic('success'); justDone = 'char'; }
+  });
+  save(); render();
+}
+function addPages() {
+  const b = readingBook();
+  if (!b) return;
+  withRankCheck(() => {
+    S.pages = S.pages || {};
+    S.pages[today()] = (S.pages[today()] || 0) + 10;
+    const n = S.pages[today()];
+    S.events = (S.events || []).filter((e) => !(e.date === today() && e.type === 'read'));
+    addEvent('read', `Прочитали ${n} ${plural(n, 'страницу', 'страницы', 'страниц')}: «${b.t}»`);
+  });
+  floatXP('+5 XP');
+  if (S.pages[today()] === 10) { haptic('success'); confetti(); toast('Норма дня по чтению выполнена'); } else haptic('medium');
+  justDone = 'pages';
+  save(); render();
+}
+
+// ---------- путь ----------
+function journey() {
+  const days = {};
+  const get = (d) => days[d] = days[d] || { date: d, ev: [], tasks: [] };
+  (S.events || []).forEach((e) => get(e.date).ev.push(e));
+  Object.entries(S.done || {}).forEach(([d, ids]) => { if (ids.length) get(d).tasks = ids; });
+  const P = [['start', 'разобрались с целями'], ['order', 'заказали средства'], ['arrived', 'пришли средства'], ['char', 'выполнили миссию характера'], ['grat', 'записали благодарности'], ['read', 'почитали'], ['book', 'дочитали книгу'], ['lesson', 'прошли урок'], ['focus', 'провели фокус-сессию'], ['challenge', 'закрыли челлендж недели'], ['goal', 'достигли цели сезона'], ['photo', 'сделали фото прогресса'], ['activity', 'отчитались тренеру'], ['care', 'сделали паузу в уходе'], ['rank', 'взяли новый уровень']];
+  return Object.values(days).sort((a, b) => b.date.localeCompare(a.date)).map((day) => {
+    const phrases = [], details = [];
+    const types = day.ev.map((e) => e.type);
+    P.slice(0, 3).forEach(([t, p]) => types.includes(t) && phrases.push(p));
+    if (day.tasks.length) {
+      const pl = [...new Set(day.tasks.map((id) => id.split(':')[0]))].map((p) => PILLARS[p].verb);
+      phrases.push((types.includes('closed') ? 'закрыли день: ' : 'сделали ') + pl.join(' и '));
+    }
+    P.slice(3).forEach(([t, p]) => types.includes(t) && phrases.push(p));
+    if (!phrases.length && types.includes('note')) phrases.push('записали ощущения');
+    day.tasks.forEach((id) => { const [p, k] = id.split(':'); details.push(PILLARS[p].code + ' · ' + TASKS[p][k]); });
+    day.ev.filter((e) => e.type !== 'closed').forEach((e) => details.push(e.text));
+    return { date: day.date, n: dayNum(day.date), title: cap(phrases.join(', ') || 'Без отметок'), details, closed: closed(day.date) };
+  });
+}
+function pillarStats() {
+  const c = {};
+  Object.values(S.done || {}).flat().forEach((id) => { const p = id.split(':')[0]; c[p] = (c[p] || 0) + 1; });
+  return S.plan.focus.map((p) => ({ p, n: c[p] || 0 }));
+}
+
+// ---------- челленджи недели ----------
+const CHALLENGES = [
+  { id: 'closed5', t: 'Закрой 5 дней', need: 5, f: (ds) => ds.filter(closed).length },
+  { id: 'pages50', t: 'Прочитай 50 страниц', need: 50, f: (ds) => ds.reduce((a, d) => a + ((S.pages || {})[d] || 0), 0) },
+  { id: 'char3', t: 'Выполни 3 миссии характера', need: 3, f: (ds) => ds.filter((d) => (S.char || {})[d]).length },
+  { id: 'les2', t: 'Пройди 2 урока', need: 2, f: (ds) => evCount(ds, 'lesson') },
+  { id: 'photo1', t: 'Сделай фото прогресса', need: 1, f: (ds) => evCount(ds, 'photo') },
+  { id: 'grat4', t: 'Заполни дневник благодарности 4 раза', need: 4, f: (ds) => ds.filter((d) => (S.grat || {})[d]).length },
+  { id: 'mood5', t: 'Отметь настроение 5 дней', need: 5, req: 'mood', f: (ds) => ds.filter((d) => (S.mood || {})[d]).length },
+  { id: 'focus3', t: 'Проведи 3 фокус-сессии', need: 3, req: 'focus', f: (ds) => ds.reduce((a, d) => a + ((S.focus || {})[d] || 0), 0) }
+];
+function weekChallenges() {
+  const pool = CHALLENGES.filter((c) => !c.req || isOpen(c.req));
+  const wk = Math.round(parse(weekStart(today())) / (7 * DAY));
+  return [0, 1, 2].map((i) => pool[(wk * 3 + i) % pool.length]);
+}
+
+// ---------- ИИ-тренер ----------
+const coachName = () => S.coachName || 'Макс';
+const hard = () => S.coachTone === 'hard';
+function shopSet(from, to) { let n = 0; S.plan.shopping.forEach((it) => { if (it.st === from) { it.st = to; n++; } }); return n; }
+
+function localReply(text) {
+  const t = text.toLowerCase();
+  const s = streak();
+  if (/жж[её]|печ[её]т|покрасн|сыпь|чеш|от[её]к|болит|щипл|шелуш/.test(t)) {
+    addEvent('care', 'Кожа отреагировала — пауза в активном уходе');
+    return { text: 'Стоп. Жжение и покраснение — это не «грязь выходит», а раздражение.\n\n1. Смой средство прохладной водой.\n2. Сегодня ничего активного: только умывание и простой крем.\n3. Если за 1–2 дня не пройдёт или станет хуже — сразу к дерматологу.\n\nОстальные задания делай как обычно, серия не пострадает. Я отметил это в твоём пути.' };
+  }
+  if (/статист|итог|мой путь|путь|прогресс|отч[её]т|сводк/.test(t)) return { text: summaryText(), card: 'journey' };
+  if (/что сегодня|задани|план на|что делать/.test(t)) {
+    const n = dayNum(today());
+    const list = tasksFor(n).map((x, i) => `${doneOn(today()).includes(x.id) ? '✓' : (i + 1) + '.'} ${x.text}`).join('\n');
+    const b = readingBook();
+    return { text: `День ${n}. Миссии на сегодня:\n\n${list}\n\nХарактер: ${charFor(n)[1]}${b ? `\nБонус: 10 страниц «${b.t}»` : ''}\n\n${hard() ? 'Без отговорок.' : 'Отмечай на главной — у тебя получится.'}` };
+  }
+  if (/уров|опыт|xp|награ|открыть|открыва/.test(t)) {
+    const r = rank(), nu = UNLOCKS.find((u) => u.lvl > r.lvl);
+    return { text: `Ты на уровне ${r.lvl} (${r.name}), ${r.x} XP.${nu ? `\n\nСледующая награда — «${nu.name}» на уровне ${nu.lvl}. До неё ${LV(nu.lvl) - r.x} XP.` : ''}\n\nБыстрее всего опыт дают закрытые дни, миссии характера и уроки.` };
+  }
+  if (/книг|читал|почитать|страниц/.test(t)) {
+    const b = readingBook();
+    return { text: b ? `Сейчас читаешь «${b.t}». Отмечай страницы на главной или в Журнале → Книги. Норма — 10 страниц в день, это около 12 книг в год.` : 'Выбери книгу в Журнале → Книги и нажми «Читаю». Начни с «Атомных привычек» — она про то же, что и всё приложение.' };
+  }
+  if (/заказал|купил|оформил|заказ/.test(t)) {
+    const n = shopSet('none', 'ordered');
+    addEvent('order', n ? `Заказали ${n} ${plural(n, 'средство', 'средства', 'средств')} из списка` : 'Оформили заказ');
+    return { text: n ? `Записал: в пути ${n} ${plural(n, 'позиция', 'позиции', 'позиций')}. Как придут — напиши «пришло».` : 'Записал заказ в твой путь.' };
+  }
+  if (/приш[её]л|пришл|получил|забрал|доставил/.test(t)) {
+    const n = shopSet('ordered', 'arrived');
+    addEvent('arrived', n ? `Пришли средства: ${n} ${plural(n, 'позиция', 'позиции', 'позиций')}` : 'Получили посылку');
+    return { text: 'Средства на руках. Вводи их по одному, раз в 3–4 дня — так увидишь, как кожа реагирует на каждое.' };
+  }
+  if (/сделал|нан[её]с|отжал|отжим|пробеж|присед|подтян|умыл|помыл|постриг|л[её]г |прош[её]л|планк/.test(t)) {
+    addEvent('activity', '«' + text.slice(0, 80) + '»');
+    return { text: (hard() ? pick(['Принято. Так и держать.', 'Засчитано. Завтра так же.', 'Записал. Дисциплина решает.']) : pick(['Красавчик, записал в твой путь.', 'Записал. Из таких дней и складывается результат.', 'Есть! Это уже привычка, а не случайность.'])) + (s ? `\nСерия: ${s} 🔥` : '') };
+  }
+  if (/лень|не хочу|устал|сдаюсь|брос|не могу/.test(t)) {
+    return { text: hard() ? `Лень — не причина. ${s ? `У тебя ${s} ${plural(s, 'день', 'дня', 'дней')} серии. Сольёшь?` : 'Сделай одно задание. Одно.'} Пять минут — потом отдыхай.` : `Бывает, это нормально. Сделай хотя бы одно самое лёгкое задание — так мозг не потеряет привычку.${s ? ` Серия ${s} 🔥 ждёт.` : ''}` };
+  }
+  addEvent('note', '«' + text.slice(0, 80) + '»');
+  return { text: pick(['Записал в дневник. Если что-то сделал по плану — напиши, отмечу в пути.', 'Понял тебя. Хочешь статистику? Напиши «мой путь».', 'Записал. Спроси «что сегодня», если нужен план.']) };
+}
+function summaryText() {
+  const n = dayNum(today()), cd = closedDays(), r = rank();
+  const br = branches().map((b) => `${b.n.toLowerCase()} ${blv(b.x)}`).join(', ');
+  return `Твой путь за ${n} ${plural(n, 'день', 'дня', 'дней')}:\n• уровень: ${r.lvl} · ${r.name} (${r.x} XP)\n• закрыто дней: ${cd}, серия: ${streak()} 🔥\n• миссий характера: ${charCount()}\n• прочитано: ${totalPages()} стр., книг: ${booksDone()}\n• ветки: ${br}\n\n${cd >= n * 0.7 ? 'Ты в топе по дисциплине. Продолжай.' : hard() ? 'Можно лучше. Цель — минимум 5 закрытых дней из 7.' : 'Хорошее начало. Цель — 5 закрытых дней из 7.'}`;
+}
+async function askCoach(text) {
+  if (AI_ENDPOINT) {
+    try {
+      const r = await fetch(AI_ENDPOINT, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ message: text, context: { day: dayNum(today()), streak: streak(), level: rank(), focus: S.plan.focus, tone: S.coachTone, journey: journey().slice(0, 10) }, initData: tg && tg.initData }) });
+      if (r.ok) { const j = await r.json(); if (j.text) return j; }
+    } catch (e) {}
+  }
+  return localReply(text);
+}
+async function sendChat(text) {
+  text = text.trim();
+  if (!text) return;
+  S.chat.push({ from: 'me', text });
+  newMsgs = 1; typing = true; save(); render(); scrollChat();
+  const [rep] = await Promise.all([askCoach(text), new Promise((r) => setTimeout(r, 700 + Math.random() * 500))]);
+  typing = false;
+  S.chat.push({ from: 'ai', text: rep.text, card: rep.card });
+  newMsgs = 1; haptic('light'); save(); render(); scrollChat();
+}
+function scrollChat() { const go = () => window.scrollTo({ top: document.documentElement.scrollHeight, behavior: reduceMotion ? 'auto' : 'smooth' }); go(); setTimeout(go, 60); }
+
+// ---------- онбординг ----------
+const freshOb = () => ({ step: 0, adult: false, consent: false, goals: [], issues: [], budget: 1500, photo: null, result: null });
+let ob = freshOb();
+let tab = 'home', jtab = 'basics', typing = false, celebrate = false, reader = null;
+
+function analyze() {
+  const score = {};
+  Object.keys(PILLARS).forEach((p, i) => score[p] = (ob.goals.includes(p) ? 10 : 0) - i * 0.01);
+  ob.issues.forEach((id) => { const it = ISSUES.find((x) => x[0] === id); score[it[2]] += 3; });
+  const focus = Object.keys(PILLARS).sort((a, b) => score[b] - score[a]).slice(0, Math.max(3, Math.min(4, ob.goals.length)));
+  const has = (x) => ob.issues.includes(x);
+  const tips = {
+    skin: ['Старт простой: умывание утром и вечером + крем. Этого хватит на первые 2 недели.', has('acne') ? 'Против чёрных точек — салициловая кислота 2–3 раза в неделю, не чаще.' : 'SPF каждый день — главный продукт против раннего старения кожи.', has('oily') ? 'Жирной коже тоже нужен лёгкий крем, иначе она жирнится сильнее.' : has('dry') ? 'Сухой коже — крем поплотнее, без спирта в составе.' : null],
+    hair: ['Стрижка — половина образа. Подбери форму и сохрани фото для барбера.', 'Стригись раз в 3–4 недели, чтобы форма всегда была свежей.'],
+    body: [has('inactive') ? 'Начнём мягко: 8 000 шагов и отжимания, без перегруза.' : 'Минимум 20 минут движения каждый день. Зал не обязателен.', 'Через 4–6 недель изменения будет видно на фото.'],
+    posture: ['Сутулость визуально съедает 3–5 см роста. Лечится стеной и растяжкой по 3 минуты в день.'],
+    style: ['Сначала посадка, потом бренды. Однотонная база по размеру смотрится дороже.', 'Чистая обувь и отпаренная одежда — бесплатный апгрейд образа.'],
+    sleep: ['Недосып — это мешки под глазами, тусклая кожа и тяга к сладкому. Цель — 7–8 часов.']
+  };
+  let sum = 0;
+  const shopping = SHOP.filter((it) => focus.includes(it.pl) && (!it.need || has(it.need))).filter((it) => sum + it.p <= ob.budget && (sum += it.p, true)).map((it) => ({ ...it, st: 'none' }));
+  return { focus, tips, shopping, sum };
+}
+function acceptPlan() {
+  const r = ob.result;
+  S = { theme: S.theme, accent: S.accent, onboarded: true, startDate: today(), goals: ob.goals, issues: ob.issues, budget: ob.budget, plan: { focus: r.focus, shopping: r.shopping }, done: {}, events: [], photos: [], chat: [], lessons: [], articles: [], books: {}, pages: {}, char: {}, grat: {}, mood: {}, focus: {}, chest: {}, claims: {}, sgoals: [], bonus: 0 };
+  addEvent('start', 'Цели: ' + r.focus.map((p) => PILLARS[p].name).join(', '));
+  addEvent('plan', r.shopping.length ? `Получили план на 90 дней и список средств на ${r.sum} ₽` : 'Получили план на 90 дней — без покупок');
+  if (ob.photo) { S.photos.push({ date: today(), data: ob.photo }); addEvent('photo', 'Стартовое фото'); }
+  S.chat.push({ from: 'ai', text: `Привет${tgUser && tgUser.first_name ? ', ' + tgUser.first_name : ''}! Я ${coachName()}, твой тренер.\n\nФокус: ${r.focus.map((p) => PILLARS[p].name.toLowerCase()).join(', ')}. Каждый день — 3 миссии на внешность и одна на характер.\n\nЗа всё начисляется опыт, а с уровнями открываются новые функции: дневник благодарности, челленджи, темы, фокус-таймер и другое. Спроси «что откроется», «мой путь» или «что сегодня».` });
+  tab = 'home'; haptic('success'); confetti(); save(); render(); window.scrollTo(0, 0);
+}
+
+function stepsBar(n) { return '<div class="steps">' + [1, 2, 3, 4, 5].map((i) => `<i class="${i <= n ? 'on' : ''}"></i>`).join('') + '</div>'; }
+function opt(act, on, text) { return `<button class="opt ${on ? 'on' : ''}" data-act="${act}"><span class="box">${on ? IC.check : ''}</span><span>${text}</span></button>`; }
+
+function renderOnboarding() {
+  const s = ob.step;
+  if (s === 0) return `
+    <div class="hero" style="min-height:520px">
+      ${mountains('o')}${sparks(8)}
+      <div class="spray" style="font-size:96px;left:-10px;top:250px;transform:rotate(-9deg)">UPGRD</div>
+      <div class="in" style="min-height:520px">
+        <div class="row between"><div class="logo" style="color:inherit">${IC.logo}<b>Апгрейд<span class="tm">™</span></b></div><span class="mono">[ SEASON 01 ]</span></div>
+        <div class="disp huge" style="font-size:76px;margin-top:40px;position:relative;z-index:2">Стань<br>лучшей<br>версией<span class="tm">™</span></div>
+        <div class="bot row between" style="align-items:flex-end;position:relative;z-index:2"><div><div class="mono">Внешность · характер · общение · разум</div><div class="mono" style="margin-top:6px">20 уровней · награды · ИИ-тренер</div></div>${barcode()}</div>
+      </div>
+    </div>
+    <div class="tiles" style="margin-bottom:14px">
+      ${[['#ffb07c', 'ВНЕШНОСТЬ', 'кожа, стиль, тело'], ['#b79cff', 'ХАРАКТЕР', 'слово, дисциплина, сила'], ['#6ee7c8', 'ОБЩЕНИЕ', 'уверенность с людьми'], ['#7dd3fc', 'РАЗУМ', 'книги и фокус']].map(([c, a, b]) => `<div class="tint" style="--c:${c}"><div class="mono">${a}</div><small style="display:block;margin-top:4px;font-size:13px;color:var(--text);font-weight:600">${b}</small></div>`).join('')}
+    </div>
+    <button class="btn" data-act="next">Начать ${IC.send}</button>`;
+  if (s === 1) return `${stepsBar(1)}
+    <div class="mono">[ 01 / 05 ]</div><div class="disp h1" style="margin:8px 0 10px">Правила</div>
+    <p class="hint" style="margin:0 0 18px">Прокачиваем только то, что можно изменить: кожу, волосы, тело, осанку, стиль, режим — и характер. Форму лица и рост не оцениваем. Никогда.</p>
+    ${opt('ob-adult', ob.adult, 'Мне есть 16 лет')}
+    ${opt('ob-consent', ob.consent, 'Согласен на обработку фото. В демо фото хранятся только на моём телефоне')}
+    <div class="banner" style="margin-top:12px">Это не медицинский сервис. При проблемах с кожей — к дерматологу.</div>
+    <button class="btn" data-act="next" ${ob.adult && ob.consent ? '' : 'disabled'}>Дальше</button>`;
+  if (s === 2) return `${stepsBar(2)}
+    <div class="mono">[ 02 / 05 ]</div><div class="disp h1" style="margin:8px 0 10px">Что качаем?</div>
+    <p class="hint" style="margin:0 0 18px">Выбери всё, что важно во внешности. Характер и общение качаются у всех.</p>
+    <div class="tiles" style="margin-bottom:22px">${Object.entries(PILLARS).map(([k, p]) => `<button class="tint" style="--c:${p.c};text-align:left;transition:all .2s;${ob.goals.includes(k) ? `background:${p.c};color:#06101c` : ''}" data-act="ob-goal" data-k="${k}"><div class="mono" style="${ob.goals.includes(k) ? 'color:#06101c' : ''}">${p.code}</div><b style="font-size:24px">${p.name}</b></button>`).join('')}</div>
+    <button class="btn" data-act="next" ${ob.goals.length ? '' : 'disabled'}>Дальше</button>`;
+  if (s === 3) return `${stepsBar(3)}
+    <div class="mono">[ 03 / 05 ]</div><div class="disp h1" style="margin:8px 0 10px">Что мешает?</div>
+    <p class="hint" style="margin:0 0 18px">Можно пропустить. Так план будет точнее.</p>
+    <div class="chips">${ISSUES.map(([k, n]) => `<button class="chip ${ob.issues.includes(k) ? 'on' : ''}" data-act="ob-issue" data-k="${k}">${n}</button>`).join('')}</div>
+    <div class="mono lbl">Бюджет на средства</div>
+    <div class="seg" style="margin-bottom:24px">${[[0, '0 ₽'], [800, '800'], [1500, '1 500'], [3000, '3 000'], [5000, '5 000+']].map(([v, l]) => `<button class="${ob.budget === v ? 'on' : ''}" data-act="ob-budget" data-v="${v}">${l}</button>`).join('')}</div>
+    <button class="btn" data-act="next">Дальше</button>`;
+  if (s === 4) return `${stepsBar(4)}
+    <div class="mono">[ 04 / 05 ]</div><div class="disp h1" style="margin:8px 0 10px">Точка «до»</div>
+    <p class="hint" style="margin:0 0 16px">Дневной свет, лицо прямо, без фильтров. Камера на 1 метр и зум ×2.</p>
+    <label class="photo-drop" style="margin-bottom:14px">
+      ${ob.photo ? `<img src="${ob.photo}" alt="">` : `<div class="oval"></div><div style="position:relative">${IC.cam}<div style="font-weight:800;margin-top:6px">Загрузить фото</div><div class="hint">или сделать селфи</div></div>`}
+      <input type="file" accept="image/*" capture="user" hidden data-change="ob-photo">
+    </label>
+    <button class="btn" data-act="analyze">${ob.photo ? 'Сделать разбор' : 'Продолжить без фото'}</button>`;
+  if (s === 5) return `${stepsBar(5)}
+    <div class="spin"></div>
+    <div style="max-width:280px;margin:0 auto">${['Смотрю на фото', 'Учитываю цели', 'Собираю миссии', 'Считаю бюджет'].map((t, i) => `<div class="check-line" id="cl${i}">[✓] ${t}</div>`).join('')}</div>`;
+  if (s === 6) {
+    const r = ob.result;
+    return `${stepsBar(5)}
+      <div class="mono">[ 05 / 05 ]</div><div class="disp h1" style="margin:8px 0 10px">План готов</div>
+      <p class="hint" style="margin:0 0 16px">Фокус на первые 90 дней.${AI_ENDPOINT ? '' : ' Демо: разбор строится по анкете, ИИ-разбор фото подключим на сервере.'}</p>
+      ${ob.photo ? `<div class="card row"><img src="${ob.photo}" style="width:60px;height:78px;object-fit:cover;border-radius:12px"><div><b>Точка «до» сохранена</b><div class="hint">Через 30 дней сравним</div></div></div>` : ''}
+      ${r.focus.map((p, i) => `<div class="card"><div class="row between" style="margin-bottom:10px"><div class="row"><span class="tag" style="color:${PILLARS[p].c};border-color:${PILLARS[p].c}55">${PILLARS[p].code}</span><b class="disp" style="font-size:22px">${PILLARS[p].name}</b></div><span class="mono" style="color:${i < 2 ? 'var(--accent)' : 'var(--hint)'}">${i < 2 ? 'Главный фокус' : 'Поддержка'}</span></div>${r.tips[p].filter(Boolean).map((t) => `<div style="margin:5px 0;font-size:14px">— ${t}</div>`).join('')}</div>`).join('')}
+      <div class="card"><div class="disp" style="font-size:22px;margin-bottom:6px">Что заказать</div>${r.shopping.length ? r.shopping.map((it) => `<div class="item"><div style="flex:1">${it.n}</div><b>~${it.p} ₽</b></div>`).join('') + `<div class="row between" style="margin-top:12px"><span class="mono">Итого</span><b class="disp" style="font-size:22px">~${r.sum} ₽</b></div>` : '<div class="hint">Ничего покупать не нужно — весь план бесплатный.</div>'}</div>
+      <div class="disp" style="font-size:56px;text-align:center;margin:26px 0 14px">Делаем?</div>
+      <button class="btn" data-act="accept">Да, погнали ${IC.send}</button>`;
+  }
+}
+
+// ---------- шапка ----------
+function topbar(title) {
+  const r = rank();
+  return `<div class="top"><div class="logo">${IC.logo}<b>${title || 'Апгрейд'}<span class="tm">™</span></b></div><span class="lvl ${isOpen('gold') ? 'gold' : ''}">LVL <em>${r.lvl}</em> · ${r.name}</span></div>`;
+}
+
+// ---------- главная ----------
+function featureCards() {
+  const d = today(), out = [];
+  if (isOpen('grat')) {
+    const g = (S.grat || {})[d];
+    out.push(`<div class="card"><div class="row between"><span class="disp" style="font-size:20px">Дневник благодарности</span><span class="mono" style="color:#b79cff">${g ? 'готово' : '+10 XP'}</span></div>
+      ${g ? `<ul style="margin:10px 0 0;padding-left:18px">${g.map((x) => `<li style="margin:4px 0">${esc(x)}</li>`).join('')}</ul>` : `<div class="hint" style="margin-top:6px">Три вещи, которые сегодня получились или порадовали.</div>${[0, 1, 2].map((i) => `<input class="gin" id="g${i}" maxlength="80" placeholder="${i + 1}. …">`).join('')}<button class="btn sm" data-act="grat" style="width:100%;margin-top:10px">Сохранить</button>`}</div>`);
+  }
+  if (isOpen('mood')) {
+    const m = (S.mood || {})[d];
+    out.push(`<div class="card"><div class="row between"><span class="disp" style="font-size:20px">Как ты сегодня?</span><span class="mono">${m ? 'отмечено' : '+3 XP'}</span></div><div class="moods">${['😞', '😕', '😐', '🙂', '😄'].map((e, i) => `<button class="${m === i + 1 ? 'on' : ''}" data-act="mood" data-v="${i + 1}">${e}</button>`).join('')}</div></div>`);
+  }
+  if (isOpen('focus')) {
+    const f = (S.focus || {})[d] || 0;
+    out.push(`<div class="card row"><div class="iconbtn" style="font-size:20px">⏱</div><div style="flex:1"><b>Фокус-таймер</b><div class="hint">25 минут без телефона · сегодня ${f}</div></div><button class="btn sm" data-act="focus-open">Старт</button></div>`);
+  }
+  if (isOpen('week')) {
+    const ds = weekDates(), wk = weekStart(today());
+    out.push(`<div class="card"><div class="row between" style="margin-bottom:4px"><span class="disp" style="font-size:20px">Челленджи недели</span><span class="mono" style="color:var(--gold)">+60 XP</span></div>
+      ${weekChallenges().map((c) => { const cur = Math.min(c.need, c.f(ds)), done = cur >= c.need, got = (S.claims || {})[wk + ':' + c.id];
+        return `<div class="chal"><div class="row between"><span style="font-weight:700;${got ? 'color:var(--hint);text-decoration:line-through' : ''}">${c.t}</span>${got ? `<span class="check">${IC.check}</span>` : done ? `<button class="btn sm" data-act="claim" data-id="${c.id}" style="height:32px;background:var(--gold);color:#1c100b">Забрать</button>` : `<span class="mono">${cur}/${c.need}</span>`}</div><div class="pbar"><i style="width:${cur / c.need * 100}%;background:var(--gold)"></i></div></div>`; }).join('')}</div>`);
+  }
+  return out.join('');
+}
+function renderHome() {
+  const d = today(), n = dayNum(d), tasks = tasksFor(n), done = doneOn(d), s = streak(), r = rank();
+  const lastPhoto = (S.photos || []).slice(-1)[0];
+  const needPhoto = !lastPhoto || dayNum(d) - dayNum(lastPhoto.date) >= 7;
+  const shop = S.plan.shopping;
+  const st = { none: ['st-none', 'Заказать'], ordered: ['st-ordered', 'В пути'], arrived: ['st-arrived', 'Пришло'] };
+  const nextLesson = ALL_LESSONS.find((l) => !(S.lessons || []).includes(l.id));
+  const book = readingBook(), pagesToday = (S.pages || {})[d] || 0;
+  const cm = charFor(n), cmDone = (S.char || {})[d];
+  const nu = UNLOCKS.find((u) => u.lvl > r.lvl);
+  const chestOpen = !(S.chest || {})[d];
+  const html = `
+    ${topbar()}
+    ${chestOpen ? `<div class="card chest"><span class="ci">🎁</span><div style="flex:1"><b>Сундук дня</b><div class="hint">Заходи каждый день — внутри 10–30 XP</div></div><button class="btn sm" data-act="chest" style="background:var(--gold);color:#1c100b">Открыть</button></div>` : ''}
+    <div class="hero" style="min-height:400px">
+      ${mountains('h')}${sparks(9)}
+      <div class="spray" style="font-size:80px;right:-16px;top:112px;transform:rotate(-10deg)">UPGRD</div>
+      <div class="in" style="min-height:400px">
+        <div class="row between"><span class="mono">[ SEASON 01™ · LVL ${z(r.lvl)} ]</span><span class="mono">${human(d)}</span></div>
+        <div class="disp huge" style="position:relative;z-index:2">День<br>${z(n)}<span class="tm">™</span></div>
+        <div class="bot" style="position:relative;z-index:2">
+          <div class="row between" style="align-items:flex-end;margin-bottom:14px">
+            <div class="specs">
+              <div><div class="k">Фокус</div><div class="v">${S.plan.focus.map((p) => PILLARS[p].code).join(' ')}</div></div>
+              <div><div class="k">Режим</div><div class="v">${hard() ? 'Hard' : 'Soft'}</div></div>
+            </div>
+            ${octa('to-missions', 'К миссиям')}
+          </div>
+          <div class="row between"><span class="mono">${r.x - r.cur}/${r.next ? r.next - r.cur : '∞'} XP до ур. ${r.lvl + 1}</span><span class="mono">${done.length}/3 миссий</span></div>
+          <div class="track"><i style="width:${r.next ? (r.x - r.cur) / (r.next - r.cur) * 100 : 100}%"></i></div>
+        </div>
+      </div>
+    </div>
+    ${celebrate ? `<div class="celebrate"><div><b>День закрыт</b><div style="font-weight:700;font-size:13px;opacity:.8">+50 XP · серия ${s}</div></div><div style="font-size:34px">🔥</div></div>` : ''}
+    <div class="tiles">
+      <div class="tint ${s ? 'flick' : ''}" style="--c:#ff8a3d"><div class="mono">${IC.fire} Серия</div><b data-count="${s}">${s}</b><small>${plural(s, 'день', 'дня', 'дней')} подряд</small></div>
+      <div class="tint" style="--c:#b79cff"><div class="mono">${IC.bolt} Опыт</div><b data-count="${r.x}">${r.x}</b><small>${r.next ? `до ур. ${r.lvl + 1}: ${r.next - r.x}` : 'максимум'}</small></div>
+    </div>
+    <div class="sec" id="missions"><span class="disp">Миссии дня</span><span class="chipline">[ ${done.length}/3 ]</span></div>
+    ${tasks.map((t) => `<button class="mission ${done.includes(t.id) ? 'done' : ''} ${justDone === t.id ? 'just' : ''}" data-act="task" data-id="${t.id}"><span class="box">${done.includes(t.id) ? IC.check : ''}</span><span style="flex:1"><div class="t">${t.text}</div><div class="row" style="gap:6px;margin-top:5px"><span class="tag" style="color:${PILLARS[t.p].c};border-color:${PILLARS[t.p].c}55">${PILLARS[t.p].code}</span><span class="hint" style="font-size:12px">${PILLARS[t.p].name}</span></div></span><span class="xp">+10 XP</span></button>`).join('')}
+    <button class="mission charm ${cmDone ? 'done' : ''} ${justDone === 'char' ? 'just' : ''}" data-act="char"><span class="box">${cmDone ? IC.check : ''}</span><span style="flex:1"><div class="t">${cm[1]}</div><div class="row" style="gap:6px;margin-top:5px"><span class="tag" style="color:#b79cff;border-color:#b79cff55">${cm[0] === 'soc' ? 'SOCIAL' : 'MIND'}</span><span class="hint" style="font-size:12px">Миссия ${cm[0] === 'soc' ? 'общения' : 'характера'}</span></div></span><span class="xp">+15 XP</span></button>
+    ${book ? `<button class="mission bonus ${pagesToday >= 10 ? 'done' : ''} ${justDone === 'pages' ? 'just' : ''}" data-act="pages"><span class="box">${pagesToday >= 10 ? IC.check : ''}</span><span style="flex:1"><div class="t" style="${pagesToday >= 10 ? 'text-decoration:none;color:var(--text)' : ''}">10 страниц «${book.t}»</div><div class="row" style="gap:6px;margin-top:5px"><span class="tag" style="color:#7dd3fc;border-color:#7dd3fc55">READ</span><span class="hint" style="font-size:12px">сегодня ${pagesToday} стр. · тапни +10</span></div></span><span class="xp">+5 XP</span></button>` : ''}
+    ${nu ? `<div class="card teaser"><div class="row"><span class="lock">${IC.lock}</span><span class="mono">Следующая награда · ур. ${nu.lvl}</span></div><div class="row" style="margin-top:10px"><span style="font-size:28px">${nu.ic}</span><div style="flex:1"><b style="font-size:16px">${nu.name}</b><div class="hint">${nu.d}</div></div></div><div class="bar2"><i style="width:${Math.min(100, (r.x - r.cur) / (LV(nu.lvl) - r.cur) * 100)}%"></i></div><div class="row between" style="margin-top:6px"><span class="mono">${r.x} XP</span><span class="mono">ещё ${LV(nu.lvl) - r.x} XP</span></div></div>` : ''}
+    ${featureCards()}
+    <div class="sec"><span class="disp">Дроп дня</span><span class="mono">№${z(((n - 1) % DROPS.length) + 1)}</span></div>
+    <div class="card drop hot" style="background:${DROP_BG[(n - 1) % DROP_BG.length]}"><div class="n">${z(((n - 1) % DROPS.length) + 1)}</div><span class="mono">[ совет ]</span><p>${DROPS[(n - 1) % DROPS.length]}</p></div>
+    ${nextLesson ? `<button class="card row" style="width:100%;text-align:left" data-act="open" data-kind="lesson" data-id="${nextLesson.id}"><div style="flex:1"><span class="mono">${courseOf(nextLesson).name} · урок ${courseOf(nextLesson).lessons.indexOf(nextLesson) + 1} · +25 XP</span><div style="font-weight:800;font-size:16px;margin-top:4px">${nextLesson.t}</div></div><span class="arrow">${IC.arrow}</span></button>` : ''}
+    ${needPhoto ? `<label class="card row" style="cursor:pointer;transition:transform .12s"><div class="iconbtn">${IC.cam}</div><div style="flex:1"><b>Фото недели</b><div class="hint">+15 XP · для сравнения «до / после»</div></div><span class="arrow">${IC.arrow}</span><input type="file" accept="image/*" capture="user" hidden data-change="week-photo"></label>` : ''}
+    <div class="sec"><span class="disp">Коллекция<span class="tm">™</span></span><span class="chipline">[ ${S.plan.focus.length} линии ]</span></div>
+    ${renderCollection()}
+    ${shop.length ? `<div class="sec"><span class="disp">Средства</span><span class="chipline">[ тапни статус ]</span></div><div class="card">${shop.map((it, i) => `<div class="item"><div style="flex:1"><div style="font-weight:600">${it.n}</div><div class="hint">~${it.p} ₽</div></div><button class="status ${st[it.st][0]}" data-act="shop" data-i="${i}">${st[it.st][1]}</button></div>`).join('')}</div>` : ''}
+    <div class="outro">
+      ${mountains('f')}
+      <div class="spray" style="font-size:110px;left:-6px;top:70px;transform:rotate(-8deg)">UPGRD</div>
+      <div class="row between" style="position:relative;z-index:2"><span class="mono">[ Апгрейд™ · season 01 ]</span><span class="mono">№${z(n)}</span></div>
+      <div class="tag3">Собран для дисциплины<br>Сделан для роста<br>Закалён серией</div>
+      <div class="row between" style="margin-top:14px;position:relative;z-index:2;align-items:flex-end"><span class="mono">Для тех, кто качает себя,<br>а не ленту</span>${barcode()}</div>
+    </div>`;
+  celebrate = false;
+  return html;
+}
+function renderCollection() {
+  const stats = pillarStats();
+  const tier = (k) => k >= 30 ? ['Elite', 3] : k >= 10 ? ['Pro', 2] : ['Base', 1];
+  return `<div class="coll">${stats.map((x, i) => {
+    const p = PILLARS[x.p], [tn, td] = tier(x.n);
+    return `<div class="cc ${i === 0 ? 'wide' : ''}" style="--c:${p.c}">
+      <div class="gh">${p.code}</div>
+      ${i === 0 ? `<div class="spray" style="font-size:54px;right:18px;top:30px;transform:rotate(-8deg);opacity:.55">${p.code.toLowerCase()}</div>` : ''}
+      <div class="row between"><span class="mono">[ ${p.code} ]</span><span class="mono">${tn}</span></div>
+      <div class="disp">${p.name}<span class="tm">™</span></div>
+      <div class="dots">${[1, 2, 3].map((k) => `<i class="${k <= td ? 'on' : ''}"></i>`).join('')}</div>
+      <span class="mono">${x.n} ${plural(x.n, 'миссия', 'миссии', 'миссий')} · ${i < 2 ? 'главный фокус' : 'поддержка'}</span>
+    </div>`;
+  }).join('')}</div>`;
+}
+
+// ---------- тренер ----------
+function renderCoach() {
+  const card = () => {
+    const j = journey().slice(0, 4);
+    return `<div class="mini"><span class="mono">[ твой путь ]</span><div class="tl" style="margin-top:12px">${j.map((x) => `<div class="d ${x.closed ? 'closed' : ''}" style="margin-bottom:12px"><span class="mono">День ${z(x.n)}</span><div class="dt" style="font-size:13.5px">${esc(x.title)}</div></div>`).join('')}</div><button class="btn sm" data-act="go" data-tab="path" style="width:100%;margin-top:4px">Открыть весь путь</button></div>`;
+  };
+  const total = S.chat.length;
+  return `
+    ${topbar('Тренер')}
+    <div class="coach-head"><div class="ava">${esc(coachName().slice(0, 1))}</div><div style="flex:1"><b style="font-size:17px">${esc(coachName())}</b><div class="mono" style="margin-top:2px"><span style="color:var(--ok)">●</span> онлайн · ${hard() ? 'жёсткий режим' : 'мягкий режим'}</div></div></div>
+    <div class="chat">
+      ${S.chat.map((m, i) => `<div class="msg ${m.from} ${newMsgs && i === total - 1 ? 'new' : ''}">${esc(m.text)}${m.card === 'journey' ? card() : ''}</div>`).join('')}
+      ${typing ? '<div class="msg ai typing new"><span></span><span></span><span></span></div>' : ''}
+    </div>
+    <div class="composer"><div class="in">
+      <div class="qr">${['Что сегодня?', 'Мой путь', 'Что откроется?', 'Что почитать?', 'Заказал средства', 'Средства пришли', 'Лень сегодня'].map((q) => `<button data-act="quick" data-q="${q}">${q}</button>`).join('')}</div>
+      <form data-submit="chat"><input id="chatIn" placeholder="Напиши тренеру…" autocomplete="off"><button class="send" aria-label="Отправить">${IC.send}</button></form>
+    </div></div>`;
+}
+
+// ---------- журнал ----------
+const courseOf = (lesson) => Object.values(COURSES).find((c) => c.lessons.includes(lesson));
+function courseView(key) {
+  const c = COURSES[key], read = S.lessons || [];
+  const done = c.lessons.filter((l) => read.includes(l.id)).length;
+  return `
+    <div class="hero" style="min-height:230px;background:none">
+      ${art(c.art, c.word)}
+      <div class="in" style="min-height:230px;color:#fff">
+        <span class="mono">[ ${c.name} · ${c.lessons.length} уроков · ${c.lessons.reduce((a, l) => a + l.min, 0)} мин ]</span>
+        <div class="bot"><div class="disp" style="font-size:44px">${c.title}</div>
+        <div class="row between" style="margin-top:10px"><span class="mono">пройдено ${done}/${c.lessons.length}</span><span class="mono">+25 XP за урок</span></div>
+        <div class="track"><i style="width:${done / c.lessons.length * 100}%"></i></div></div>
+      </div>
+    </div>
+    ${c.lessons.map((l, i) => `<button class="lesson ${read.includes(l.id) ? 'read' : ''}" data-act="open" data-kind="lesson" data-id="${l.id}"><span class="num" style="${read.includes(l.id) ? '' : `color:${PALETTE[i % PALETTE.length]}`}">${z(i + 1)}</span><span style="flex:1"><div class="t">${l.t}</div><div class="mono" style="margin-top:4px">${l.min} мин чтения</div></span>${read.includes(l.id) ? `<span class="check">${IC.check}</span>` : `<span class="arrow">${IC.arrow}</span>`}</button>`).join('')}`;
+}
+function bookCover(b, small) {
+  return `<div class="cover" style="background:linear-gradient(160deg,${b.c[1]},${b.c[0]} 70%);${small ? 'padding:8px 6px 8px 12px' : ''}">${small ? '' : `<span class="mono">${b.a}</span>`}<div class="disp" style="${small ? 'font-size:11px' : ''}">${b.t}</div></div>`;
+}
+function booksView() {
+  const st = S.books || {}, cur = readingBook(), pt = (S.pages || {})[today()] || 0;
+  const label = { want: ['bs-want', 'Хочу'], reading: ['bs-reading', 'Читаю'], done: ['bs-done', 'Прочитал'] };
+  return `
+    <div class="card ink" style="position:relative;overflow:hidden">
+      <div class="spray" style="font-size:64px;right:-6px;top:6px;transform:rotate(-8deg);opacity:.35">read</div>
+      <span class="mono">[ привычка чтения ]</span>
+      ${cur ? `<div class="row" style="margin-top:12px;align-items:flex-start;position:relative"><div style="width:74px;flex:none">${bookCover(cur, true)}</div><div style="flex:1"><div class="mono">Читаю сейчас</div><div style="font-weight:800;font-size:17px;line-height:1.25;margin:4px 0">${cur.t}</div><div class="hint">${cur.a}</div></div></div>
+        <div class="row between" style="margin-top:14px"><span class="mono">сегодня ${pt}/10 стр.</span><span class="mono">всего ${totalPages()} стр.</span></div>
+        <div class="pbar" style="background:rgba(255,255,255,.12)"><i style="width:${Math.min(100, pt * 10)}%"></i></div>
+        <div class="row" style="margin-top:14px"><button class="btn sm" data-act="pages" style="flex:1">+10 страниц</button><button class="btn sm ghost" data-act="book-st" data-id="${cur.id}" data-v="done" style="flex:1;background:rgba(255,255,255,.08);color:#fff;border-color:rgba(255,255,255,.15)">Дочитал ✓</button></div>`
+      : `<div style="font-weight:800;font-size:18px;margin:10px 0 6px;position:relative">10 страниц в день = ~12 книг в год</div><div class="hint" style="position:relative">Выбери книгу ниже и нажми «Читаю». Она появится бонус-миссией на главной.</div>`}
+    </div>
+    <div class="tiles" style="margin-bottom:6px">
+      <div class="tint" style="--c:#ff7ccf"><div class="mono">${IC.book} Страниц</div><b data-count="${totalPages()}">${totalPages()}</b><small>прочитано всего</small></div>
+      <div class="tint" style="--c:#6ee7c8"><div class="mono">${IC.check} Книг</div><b data-count="${booksDone()}">${booksDone()}</b><small>дочитано · +50 XP</small></div>
+    </div>
+    <div class="sec"><span class="disp">Полка</span><span class="chipline">[ ${BOOKS.length} книг ]</span></div>
+    <div class="books">${BOOKS.map((b) => { const s = st[b.id]; return `<button class="book" data-act="open" data-kind="book" data-id="${b.id}">${bookCover(b)}<span class="mono">${b.cat}</span>${s ? `<span class="bstat ${label[s][0]}">${label[s][1]}</span>` : ''}</button>`; }).join('')}</div>`;
+}
+function shelfView() {
+  return `
+    <div class="banner"><span class="mono" style="color:var(--accent)">[ подборка редакции ]</span><div style="margin-top:4px">Не реклама. Перед покупкой проверь состав и отзывы, новое средство для кожи вводи по одному. ₽ — бюджетно, ₽₽₽ — дороже.</div></div>
+    ${PRODUCTS.map((g) => `
+      <div class="sec"><span class="disp">${g.cat}</span><span class="chipline" style="color:${g.c};border-color:${g.c}55">[ ${g.code} ]</span></div>
+      <div class="card">${g.items.map(([n, what, tier]) => `<div class="prod"><div class="sq" style="background:color-mix(in srgb,${g.c} 18%,transparent);color:${g.c}">${g.code}</div><div style="flex:1"><div class="n">${n}</div><div class="hint" style="font-size:12.5px;margin-top:2px">${what}</div></div><span class="tier" style="color:${g.c}">${'₽'.repeat(tier)}<span>${'₽'.repeat(3 - tier)}</span></span></div>`).join('')}</div>`).join('')}`;
+}
+function feedView() {
+  const ra = S.articles || [];
+  const [f, ...rest] = ARTICLES;
+  return `
+    <div class="banner"><span class="mono" style="color:var(--accent)">[ демо-лента ]</span><div style="margin-top:4px">В рабочей версии сюда автоматически приходят новости с показов и трендов. Сейчас — вечные статьи.</div></div>
+    <button class="feature" data-act="open" data-kind="article" data-id="${f.id}">${art(f.art, 'FASHION')}<div class="in"><span class="mono">[ ${f.tag} · ${f.min} мин ]</span><div class="disp" style="margin:8px 0 12px">${f.t}</div><span class="pillbtn" style="background:#fff;color:#000">Читать <i style="background:#000;color:#fff">${IC.arrow}</i></span></div></button>
+    ${rest.map((a) => `<button class="acard" data-act="open" data-kind="article" data-id="${a.id}"><div class="thumb">${art(a.art)}</div><div style="flex:1;padding:4px 4px 4px 0;display:flex;flex-direction:column"><span class="mono" style="color:${TAG_C[a.tag] || 'var(--hint)'}">[ ${a.tag} ]${ra.includes(a.id) ? ' · прочитано' : ''}</span><div class="t">${a.t}</div><div class="row between" style="margin-top:auto"><span class="hint" style="font-size:12px">${a.min} мин</span><span class="arrow" style="width:32px;height:32px">${IC.arrow}</span></div></div></button>`).join('')}`;
+}
+function renderJournal() {
+  const tabs = [['mind', 'Характер'], ['social', 'Общение'], ['books', 'Книги'], ['basics', 'Внешность'], ['shelf', 'Полка'], ['feed', 'Лента']];
+  const body = COURSES[jtab] ? courseView(jtab) : jtab === 'books' ? booksView() : jtab === 'shelf' ? shelfView() : feedView();
+  return `${topbar('Журнал')}
+    <div class="jt">${tabs.map(([k, l]) => `<button class="${jtab === k ? 'on' : ''}" data-act="jtab" data-v="${k}">${l}</button>`).join('')}</div>
+    ${body}`;
+}
+function renderReader() {
+  if (!reader) return '';
+  if (reader.kind === 'book') {
+    const b = BOOKS.find((x) => x.id === reader.id), s = (S.books || {})[b.id];
+    return `<div class="reader">
+      <div class="rcover" style="background:linear-gradient(160deg,${b.c[1]},${b.c[0]} 75%)"><div class="spray" style="font-size:90px;right:-10px;top:60px;transform:rotate(-8deg);opacity:.5">read</div><button class="close" data-act="close-reader" aria-label="Закрыть">${IC.close}</button>
+        <div class="in"><span class="mono" style="color:rgba(255,255,255,.8)">[ ${b.cat} · ${b.a} ]</span><div class="disp" style="font-size:44px;margin-top:8px">${b.t}</div></div></div>
+      <div class="body">
+        <h3>Почему стоит прочитать</h3>
+        ${b.why.map((p) => `<p>${p}</p>`).join('')}
+        <div class="quote">Норма: 10 страниц в день. Отмечай на главной — каждая десятка даёт +5 XP.</div>
+        <div class="seg" style="margin-top:6px">${[['want', 'Хочу'], ['reading', 'Читаю'], ['done', 'Прочитал']].map(([v, l]) => `<button class="${s === v ? 'on' : ''}" data-act="book-st" data-id="${b.id}" data-v="${v}">${l}</button>`).join('')}</div>
+        <button class="btn ghost" data-act="close-reader">Закрыть</button>
+      </div>
+    </div>`;
+  }
+  const list = reader.kind === 'lesson' ? ALL_LESSONS : ARTICLES;
+  const it = list.find((x) => x.id === reader.id);
+  const isRead = (reader.kind === 'lesson' ? S.lessons : S.articles).includes(it.id);
+  const course = reader.kind === 'lesson' ? courseOf(it) : null;
+  const idx = course ? course.lessons.indexOf(it) : 0;
+  return `<div class="reader">
+    <div class="rcover">${art(it.art, course ? z(idx + 1) : it.tag)}<button class="close" data-act="close-reader" aria-label="Закрыть">${IC.close}</button>
+      <div class="in"><span class="mono" style="color:rgba(255,255,255,.75)">[ ${course ? course.name + ' · урок ' + (idx + 1) : it.tag} · ${it.min} мин ]</span><div class="disp" style="font-size:44px;margin-top:8px">${it.t}</div></div></div>
+    <div class="body">
+      ${it.body.map((b) => typeof b === 'string' ? `<p>${b}</p>` : b.q ? `<div class="quote">${b.q}</div>` : `<h3>${b.h}</h3>`).join('')}
+      <div style="height:10px"></div>
+      ${isRead ? `<button class="btn ghost" data-act="close-reader">Прочитано ✓ · закрыть</button>` : `<button class="btn" data-act="mark-read">Прочитал · +${reader.kind === 'lesson' ? 25 : 5} XP</button>`}
+    </div>
+  </div>`;
+}
+
+// ---------- модалки ----------
+let focusT = { left: 1500, running: false, id: null };
+function renderModal() {
+  if (!modal) return '';
+  if (modal.kind === 'levelup') {
+    const r = rank(), got = UNLOCKS.filter((u) => u.lvl > modal.from && u.lvl <= modal.lvl);
+    return `<div class="modal"><div class="sheet"><div class="rays"></div>
+      <span class="mono" style="position:relative">[ новый уровень ]</span>
+      <div class="lvnum">${z(modal.lvl)}</div>
+      <div class="disp" style="font-size:30px;position:relative">${r.name}</div>
+      ${got.length ? `<div class="mono" style="margin-top:18px;position:relative">Открыто</div>${got.map((u, i) => `<div class="unl" style="animation-delay:${0.5 + i * 0.12}s;position:relative"><span class="ui">${u.ic}</span><div><b>${u.name}</b><div class="hint" style="font-size:12.5px">${u.d}</div></div></div>`).join('')}` : `<div class="hint" style="margin-top:14px;position:relative">Продолжай — следующая награда уже близко.</div>`}
+      <button class="btn" data-act="modal-close" style="margin-top:18px;position:relative">Круто!</button>
+    </div></div>`;
+  }
+  if (modal.kind === 'focus') {
+    const L = 2 * Math.PI * 96, k = focusT.left / 1500;
+    return `<div class="modal"><div class="sheet">
+      <span class="mono">[ фокус-сессия · 25 минут ]</span>
+      <div class="ring"><svg viewBox="0 0 220 220"><circle cx="110" cy="110" r="96" fill="none" stroke="var(--line)" stroke-width="10"/><circle id="fring" cx="110" cy="110" r="96" fill="none" stroke="var(--accent)" stroke-width="10" stroke-linecap="round" stroke-dasharray="${L}" stroke-dashoffset="${L * (1 - k)}" style="transition:stroke-dashoffset 1s linear"/></svg><div class="tt" id="ftime">${z(Math.floor(focusT.left / 60))}:${z(focusT.left % 60)}</div></div>
+      <div class="hint">Телефон экраном вниз. Одна задача. Без уведомлений.</div>
+      <div class="row" style="margin-top:16px"><button class="btn" data-act="focus-toggle" id="fbtn" style="flex:1">${focusT.running ? 'Пауза' : 'Старт'}</button><button class="btn ghost" data-act="focus-close" style="flex:1">Закрыть</button></div>
+    </div></div>`;
+  }
+  if (modal.kind === 'share') {
+    const r = rank();
+    return `<div class="modal"><div class="sheet" style="padding:14px">
+      <div class="share hero" style="margin:0;border-radius:24px">${mountains('s')}${sparks(6)}
+        <div class="spray" style="font-size:84px;left:-6px;top:150px;transform:rotate(-9deg)">UPGRD</div>
+        <div style="position:relative;z-index:2;display:flex;flex-direction:column;min-height:400px">
+          <div class="row between"><span class="mono">[ Апгрейд™ ]</span><span class="mono">день ${z(dayNum(today()))}</span></div>
+          <div class="disp" style="font-size:20px;margin-top:22px">Уровень</div>
+          <div class="disp" style="font-size:110px;line-height:.85">${z(r.lvl)}</div>
+          <div class="disp" style="font-size:26px">${r.name}</div>
+          <div style="margin-top:auto" class="specs">
+            <div><div class="k">Серия</div><div class="v">${streak()} 🔥</div></div>
+            <div><div class="k">Миссий</div><div class="v">${totalTasks() + charCount()}</div></div>
+            <div><div class="k">Страниц</div><div class="v">${totalPages()}</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="hint" style="margin:12px 0">Сделай скриншот и выложи в сторис. В рабочей версии здесь будет кнопка «Поделиться».</div>
+      <button class="btn ghost" data-act="modal-close">Закрыть</button>
+    </div></div>`;
+  }
+  return '';
+}
+function focusTick() {
+  focusT.left--;
+  const t = document.getElementById('ftime'), ring = document.getElementById('fring');
+  if (t) t.textContent = z(Math.floor(focusT.left / 60)) + ':' + z(focusT.left % 60);
+  if (ring) ring.setAttribute('stroke-dashoffset', 2 * Math.PI * 96 * (1 - focusT.left / 1500));
+  if (focusT.left <= 0) {
+    clearInterval(focusT.id); focusT = { left: 1500, running: false, id: null };
+    modal = null;
+    withRankCheck(() => { S.focus = S.focus || {}; S.focus[today()] = (S.focus[today()] || 0) + 1; addEvent('focus', 'Фокус-сессия 25 минут'); });
+    confetti(); toast('Фокус-сессия завершена · +10 XP'); haptic('success');
+    save(); render();
+  }
+}
+
+// ---------- путь ----------
+function renderPath() {
+  const n = dayNum(today()), j = journey(), ps = pillarStats(), max = Math.max(1, ...ps.map((x) => x.n)), r = rank();
+  const end = today(), cells = [];
+  for (let d = addDays(end, -34), k = 0; d <= end; d = addDays(d, 1), k++) {
+    const c = d < S.startDate ? -1 : doneOn(d).length;
+    cells.push(`<i class="${c > 0 ? 'f' : ''} ${d === end ? 'today' : ''}" style="animation-delay:${k * 12}ms;${c > 0 ? `opacity:${[0, .35, .65, 1][c]}` : c < 0 ? 'opacity:.35' : ''}" title="${human(d)}: ${Math.max(0, c)}/3"></i>`);
+  }
+  const ph = S.photos || [], first = ph[0], last = ph[ph.length - 1];
+  const moodDays = [...Array(14)].map((_, i) => addDays(end, i - 13));
+  return `${topbar('Мой путь')}
+    <div class="card ink" style="overflow:hidden">
+      <div class="row between"><span class="mono">[ уровень · дорожка наград ]</span><span class="mono">${r.x} XP</span></div>
+      <div class="row between" style="margin-top:6px"><div class="disp" style="font-size:40px">${r.name}</div><div class="disp" style="font-size:40px;color:var(--accent)">${z(r.lvl)}</div></div>
+      <div class="pbar" style="background:rgba(255,255,255,.12)"><i style="width:${r.next ? (r.x - r.cur) / (r.next - r.cur) * 100 : 100}%"></i></div>
+      <div class="hint" style="margin-top:8px">${r.next ? `До уровня ${r.lvl + 1} — ${r.next - r.x} XP` : 'Максимальный уровень'}</div>
+      <div class="track-lv" id="lvtrack">${[...Array(MAX_LVL)].map((_, i) => { const L = i + 1, u = UNLOCKS.find((x) => x.lvl === L); return `<div class="node ${L < r.lvl ? 'past' : L === r.lvl ? 'now' : ''}"><div class="nb">${z(L)}</div><div class="nl">${u ? u.ic + ' ' + u.name : '+ опыт'}</div></div>`; }).join('')}</div>
+    </div>
+    <div class="card"><span class="disp" style="font-size:22px">Ветки развития</span>
+      ${branches().map((b) => { const l = blv(b.x), lo = 30 * (l - 1) ** 2, hi = 30 * l ** 2; return `<div style="margin:12px 0"><div class="row between"><span style="font-weight:700">${b.n}</span><span class="mono" style="color:${b.c}">ур. ${l} · ${b.x} XP</span></div><div class="pbar"><i style="width:${(b.x - lo) / (hi - lo) * 100}%;background:${b.c}"></i></div></div>`; }).join('')}
+    </div>
+    <div class="tiles" style="margin-bottom:12px">
+      <div class="tint ${streak() ? 'flick' : ''}" style="--c:#ff8a3d"><div class="mono">${IC.fire} Серия</div><b data-count="${streak()}">${streak()}</b><small>лучшая: ${bestStreak()}</small></div>
+      <div class="tint" style="--c:#6ee7c8"><div class="mono">${IC.target} Закрыто</div><b>${closedDays()}/${n}</b><small>дней сезона</small></div>
+      <div class="tint" style="--c:#b79cff"><div class="mono">${IC.bolt} Характер</div><b data-count="${charCount()}">${charCount()}</b><small>миссий характера</small></div>
+      <div class="tint" style="--c:#7dd3fc"><div class="mono">${IC.book} Чтение</div><b data-count="${totalPages()}">${totalPages()}</b><small>страниц</small></div>
+    </div>
+    ${isOpen('share') ? `<button class="card row" style="width:100%;text-align:left" data-act="share"><span style="font-size:26px">📲</span><div style="flex:1"><b>Карточка для сторис</b><div class="hint">Покажи свой уровень друзьям</div></div><span class="arrow">${IC.arrow}</span></button>` : ''}
+    <div class="card"><div class="row between"><span class="disp" style="font-size:22px">Достижения</span><span class="mono">${BADGES.filter((b) => b[3]()).length}/${BADGES.length}</span></div>
+      <div class="badges">${BADGES.map(([ic, nm, d, f]) => `<div class="badge ${f() ? '' : 'off'}"><div class="bi">${ic}</div><b>${nm}</b><small>${d}</small></div>`).join('')}</div></div>
+    ${isOpen('goals') ? `<div class="card"><div class="row between"><span class="disp" style="font-size:22px">Цели сезона</span><span class="mono">+100 XP</span></div><div class="hint" style="margin-top:4px">Не только внешность. Запиши цель и отметь, когда достигнешь.</div>
+      ${GOAL_AREAS.map(([a, ph], i) => { const g = (S.sgoals || [])[i] || {}; return `<div class="goal"><span class="mono gk">${a}</span><input value="${esc(g.text || '')}" placeholder="${ph}" data-input="goal" data-i="${i}" ${g.done ? 'disabled' : ''}><button class="box ${g.done ? 'on' : ''}" data-act="goal-done" data-i="${i}">${g.done ? IC.check : ''}</button></div>`; }).join('')}</div>` : ''}
+    ${isOpen('mood') ? `<div class="card"><div class="row between"><span class="disp" style="font-size:22px">Настроение</span><span class="mono">14 дней</span></div><div class="mchart">${moodDays.map((d, i) => { const m = (S.mood || {})[d]; return `<i style="height:${m ? m * 20 : 6}%;background:${m ? ['#ff6b6b', '#ffb07c', '#ffd166', '#a3e635', '#6ee7c8'][m - 1] : 'var(--line)'};animation-delay:${i * 30}ms" title="${human(d)}"></i>`; }).join('')}</div></div>` : ''}
+    <div class="card"><div class="row between"><span class="disp" style="font-size:22px">Активность</span><span class="mono">5 недель</span></div><div class="heat">${cells.join('')}</div></div>
+    <div class="card bars"><span class="disp" style="font-size:22px">Что качаем</span>${ps.map((x) => `<div class="b"><div class="row between"><span class="row" style="gap:8px"><span class="tag" style="color:${PILLARS[x.p].c};border-color:${PILLARS[x.p].c}55">${PILLARS[x.p].code}</span><span style="font-weight:600">${PILLARS[x.p].name}</span></span><b>${x.n}</b></div><div class="pbar"><i style="width:${x.n / max * 100}%;background:${PILLARS[x.p].c}"></i></div></div>`).join('')}</div>
+    <div class="card"><div class="row between"><span class="disp" style="font-size:22px">До / после</span><label class="btn sm" style="cursor:pointer">+ Фото<input type="file" accept="image/*" capture="user" hidden data-change="week-photo"></label></div>
+      ${ph.length >= 2 ? `<div class="cmp" style="margin-top:12px"><figure style="margin:0"><img src="${first.data}"><div class="mono" style="text-align:center;margin-top:6px">День ${z(dayNum(first.date))}</div></figure><figure style="margin:0"><img src="${last.data}"><div class="mono" style="text-align:center;margin-top:6px">День ${z(dayNum(last.date))}</div></figure></div>` : `<div class="hint" style="margin-top:10px">Нужно минимум 2 фото, чтобы появилось сравнение.</div>`}
+      ${ph.length > 2 ? `<div class="grid3">${ph.map((p) => `<img src="${p.data}" alt="">`).join('')}</div>` : ''}
+    </div>
+    <div class="card"><div class="row between" style="margin-bottom:16px"><span class="disp" style="font-size:22px">Дневник пути</span><button class="btn sm" data-act="ask-summary">Итоги ✦</button></div>
+      <div class="tl">${j.map((x) => `<div class="d ${x.closed ? 'closed' : ''}"><span class="mono">День ${z(x.n)} · ${human(x.date)}</span><div class="dt">${esc(x.title)}</div>${x.details.length ? `<ul>${x.details.map((t) => `<li>${esc(t)}</li>`).join('')}</ul>` : ''}</div>`).join('')}</div>
+    </div>`;
+}
+
+// ---------- профиль ----------
+function renderMe() {
+  const r = rank(), cur = S.theme || 'matcha';
+  return `${topbar('Профиль')}
+    <div class="card">
+      <span class="mono">Тема · открыто ${THEMES.filter(([k]) => r.lvl >= themeLvl(k)).length}/${THEMES.length}</span>
+      <div class="themes" style="margin-top:10px">${THEMES.map(([k, n, g]) => { const lk = r.lvl < themeLvl(k); return `<button class="${cur === k && !lk ? 'on' : ''} ${lk ? 'locked' : ''}" data-act="theme" data-v="${k}"><div class="pv" style="background:${g}"><div style="position:absolute;left:8px;bottom:8px;width:45%;height:7px;border-radius:4px;background:${LIGHT_ACCENT[k] ? '#2a1418' : '#fff'};opacity:.8"></div></div>${lk ? `<span class="lk">УР.${themeLvl(k)}</span>` : ''}<div class="nm">${n}</div></button>`; }).join('')}</div>
+      <div class="mono lbl">Акцент</div>
+      <div class="sw">${ACCENTS.map((c) => `<button class="${(S.accent || 'auto') === c ? 'on' : ''}" style="background:${c === 'auto' ? 'conic-gradient(#cde59b,#ffb07c,#ff7ccf,#9cc8ff,#cde59b)' : c}" data-act="accent" data-v="${c}" aria-label="${c === 'auto' ? 'Под тему' : c}"></button>`).join('')}</div>
+      <div class="hint" style="margin-top:8px;font-size:12px">Первый кружок — цвет под тему автоматически.</div>
+    </div>
+    <div class="card">
+      <span class="mono">Награды за уровни</span>
+      ${UNLOCKS.map((u) => `<div class="item"><span style="font-size:22px;${r.lvl >= u.lvl ? '' : 'filter:grayscale(1);opacity:.4'}">${u.ic}</span><div style="flex:1"><div style="font-weight:700">${u.name}</div><div class="hint" style="font-size:12px">${u.d}</div></div>${r.lvl >= u.lvl ? `<span class="check">${IC.check}</span>` : `<span class="mono">ур. ${u.lvl}</span>`}</div>`).join('')}
+    </div>
+    <div class="card">
+      <span class="mono">Тренер</span>
+      <input class="field" style="margin-top:10px" value="${esc(coachName())}" maxlength="20" data-input="coach-name" placeholder="Имя тренера">
+      <div class="mono lbl">Характер</div>
+      <div class="seg" style="margin:0">${[['soft', 'Мягкий'], ['hard', 'Жёсткий']].map(([v, l]) => `<button class="${(S.coachTone || 'soft') === v ? 'on' : ''}" data-act="tone" data-v="${v}">${l}</button>`).join('')}</div>
+    </div>
+    ${DEV ? `<div class="card">
+      <span class="mono">Для теста</span>
+      <div class="row" style="margin-top:10px;flex-wrap:wrap"><button class="btn sm ghost" data-act="add-xp">+300 XP</button><button class="btn sm ghost" data-act="skip-day">Перемотать день →</button></div>
+    </div>` : ''}
+    <button class="btn sm ghost" data-act="reset" style="color:var(--danger);width:100%">Сбросить прогресс</button>
+    <p class="mono" style="text-align:center;margin-top:20px">Апгрейд · демо · season 01</p>`;
+}
+
+function renderTabs() {
+  return `<nav class="tabs"><div class="in">${[['home', 'Главная'], ['coach', 'Тренер'], ['journal', 'Журнал'], ['path', 'Путь'], ['me', 'Профиль']].map(([k, l]) => `<button class="tab ${tab === k ? 'on' : ''}" data-act="go" data-tab="${k}">${IC[k]}${l}</button>`).join('')}</div></nav>`;
+}
+
+function render() {
+  applyTheme();
+  const app = document.getElementById('app');
+  if (!S.onboarded) {
+    app.className = 'app no-tabs';
+    app.innerHTML = renderOnboarding();
+    document.getElementById('overlay').innerHTML = '';
+    document.getElementById('modal').innerHTML = '';
+    afterRender('ob' + ob.step);
+    return;
+  }
+  app.className = 'app' + (app.classList.contains('enter') ? ' enter' : '');
+  const screens = { home: renderHome, coach: renderCoach, journal: renderJournal, path: renderPath, me: renderMe };
+  app.innerHTML = screens[tab]() + renderTabs();
+  document.getElementById('overlay').innerHTML = renderReader();
+  document.getElementById('modal').innerHTML = renderModal();
+  document.body.style.overflow = reader || modal ? 'hidden' : '';
+  justDone = null; newMsgs = 0;
+  const fresh = lastScreen !== tab + (tab === 'journal' ? ':' + jtab : '');
+  afterRender(tab + (tab === 'journal' ? ':' + jtab : ''));
+  syncBackButton();
+  const tr = document.getElementById('lvtrack');
+  if (tr && fresh) { const nowEl = tr.querySelector('.now'); if (nowEl) { tr.style.scrollBehavior = 'auto'; tr.scrollLeft = nowEl.offsetLeft - 140; tr.style.scrollBehavior = ''; } }
+}
+
+// Системная кнопка «Назад» Telegram: закрывает статью/окно, иначе ведёт на главную
+function syncBackButton() {
+  try {
+    if (!tg || !tg.BackButton) return;
+    if (reader || modal || tab !== 'home') tg.BackButton.show(); else tg.BackButton.hide();
+  } catch (e) {}
+}
+try {
+  tg && tg.BackButton && tg.BackButton.onClick(() => {
+    if (modal) { if (modal.kind === 'focus') { clearInterval(focusT.id); focusT = { left: 1500, running: false, id: null }; } modal = null; }
+    else if (reader) reader = null;
+    else tab = 'home';
+    haptic('light'); render(); window.scrollTo(0, 0);
+  });
+} catch (e) {}
+
+// ---------- фото ----------
+function readPhoto(file) {
+  return new Promise((res, rej) => {
+    const r = new FileReader();
+    r.onload = () => {
+      const img = new Image();
+      img.onload = () => {
+        const k = Math.min(1, 600 / Math.max(img.width, img.height));
+        const c = document.createElement('canvas');
+        c.width = Math.round(img.width * k); c.height = Math.round(img.height * k);
+        c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+        res(c.toDataURL('image/jpeg', 0.78));
+      };
+      img.onerror = rej; img.src = r.result;
+    };
+    r.onerror = rej; r.readAsDataURL(file);
+  });
+}
+
+// ---------- действия ----------
+const toggleIn = (arr, v) => { const i = arr.indexOf(v); i >= 0 ? arr.splice(i, 1) : arr.push(v); };
+const ACT = {
+  next() { ob.step++; haptic('light'); render(); window.scrollTo(0, 0); },
+  'ob-adult'() { ob.adult = !ob.adult; render(); },
+  'ob-consent'() { ob.consent = !ob.consent; render(); },
+  'ob-goal'(el) { toggleIn(ob.goals, el.dataset.k); haptic('light'); render(); },
+  'ob-issue'(el) { toggleIn(ob.issues, el.dataset.k); haptic('light'); render(); },
+  'ob-budget'(el) { ob.budget = +el.dataset.v; render(); },
+  analyze() {
+    ob.step = 5; ob.result = analyze(); render();
+    [0, 1, 2, 3].forEach((i) => setTimeout(() => { const e = document.getElementById('cl' + i); e && e.classList.add('on'); }, 450 * (i + 1)));
+    setTimeout(() => { ob.step = 6; haptic('success'); render(); window.scrollTo(0, 0); }, 2300);
+  },
+  accept: acceptPlan,
+  task(el) { toggleTask(el.dataset.id); },
+  char: toggleChar,
+  pages: addPages,
+  chest() {
+    const v = 10 + Math.floor(Math.random() * 21);
+    withRankCheck(() => { S.chest = S.chest || {}; S.chest[today()] = v; });
+    floatXP('+' + v + ' XP'); confetti(); haptic('success'); toast(`В сундуке ${v} XP. Завтра — новый`);
+    save(); render();
+  },
+  grat() {
+    const items = [0, 1, 2].map((i) => (document.getElementById('g' + i) || {}).value || '').map((x) => x.trim()).filter(Boolean);
+    if (!items.length) return toast('Напиши хотя бы одну вещь');
+    withRankCheck(() => { S.grat = S.grat || {}; S.grat[today()] = items; addEvent('grat', 'Благодарность: ' + items.join(' · ')); });
+    floatXP('+10 XP'); haptic('success'); save(); render();
+  },
+  mood(el) {
+    const first = !(S.mood || {})[today()];
+    withRankCheck(() => { S.mood = S.mood || {}; S.mood[today()] = +el.dataset.v; });
+    if (first) floatXP('+3 XP');
+    haptic('light'); save(); render();
+  },
+  claim(el) {
+    const key = weekStart(today()) + ':' + el.dataset.id, c = CHALLENGES.find((x) => x.id === el.dataset.id);
+    withRankCheck(() => { S.claims = S.claims || {}; S.claims[key] = true; addEvent('challenge', 'Челлендж недели: ' + c.t); });
+    floatXP('+60 XP'); confetti(); haptic('success'); save(); render();
+  },
+  'goal-done'(el) {
+    const i = +el.dataset.i;
+    S.sgoals = S.sgoals || [];
+    const g = S.sgoals[i] = S.sgoals[i] || {};
+    if (!g.text) return toast('Сначала запиши цель');
+    withRankCheck(() => { g.done = !g.done; if (g.done) addEvent('goal', `Цель сезона (${GOAL_AREAS[i][0]}): ${g.text}`); });
+    if (g.done) { floatXP('+100 XP'); confetti(); haptic('success'); }
+    save(); render();
+  },
+  'focus-open'() { modal = { kind: 'focus' }; render(); },
+  'focus-toggle'() {
+    if (focusT.running) { clearInterval(focusT.id); focusT.running = false; }
+    else { focusT.running = true; focusT.id = setInterval(focusTick, 1000); }
+    const b = document.getElementById('fbtn'); if (b) b.textContent = focusT.running ? 'Пауза' : 'Старт';
+    haptic('light');
+  },
+  'focus-close'() { clearInterval(focusT.id); focusT = { left: 1500, running: false, id: null }; modal = null; render(); },
+  share() { modal = { kind: 'share' }; render(); },
+  'modal-close'() { modal = null; render(); },
+  go(el) { tab = el.dataset.tab; reader = null; haptic('light'); render(); if (tab === 'coach') scrollChat(); else window.scrollTo(0, 0); },
+  jtab(el) { jtab = el.dataset.v; haptic('light'); render(); const b = document.querySelector(`.jt [data-v="${jtab}"]`); b && b.scrollIntoView({ inline: 'center', block: 'nearest', behavior: 'smooth' }); },
+  'to-missions'() { const m = document.getElementById('missions'); m && m.scrollIntoView({ behavior: 'smooth' }); haptic('light'); },
+  open(el) { reader = { kind: el.dataset.kind, id: el.dataset.id }; haptic('light'); render(); const r = document.querySelector('.reader'); r && (r.scrollTop = 0); },
+  'close-reader'() { reader = null; render(); },
+  'mark-read'() {
+    const key = reader.kind === 'lesson' ? 'lessons' : 'articles';
+    withRankCheck(() => {
+      S[key] = S[key] || [];
+      if (!S[key].includes(reader.id)) {
+        S[key].push(reader.id);
+        const it = (reader.kind === 'lesson' ? ALL_LESSONS : ARTICLES).find((x) => x.id === reader.id);
+        addEvent(reader.kind === 'lesson' ? 'lesson' : 'note', (reader.kind === 'lesson' ? 'Урок: ' : 'Прочитали: ') + it.t);
+      }
+    });
+    floatXP(`+${reader.kind === 'lesson' ? 25 : 5} XP`); haptic('success');
+    reader = null; save(); render();
+  },
+  'book-st'(el) {
+    const id = el.dataset.id, v = el.dataset.v, b = BOOKS.find((x) => x.id === id);
+    S.books = S.books || {};
+    withRankCheck(() => {
+      if (v === 'reading') Object.keys(S.books).forEach((k) => { if (S.books[k] === 'reading') S.books[k] = 'want'; });
+      const was = S.books[id];
+      S.books[id] = v;
+      if (v === 'done' && was !== 'done') { addEvent('book', `Дочитали «${b.t}» · ${b.a}`); confetti(); floatXP('+50 XP'); haptic('success'); }
+      else if (v === 'reading') { toast('Книга добавлена в бонус-миссию'); haptic('medium'); }
+      else haptic('light');
+    });
+    save(); render();
+  },
+  shop(el) {
+    const it = S.plan.shopping[+el.dataset.i];
+    const next = { none: 'ordered', ordered: 'arrived', arrived: 'none' }[it.st];
+    it.st = next;
+    if (next === 'ordered') addEvent('order', 'Заказали: ' + it.n);
+    if (next === 'arrived') addEvent('arrived', 'Пришло: ' + it.n);
+    if (next === 'none') S.events = S.events.filter((e) => !(e.date === today() && e.text.endsWith(it.n)));
+    haptic('light'); save(); render();
+  },
+  quick(el) { sendChat(el.dataset.q); },
+  'ask-summary'() { tab = 'coach'; render(); sendChat('Покажи мой путь'); },
+  theme(el) {
+    const k = el.dataset.v, need = themeLvl(k);
+    if (rank().lvl < need) { haptic('light'); return toast(`Тема откроется на уровне ${need}`); }
+    S.theme = k; haptic('light'); save(); lastScreen = ''; render();
+  },
+  accent(el) { S.accent = el.dataset.v; haptic('light'); save(); render(); },
+  tone(el) { S.coachTone = el.dataset.v; save(); render(); toast(S.coachTone === 'hard' ? 'Тренер стал строже' : 'Тренер стал мягче'); },
+  'add-xp'() { withRankCheck(() => { S.bonus = (S.bonus || 0) + 300; }); floatXP('+300 XP'); save(); render(); },
+  'skip-day'() { S.dayOffset = (S.dayOffset || 0) + 1; save(); render(); toast('Теперь день ' + dayNum(today())); },
+  reset() {
+    const go = () => { S = { theme: S.theme, accent: S.accent }; save(); ob = freshOb(); tab = 'home'; reader = null; modal = null; render(); window.scrollTo(0, 0); };
+    try { if (tg && tg.initData) return tg.showConfirm('Удалить весь прогресс?', (ok) => ok && go()); } catch (e) {}
+    if (confirm('Удалить весь прогресс?')) go();
+  }
+};
+document.addEventListener('click', (e) => { const el = e.target.closest('[data-act]'); if (el && ACT[el.dataset.act]) { e.preventDefault(); ACT[el.dataset.act](el); } });
+document.addEventListener('submit', (e) => { if (e.target.dataset.submit === 'chat') { e.preventDefault(); const i = document.getElementById('chatIn'); const v = i.value; i.value = ''; sendChat(v); } });
+document.addEventListener('input', (e) => {
+  const k = e.target.dataset.input;
+  if (k === 'coach-name') { S.coachName = e.target.value.trim() || 'Макс'; save(); }
+  if (k === 'goal') { const i = +e.target.dataset.i; S.sgoals = S.sgoals || []; S.sgoals[i] = { ...(S.sgoals[i] || {}), text: e.target.value }; save(); }
+});
+document.addEventListener('change', async (e) => {
+  const kind = e.target.dataset.change, f = e.target.files && e.target.files[0];
+  if (!kind || !f) return;
+  try {
+    const data = await readPhoto(f);
+    if (kind === 'ob-photo') { ob.photo = data; render(); }
+    if (kind === 'week-photo') { withRankCheck(() => { S.photos.push({ date: today(), data }); addEvent('photo', 'Фото прогресса'); }); save(); render(); floatXP('+15 XP'); haptic('success'); }
+  } catch (err) { toast('Не получилось открыть фото'); }
+});
+
+render();
+</script>
+</body>
+</html>
