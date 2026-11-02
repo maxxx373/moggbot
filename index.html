@@ -60,6 +60,48 @@
   --text:#0b0b0c; --hint:#72767e; --line:rgba(0,0,0,.08);
   --ink:#0b0b0c; --ok:#12a26a; --warn:#d18b00;
 }
+/* яркие «дофаминовые» темы: насыщенный фон с плавающими цветными пятнами */
+[data-theme="acid"]{
+  --bg:#0d0a1a; --glow1:rgba(198,255,61,.22); --glow2:rgba(255,61,214,.22);
+  --card:rgba(255,255,255,.05); --card-b:rgba(198,255,61,.2); --solid:#17122b;
+  --text:#f6f3ff; --hint:#a49cc4; --line:rgba(255,255,255,.09); --ink:#000;
+  --mA:#f3ffd6; --mB:#c6ff3d; --mC:#5b1cff; --mD:#ff9cf0; --mE:#26105c;
+  --b1:#c6ff3d; --b2:#ff3dd6; --b3:#5b1cff; --grad:linear-gradient(120deg,#c6ff3d,#7dffb0);
+}
+[data-theme="mango"]{
+  --bg:#1a0d08; --glow1:rgba(255,182,39,.26); --glow2:rgba(255,61,110,.24);
+  --card:rgba(255,240,220,.06); --card-b:rgba(255,182,39,.22); --solid:#2a160d;
+  --text:#fff6ec; --hint:#c9a58f; --line:rgba(255,226,200,.1); --ink:#140a05;
+  --mA:#fff3c4; --mB:#ffb627; --mC:#c2185b; --mD:#ffd0a0; --mE:#4a1225;
+  --b1:#ffb627; --b2:#ff3d6e; --b3:#ff8a3d; --grad:linear-gradient(120deg,#ffd23d,#ff9a3d);
+}
+[data-theme="candy"]{
+  --bg:#150a20; --glow1:rgba(255,94,196,.26); --glow2:rgba(80,220,255,.2);
+  --card:rgba(255,255,255,.05); --card-b:rgba(255,94,196,.22); --solid:#21122f;
+  --text:#fff3fb; --hint:#b89cc4; --line:rgba(255,255,255,.09); --ink:#000;
+  --mA:#ffe3f6; --mB:#ff9fdc; --mC:#5a1fa8; --mD:#a6f0ff; --mE:#2a0d4a;
+  --b1:#ff5ec4; --b2:#50dcff; --b3:#9a5cff; --grad:linear-gradient(120deg,#ff8ad6,#ffc2e8);
+}
+[data-theme="ocean"]{
+  --bg:#04111c; --glow1:rgba(46,230,255,.24); --glow2:rgba(64,255,170,.16);
+  --card:rgba(220,250,255,.05); --card-b:rgba(46,230,255,.2); --solid:#0a1d2c;
+  --text:#ecfbff; --hint:#8fb0c0; --line:rgba(220,250,255,.09); --ink:#000;
+  --mA:#e3fffb; --mB:#7af2ff; --mC:#0a3c8f; --mD:#b8fff0; --mE:#06203d;
+  --b1:#2ee6ff; --b2:#3b6dff; --b3:#40ffaa; --grad:linear-gradient(120deg,#2ee6ff,#8affd6);
+}
+[data-vivid] body::before{content:'';position:fixed;inset:-25%;z-index:-1;pointer-events:none;opacity:.5;filter:blur(40px);
+  background:radial-gradient(30% 26% at 22% 22%,var(--b1),transparent 70%),radial-gradient(28% 26% at 82% 55%,var(--b2),transparent 70%),radial-gradient(26% 22% at 38% 88%,var(--b3),transparent 70%);
+  animation:blobs 16s ease-in-out infinite alternate}
+@keyframes blobs{0%{transform:translate(0,0) rotate(0) scale(1)}50%{transform:translate(5%,-4%) rotate(10deg) scale(1.08)}100%{transform:translate(-4%,5%) rotate(-8deg) scale(.96)}}
+[data-vivid] .card{background:linear-gradient(160deg,color-mix(in srgb,var(--accent) 9%,transparent),var(--card) 55%);border-color:var(--card-b)}
+[data-vivid] .btn:not(.ghost){background:var(--grad);box-shadow:0 8px 26px color-mix(in srgb,var(--accent) 35%,transparent)}
+[data-vivid] .lvl em,[data-vivid] .logo svg{filter:drop-shadow(0 0 8px var(--accent))}
+[data-theme="acid"] .hero,[data-theme="acid"] .outro{background:linear-gradient(180deg,#120a2a 0%,#5b1cff 38%,#ff3dd6 72%,#c6ff3d 100%)}
+[data-theme="mango"] .hero,[data-theme="mango"] .outro{background:linear-gradient(180deg,#2a0f1f 0%,#c2185b 34%,#ff6a3d 64%,#ffd23d 100%)}
+[data-theme="candy"] .hero,[data-theme="candy"] .outro{background:linear-gradient(180deg,#1b0b3a 0%,#7b2ff7 38%,#ff5ec4 72%,#ffc2e8 100%)}
+[data-theme="ocean"] .hero,[data-theme="ocean"] .outro{background:linear-gradient(180deg,#031a2e 0%,#0a5cff 40%,#2ee6ff 76%,#b8fff4 100%)}
+[data-vivid] .hero .shade{height:44%;background:linear-gradient(transparent,color-mix(in srgb,var(--bg) 85%,transparent))}
+[data-vivid] .spray{text-shadow:0 0 6px #fff,0 0 18px var(--b1),0 0 42px var(--b2)}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0;color:var(--text);font:15px/1.5 'Manrope',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;-webkit-font-smoothing:antialiased}
 body{background:var(--bg);background-image:radial-gradient(120% 60% at 100% 0%,var(--glow1),transparent 60%),radial-gradient(90% 50% at 0% 100%,var(--glow2),transparent 60%);background-attachment:fixed;min-height:100vh;transition:background-color .4s}
@@ -420,8 +462,10 @@ button:active,label.card:active{transform:scale(.97)}
 .app.enter .heat i{animation:fadeup .4s both}
 .app.enter .hero .huge{animation:heroIn .7s cubic-bezier(.2,.8,.2,1) both}
 @keyframes heroIn{from{opacity:0;transform:translateY(30px);letter-spacing:.08em}to{opacity:1;transform:none}}
-.rv{opacity:0;transform:translateY(22px) scale(.98);transition:opacity .55s ease,transform .7s cubic-bezier(.2,.8,.2,1)!important}
-.rv.in{opacity:1;transform:none}
+.rv{opacity:0;transform:translateY(34px) scale(.94) rotate(-.8deg);filter:blur(5px);transition:opacity .55s ease,transform .75s cubic-bezier(.2,1.25,.4,1),filter .5s ease!important}
+.rv.in{opacity:1;transform:none;filter:none}
+.rv:nth-child(even){transform:translateY(34px) scale(.94) rotate(.8deg)}
+.rv.in:nth-child(even){transform:none}
 .xpfloat{position:fixed;z-index:80;font-family:var(--disp);font-size:24px;color:var(--accent);text-shadow:0 2px 12px rgba(0,0,0,.45);pointer-events:none;white-space:nowrap;animation:xpf 1.1s ease-out forwards}
 @keyframes xpf{0%{opacity:0;transform:translate(-50%,-30%) scale(.5)}20%{opacity:1;transform:translate(-50%,-90%) scale(1.2)}100%{opacity:0;transform:translate(-50%,-280%) scale(1)}}
 .confetti{position:fixed;left:50%;top:42%;z-index:70;pointer-events:none}
@@ -430,9 +474,19 @@ button:active,label.card:active{transform:scale(.97)}
 @media (prefers-reduced-motion: reduce){*,*:before,*:after{animation:none!important;transition:none!important}.rv{opacity:1;transform:none}}
 /* протоколы и упражнения */
 .exa{display:block;width:100%;height:auto;color:var(--text)}
+.exa .fig-o{stroke:var(--solid);stroke-width:12;opacity:.9}
+.exa .fig-o .wl,.exa .fig-o .eye{display:none}
+.exa .fig-o .ac{stroke:var(--solid)}
+.exa .fig-o circle{fill:var(--solid)}
+.exa .fig{stroke-width:7.5}
+.exa .fig circle{fill:currentColor}
+.exa .fig .eye{fill:var(--solid)}
+.exa .fig .ac{stroke:var(--accent);filter:drop-shadow(0 0 3px var(--accent))}
 .exa .ac{stroke:var(--accent)}
-.exa .acf{fill:var(--accent)}
-.exa .wl{stroke:var(--hint);opacity:.6}
+.exa .acf{fill:var(--accent);filter:drop-shadow(0 0 4px var(--accent))}
+.exa .wl{stroke:var(--hint);opacity:.5}
+.exa .exsh{fill:currentColor;opacity:.1}
+.exa .skin{fill:color-mix(in srgb,var(--accent) 10%,transparent)}
 .exgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
 .excard{text-align:left;padding:10px 10px 12px;border-radius:18px;background:var(--card);border:1px solid var(--card-b)}
 .excard .pv{border-radius:12px;background:color-mix(in srgb,var(--accent) 8%,transparent);margin-bottom:8px}
@@ -453,6 +507,47 @@ button:active,label.card:active{transform:scale(.97)}
 .sheet.exs .pv{border-radius:20px;background:color-mix(in srgb,var(--accent) 8%,transparent);margin-bottom:14px}
 .sheet.exs ol,.sheet.exs ul{margin:6px 0 12px;padding-left:20px;font-size:14px;line-height:1.5}
 .sheet.exs h4{font-family:var(--mono);font-size:10.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--hint);margin:14px 0 4px;font-weight:400}
+/* режимы тренера */
+.modes{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:4px 0 12px}
+.modes button{display:grid;grid-template-columns:auto 1fr;column-gap:8px;align-items:center;text-align:left;padding:10px 12px;border-radius:16px;background:var(--card);border:1.5px solid var(--card-b);transition:transform .15s,border-color .2s,background .2s}
+.modes button.on{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 14%,transparent)}
+.modes .mi{grid-row:span 2;font-size:24px}
+.modes b{font-size:14px}
+.modes small{color:var(--hint);font-size:11.5px;line-height:1.3}
+/* тренировки */
+.wocard{--c:var(--accent);position:relative;overflow:hidden;width:100%;text-align:left;display:block;background:linear-gradient(150deg,color-mix(in srgb,var(--c) 30%,transparent),color-mix(in srgb,var(--c) 6%,var(--card)) 60%)!important;border-color:color-mix(in srgb,var(--c) 40%,transparent)!important}
+.wocard:after{content:'';position:absolute;right:-40px;top:-40px;width:140px;height:140px;border-radius:50%;background:var(--c);opacity:.18;filter:blur(30px)}
+.woprev{display:flex;gap:4px}
+.woprev span{width:46px;height:46px;border-radius:12px;background:color-mix(in srgb,var(--c) 14%,transparent);overflow:hidden}
+.wogo{margin-top:12px;height:44px;border-radius:14px;display:grid;place-items:center;font-weight:800;background:var(--c);color:#0b0b0c;position:relative;z-index:1}
+.wogrid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}
+.wotile{--c:var(--accent);text-align:left;padding:12px 10px;border-radius:18px;background:linear-gradient(160deg,color-mix(in srgb,var(--c) 26%,transparent),var(--card) 75%);border:1px solid color-mix(in srgb,var(--c) 35%,transparent)}
+.wotile .ic{font-size:24px;display:block}
+.wotile b{display:block;font-size:13.5px;margin-top:6px;line-height:1.2}
+.wotile small{color:var(--hint);font-size:11.5px}
+.sheet.wos{max-width:440px}
+.wos .pv{max-width:250px;margin:8px auto 10px;transition:opacity .3s}
+.wos .pv.dim{opacity:.55}
+.wox{width:34px;height:34px;border-radius:50%;background:var(--card);border:1px solid var(--card-b);font-size:14px}
+.wobar{display:flex;gap:4px;margin-top:10px}
+.wobar i{flex:1;height:5px;border-radius:5px;background:var(--card-b)}
+.wobar i.on{background:var(--accent)}
+.wobar i.cur{background:linear-gradient(90deg,var(--accent),var(--card-b));animation:pulseb 1.2s ease-in-out infinite}
+@keyframes pulseb{50%{opacity:.5}}
+.wotimer{position:relative;width:150px;height:150px;margin:14px auto 6px}
+.wotimer svg{width:100%;height:100%;transform:rotate(-90deg)}
+.wotimer circle{fill:none;stroke-width:8}
+.wotimer .tr{stroke:var(--card-b)}
+.wotimer .pr{stroke:var(--accent);stroke-linecap:round;transition:stroke-dashoffset 1s linear;filter:drop-shadow(0 0 6px var(--accent))}
+.wotimer .pr.rest{stroke:var(--hint);filter:none}
+.wotimer b{position:absolute;inset:0;display:grid;place-items:center;font-family:var(--disp);font-size:44px}
+.woctl{display:flex;justify-content:center;align-items:center;gap:18px;margin:6px 0 14px}
+.woctl button{width:52px;height:52px;border-radius:50%;background:var(--card);border:1px solid var(--card-b);font-size:18px}
+.woctl .main{width:72px;height:72px;background:var(--accent);color:var(--on-accent);font-size:24px;border:0;box-shadow:0 8px 26px color-mix(in srgb,var(--accent) 40%,transparent)}
+.wos details{border-top:1px solid var(--line);padding-top:10px;text-align:left}
+.wos summary{font-weight:700;font-size:14px;cursor:pointer;list-style:none}
+.wos summary::-webkit-details-marker{display:none}
+.wos summary:after{content:' +';color:var(--accent)}
 </style>
 </head>
 <body>
@@ -953,12 +1048,17 @@ const C2 = (cx, cy, r, d, extra) => {
   const an = (n, k) => Array.isArray(n) ? SA(k, `${n[0]};${n[1]};${n[0]}`, d) : '';
   return `<circle ${v(cx, 'cx')} ${v(cy, 'cy')} r="${r}" ${extra || ''}>${an(cx, 'cx')}${an(cy, 'cy')}</circle>`;
 };
-const FIG = (inner) => `<svg class="exa" viewBox="0 0 120 120" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round">${inner}</g></svg>`;
+// Фигура рисуется дважды: тёмный контур под низом и объёмное «тело» сверху, рабочие мышцы светятся акцентом
+const EXBG = `<defs><radialGradient id="exbg" cx="50%" cy="38%" r="70%"><stop offset="0" style="stop-color:var(--accent)" stop-opacity=".22"/><stop offset="1" style="stop-color:var(--accent)" stop-opacity="0"/></radialGradient></defs>
+  <rect width="120" height="120" rx="14" fill="url(#exbg)"/><ellipse class="exsh" cx="60" cy="113" rx="42" ry="3.5"/>`;
+const FIG = (inner) => `<svg class="exa" viewBox="0 0 120 120" aria-hidden="true">${EXBG}
+  <g class="fig-o" fill="none" stroke-linecap="round" stroke-linejoin="round">${inner}</g>
+  <g class="fig" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">${inner}</g></svg>`;
 const EX_ANIM = {
   chintuck: () => { const d = 3; return FIG(`
     ${L2(55, 64, 55, 104, d)}${L2(55, 68, 62, 90, d)}
     ${L2(55, 64, [64, 56], 52, d)}${C2([69, 60], 40, 11, d)}
-    <circle r="2" fill="currentColor" stroke="none" cy="38" cx="74">${SA('cx', '74;65;74', d)}</circle>
+    <circle class="eye" r="2" stroke="none" cy="38" cx="74">${SA('cx', '74;65;74', d)}</circle>
     <path class="ac" stroke-width="3" d="M100 40h-14m5-5-5 5 5 5"><animate attributeName="opacity" values="1;.2;1" dur="${d}s" repeatCount="indefinite"/></path>`); },
   wall: () => { const d = 4; return FIG(`
     <line class="wl" stroke-width="3" x1="30" y1="8" x2="30" y2="112"/>
@@ -979,7 +1079,8 @@ const EX_ANIM = {
     <line class="wl" stroke-width="3" x1="6" y1="102" x2="114" y2="102"/>
     ${L2(16, 96, 54, 95, d)}${L2(54, 95, 80, 92, d)}${C2(89, [88, 86], 8, d)}
     ${L2(78, 92, 108, [97, 76], d, 'ac')}`); },
-  facemassage: () => { const d = 3.2, pl = 'M52 64 Q41 62 31 56 L32 76 Q38 96 47 112', pr = 'M68 64 Q79 62 89 56 L88 76 Q82 96 73 112'; return `<svg class="exa" viewBox="0 0 120 120" aria-hidden="true">
+  facemassage: () => { const d = 3.2, pl = 'M52 64 Q41 62 31 56 L32 76 Q38 96 47 112', pr = 'M68 64 Q79 62 89 56 L88 76 Q82 96 73 112'; return `<svg class="exa" viewBox="0 0 120 120" aria-hidden="true">${EXBG}
+    <ellipse class="skin" cx="60" cy="56" rx="30" ry="38"/>
     <g fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"><ellipse cx="60" cy="56" rx="30" ry="38"/><path d="M47 47h8M65 47h8M60 52v12h-4M52 76q8 5 16 0M48 94v20M72 94v20"/></g>
     <g fill="none" class="ac" stroke-width="2" stroke-dasharray="3 5" opacity=".6"><path d="${pl}"/><path d="${pr}"/></g>
     <g class="acf"><circle r="5"><animateMotion dur="${d}s" repeatCount="indefinite" path="${pl}"/></circle><circle r="5"><animateMotion dur="${d}s" repeatCount="indefinite" path="${pr}"/></circle></g></svg>`; },
@@ -991,11 +1092,17 @@ const EX_ANIM = {
     <line class="wl" stroke-width="3" x1="20" y1="106" x2="100" y2="106"/>
     ${L2(58, 103, 72, 103, d)}${L2(60, 102, [62, 76], [80, 84], d)}${L2([62, 76], [80, 84], [56, 44], [60, 84], d, 'ac')}
     ${L2([56, 44], [60, 84], [58, 62], [30, 56], d)}${C2([60, 66], [18, 44], 10, d)}${L2([58, 62], [30, 56], [62, 92], [58, 56], d)}`); },
-  plank: () => { const d = 3; return `<svg class="exa" viewBox="0 0 120 120" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round">
+  plank: () => { const d = 3; return FIG(`
     <line class="wl" stroke-width="3" x1="6" y1="100" x2="114" y2="100"/>
-    ${L2(14, 96, 82, [76, 74], d)}${C2(94, [72, 70], 8, d)}${L2(82, [76, 74], 82, 96, d, 'ac')}${L2(82, 96, 102, 96, d, 'ac')}</g>
-    <rect x="20" y="112" width="80" height="4" rx="2" fill="currentColor" opacity=".15"/><rect class="acf" x="20" y="112" height="4" rx="2" width="0"><animate attributeName="width" values="0;80" dur="6s" repeatCount="indefinite"/></rect></svg>`; },
-  gum: () => { const d = 0.9; return `<svg class="exa" viewBox="0 0 120 120" aria-hidden="true">
+    ${L2(14, 96, 82, [76, 74], d)}${C2(94, [72, 70], 8, d)}${L2(82, [76, 74], 82, 96, d, 'ac')}${L2(82, 96, 102, 96, d, 'ac')}
+    <path class="ac" stroke-width="2.5" d="M40 70q8-6 16 0"><animate attributeName="opacity" values=".2;1;.2" dur="${d}s" repeatCount="indefinite"/></path>`); },
+  neckstretch: () => { const d = 8, kt = 'keyTimes="0;.25;.5;.75;1" keySplines=".45 0 .55 1;.45 0 .55 1;.45 0 .55 1;.45 0 .55 1" calcMode="spline"'; return FIG(`
+    ${L2(60, 54, 60, 88, d)}${L2(60, 88, 50, 112, d)}${L2(60, 88, 70, 112, d)}${L2(42, 56, 78, 56, d)}${L2(42, 56, 38, 86, d)}${L2(78, 56, 82, 86, d)}
+    <g><animateTransform attributeName="transform" type="rotate" values="0 60 54;-24 60 54;0 60 54;24 60 54;0 60 54" dur="${d}s" repeatCount="indefinite" ${kt}/>
+      <line x1="60" y1="54" x2="60" y2="44"/><circle cx="60" cy="32" r="10"/></g>
+    <path class="ac" stroke-width="3" d="M66 52q6-6 10 2"><animate attributeName="opacity" values="0;0;0;1;0" dur="${d}s" repeatCount="indefinite" keyTimes="0;.5;.6;.75;.9"/></path>
+    <path class="ac" stroke-width="3" d="M54 52q-6-6-10 2"><animate attributeName="opacity" values="0;1;0;0;0" dur="${d}s" repeatCount="indefinite" keyTimes="0;.25;.4;.5;1"/></path>`); },
+  gum: () => { const d = 0.9; return `<svg class="exa" viewBox="0 0 120 120" aria-hidden="true">${EXBG}
     <g fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"><path d="M28 62 Q28 18 60 18 Q92 18 92 62"/><path d="M47 48h8M65 48h8M60 52v12h-4"/>
     <g><animateTransform attributeName="transform" type="translate" values="0 0;0 5;0 0" dur="${d}s" repeatCount="indefinite"/><path d="M28 62 Q31 96 60 104 Q89 96 92 62"/><path d="M52 82q8 4 16 0"/></g></g>
     <g class="acf"><animate attributeName="opacity" values=".2;.85;.2" dur="${d}s" repeatCount="indefinite"/><ellipse cx="36" cy="74" rx="6" ry="11"/><ellipse cx="84" cy="74" rx="6" ry="11"/></g></svg>`; }
@@ -1041,8 +1148,42 @@ const EXERCISES = {
     gives: 'Нагружает жевательную мышцу. Честно: заметный эффект на внешность хорошо не доказан. Это бонус, а не основа — основа для линии челюсти это процент жира и осанка.',
     how: ['Жёсткая жвачка без сахара (мастика или специальная «для челюсти»).', 'Жуй равномерно обеими сторонами, не одной.', 'Начни с 10 минут, прибавляй постепенно.'],
     mistakes: ['Жевать часами', 'Продолжать через боль', 'Эспандеры для челюсти — риск для сустава'],
-    warn: 'Щелчки, боль у уха, головная боль — сразу прекращай. Если челюсть уже щёлкает или болит — не делай вообще.' }
+    warn: 'Щелчки, боль у уха, головная боль — сразу прекращай. Если челюсть уже щёлкает или болит — не делай вообще.' },
+  neckstretch: { t: 'Растяжка шеи', dose: '30 секунд на каждую сторону',
+    gives: 'Снимает зажим в шее и трапециях от телефона и компа. Шея выглядит длиннее, голове проще держаться ровно — вместе с втягиванием подбородка это делает линию шеи и челюсти чётче.',
+    how: ['Сядь или встань ровно, плечи опусти вниз.', 'Медленно наклони голову ухом к плечу, плечо не поднимай.', 'Почувствуй растяжение сбоку шеи, держи 30 секунд, дыши.', 'Плавно вернись и сделай в другую сторону.'],
+    mistakes: ['Тянуть голову рукой с силой', 'Поднимать плечо навстречу уху'], warn: 'Если кружится голова или немеют руки — остановись.' }
 };
+
+// ---------- тренировки с таймером ----------
+// [упражнение, секунд работы, подсказка]. Между упражнениями — отдых REST секунд
+const REST = 15;
+const WORKOUTS = {
+  face: { t: 'Лицо и шея', ic: '🗿', c: '#ffb07c',
+    why: 'Убирает утреннюю отёчность и возвращает голову над плечами — так линия шеи и челюсти выглядит чётче. Честно: скулы и форма челюсти — это кость, упражнения её не меняют. Меняются отёки, осанка шеи и процент жира.',
+    items: [['facemassage', 90, 'от носа к ушам, от ушей вниз к шее'], ['chintuck', 60, '10 повторов, держи по 3 секунды'], ['neckstretch', 60, '30 секунд на каждую сторону'], ['chintuck', 45, 'ещё 8 медленных повторов']] },
+  posture: { t: 'Осанка', ic: '🧍', c: '#ffd166',
+    why: 'Раскрывает грудь, включает мышцы между лопатками и учит тело держать спину. Ровная осанка визуально добавляет пару сантиметров роста и делает фигуру увереннее.',
+    items: [['wall', 60, 'три точки касания: таз, лопатки, затылок'], ['wallangel', 60, '10 медленных повторов'], ['doorstretch', 60, '30 секунд на сторону'], ['yraise', 45, '12 повторов с задержкой'], ['chintuck', 45, '10 повторов']] },
+  body: { t: 'Тело', ic: '💪', c: '#6ee7c8',
+    why: 'Два круга по ногам, груди и корпусу. Без зала и железа — заметнее всего на фото через 4–6 недель, если делать через день.',
+    items: [['squat', 45, '15–20 повторов'], ['pushup', 40, 'сколько сможешь с хорошей техникой'], ['plank', 40, 'тело — одна линия'], ['squat', 45, '15–20 повторов'], ['pushup', 40, 'можно с колен'], ['plank', 40, 'дыши ровно']] }
+};
+const EX_SEC = { chintuck: [60, '10 повторов, держи по 3 секунды'], wall: [60, 'три точки касания'], wallangel: [60, '10 медленных повторов'], doorstretch: [60, '30 секунд на сторону'], yraise: [45, '12 повторов'], facemassage: [90, 'от носа к ушам, вниз к шее'], pushup: [40, 'с хорошей техникой'], squat: [45, '15–20 повторов'], plank: [40, 'тело — одна линия'], neckstretch: [60, '30 секунд на сторону'] };
+// Тренировка дня под человека: упражнения, которые подобрал разбор по фото, иначе — из активных протоколов
+function myWorkout() {
+  const fromAi = ((S.ai && S.ai.exercises) || []).filter((x) => EX_SEC[x]);
+  const fromPlan = ((S.protos && S.protos.active) || []).flatMap((a) => PROTOCOLS[a.id].steps.filter((s) => s.x).map((s) => s.x)).filter((x) => EX_SEC[x]);
+  const ids = [...new Set([...fromAi, ...fromPlan])].slice(0, 5);
+  if (!ids.length) return null;
+  return { t: 'Твоя тренировка', ic: '⚡', c: 'var(--accent)', mine: true,
+    why: fromAi.length ? 'Собрана по твоему разбору фото и активным протоколам — то, что тебе нужнее всего сейчас.' : 'Собрана из упражнений твоих активных протоколов.',
+    items: ids.map((x) => [x, ...EX_SEC[x]]) };
+}
+const getWorkout = (id) => id === 'my' ? myWorkout() : WORKOUTS[id];
+const woMin = (w) => Math.round((w.items.reduce((a, it) => a + it[1], 0) + REST * (w.items.length - 1)) / 60);
+const woDone = (d) => (S.wdone && S.wdone[d]) || [];
+const workoutXP = () => Object.values(S.wdone || {}).reduce((a, l) => a + Math.min(l.length, 2) * 20, 0);
 
 // ---------- протоколы ----------
 // Сейчас план собирается правилами по анкете. Когда подключим ИИ, он будет выбирать из этой же
@@ -1210,16 +1351,11 @@ const CAP = { lesson: 1, article: 2, pages: 30, bookPages: 150 };
 const TITLES = [[1, 'Новичок'], [3, 'В процессе'], [5, 'Заметный'], [8, 'Стильный'], [12, 'Харизма'], [16, 'Легенда'], [20, 'Икона']];
 const UNLOCKS = [
   { lvl: 2, id: 'grat', ic: '✍️', name: 'Дневник благодарности', d: 'Три хороших момента дня · +10 XP' },
-  { lvl: 3, id: 't-sunset', ic: '🌅', name: 'Тема «Закат»', d: 'Тёплое оформление', theme: 'sunset' },
   { lvl: 4, id: 'week', ic: '🏆', name: 'Челленджи недели', d: 'Три задания на неделю · +60 XP за каждое' },
-  { lvl: 5, id: 't-neon', ic: '🌌', name: 'Тема «Неон»', d: 'Ночной неон', theme: 'neon' },
   { lvl: 6, id: 'mood', ic: '🙂', name: 'Трекер настроения', d: 'Отмечай настроение и смотри график' },
-  { lvl: 7, id: 't-sakura', ic: '🌸', name: 'Тема «Сакура»', d: 'Светлая розовая тема', theme: 'sakura' },
   { lvl: 8, id: 'share', ic: '📲', name: 'Карточка для сторис', d: 'Покажи свой прогресс друзьям' },
   { lvl: 9, id: 'focus', ic: '⏱', name: 'Фокус-таймер', d: '25 минут без отвлечений · +10 XP' },
   { lvl: 10, id: 'goals', ic: '🎯', name: 'Цели сезона', d: 'Учёба, деньги, спорт, отношения · +100 XP' },
-  { lvl: 12, id: 't-frost', ic: '🏔', name: 'Тема «Иней»', d: 'Холодный стиль FRZN', theme: 'frost' },
-  { lvl: 14, id: 't-ice', ic: '🧊', name: 'Тема «Лёд»', d: 'Тёмная ледяная тема', theme: 'ice' },
   { lvl: 16, id: 'gold', ic: '👑', name: 'Золотой профиль', d: 'Золотой значок уровня' },
   { lvl: 20, id: 's2', ic: '🚀', name: 'Сезон 02', d: 'Новый сезон и новые миссии' }
 ];
@@ -1238,11 +1374,16 @@ const BADGES = [
   ['👑', 'Легенда', 'Уровень 16', () => rank().lvl >= 16]
 ];
 const ACCENTS = ['auto', '#cde59b', '#ffb07c', '#ff7a6b', '#ffd166', '#6ee7c8', '#b79cff', '#ff7ccf', '#9cc8ff', '#4d7cff', '#ffffff'];
-const THEME_ACCENT = { matcha: '#cde59b', sunset: '#ffb07c', neon: '#ff7ccf', sakura: '#d94f7a', frost: '#9cc8ff', ice: '#9cc8ff', paper: '#0b0b0c' };
+const THEME_ACCENT = { matcha: '#cde59b', sunset: '#ffb07c', neon: '#ff7ccf', sakura: '#d94f7a', frost: '#9cc8ff', ice: '#9cc8ff', paper: '#0b0b0c', acid: '#c6ff3d', mango: '#ffc23d', candy: '#ff8ad6', ocean: '#2ee6ff' };
+const VIVID = ['acid', 'mango', 'candy', 'ocean'];
 const PALETTE = ['#ffb07c', '#6ee7c8', '#b79cff', '#ffd166', '#ff7a9c', '#7dd3fc'];
 const DROP_BG = ['linear-gradient(135deg,#ff7a6b,#ffb07c 55%,#ffd166)', 'linear-gradient(135deg,#6ee7c8,#b5f5d9 60%,#fff1c9)', 'linear-gradient(135deg,#b79cff,#ffb3d1 60%,#ffd9b8)', 'linear-gradient(135deg,#7dd3fc,#c7f0ff 55%,#ffe8c2)'];
 const TAG_C = { 'Мода': '#b79cff', 'Тренд': '#6ee7c8', 'Стиль': '#ff7a9c', 'Уход': '#ffd166' };
 const THEMES = [
+  ['acid', 'Кислота', 'linear-gradient(160deg,#c6ff3d,#ff3dd6 50%,#5b1cff)'],
+  ['mango', 'Манго', 'linear-gradient(160deg,#ffd23d,#ff6a3d 50%,#c2185b)'],
+  ['candy', 'Конфета', 'linear-gradient(160deg,#ffc2e8,#ff5ec4 45%,#7b2ff7)'],
+  ['ocean', 'Океан', 'linear-gradient(160deg,#b8fff4,#2ee6ff 45%,#0a5cff)'],
   ['matcha', 'Матча', 'linear-gradient(160deg,#eef4d6,#7d9a68 45%,#141913)'],
   ['paper', 'Бумага', 'linear-gradient(160deg,#ffffff,#e6e9ee)'],
   ['sunset', 'Закат', 'linear-gradient(160deg,#ffc89a,#d9806a 40%,#2a1b2e)'],
@@ -1251,7 +1392,7 @@ const THEMES = [
   ['frost', 'Иней', 'linear-gradient(160deg,#7e95ac,#4e6276)'],
   ['ice', 'Лёд', 'linear-gradient(160deg,#0e1a2b,#080d14)']
 ];
-const THEME_BG = { matcha: '#141913', sunset: '#211915', neon: '#09080f', sakura: '#fbf0f1', frost: '#4e6276', ice: '#080d14', paper: '#eef0f3' };
+const THEME_BG = { matcha: '#141913', sunset: '#211915', neon: '#09080f', sakura: '#fbf0f1', frost: '#4e6276', ice: '#080d14', paper: '#eef0f3', acid: '#0d0a1a', mango: '#1a0d08', candy: '#150a20', ocean: '#04111c' };
 const LIGHT_ACCENT = { paper: '#0b0b0c', sakura: '#d94f7a' };
 const GOAL_AREAS = [['Учёба', 'Например: закрыть сессию без долгов'], ['Деньги', 'Например: первые 10 000 ₽ своими силами'], ['Спорт', 'Например: 15 подтягиваний'], ['Люди', 'Например: новый круг общения']];
 const MONTHS = ['янв', 'фев', 'мар', 'апр', 'мая', 'июн', 'июл', 'авг', 'сен', 'окт', 'ноя', 'дек'];
@@ -1288,6 +1429,7 @@ function applyTheme() {
   if (LIGHT_ACCENT[theme] && lum(accent) > 0.7) accent = LIGHT_ACCENT[theme];
   const r = document.documentElement;
   r.dataset.theme = theme;
+  r.toggleAttribute('data-vivid', VIVID.includes(theme));
   r.style.setProperty('--accent', accent);
   r.style.setProperty('--on-accent', lum(accent) > 0.6 ? '#06101c' : '#ffffff');
   try { tg.setHeaderColor(THEME_BG[theme]); tg.setBackgroundColor(THEME_BG[theme]); } catch (e) {}
@@ -1441,7 +1583,7 @@ function protoToday(a) {
 
 function branches() {
   return [
-    { n: 'Внешность', c: '#ffb07c', x: totalTasks() * 10 + (S.photos || []).length * 15 + protoXP() },
+    { n: 'Внешность', c: '#ffb07c', x: totalTasks() * 10 + (S.photos || []).length * 15 + protoXP() + workoutXP() },
     { n: 'Характер', c: '#b79cff', x: charCount('mind') * 15 + xpLessonsIn(MIND) * 25 + Object.keys(S.grat || {}).length * 10 + (S.sgoals || []).filter((g) => g && g.done).length * 100 },
     { n: 'Общение', c: '#6ee7c8', x: charCount('soc') * 15 + xpLessonsIn(SOCIAL) * 25 },
     { n: 'Разум', c: '#7dd3fc', x: pagesXP() + booksXP() + xpLessonsIn(LESSONS) * 25 + paidReads(S.articles, CAP.article).size * 5 + sumObj(S.focus) * 10 }
@@ -1501,7 +1643,7 @@ function afterRender(key) {
   lastScreen = key;
   const app = document.getElementById('app');
   app.classList.remove('enter'); void app.offsetWidth; app.classList.add('enter');
-  const els = [...app.querySelectorAll('.card,.tint,.mission,.lesson,.acard,.cc,.feature,.book,.outro,.sec,.badge')];
+  const els = [...app.querySelectorAll('.card,.tint,.mission,.lesson,.acard,.cc,.feature,.book,.outro,.sec,.badge,.excard,.banner')];
   let batch = 0, timer;
   const io = new IntersectionObserver((ents) => {
     ents.forEach((e) => {
@@ -1649,7 +1791,18 @@ function weekChallenges() {
 
 // ---------- ИИ-тренер ----------
 const coachName = () => S.coachName || 'Макс';
-const hard = () => S.coachTone === 'hard';
+// Режимы тренера: как он разговаривает в чате и подаёт разбор
+const MODES = {
+  soft: ['🧭', 'Тренер', 'поддерживает и ведёт по плану'],
+  friend: ['🤙', 'Друг', 'на равных, с юмором, по-пацански'],
+  motivator: ['⚡', 'Мотиватор', 'заряжает и толкает вперёд'],
+  hard: ['🔥', 'Жёсткий', 'без соплей, требует дисциплину'],
+  critic: ['🧐', 'Критик', 'ищет слабые места, честно и колко'],
+  mentor: ['🧘', 'Наставник', 'спокойно, мудро, про смысл']
+};
+const mode = () => MODES[S.coachTone] || MODES.soft;
+const hard = () => S.coachTone === 'hard' || S.coachTone === 'critic';
+const modePicker = () => `<div class="modes">${Object.entries(MODES).map(([k, [ic, n, d]]) => `<button class="${(S.coachTone || 'soft') === k ? 'on' : ''}" data-act="tone" data-v="${k}"><span class="mi">${ic}</span><b>${n}</b><small>${d}</small></button>`).join('')}</div>`;
 function shopSet(from, to) { let n = 0; S.plan.shopping.forEach((it) => { if (it.st === from) { it.st = to; n++; } }); return n; }
 
 function localReply(text) {
@@ -1710,10 +1863,10 @@ async function aiCall(action, payload, ms) {
     return r.ok ? j : { error: j.error || 'http_' + r.status };
   } catch (e) { return { error: 'network' }; } finally { clearTimeout(t); }
 }
-const aiErr = (e) => e === 'limit' ? 'Лимит разборов на сегодня исчерпан — попробуй завтра.' : e === 'not_telegram' ? 'Разбор работает только внутри Telegram.' : 'Нейронка не ответила — попробуй ещё раз позже.';
+const aiErr = (e) => e === 'limit' ? 'Лимит разборов на сегодня исчерпан — попробуй завтра.' : e === 'not_telegram' ? 'Разбор работает только внутри Telegram.' : 'Не получилось сделать разбор — попробуй ещё раз чуть позже.';
 const aiSummary = (a) => a ? (a.areas || []).map((x) => `${(PILLARS[x.key] || { name: x.key }).name} ${x.score}/10 — ${x.seen}`).join('; ') + (a.priorities && a.priorities.length ? '. Приоритеты: ' + a.priorities.join('; ') : '') : '';
 function aiCard(a) {
-  return `<div class="card"><div class="disp" style="font-size:22px;margin-bottom:8px">ИИ-разбор фото</div>
+  return `<div class="card"><div class="disp" style="font-size:22px;margin-bottom:8px">Разбор по фото</div>
     ${a.strengths.length ? `<div class="mono lbl">Сильные стороны</div>${a.strengths.map((s) => `<div style="margin:4px 0;font-size:14px">+ ${esc(s)}</div>`).join('')}` : ''}
     ${a.areas.map((x) => { const p = PILLARS[x.key] || { name: x.key, c: 'var(--accent)' }; return `<div style="margin-top:12px"><div class="row between"><b>${p.name}</b><span class="mono">${x.score}/10 → ${x.potential}/10</span></div>
       <div style="height:6px;border-radius:6px;background:var(--card-b);margin-top:6px;overflow:hidden;position:relative"><div style="position:absolute;inset:0 auto 0 0;width:${x.potential * 10}%;background:${p.c};opacity:.3"></div><div style="position:absolute;inset:0 auto 0 0;width:${x.score * 10}%;background:${p.c}"></div></div>
@@ -1761,7 +1914,7 @@ function scrollChat() { const go = () => window.scrollTo({ top: document.documen
 // ---------- онбординг ----------
 const freshOb = () => ({ step: 0, adult: false, consent: false, goals: [], issues: [], budget: 1500, photo: null, result: null });
 let ob = freshOb();
-let tab = 'home', jtab = 'basics', typing = false, celebrate = false, reader = null, aiBusy = false;
+let tab = 'home', jtab = 'basics', typing = false, celebrate = false, reader = null, aiBusy = false, modeOpen = false;
 
 function analyze() {
   const score = {};
@@ -1788,7 +1941,7 @@ function acceptPlan() {
   addEvent('plan', r.shopping.length ? `Получили план на 90 дней и список средств на ${r.sum} ₽` : 'Получили план на 90 дней — без покупок');
   if (ob.photo) { S.photos.push({ date: today(), data: ob.photo }); addEvent('photo', 'Стартовое фото'); }
   if (ob.ai) S.ai = { ...ob.ai, date: today() };
-  S.chat.push({ from: 'ai', text: `Привет${tgUser && tgUser.first_name ? ', ' + tgUser.first_name : ''}! Я ${coachName()}, твой тренер.\n\nФокус: ${r.focus.map((p) => PILLARS[p].name.toLowerCase()).join(', ')}. Каждый день — 3 миссии на внешность и одна на характер.\n\nЗа всё начисляется опыт, а с уровнями открываются новые функции: дневник благодарности, челленджи, темы, фокус-таймер и другое. Спроси «что откроется», «мой путь» или «что сегодня».` });
+  S.chat.push({ from: 'ai', text: `Привет${tgUser && tgUser.first_name ? ', ' + tgUser.first_name : ''}! Я ${coachName()}, твой тренер.\n\nФокус: ${r.focus.map((p) => PILLARS[p].name.toLowerCase()).join(', ')}. Каждый день — 3 миссии на внешность и одна на характер.\n\nЗа всё начисляется опыт, а с уровнями открываются новые функции: дневник благодарности, челленджи, фокус-таймер и другое. Темы оформления — в профиле, все открыты сразу. Спроси «что откроется», «мой путь» или «что сегодня».` });
   tab = 'home'; haptic('success'); confetti(); save(); render(); window.scrollTo(0, 0);
   track('onboarded', { photo: !!ob.photo });
 }
@@ -1805,7 +1958,7 @@ function renderOnboarding() {
       <div class="in" style="min-height:520px">
         <div class="row between"><div class="logo" style="color:inherit">${IC.logo}<b>Апгрейд<span class="tm">™</span></b></div><span class="mono">[ SEASON 01 ]</span></div>
         <div class="disp huge" style="font-size:76px;margin-top:40px;position:relative;z-index:2">Стань<br>лучшей<br>версией<span class="tm">™</span></div>
-        <div class="bot row between" style="align-items:flex-end;position:relative;z-index:2"><div><div class="mono">Внешность · характер · общение · разум</div><div class="mono" style="margin-top:6px">20 уровней · награды · ИИ-тренер</div></div>${barcode()}</div>
+        <div class="bot row between" style="align-items:flex-end;position:relative;z-index:2"><div><div class="mono">Внешность · характер · общение · разум</div><div class="mono" style="margin-top:6px">20 уровней · награды · личный тренер</div></div>${barcode()}</div>
       </div>
     </div>
     <div class="tiles" style="margin-bottom:14px">
@@ -1816,7 +1969,7 @@ function renderOnboarding() {
     <div class="mono">[ 01 / 05 ]</div><div class="disp h1" style="margin:8px 0 10px">Правила</div>
     <p class="hint" style="margin:0 0 18px">Прокачиваем только то, что можно изменить: кожу, волосы, тело, осанку, стиль, режим — и характер. Форму лица и рост не оцениваем. Никогда.</p>
     ${opt('ob-adult', ob.adult, 'Мне есть 18 лет')}
-    ${opt('ob-consent', ob.consent, AI_ENDPOINT ? 'Согласен на обработку фото: для разбора оно отправляется нейросети в Yandex Cloud (РФ) и не сохраняется на сервере. Сами фото хранятся на моём телефоне' : 'Согласен на обработку фото. В демо фото хранятся только на моём телефоне')}
+    ${opt('ob-consent', ob.consent, AI_ENDPOINT ? 'Согласен на обработку фото: для разбора оно отправляется на сервер в Yandex Cloud (РФ) и там не сохраняется. Сами фото хранятся на моём телефоне' : 'Согласен на обработку фото. В демо фото хранятся только на моём телефоне')}
     <div class="banner" style="margin-top:12px">Это не медицинский сервис. При проблемах с кожей — к дерматологу.</div>
     <button class="btn" data-act="next" ${ob.adult && ob.consent ? '' : 'disabled'}>Дальше</button>`;
   if (s === 2) return `${stepsBar(2)}
@@ -1834,6 +1987,7 @@ function renderOnboarding() {
   if (s === 4) return `${stepsBar(4)}
     <div class="mono">[ 04 / 05 ]</div><div class="disp h1" style="margin:8px 0 10px">Точка «до»</div>
     <p class="hint" style="margin:0 0 16px">Дневной свет, лицо прямо, без фильтров. Камера на 1 метр и зум ×2.</p>
+    ${ob.photoErr ? `<div class="banner" style="margin-bottom:14px">⚠️ ${esc(ob.photoErr)}</div>` : ''}
     <label class="photo-drop" style="margin-bottom:14px">
       ${ob.photo ? `<img src="${ob.photo}" alt="">` : `<div class="oval"></div><div style="position:relative">${IC.cam}<div style="font-weight:800;margin-top:6px">Загрузить фото</div><div class="hint">или сделать селфи</div></div>`}
       <input type="file" accept="image/*" capture="user" hidden data-change="ob-photo">
@@ -1842,12 +1996,12 @@ function renderOnboarding() {
   if (s === 5) return `${stepsBar(5)}
     <div class="spin"></div>
     <div style="max-width:280px;margin:0 auto">${['Смотрю на фото', 'Учитываю цели', 'Собираю миссии', 'Считаю бюджет'].map((t, i) => `<div class="check-line" id="cl${i}">[✓] ${t}</div>`).join('')}</div>
-    ${AI_ENDPOINT && ob.photo ? '<p class="hint" style="text-align:center;margin-top:18px">Нейронка разбирает фото — это может занять до минуты</p>' : ''}`;
+    ${AI_ENDPOINT && ob.photo ? '<p class="hint" style="text-align:center;margin-top:18px">Анализируем фото — это может занять до минуты</p>' : ''}`;
   if (s === 6) {
     const r = ob.result;
     return `${stepsBar(5)}
       <div class="mono">[ 05 / 05 ]</div><div class="disp h1" style="margin:8px 0 10px">План готов</div>
-      <p class="hint" style="margin:0 0 16px">Фокус на первые 90 дней.${AI_ENDPOINT ? '' : ' Демо: разбор строится по анкете, ИИ-разбор фото подключим на сервере.'}</p>
+      <p class="hint" style="margin:0 0 16px">Фокус на первые 90 дней.${AI_ENDPOINT ? '' : ' Демо: разбор строится по анкете, разбор по фото подключим на сервере.'}</p>
       ${ob.photo ? `<div class="card row"><img src="${ob.photo}" style="width:60px;height:78px;object-fit:cover;border-radius:12px"><div><b>Точка «до» сохранена</b><div class="hint">Через 30 дней сравним</div></div></div>` : ''}
       ${ob.ai ? aiCard(ob.ai) : ''}${ob.aiErr ? `<div class="banner">${esc(ob.aiErr)}</div>` : ''}
       ${r.focus.map((p, i) => `<div class="card"><div class="row between" style="margin-bottom:10px"><div class="row"><span class="tag" style="color:${PILLARS[p].c};border-color:${PILLARS[p].c}55">${PILLARS[p].code}</span><b class="disp" style="font-size:22px">${PILLARS[p].name}</b></div><span class="mono" style="color:${i < 2 ? 'var(--accent)' : 'var(--hint)'}">${i < 2 ? 'Главный фокус' : 'Поддержка'}</span></div>${r.tips[p].filter(Boolean).map((t) => `<div style="margin:5px 0;font-size:14px">— ${t}</div>`).join('')}</div>`).join('')}
@@ -1912,7 +2066,7 @@ function renderHome() {
           <div class="row between" style="align-items:flex-end;margin-bottom:14px">
             <div class="specs">
               <div><div class="k">Фокус</div><div class="v">${S.plan.focus.map((p) => PILLARS[p].code).join(' ')}</div></div>
-              <div><div class="k">Режим</div><div class="v">${hard() ? 'Hard' : 'Soft'}</div></div>
+              <div><div class="k">Режим</div><div class="v">${mode()[1]}</div></div>
             </div>
             ${octa('to-missions', 'К миссиям')}
           </div>
@@ -1931,6 +2085,7 @@ function renderHome() {
     <button class="mission charm ${cmDone ? 'done' : ''} ${justDone === 'char' ? 'just' : ''}" data-act="char"><span class="box">${cmDone ? IC.check : ''}</span><span style="flex:1"><div class="t">${cm[1]}</div><div class="row" style="gap:6px;margin-top:5px"><span class="tag" style="color:#b79cff;border-color:#b79cff55">${cm[0] === 'soc' ? 'SOCIAL' : 'MIND'}</span><span class="hint" style="font-size:12px">Миссия ${cm[0] === 'soc' ? 'общения' : 'характера'}</span></div></span><span class="xp">+15 XP</span></button>
     ${book ? `<button class="mission bonus ${pagesToday >= 10 ? 'done' : ''} ${justDone === 'pages' ? 'just' : ''}" data-act="pages"><span class="box">${pagesToday >= 10 ? IC.check : ''}</span><span style="flex:1"><div class="t" style="${pagesToday >= 10 ? 'text-decoration:none;color:var(--text)' : ''}">10 страниц «${book.t}»</div><div class="row" style="gap:6px;margin-top:5px"><span class="tag" style="color:#7dd3fc;border-color:#7dd3fc55">READ</span><span class="hint" style="font-size:12px">сегодня ${pagesToday} стр. · тапни +10</span></div></span><span class="xp">+5 XP</span></button>` : ''}
     ${planCard()}
+    ${woHomeCard()}
     ${nu ? `<div class="card teaser"><div class="row"><span class="lock">${IC.lock}</span><span class="mono">Следующая награда · ур. ${nu.lvl}</span></div><div class="row" style="margin-top:10px"><span style="font-size:28px">${nu.ic}</span><div style="flex:1"><b style="font-size:16px">${nu.name}</b><div class="hint">${nu.d}</div></div></div><div class="bar2"><i style="width:${Math.min(100, (r.x - r.cur) / (LV(nu.lvl) - r.cur) * 100)}%"></i></div><div class="row between" style="margin-top:6px"><span class="mono">${r.x} XP</span><span class="mono">ещё ${LV(nu.lvl) - r.x} XP</span></div></div>` : ''}
     ${featureCards()}
     ${(() => { const dr = dropNow(); return `<div class="sec"><span class="disp">Дроп</span><span class="mono">${dr.slot} · новый через ${dr.left}</span></div>
@@ -1951,6 +2106,94 @@ function renderHome() {
   return html;
 }
 // ---------- мой план ----------
+// ---------- тренировки: карточки и проигрыватель ----------
+function woHomeCard() {
+  const my = myWorkout(), id = my ? 'my' : 'posture', w = my || WORKOUTS.posture, done = woDone(today()).includes(id);
+  return `<button class="card wocard" data-act="wo-start" data-id="${id}" style="--c:${w.c}">
+    <div class="row between"><span class="mono">[ тренировка дня ]</span><span class="mono">${done ? 'сделано ✓' : '+20 XP'}</span></div>
+    <div class="row" style="margin-top:8px;align-items:flex-end"><div style="flex:1"><div class="disp" style="font-size:30px">${w.t}</div>
+      <div class="hint" style="margin-top:4px">${w.items.length} ${plural(w.items.length, 'упражнение', 'упражнения', 'упражнений')} · ~${woMin(w)} мин · с таймером</div></div>
+      <div class="woprev">${[...new Set(w.items.map((it) => it[0]))].slice(0, 3).map((x) => `<span>${EX_ANIM[x]()}</span>`).join('')}</div></div>
+    <div class="wogo">${done ? 'Ещё раз' : 'Начать'} ▶</div>
+  </button>`;
+}
+function woCards() {
+  const my = myWorkout(), dn = woDone(today());
+  const small = (id, w) => `<button class="wotile" data-act="wo-start" data-id="${id}" style="--c:${w.c}"><span class="ic">${w.ic}</span><b>${w.t}</b><small>~${woMin(w)} мин${dn.includes(id) ? ' · ✓' : ''}</small></button>`;
+  return `<div class="sec"><span class="disp">Тренировки</span><span class="chipline">[ с таймером ]</span></div>
+    ${my ? woHomeCard() : ''}
+    <div class="wogrid">${Object.entries(WORKOUTS).map(([id, w]) => small(id, w)).join('')}</div>`;
+}
+let wo = null;
+function woStart(id) {
+  const w = getWorkout(id);
+  if (!w) return;
+  woStop();
+  wo = { id, w, i: 0, phase: 'ready', left: w.items[0][1], paused: false, tid: null };
+  modal = { kind: 'wo' }; haptic('medium'); render();
+}
+function woStop() { if (wo) clearInterval(wo.tid); wo = null; }
+function woRun() { clearInterval(wo.tid); wo.paused = false; wo.tid = setInterval(woTick, 1000); }
+function woTick() {
+  if (!wo || !modal || modal.kind !== 'wo') return woStop();
+  if (wo.paused) return;
+  wo.left--;
+  if (wo.left > 0) { if (wo.left <= 3) haptic('light'); woPaint(); return; }
+  woNext();
+}
+function woNext() {
+  const n = wo.w.items.length;
+  if (wo.phase === 'work') {
+    if (wo.i >= n - 1) return woFinish();
+    wo.phase = 'rest'; wo.left = REST;
+  } else { if (wo.phase === 'rest') wo.i++; wo.phase = 'work'; wo.left = wo.w.items[wo.i][1]; if (!wo.tid || wo.paused) woRun(); }
+  haptic('medium'); render();
+}
+function woPrev() {
+  if (wo.phase === 'work' && wo.i > 0 && wo.left >= wo.w.items[wo.i][1] - 2) wo.i--;
+  wo.phase = 'work'; wo.left = wo.w.items[wo.i][1]; haptic('light'); render();
+}
+function woFinish() {
+  clearInterval(wo.tid);
+  const d = today(), first = !woDone(d).includes(wo.id), paid = first && woDone(d).length < 2;
+  if (first) withRankCheck(() => { S.wdone = S.wdone || {}; (S.wdone[d] = S.wdone[d] || []).push(wo.id); addEvent('workout', `Тренировка «${wo.w.t}»`); });
+  wo.phase = 'done'; wo.paid = paid; save();
+  haptic('success'); confetti(); if (paid) floatXP('+20 XP'); render();
+}
+const mmss = (s) => Math.floor(s / 60) + ':' + z(s % 60);
+const WO_C = 2 * Math.PI * 54;
+function woPaint() {
+  const t = document.getElementById('woT'), r = document.getElementById('woRing');
+  if (!t || !wo) return;
+  const total = wo.phase === 'rest' ? REST : wo.w.items[wo.i][1];
+  t.textContent = mmss(wo.left);
+  r.style.strokeDashoffset = WO_C * (1 - wo.left / total);
+}
+function renderWorkout() {
+  const w = wo.w, n = w.items.length;
+  if (wo.phase === 'done') return `<div class="modal"><div class="sheet wos">
+    <div style="font-size:64px;margin-top:6px">🔥</div>
+    <div class="disp" style="font-size:38px;margin:6px 0">Тренировка закрыта</div>
+    <div class="hint">${w.t} · ${n} ${plural(n, 'упражнение', 'упражнения', 'упражнений')} · ~${woMin(w)} мин</div>
+    <div class="disp" style="font-size:28px;color:var(--accent);margin:18px 0">${wo.paid ? '+20 XP' : 'XP за тренировки сегодня уже получен'}</div>
+    <button class="btn" data-act="wo-close">Готово</button></div></div>`;
+  const ready = wo.phase === 'ready', rest = wo.phase === 'rest', it = w.items[rest ? wo.i + 1 : wo.i], ex = EXERCISES[it[0]];
+  const total = rest ? REST : it[1], run = wo.tid && !wo.paused && !ready;
+  return `<div class="modal"><div class="sheet exs wos">
+    <div class="row between"><span class="mono">${w.ic} ${w.t} · ${Math.min(wo.i + (rest ? 2 : 1), n)}/${n}</span><button class="wox" data-act="wo-close" aria-label="Закрыть">✕</button></div>
+    <div class="wobar">${w.items.map((_, k) => `<i class="${k < wo.i || (rest && k === wo.i) ? 'on' : k === wo.i && !rest ? 'cur' : ''}"></i>`).join('')}</div>
+    ${ready ? `<div class="why" style="margin-top:12px">${w.why}</div>` : ''}
+    <div class="mono" style="color:var(--accent);margin-top:10px">${ready ? 'Первое упражнение' : rest ? `Отдых · дальше` : 'Делаем'}</div>
+    <div class="pv ${rest ? 'dim' : ''}">${EX_ANIM[it[0]]()}</div>
+    <div class="disp" style="font-size:30px;margin:2px 0 4px">${ex.t}</div>
+    <div class="hint" style="font-size:14px">${it[2] || ex.dose}</div>
+    ${ready ? `<div class="card" style="margin:14px 0 12px;padding:10px 14px">${w.items.map((x, k) => `<div class="item" style="padding:6px 0"><span class="mono" style="width:22px">${k + 1}</span><div style="flex:1;font-size:14px">${EXERCISES[x[0]].t}</div><span class="mono">${mmss(x[1])}</span></div>`).join('')}</div>
+      <button class="btn" data-act="wo-go">Начать · ~${woMin(w)} мин ▶</button>`
+    : `<div class="wotimer"><svg viewBox="0 0 120 120"><circle cx="60" cy="60" r="54" class="tr"/><circle id="woRing" cx="60" cy="60" r="54" class="pr ${rest ? 'rest' : ''}" style="stroke-dasharray:${WO_C};stroke-dashoffset:${WO_C * (1 - wo.left / total)}"/></svg><b id="woT">${mmss(wo.left)}</b></div>
+      <div class="woctl"><button data-act="wo-prev" aria-label="Назад">⏮</button><button class="main" data-act="wo-pause">${run ? '❚❚' : '▶'}</button><button data-act="wo-skip" aria-label="Дальше">⏭</button></div>`}
+    <details><summary>Что даёт и как делать</summary><p style="font-size:14px;line-height:1.5">${ex.gives}</p><ol>${ex.how.map((x) => `<li>${x}</li>`).join('')}</ol><h4>Частые ошибки</h4><ul>${ex.mistakes.map((x) => `<li>${x}</li>`).join('')}</ul>${ex.warn ? `<div class="banner">⚠️ ${ex.warn}</div>` : ''}</details>
+  </div></div>`;
+}
 function planCard() {
   const act = (S.protos && S.protos.active) || [];
   if (!act.length) return `<button class="card row" style="width:100%;text-align:left" data-act="go" data-tab="plan"><span style="font-size:26px">🧭</span><div style="flex:1"><b>Мой план</b><div class="hint">Выбери протокол под свою проблему</div></div><span class="arrow">${IC.arrow}</span></button>`;
@@ -1983,10 +2226,11 @@ function renderPlan() {
   const exIds = [...new Set(act.flatMap((a) => PROTOCOLS[a.id].steps.filter((s) => s.x).map((s) => s.x)))];
   const status = (id) => act.some((a) => a.id === id) ? 'активен' : P.queue.includes(id) ? 'в очереди' : P.done.some((d) => d.id === id) ? 'пройден ✓' : '';
   return `${topbar('Мой план')}
-    <div class="banner"><span class="mono" style="color:var(--accent)">[ персональный план ]</span><div style="margin-top:4px">${iss.length ? `Собран по твоей анкете: ${iss.join(', ').toLowerCase()}.` : 'Ты не отметил проблем в анкете — выбери протокол ниже.'} Одновременно — не больше ${MAX_ACTIVE} протоколов, чтобы не распыляться.${AI_ENDPOINT ? '' : ' Когда подключим ИИ, он будет подбирать протоколы по фото и подстраивать под тебя.'}</div></div>
-    ${AI_ENDPOINT ? `<div class="card"><div class="row between"><b>ИИ-разбор по фото</b>${S.ai && !aiBusy ? '<button class="btn sm ghost" data-act="ai-open" style="height:32px">Открыть</button>' : ''}</div>
-      <div class="hint" style="margin:4px 0 10px">${aiBusy ? 'Нейронка смотрит фото — это может занять до минуты…' : S.ai ? `Последний — ${human(S.ai.date)}. Новый разбор добавит в план то, что видно на фото.` : 'Нейронка посмотрит фото и добавит в план то, что реально видно.'}</div>
+    <div class="banner"><span class="mono" style="color:var(--accent)">[ персональный план ]</span><div style="margin-top:4px">${iss.length ? `Собран по твоей анкете: ${iss.join(', ').toLowerCase()}.` : 'Ты не отметил проблем в анкете — выбери протокол ниже.'} Одновременно — не больше ${MAX_ACTIVE} протоколов, чтобы не распыляться.${AI_ENDPOINT ? '' : ' Скоро протоколы будут подбираться по фото и подстраиваться под тебя.'}</div></div>
+    ${AI_ENDPOINT ? `<div class="card"><div class="row between"><b>Разбор по фото</b>${S.ai && !aiBusy ? '<button class="btn sm ghost" data-act="ai-open" style="height:32px">Открыть</button>' : ''}</div>
+      <div class="hint" style="margin:4px 0 10px">${aiBusy ? 'Анализируем фото — это может занять до минуты…' : S.ai ? `Последний — ${human(S.ai.date)}. Новый разбор добавит в план то, что видно на фото.` : 'Разберём фото и добавим в план то, что реально видно.'}</div>
       ${aiBusy ? '<div class="spin" style="margin:6px auto"></div>' : `<label class="btn sm" style="cursor:pointer">${S.ai ? 'Новый разбор' : 'Сделать разбор'}<input type="file" accept="image/*" capture="user" hidden data-change="ai-photo"></label>`}</div>` : ''}
+    ${woCards()}
     ${act.length ? act.map(protoCard).join('') : '<div class="card"><b>Активных протоколов нет</b><div class="hint" style="margin-top:4px">Выбери один из списка ниже.</div></div>'}
     ${exIds.length ? `<div class="sec"><span class="disp">Мои упражнения</span><span class="chipline">[ ${exIds.length} ]</span></div>
       <div class="exgrid">${exIds.map((id) => `<button class="excard" data-act="ex-open" data-x="${id}"><div class="pv">${EX_ANIM[id]()}</div><b>${EXERCISES[id].t}</b><small>${EXERCISES[id].dose}</small></button>`).join('')}</div>` : ''}
@@ -2044,7 +2288,8 @@ function renderCoach() {
   const total = S.chat.length;
   return `
     ${topbar('Тренер')}
-    <div class="coach-head"><div class="ava">${esc(coachName().slice(0, 1))}</div><div style="flex:1"><b style="font-size:17px">${esc(coachName())}</b><div class="mono" style="margin-top:2px"><span style="color:var(--ok)">●</span> онлайн · ${hard() ? 'жёсткий режим' : 'мягкий режим'}</div></div></div>
+    <div class="coach-head"><div class="ava">${esc(coachName().slice(0, 1))}</div><div style="flex:1"><b style="font-size:17px">${esc(coachName())}</b><div class="mono" style="margin-top:2px"><span style="color:var(--ok)">●</span> онлайн · ${mode()[0]} ${mode()[1].toLowerCase()}</div></div><button class="btn sm ghost" data-act="mode-toggle" style="height:32px">Режим</button></div>
+    ${modeOpen ? modePicker() : ''}
     <div class="chat">
       ${S.chat.map((m, i) => `<div class="msg ${m.from} ${newMsgs && i === total - 1 ? 'new' : ''}">${esc(m.text)}${m.card === 'journey' ? card() : ''}</div>`).join('')}
       ${typing ? '<div class="msg ai typing new"><span></span><span></span><span></span></div>' : ''}
@@ -2203,11 +2448,13 @@ function renderModal() {
       <button class="btn" data-act="modal-close">Понятно</button>
     </div></div>`;
   }
+  if (modal.kind === 'wo' && wo) return renderWorkout();
   if (modal.kind === 'ai' && S.ai) {
     const fr = (modal.fresh || []).map((id) => PROTOCOLS[id].t);
     return `<div class="modal"><div class="sheet exs" style="text-align:left">
       ${aiCard(S.ai)}
       ${fr.length ? `<div class="banner">Добавил в план: ${fr.join(', ')}.</div>` : ''}
+      ${S.ai.exercises && S.ai.exercises.length ? '<div class="banner">Тренировка дня собрана под этот разбор — она на главной и в «Моём плане».</div>' : ''}
       <button class="btn" data-act="modal-close">Понятно</button>
     </div></div>`;
   }
@@ -2328,8 +2575,8 @@ function renderMe() {
     <div class="card">
       <span class="mono">Тренер</span>
       <input class="field" style="margin-top:10px" value="${esc(coachName())}" maxlength="20" data-input="coach-name" placeholder="Имя тренера">
-      <div class="mono lbl">Характер</div>
-      <div class="seg" style="margin:0">${[['soft', 'Мягкий'], ['hard', 'Жёсткий']].map(([v, l]) => `<button class="${(S.coachTone || 'soft') === v ? 'on' : ''}" data-act="tone" data-v="${v}">${l}</button>`).join('')}</div>
+      <div class="mono lbl">Режим общения</div>
+      ${modePicker()}
     </div>
     ${DEV ? `<div class="card">
       <span class="mono">Для теста</span>
@@ -2379,7 +2626,7 @@ function syncBackButton() {
 }
 try {
   tg && tg.BackButton && tg.BackButton.onClick(() => {
-    if (modal) { if (modal.kind === 'focus') { clearInterval(focusT.id); focusT = { left: 1500, running: false, id: null }; } modal = null; }
+    if (modal) { if (modal.kind === 'focus') { clearInterval(focusT.id); focusT = { left: 1500, running: false, id: null }; } if (modal.kind === 'wo') woStop(); modal = null; }
     else if (reader) reader = null;
     else tab = 'home';
     haptic('light'); render(); window.scrollTo(0, 0);
@@ -2423,8 +2670,13 @@ const ACT = {
         ob.ai = a;
         a.issues.forEach((x) => { if (!ob.issues.includes(x)) ob.issues.push(x); });
         ob.result = analyze();
+      } else if (a && !a.error) {
+        // Фото не подходит (нет человека, темно) — возвращаем на шаг с фото, а не делаем вид, что разобрали
+        ob.photo = null; ob.step = 4;
+        ob.photoErr = !a.person ? 'На фото не видно человека. Нужно селфи или фото в полный рост — тогда разбор будет про тебя.' : `${a.quality_note || 'Фото тёмное или размытое.'} Попробуй переснять.`;
+        haptic('heavy'); render(); window.scrollTo(0, 0); return;
       } else if (a) {
-        ob.aiErr = a.error ? aiErr(a.error) + ' План пока по анкете.' : !a.person ? 'На фото не видно человека — план пока по анкете. Разбор можно сделать позже в «Моём плане».' : `${a.quality_note || 'Фото тёмное или размытое.'} План пока по анкете — переснять можно позже в «Моём плане».`;
+        ob.aiErr = aiErr(a.error) + ' План пока по анкете — разбор по фото можно сделать позже в «Моём плане».';
       }
       ob.step = 6; haptic('success'); render(); window.scrollTo(0, 0);
     });
@@ -2434,6 +2686,12 @@ const ACT = {
   pstep(el) { toggleStep(el.dataset.k); },
   'ex-open'(el) { modal = { kind: 'ex', id: el.dataset.x }; haptic('light'); render(); },
   'ai-open'() { modal = { kind: 'ai' }; haptic('light'); render(); },
+  'wo-start'(el) { woStart(el.dataset.id); },
+  'wo-go'() { wo.phase = 'work'; wo.left = wo.w.items[0][1]; woRun(); haptic('medium'); render(); },
+  'wo-pause'() { if (!wo.tid || wo.paused) woRun(); else wo.paused = true; haptic('light'); render(); },
+  'wo-skip'() { woNext(); },
+  'wo-prev'() { woPrev(); },
+  'wo-close'() { woStop(); modal = null; render(); },
   'proto-finish'(el) {
     const id = el.dataset.id, P = S.protos;
     withRankCheck(() => {
@@ -2559,7 +2817,8 @@ const ACT = {
     S.theme = k; haptic('light'); save(); lastScreen = ''; render();
   },
   accent(el) { S.accent = el.dataset.v; haptic('light'); save(); render(); },
-  tone(el) { S.coachTone = el.dataset.v; save(); render(); toast(S.coachTone === 'hard' ? 'Тренер стал строже' : 'Тренер стал мягче'); },
+  tone(el) { S.coachTone = el.dataset.v; modeOpen = false; haptic('light'); save(); render(); toast(`Режим: ${mode()[0]} ${mode()[1]}`); },
+  'mode-toggle'() { modeOpen = !modeOpen; haptic('light'); render(); },
   'add-xp'() { withRankCheck(() => { S.bonus = (S.bonus || 0) + 300; }); floatXP('+300 XP'); save(); render(); },
   'skip-day'() { S.dayOffset = (S.dayOffset || 0) + 1; save(); render(); toast('Теперь день ' + dayNum(today())); },
   reset() {
@@ -2580,7 +2839,7 @@ document.addEventListener('change', async (e) => {
   if (!kind || !f) return;
   try {
     const data = await readPhoto(f);
-    if (kind === 'ob-photo') { ob.photo = data; render(); }
+    if (kind === 'ob-photo') { ob.photo = data; ob.photoErr = null; render(); }
     if (kind === 'ai-photo') {
       if (aiBusy) return;
       aiBusy = true; render();
