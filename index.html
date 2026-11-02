@@ -449,10 +449,113 @@ const DEV = /[?&]dev=1/.test(location.search);
 const haptic = (type) => { try { if (type === 'success') tg.HapticFeedback.notificationOccurred('success'); else tg.HapticFeedback.impactOccurred(type || 'light'); } catch (e) {} };
 const reduceMotion = (() => { try { return matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) { return false; } })();
 
+// Яндекс Метрика: номер счётчика с metrika.yandex.ru. 0 — статистика выключена.
+// По ссылке с ?dev=1 статистика не пишется, чтобы твои тесты не портили цифры.
+const YM_ID = 114017851;
+if (YM_ID && !DEV) {
+  (function (m, e, t, r, i, k, a) { m[i] = m[i] || function () { (m[i].a = m[i].a || []).push(arguments); }; m[i].l = 1 * new Date(); k = e.createElement(t); a = e.getElementsByTagName(t)[0]; k.async = 1; k.src = r; a.parentNode.insertBefore(k, a); })(window, document, 'script', 'https://mc.yandex.ru/metrika/tag.js', 'ym');
+  // Вебвизор выключен: он записывал бы экран вместе с фото
+  ym(YM_ID, 'init', { clickmap: false, trackLinks: false, accurateTrackBounce: true, webvisor: false });
+  // ID из Telegram — чтобы один и тот же человек считался одним, даже если телефон почистил память
+  if (tgUser && tgUser.id) ym(YM_ID, 'userParams', { UserID: String(tgUser.id) });
+}
+const track = (goal, params) => { try { if (YM_ID && !DEV) ym(YM_ID, 'reachGoal', goal, params); } catch (e) {} };
+
+// ---------- хранилище ----------
+// Прогресс: localStorage (быстро) + Telegram CloudStorage (переживает чистку памяти и смену телефона).
+// Фото: IndexedDB — там места в разы больше, и тяжёлые картинки не мешают сохранять прогресс.
 const KEY = 'upgrade_v3';
 let S = load();
 function load() { try { return JSON.parse(localStorage.getItem(KEY)) || {}; } catch (e) { return {}; } }
-function save() { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) { toast('Память заполнена — удали старые фото'); } }
+
+const photoDB = (() => {
+  let dbp = null;
+  const open = () => dbp || (dbp = new Promise((res, rej) => {
+    const r = indexedDB.open('mogg_photos', 1);
+    r.onupgradeneeded = () => r.result.createObjectStore('p');
+    r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error);
+  }));
+  const tx = (mode, fn) => open().then((db) => new Promise((res, rej) => {
+    const t = db.transaction('p', mode), r = fn(t.objectStore('p'));
+    t.oncomplete = () => res(r.result); t.onerror = () => rej(t.error);
+  }));
+  return {
+    put: (id, data) => tx('readwrite', (s) => s.put(data, id)),
+    get: (id) => tx('readonly', (s) => s.get(id)),
+    clear: () => tx('readwrite', (s) => s.clear())
+  };
+})();
+// Фото, которые точно лежат в IndexedDB: в localStorage для них храним только id и дату
+const storedPhotos = new Set((S.photos || []).filter((p) => p.id && !p.data).map((p) => p.id));
+const newPhotoId = () => 'p' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+const leanPhotos = (all) => (S.photos || []).map((p) => (all || storedPhotos.has(p.id) ? { id: p.id, date: p.date } : p));
+
+function persistLocal() {
+  try { localStorage.setItem(KEY, JSON.stringify({ ...S, photos: leanPhotos() })); }
+  catch (e) {
+    // Места нет: сохраняем прогресс хотя бы без картинок, чтобы не потерять XP и миссии
+    try { localStorage.setItem(KEY, JSON.stringify({ ...S, photos: leanPhotos(true) })); } catch (e2) {}
+    toast('Память телефона заполнена — часть фото может не сохраниться');
+  }
+}
+function save() {
+  S._ts = Date.now();
+  (S.photos || []).forEach((p) => {
+    if (!p.id) p.id = newPhotoId();
+    if (p.data && !storedPhotos.has(p.id)) {
+      photoDB.put(p.id, p.data).then(() => { storedPhotos.add(p.id); persistLocal(); }).catch(() => {});
+    }
+  });
+  persistLocal();
+  cloud.schedule();
+}
+// Подтянуть картинки из IndexedDB после запуска
+function hydratePhotos() {
+  const miss = (S.photos || []).filter((p) => p.id && !p.data);
+  if (!miss.length) return;
+  Promise.all(miss.map((p) => photoDB.get(p.id).then((d) => { if (d) { p.data = d; storedPhotos.add(p.id); } }).catch(() => {}))).then(() => render());
+}
+
+// Облако Telegram: до 1024 ключей по 4096 символов. Режем прогресс на куски, фото туда не кладём.
+const cloud = (() => {
+  const cs = (() => { try { return tg && tg.isVersionAtLeast && tg.isVersionAtLeast('6.9') && tg.CloudStorage ? tg.CloudStorage : null; } catch (e) { return null; } })();
+  const CH = 4000;
+  const call = (m, ...a) => new Promise((res, rej) => { try { cs[m](...a, (err, v) => (err ? rej(err) : res(v))); } catch (e) { rej(e); } });
+  let timer = null, busy = false, again = false, lastN = 0;
+  async function push() {
+    if (busy) { again = true; return; }
+    busy = true;
+    try {
+      const str = JSON.stringify({ ...S, photos: leanPhotos(true) });
+      const parts = [];
+      for (let i = 0; i < str.length; i += CH) parts.push(str.slice(i, i + CH));
+      await Promise.all(parts.map((p, i) => call('setItem', 'c' + i, p)));
+      await call('setItem', 'm', JSON.stringify({ n: parts.length, ts: S._ts || 0 }));
+      // Хвост от прошлой, более длинной версии больше не нужен
+      if (lastN > parts.length) await call('removeItems', Array.from({ length: lastN - parts.length }, (_, i) => 'c' + (parts.length + i)));
+      lastN = parts.length;
+    } catch (e) {}
+    busy = false;
+    if (again) { again = false; push(); }
+  }
+  return {
+    ok: !!cs,
+    schedule() { if (!cs) return; clearTimeout(timer); timer = setTimeout(push, 1500); },
+    flush() { if (!cs || !timer) return; clearTimeout(timer); timer = null; push(); },
+    async pull() {
+      if (!cs) return null;
+      const meta = JSON.parse((await call('getItem', 'm')) || 'null');
+      if (!meta || !meta.n) return null;
+      lastN = meta.n;
+      const keys = Array.from({ length: meta.n }, (_, i) => 'c' + i);
+      const vals = await call('getItems', keys);
+      const data = JSON.parse(keys.map((k) => vals[k] || '').join(''));
+      return data && data._ts === meta.ts ? data : null;
+    }
+  };
+})();
+// Приложение свернули или закрыли — отправляем в облако сразу, не ждём таймер
+document.addEventListener('visibilitychange', () => { if (document.hidden) cloud.flush(); });
 
 // ---------- данные ----------
 const PILLARS = {
@@ -999,6 +1102,7 @@ function toggleTask(id) {
       haptic('light');
     } else {
       arr.push(id);
+      track('mission', { day: dayNum(d) });
       justDone = id;
       haptic('medium');
       floatXP(arr.length === 3 ? '+30 XP' : '+10 XP');
@@ -1188,6 +1292,7 @@ function acceptPlan() {
   if (ob.photo) { S.photos.push({ date: today(), data: ob.photo }); addEvent('photo', 'Стартовое фото'); }
   S.chat.push({ from: 'ai', text: `Привет${tgUser && tgUser.first_name ? ', ' + tgUser.first_name : ''}! Я ${coachName()}, твой тренер.\n\nФокус: ${r.focus.map((p) => PILLARS[p].name.toLowerCase()).join(', ')}. Каждый день — 3 миссии на внешность и одна на характер.\n\nЗа всё начисляется опыт, а с уровнями открываются новые функции: дневник благодарности, челленджи, темы, фокус-таймер и другое. Спроси «что откроется», «мой путь» или «что сегодня».` });
   tab = 'home'; haptic('success'); confetti(); save(); render(); window.scrollTo(0, 0);
+  track('onboarded', { photo: !!ob.photo });
 }
 
 function stepsBar(n) { return '<div class="steps">' + [1, 2, 3, 4, 5].map((i) => `<i class="${i <= n ? 'on' : ''}"></i>`).join('') + '</div>'; }
@@ -1541,7 +1646,8 @@ function renderPath() {
     const c = d < S.startDate ? -1 : doneOn(d).length;
     cells.push(`<i class="${c > 0 ? 'f' : ''} ${d === end ? 'today' : ''}" style="animation-delay:${k * 12}ms;${c > 0 ? `opacity:${[0, .35, .65, 1][c]}` : c < 0 ? 'opacity:.35' : ''}" title="${human(d)}: ${Math.max(0, c)}/3"></i>`);
   }
-  const ph = S.photos || [], first = ph[0], last = ph[ph.length - 1];
+  // Фото без картинки — восстановленные из облака на новом телефоне: их показать нечем
+  const ph = (S.photos || []).filter((p) => p.data), first = ph[0], last = ph[ph.length - 1];
   const moodDays = [...Array(14)].map((_, i) => addDays(end, i - 13));
   return `${topbar('Мой путь')}
     <div class="card ink" style="overflow:hidden">
@@ -1782,7 +1888,7 @@ const ACT = {
   'add-xp'() { withRankCheck(() => { S.bonus = (S.bonus || 0) + 300; }); floatXP('+300 XP'); save(); render(); },
   'skip-day'() { S.dayOffset = (S.dayOffset || 0) + 1; save(); render(); toast('Теперь день ' + dayNum(today())); },
   reset() {
-    const go = () => { S = { theme: S.theme, accent: S.accent }; save(); ob = freshOb(); tab = 'home'; reader = null; modal = null; render(); window.scrollTo(0, 0); };
+    const go = () => { S = { theme: S.theme, accent: S.accent }; storedPhotos.clear(); photoDB.clear().catch(() => {}); save(); ob = freshOb(); tab = 'home'; reader = null; modal = null; render(); window.scrollTo(0, 0); };
     try { if (tg && tg.initData) return tg.showConfirm('Удалить весь прогресс?', (ok) => ok && go()); } catch (e) {}
     if (confirm('Удалить весь прогресс?')) go();
   }
@@ -1804,7 +1910,28 @@ document.addEventListener('change', async (e) => {
   } catch (err) { toast('Не получилось открыть фото'); }
 });
 
-render();
+// Запуск: сначала то, что есть в телефоне, потом сверяемся с облаком Telegram
+function start() {
+  let shown = false;
+  const show = () => { if (shown) return; shown = true; render(); hydratePhotos(); };
+  // Телефон пустой (новое устройство или память почистили) — даём облаку пару секунд, чтобы не показать онбординг зря
+  if (S.onboarded || !cloud.ok) show();
+  else setTimeout(show, 2500);
+  cloud.pull().then((c) => {
+    if (c && (c._ts || 0) > (S._ts || 0)) {
+      const local = S.photos || [];
+      S = c;
+      S.photos = (S.photos || []).map((p) => local.find((l) => l.id === p.id) || p);
+      S.photos.forEach((p) => { if (!p.data) storedPhotos.add(p.id); });
+      persistLocal();
+      if (shown) { render(); hydratePhotos(); } else show();
+    } else {
+      if ((S._ts || 0) > ((c && c._ts) || 0)) cloud.schedule();
+      show();
+    }
+  }).catch(show).then(() => { if (S.onboarded) track('open', { day: dayNum(today()) }); });
+}
+start();
 </script>
 </body>
 </html>
