@@ -461,8 +461,8 @@ button:active,label.card:active{transform:scale(.97)}
 <div id="modal"></div>
 <div class="toast" id="toast"></div>
 <script>
-// Адрес бэкенда с настоящей нейросетью. Пока пусто — тренер работает на локальных правилах.
-const AI_ENDPOINT = '';
+// Адрес бэкенда с настоящей нейросетью (Yandex Cloud Functions). Пусто — тренер работает на локальных правилах.
+const AI_ENDPOINT = 'https://functions.yandexcloud.net/d4ed49e9mdk8mqm9i4if';
 
 const tg = window.Telegram && window.Telegram.WebApp;
 try { tg && tg.ready(); tg && tg.expand(); } catch (e) {}
@@ -1700,12 +1700,49 @@ function summaryText() {
   const br = branches().map((b) => `${b.n.toLowerCase()} ${blv(b.x)}`).join(', ');
   return `Твой путь за ${n} ${plural(n, 'день', 'дня', 'дней')}:\n• уровень: ${r.lvl} · ${r.name} (${r.x} XP)\n• закрыто дней: ${cd}, серия: ${streak()} 🔥\n• миссий характера: ${charCount()}\n• прочитано: ${totalPages()} стр., книг: ${booksDone()}\n• ветки: ${br}\n\n${cd >= n * 0.7 ? 'Ты в топе по дисциплине. Продолжай.' : hard() ? 'Можно лучше. Цель — минимум 5 закрытых дней из 7.' : 'Хорошее начало. Цель — 5 закрытых дней из 7.'}`;
 }
+// ---------- ИИ на сервере ----------
+async function aiCall(action, payload, ms) {
+  const ctl = new AbortController(), t = setTimeout(() => ctl.abort(), ms);
+  try {
+    // text/plain — чтобы браузер не слал лишний предварительный запрос на сервер
+    const r = await fetch(AI_ENDPOINT, { method: 'POST', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify({ action, initData: (tg && tg.initData) || '', ...payload }), signal: ctl.signal });
+    const j = await r.json().catch(() => ({}));
+    return r.ok ? j : { error: j.error || 'http_' + r.status };
+  } catch (e) { return { error: 'network' }; } finally { clearTimeout(t); }
+}
+const aiErr = (e) => e === 'limit' ? 'Лимит разборов на сегодня исчерпан — попробуй завтра.' : e === 'not_telegram' ? 'Разбор работает только внутри Telegram.' : 'Нейронка не ответила — попробуй ещё раз позже.';
+const aiSummary = (a) => a ? (a.areas || []).map((x) => `${(PILLARS[x.key] || { name: x.key }).name} ${x.score}/10 — ${x.seen}`).join('; ') + (a.priorities && a.priorities.length ? '. Приоритеты: ' + a.priorities.join('; ') : '') : '';
+function aiCard(a) {
+  return `<div class="card"><div class="disp" style="font-size:22px;margin-bottom:8px">ИИ-разбор фото</div>
+    ${a.strengths.length ? `<div class="mono lbl">Сильные стороны</div>${a.strengths.map((s) => `<div style="margin:4px 0;font-size:14px">+ ${esc(s)}</div>`).join('')}` : ''}
+    ${a.areas.map((x) => { const p = PILLARS[x.key] || { name: x.key, c: 'var(--accent)' }; return `<div style="margin-top:12px"><div class="row between"><b>${p.name}</b><span class="mono">${x.score}/10 → ${x.potential}/10</span></div>
+      <div style="height:6px;border-radius:6px;background:var(--card-b);margin-top:6px;overflow:hidden;position:relative"><div style="position:absolute;inset:0 auto 0 0;width:${x.potential * 10}%;background:${p.c};opacity:.3"></div><div style="position:absolute;inset:0 auto 0 0;width:${x.score * 10}%;background:${p.c}"></div></div>
+      <div class="hint" style="font-size:12.5px;margin-top:5px">${esc(x.seen)}</div><div style="font-size:13.5px;margin-top:3px">→ ${esc(x.do)}</div></div>`; }).join('')}
+    ${a.priorities.length ? `<div class="mono lbl" style="margin-top:14px">Главное</div><ol style="margin:4px 0 0;padding-left:20px;font-size:14px">${a.priorities.map((p) => `<li>${esc(p)}</li>`).join('')}</ol>` : ''}
+    ${a.today ? `<div class="banner" style="margin-top:12px">Сегодня: ${esc(a.today)}</div>` : ''}
+  </div>`;
+}
+// Разбор после онбординга: добавляет в план то, что нейронка увидела на фото
+function applyAI(a) {
+  S.ai = { ...a, date: today() };
+  const fresh = a.issues.filter((x) => !(S.issues || []).includes(x) && PROTOCOLS[x]);
+  S.issues = [...(S.issues || []), ...fresh];
+  const P = S.protos;
+  fresh.forEach((id) => { if (!P.active.some((x) => x.id === id) && !P.queue.includes(id)) P.queue.push(id); });
+  activateNext();
+  modal = { kind: 'ai', fresh }; haptic('success'); save(); render();
+}
+// Команды, на которые точнее отвечают правила приложения (статистика, план, заказы, реакция кожи)
+const LOCAL_CMD = /жж[её]|печ[её]т|покрасн|сыпь|чеш|болит|щипл|шелуш|статист|итог|мой путь|прогресс|отч[её]т|сводк|что сегодня|задани|план на|уров|опыт|xp|награ|открыть|открыва|заказал|купил|оформил|приш[её]л|пришл|получил|забрал|доставил/;
 async function askCoach(text) {
-  if (AI_ENDPOINT) {
-    try {
-      const r = await fetch(AI_ENDPOINT, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ message: text, context: { day: dayNum(today()), streak: streak(), level: rank(), focus: S.plan.focus, tone: S.coachTone, journey: journey().slice(0, 10) }, initData: tg && tg.initData }) });
-      if (r.ok) { const j = await r.json(); if (j.text) return j; }
-    } catch (e) {}
+  if (AI_ENDPOINT && !LOCAL_CMD.test(text.toLowerCase())) {
+    const r = rank(), P = S.protos || { active: [] };
+    const j = await aiCall('chat', { message: text, history: S.chat.slice(-11, -1), context: { day: dayNum(today()), streak: streak(), level: `${r.lvl} · ${r.name}`, focus: S.plan.focus.map((p) => PILLARS[p].name), tone: S.coachTone || 'soft', protocols: P.active.map((a) => PROTOCOLS[a.id].t), analysis: aiSummary(S.ai), journey: journey().slice(0, 10).map((x) => x.title) } }, 45000);
+    if (j.text) {
+      if (/сделал|нан[её]с|отжал|отжим|пробеж|присед|подтян|умыл|помыл|постриг|прош[её]л|планк/.test(text.toLowerCase())) addEvent('activity', '«' + text.slice(0, 80) + '»');
+      return { text: j.text };
+    }
+    if (j.error === 'limit') return { text: 'На сегодня лимит сообщений тренеру исчерпан. Завтра продолжим — а пока отметь миссии на главной.' };
   }
   return localReply(text);
 }
@@ -1724,7 +1761,7 @@ function scrollChat() { const go = () => window.scrollTo({ top: document.documen
 // ---------- онбординг ----------
 const freshOb = () => ({ step: 0, adult: false, consent: false, goals: [], issues: [], budget: 1500, photo: null, result: null });
 let ob = freshOb();
-let tab = 'home', jtab = 'basics', typing = false, celebrate = false, reader = null;
+let tab = 'home', jtab = 'basics', typing = false, celebrate = false, reader = null, aiBusy = false;
 
 function analyze() {
   const score = {};
@@ -1750,6 +1787,7 @@ function acceptPlan() {
   addEvent('start', 'Цели: ' + r.focus.map((p) => PILLARS[p].name).join(', '));
   addEvent('plan', r.shopping.length ? `Получили план на 90 дней и список средств на ${r.sum} ₽` : 'Получили план на 90 дней — без покупок');
   if (ob.photo) { S.photos.push({ date: today(), data: ob.photo }); addEvent('photo', 'Стартовое фото'); }
+  if (ob.ai) S.ai = { ...ob.ai, date: today() };
   S.chat.push({ from: 'ai', text: `Привет${tgUser && tgUser.first_name ? ', ' + tgUser.first_name : ''}! Я ${coachName()}, твой тренер.\n\nФокус: ${r.focus.map((p) => PILLARS[p].name.toLowerCase()).join(', ')}. Каждый день — 3 миссии на внешность и одна на характер.\n\nЗа всё начисляется опыт, а с уровнями открываются новые функции: дневник благодарности, челленджи, темы, фокус-таймер и другое. Спроси «что откроется», «мой путь» или «что сегодня».` });
   tab = 'home'; haptic('success'); confetti(); save(); render(); window.scrollTo(0, 0);
   track('onboarded', { photo: !!ob.photo });
@@ -1777,8 +1815,8 @@ function renderOnboarding() {
   if (s === 1) return `${stepsBar(1)}
     <div class="mono">[ 01 / 05 ]</div><div class="disp h1" style="margin:8px 0 10px">Правила</div>
     <p class="hint" style="margin:0 0 18px">Прокачиваем только то, что можно изменить: кожу, волосы, тело, осанку, стиль, режим — и характер. Форму лица и рост не оцениваем. Никогда.</p>
-    ${opt('ob-adult', ob.adult, 'Мне есть 16 лет')}
-    ${opt('ob-consent', ob.consent, 'Согласен на обработку фото. В демо фото хранятся только на моём телефоне')}
+    ${opt('ob-adult', ob.adult, 'Мне есть 18 лет')}
+    ${opt('ob-consent', ob.consent, AI_ENDPOINT ? 'Согласен на обработку фото: для разбора оно отправляется нейросети в Yandex Cloud (РФ) и не сохраняется на сервере. Сами фото хранятся на моём телефоне' : 'Согласен на обработку фото. В демо фото хранятся только на моём телефоне')}
     <div class="banner" style="margin-top:12px">Это не медицинский сервис. При проблемах с кожей — к дерматологу.</div>
     <button class="btn" data-act="next" ${ob.adult && ob.consent ? '' : 'disabled'}>Дальше</button>`;
   if (s === 2) return `${stepsBar(2)}
@@ -1803,13 +1841,15 @@ function renderOnboarding() {
     <button class="btn" data-act="analyze">${ob.photo ? 'Сделать разбор' : 'Продолжить без фото'}</button>`;
   if (s === 5) return `${stepsBar(5)}
     <div class="spin"></div>
-    <div style="max-width:280px;margin:0 auto">${['Смотрю на фото', 'Учитываю цели', 'Собираю миссии', 'Считаю бюджет'].map((t, i) => `<div class="check-line" id="cl${i}">[✓] ${t}</div>`).join('')}</div>`;
+    <div style="max-width:280px;margin:0 auto">${['Смотрю на фото', 'Учитываю цели', 'Собираю миссии', 'Считаю бюджет'].map((t, i) => `<div class="check-line" id="cl${i}">[✓] ${t}</div>`).join('')}</div>
+    ${AI_ENDPOINT && ob.photo ? '<p class="hint" style="text-align:center;margin-top:18px">Нейронка разбирает фото — это может занять до минуты</p>' : ''}`;
   if (s === 6) {
     const r = ob.result;
     return `${stepsBar(5)}
       <div class="mono">[ 05 / 05 ]</div><div class="disp h1" style="margin:8px 0 10px">План готов</div>
       <p class="hint" style="margin:0 0 16px">Фокус на первые 90 дней.${AI_ENDPOINT ? '' : ' Демо: разбор строится по анкете, ИИ-разбор фото подключим на сервере.'}</p>
       ${ob.photo ? `<div class="card row"><img src="${ob.photo}" style="width:60px;height:78px;object-fit:cover;border-radius:12px"><div><b>Точка «до» сохранена</b><div class="hint">Через 30 дней сравним</div></div></div>` : ''}
+      ${ob.ai ? aiCard(ob.ai) : ''}${ob.aiErr ? `<div class="banner">${esc(ob.aiErr)}</div>` : ''}
       ${r.focus.map((p, i) => `<div class="card"><div class="row between" style="margin-bottom:10px"><div class="row"><span class="tag" style="color:${PILLARS[p].c};border-color:${PILLARS[p].c}55">${PILLARS[p].code}</span><b class="disp" style="font-size:22px">${PILLARS[p].name}</b></div><span class="mono" style="color:${i < 2 ? 'var(--accent)' : 'var(--hint)'}">${i < 2 ? 'Главный фокус' : 'Поддержка'}</span></div>${r.tips[p].filter(Boolean).map((t) => `<div style="margin:5px 0;font-size:14px">— ${t}</div>`).join('')}</div>`).join('')}
       ${(() => { const pp = buildPlan(ob.issues, ob.budget); return pp.active.length ? `<div class="card"><div class="disp" style="font-size:22px;margin-bottom:6px">Твои протоколы</div><div class="hint" style="margin-bottom:6px">Пошаговый план под то, что ты отметил: что делать каждый день, чего избегать, упражнения с анимацией.</div>${pp.active.map((a) => `<div class="item"><div style="flex:1"><b>${PROTOCOLS[a.id].t}</b>${pp.notes[a.id] ? `<div class="hint" style="font-size:12.5px;margin-top:2px">${pp.notes[a.id]}</div>` : ''}</div><span class="mono">${PROTOCOLS[a.id].days} дн.</span></div>`).join('')}${pp.queue.length ? `<div class="hint" style="margin-top:8px">И ещё ${pp.queue.length} в очереди — начнутся, когда пройдёшь эти.</div>` : ''}</div>` : ''; })()}
       <div class="card"><div class="disp" style="font-size:22px;margin-bottom:6px">Что заказать</div>${r.shopping.length ? r.shopping.map((it) => `<div class="item"><div style="flex:1">${it.n}</div><b>~${it.p} ₽</b></div>`).join('') + `<div class="row between" style="margin-top:12px"><span class="mono">Итого</span><b class="disp" style="font-size:22px">~${r.sum} ₽</b></div>` : '<div class="hint">Ничего покупать не нужно — весь план бесплатный.</div>'}</div>
@@ -1944,6 +1984,9 @@ function renderPlan() {
   const status = (id) => act.some((a) => a.id === id) ? 'активен' : P.queue.includes(id) ? 'в очереди' : P.done.some((d) => d.id === id) ? 'пройден ✓' : '';
   return `${topbar('Мой план')}
     <div class="banner"><span class="mono" style="color:var(--accent)">[ персональный план ]</span><div style="margin-top:4px">${iss.length ? `Собран по твоей анкете: ${iss.join(', ').toLowerCase()}.` : 'Ты не отметил проблем в анкете — выбери протокол ниже.'} Одновременно — не больше ${MAX_ACTIVE} протоколов, чтобы не распыляться.${AI_ENDPOINT ? '' : ' Когда подключим ИИ, он будет подбирать протоколы по фото и подстраивать под тебя.'}</div></div>
+    ${AI_ENDPOINT ? `<div class="card"><div class="row between"><b>ИИ-разбор по фото</b>${S.ai && !aiBusy ? '<button class="btn sm ghost" data-act="ai-open" style="height:32px">Открыть</button>' : ''}</div>
+      <div class="hint" style="margin:4px 0 10px">${aiBusy ? 'Нейронка смотрит фото — это может занять до минуты…' : S.ai ? `Последний — ${human(S.ai.date)}. Новый разбор добавит в план то, что видно на фото.` : 'Нейронка посмотрит фото и добавит в план то, что реально видно.'}</div>
+      ${aiBusy ? '<div class="spin" style="margin:6px auto"></div>' : `<label class="btn sm" style="cursor:pointer">${S.ai ? 'Новый разбор' : 'Сделать разбор'}<input type="file" accept="image/*" capture="user" hidden data-change="ai-photo"></label>`}</div>` : ''}
     ${act.length ? act.map(protoCard).join('') : '<div class="card"><b>Активных протоколов нет</b><div class="hint" style="margin-top:4px">Выбери один из списка ниже.</div></div>'}
     ${exIds.length ? `<div class="sec"><span class="disp">Мои упражнения</span><span class="chipline">[ ${exIds.length} ]</span></div>
       <div class="exgrid">${exIds.map((id) => `<button class="excard" data-act="ex-open" data-x="${id}"><div class="pv">${EX_ANIM[id]()}</div><b>${EXERCISES[id].t}</b><small>${EXERCISES[id].dose}</small></button>`).join('')}</div>` : ''}
@@ -2160,6 +2203,22 @@ function renderModal() {
       <button class="btn" data-act="modal-close">Понятно</button>
     </div></div>`;
   }
+  if (modal.kind === 'ai' && S.ai) {
+    const fr = (modal.fresh || []).map((id) => PROTOCOLS[id].t);
+    return `<div class="modal"><div class="sheet exs" style="text-align:left">
+      ${aiCard(S.ai)}
+      ${fr.length ? `<div class="banner">Добавил в план: ${fr.join(', ')}.</div>` : ''}
+      <button class="btn" data-act="modal-close">Понятно</button>
+    </div></div>`;
+  }
+  if (modal.kind === 'ai-bad') {
+    return `<div class="modal"><div class="sheet">
+      <span class="mono">[ разбор не получился ]</span>
+      <div style="font-size:15px;margin:10px 0 6px">${esc(modal.note)}</div>
+      <div class="hint">Лучше всего: дневной свет из окна, лицо прямо, без фильтров, камера на уровне глаз. Лимит разборов при этом не сгорает впустую — просто попробуй ещё раз.</div>
+      <button class="btn" data-act="modal-close" style="margin-top:16px">Ок</button>
+    </div></div>`;
+  }
   if (modal.kind === 'focus') {
     const L = 2 * Math.PI * 96, k = focusT.left / 1500;
     return `<div class="modal"><div class="sheet">
@@ -2356,14 +2415,25 @@ const ACT = {
   'ob-issue'(el) { toggleIn(ob.issues, el.dataset.k); haptic('light'); render(); },
   'ob-budget'(el) { ob.budget = +el.dataset.v; render(); },
   analyze() {
-    ob.step = 5; ob.result = analyze(); render();
+    ob.step = 5; ob.result = analyze(); ob.ai = null; ob.aiErr = null; render();
     [0, 1, 2, 3].forEach((i) => setTimeout(() => { const e = document.getElementById('cl' + i); e && e.classList.add('on'); }, 450 * (i + 1)));
-    setTimeout(() => { ob.step = 6; haptic('success'); render(); window.scrollTo(0, 0); }, 2300);
+    const ai = AI_ENDPOINT && ob.photo ? aiCall('analyze', { photo: ob.photo, issues: ob.issues, tone: 'soft' }, 90000) : null;
+    Promise.all([ai, new Promise((r) => setTimeout(r, 2300))]).then(([a]) => {
+      if (a && !a.error && a.person && a.quality === 'ok') {
+        ob.ai = a;
+        a.issues.forEach((x) => { if (!ob.issues.includes(x)) ob.issues.push(x); });
+        ob.result = analyze();
+      } else if (a) {
+        ob.aiErr = a.error ? aiErr(a.error) + ' План пока по анкете.' : !a.person ? 'На фото не видно человека — план пока по анкете. Разбор можно сделать позже в «Моём плане».' : `${a.quality_note || 'Фото тёмное или размытое.'} План пока по анкете — переснять можно позже в «Моём плане».`;
+      }
+      ob.step = 6; haptic('success'); render(); window.scrollTo(0, 0);
+    });
   },
   accept: acceptPlan,
   task(el) { toggleTask(el.dataset.id); },
   pstep(el) { toggleStep(el.dataset.k); },
   'ex-open'(el) { modal = { kind: 'ex', id: el.dataset.x }; haptic('light'); render(); },
+  'ai-open'() { modal = { kind: 'ai' }; haptic('light'); render(); },
   'proto-finish'(el) {
     const id = el.dataset.id, P = S.protos;
     withRankCheck(() => {
@@ -2511,6 +2581,15 @@ document.addEventListener('change', async (e) => {
   try {
     const data = await readPhoto(f);
     if (kind === 'ob-photo') { ob.photo = data; render(); }
+    if (kind === 'ai-photo') {
+      if (aiBusy) return;
+      aiBusy = true; render();
+      const a = await aiCall('analyze', { photo: data, issues: S.issues || [], tone: S.coachTone || 'soft' }, 90000);
+      aiBusy = false;
+      if (a.error) { toast(aiErr(a.error)); render(); return; }
+      if (!a.person || a.quality === 'bad') { modal = { kind: 'ai-bad', note: !a.person ? 'На фото не видно человека.' : a.quality_note || 'Фото тёмное или размытое.' }; render(); return; }
+      applyAI(a);
+    }
     if (kind === 'week-photo') { withRankCheck(() => { S.photos.push({ date: today(), data }); addEvent('photo', 'Фото прогресса'); }); save(); render(); floatXP('+15 XP'); haptic('success'); }
   } catch (err) { toast('Не получилось открыть фото'); }
 });
