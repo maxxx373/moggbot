@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,maximum-scale=1">
-<title>Апгрейд</title>
+<title>mogg</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -443,6 +443,75 @@ button:hover .arrow{transform:rotate(45deg)}
 .photo-drop img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 .photo-drop .oval{position:absolute;inset:13% 21% 22%;border:1.5px dashed var(--accent);border-radius:50%;animation:breathe 2.4s ease-in-out infinite}
 @keyframes breathe{50%{transform:scale(1.03);opacity:.6}}
+/* фото */
+.art{overflow:hidden}
+.art img.ph{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.92;animation:phIn .9s ease both,kenburns 18s ease-in-out infinite alternate}
+@keyframes phIn{from{opacity:0}}
+@keyframes kenburns{from{transform:scale(1.02)}to{transform:scale(1.12) translate(-1.5%,-1%)}}
+.phcard{position:relative;border-radius:26px;overflow:hidden;min-height:180px;color:#fff;display:flex;flex-direction:column;justify-content:flex-end;padding:16px;margin-bottom:12px;background:#111}
+.phcard img.ph{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.92;animation:phIn .9s ease both,kenburns 20s ease-in-out infinite alternate}
+.phcard:before{content:'';position:absolute;inset:0;z-index:1;background:linear-gradient(180deg,rgba(0,0,0,.05) 20%,rgba(0,0,0,.75))}
+.phcard > *:not(img){position:relative;z-index:2}
+.phcard .mono{color:rgba(255,255,255,.8)}
+.strip{display:flex;gap:10px;overflow-x:auto;scroll-snap-type:x mandatory;margin:0 -16px 14px;padding:0 16px 4px;scrollbar-width:none}
+.strip::-webkit-scrollbar{display:none}
+.strip .phcard{flex:0 0 72%;scroll-snap-align:start;min-height:230px;margin:0}
+/* каталог средств */
+.pcard{display:flex;gap:12px;align-items:center;padding:12px 0;border-top:1px solid var(--card-b)}
+.pcard:first-child{border-top:0}
+.pcard .pi{width:58px;height:58px;flex:none;border-radius:16px;display:grid;place-items:center;background:color-mix(in srgb,var(--c) 16%,transparent)}
+.pcard .pi svg{width:40px;height:40px}
+.pcard .n{font-weight:800;font-size:14.5px;line-height:1.25}
+.pcard .w{font-size:12.5px;color:var(--hint);margin-top:2px;line-height:1.35}
+.pcard .pr{font-family:var(--mono);font-size:12px;color:var(--c);margin-top:4px}
+.buy{display:inline-flex;align-items:center;gap:4px;height:30px;padding:0 10px;border-radius:10px;background:var(--card);border:1px solid var(--card-b);font-size:12px;font-weight:700;color:var(--text);margin:6px 6px 0 0}
+.prodmini{display:flex;gap:10px;align-items:center;margin-top:10px;padding:10px;border-radius:16px;background:color-mix(in srgb,var(--text) 6%,transparent);text-align:left}
+.prodmini .pi{width:44px;height:44px;flex:none;border-radius:12px;display:grid;place-items:center;background:color-mix(in srgb,var(--c) 18%,transparent)}
+.prodmini .pi svg{width:30px;height:30px}
+.newb{display:inline-block;margin-left:6px;padding:1px 7px;border-radius:8px;background:var(--accent);color:var(--on-accent);font-family:var(--mono);font-size:10px;letter-spacing:.06em;vertical-align:middle}
+/* рутина ухода */
+.rstep{display:flex;gap:12px;align-items:flex-start;width:100%;text-align:left;padding:12px;border-radius:18px;background:var(--card);border:1px solid var(--card-b);margin-bottom:8px;transition:transform .15s,opacity .3s}
+.rstep:active{transform:scale(.98)}
+.rstep.done{opacity:.55}
+.rstep.done .rt{text-decoration:line-through}
+.rstep .rn{width:30px;height:30px;flex:none;border-radius:50%;display:grid;place-items:center;font-weight:800;font-size:13px;background:color-mix(in srgb,var(--accent) 20%,transparent);color:var(--accent)}
+.rstep.done .rn{background:var(--accent);color:var(--on-accent)}
+.rstep .rt{font-weight:800;font-size:15px}
+.rstep .rh{font-size:12.5px;color:var(--hint);margin-top:2px;line-height:1.4}
+.rtimer{font-family:var(--mono);font-size:12px;color:var(--accent);margin-top:6px}
+/* план: библиотека и список протоколов */
+.libgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+.libtile{display:flex;flex-direction:column;align-items:flex-start;text-align:left;margin:0;padding:14px;gap:2px;transition:transform .15s}
+.libtile:active{transform:scale(.96)}
+.libtile{position:relative;overflow:hidden;min-height:132px;justify-content:flex-end}
+.libtile img.lt{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.32;animation:phIn .8s ease both;transition:transform .5s}
+.libtile:active img.lt{transform:scale(1.08)}
+
+.libtile > :not(img){position:relative;z-index:1}
+.libtile .ic{font-size:26px;margin-bottom:6px}
+.hero > img.heroph{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.55;animation:phIn 1.2s ease .2s both;filter:grayscale(.35) contrast(1.05)}
+
+.rcard{box-shadow:0 0 0 1px color-mix(in srgb,var(--accent) 45%,transparent)}
+.libtile b{font-size:15px}
+.libtile small{color:var(--hint);font-size:12px}
+details.allp summary{display:flex;align-items:center;justify-content:space-between;cursor:pointer;list-style:none}
+details.allp summary::-webkit-details-marker{display:none}
+details.allp summary::after{content:'＋';font-size:20px;color:var(--hint);margin-left:10px;transition:transform .25s}
+details.allp[open] summary::after{transform:rotate(45deg)}
+details.allp[open] summary{margin-bottom:8px}
+.backlink{display:inline-block;margin:0 0 10px;padding:6px 12px;border-radius:12px;background:var(--card);border:1px solid var(--card-b);color:var(--text);font-weight:700;font-size:13px}
+/* камера внутри приложения */
+.cam{position:fixed;inset:0;z-index:70;background:#000;color:#fff;animation:fade .25s}
+.cam video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.cam video.mirror{transform:scaleX(-1)}
+.cam-oval{position:absolute;left:0;right:0;top:15%;margin:0 auto;width:64%;max-width:300px;aspect-ratio:3/4;border:2px dashed rgba(255,255,255,.8);border-radius:50%;box-shadow:0 0 0 200vmax rgba(0,0,0,.32);pointer-events:none;animation:breathe 2.4s ease-in-out infinite}
+.cam-top{position:absolute;left:0;right:0;top:0;padding:calc(env(safe-area-inset-top) + 14px) 14px 18px;display:flex;align-items:center;justify-content:space-between;gap:10px;background:linear-gradient(rgba(0,0,0,.55),transparent)}
+.cam-top .mono{color:rgba(255,255,255,.85);text-align:center}
+.cam-b{width:44px;height:44px;flex:none;border-radius:50%;background:rgba(255,255,255,.16);color:#fff;font-size:20px;-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
+.cam-bot{position:absolute;left:0;right:0;bottom:0;padding:24px 0 calc(env(safe-area-inset-bottom) + 30px);display:grid;place-items:center;background:linear-gradient(transparent,rgba(0,0,0,.55))}
+.cam-shot{width:78px;height:78px;border-radius:50%;border:5px solid #fff;background:rgba(255,255,255,.22);transition:transform .15s,background .15s}
+.cam-shot:active{transform:scale(.88);background:#fff}
+.cam-err{position:absolute;left:18px;right:18px;top:50%;transform:translateY(-50%);background:var(--solid);color:var(--text);border-radius:26px;padding:22px 18px;text-align:center;animation:popin .4s cubic-bezier(.3,1.5,.5,1)}
 .spin{width:64px;height:64px;border-radius:50%;border:3px solid var(--line);border-top-color:var(--accent);animation:sp .9s linear infinite;margin:60px auto 28px}
 @keyframes sp{to{transform:rotate(360deg)}}
 .check-line{opacity:.25;transition:opacity .3s,transform .3s;margin:10px 0;font-family:var(--mono);font-size:12.5px;letter-spacing:.06em;text-transform:uppercase;transform:translateX(-6px)}
@@ -721,13 +790,15 @@ const ISSUES = [
   ['latesleep', 'Ложусь поздно', 'sleep'], ['messy', 'Одеваюсь как попало', 'style'], ['sweat', 'Пот и запах', 'style']
 ];
 const SHOP = [
-  { n: 'Гель для умывания', p: 350, pl: 'skin' },
-  { n: 'Увлажняющий крем', p: 450, pl: 'skin' },
-  { n: 'Гель с салициловой кислотой', p: 500, pl: 'skin', need: 'acne' },
-  { n: 'Крем с SPF 30+', p: 600, pl: 'skin' },
-  { n: 'Паста или глина для укладки', p: 500, pl: 'hair' },
-  { n: 'Турник в дверной проём', p: 1200, pl: 'body' },
-  { n: 'Две базовые однотонные футболки', p: 1200, pl: 'style' }
+  { n: 'Гель для умывания', p: 350, pl: 'skin', slot: 'cleanser' },
+  { n: 'Увлажняющий крем', p: 450, pl: 'skin', slot: 'moist' },
+  { n: 'Крем с SPF 30+', p: 600, pl: 'skin', slot: 'spf' },
+  { n: 'Средство от чёрных точек (BHA)', p: 500, pl: 'skin', need: 'acne', slot: 'bha' },
+  { n: 'Средство для укладки', p: 500, pl: 'hair', slot: 'styling' },
+  { n: 'Шампунь от перхоти', p: 500, pl: 'hair', need: 'dandruff', slot: 'dandruff' },
+  { n: 'Антиперспирант', p: 350, pl: 'style', need: 'sweat', slot: 'deo' },
+  { n: 'Турник в дверной проём', p: 1200, pl: 'body', slot: 'pullup' },
+  { n: 'Плотные однотонные футболки', p: 1200, pl: 'style', slot: 'tee' }
 ];
 const DROPS = [
   'Свежая стрижка раз в 3–4 недели даёт больше, чем любая новая вещь.',
@@ -958,6 +1029,7 @@ const COURSES = {
   social: { name: 'Общение', title: 'Сила<br>общения', word: 'SOCIAL', art: 'a13', lessons: SOCIAL }
 };
 const ALL_LESSONS = [...LESSONS, ...MIND, ...SOCIAL];
+const COURSE_IMG = { basics: 'mirror', mind: 'read', social: 'portrait' };
 
 const BOOKS = [
   { id: 'b1', a: 'Джеймс Клир', t: 'Атомные привычки', cat: 'Привычки', c: ['#ff7a6b', '#ffb07c'], why: ['Как маленькие ежедневные изменения складываются в большой результат.', 'Ровно на этой идее построено приложение: небольшие миссии каждый день вместо подвигов раз в месяц.'] },
@@ -971,36 +1043,110 @@ const BOOKS = [
   { id: 'b9', a: 'Марк Мэнсон', t: 'Тонкое искусство пофигизма', cat: 'Характер', c: ['#c2410c', '#fb923c'], why: ['Дерзкая книга о том, как выбирать, что действительно важно, и не тратить силы на остальное.'] },
   { id: 'b10', a: 'Стивен Кови', t: '7 навыков высокоэффективных людей', cat: 'Привычки', c: ['#1f3d2b', '#86efac'], why: ['Системный взгляд на ответственность, приоритеты и отношения с людьми.', 'Плотная, но одна из самых влиятельных книг в жанре.'] }
 ];
-const PRODUCTS = [
-  { cat: 'Уход', code: 'SKN', c: '#ffb07c', items: [
-    ['CeraVe Увлажняющий очищающий гель', 'Мягкое умывание для нормальной и сухой кожи, не стягивает', 2],
-    ['CeraVe Пенящийся очищающий гель', 'Умывание для нормальной и жирной кожи', 2],
-    ['The Ordinary Niacinamide 10% + Zinc 1%', 'Сыворотка для жирной кожи и расширенных пор', 1],
-    ['Beauty of Joseon Relief Sun SPF 50+', 'Лёгкий SPF на каждый день без белых разводов', 2],
-    ['La Roche-Posay Effaclar Duo+', 'Крем для кожи, склонной к воспалениям', 3],
-    ['Paula\'s Choice 2% BHA Liquid Exfoliant', 'Салициловая кислота против чёрных точек, 2–3 раза в неделю', 3]
-  ] },
-  { cat: 'Волосы', code: 'HAIR', c: '#b79cff', items: [
-    ['Reuzel Clay Matte Pomade', 'Матовая укладка с естественным видом', 2],
-    ['Schwarzkopf OSiS+ Dust It', 'Пудра для объёма у корней', 2],
-    ['Сухой шампунь Batiste', 'Освежить волосы, когда некогда мыть', 1]
-  ] },
-  { cat: 'Спорт дома', code: 'BODY', c: '#6ee7c8', items: [
-    ['Турник в дверной проём', 'Подтягивания без зала', 1],
-    ['Набор резиновых лент-эспандеров', 'Полноценная тренировка на всё тело дома', 1],
-    ['Разборные гантели', 'База для силовых упражнений', 2]
-  ] },
-  { cat: 'Гардероб', code: 'STYL', c: '#ff7a9c', items: [
-    ['Плотные однотонные футболки (от 200 г/м²)', 'Не просвечивают и держат форму. Плотность важнее бренда', 1],
-    ['Прямые тёмные джинсы без потёртостей', 'Универсальный низ под любой верх', 2],
-    ['Минималистичные белые кеды', 'Подходят почти ко всему', 2]
-  ] },
-  { cat: 'Сон', code: 'SLP', c: '#7dd3fc', items: [
-    ['Маска для сна', 'Полная темнота даже летом', 1],
-    ['Беруши', 'Если шумные соседи или улица', 1],
-    ['Лампа с тёплым светом', 'Вечером меньше яркого холодного света — легче заснуть', 1]
-  ] }
+// ---------- каталог средств ----------
+// Только реальные проверенные средства. Тренер советует ТОЛЬКО отсюда, ничего не выдумывает.
+// p — примерная цена в ₽ (ноябрь 2026, бывает дешевле на распродажах). slot — какую задачу закрывает.
+// for — под какие проблемы из анкеты особенно подходит. type — какая картинка-иконка.
+// Когда подключим партнёрку — сюда добавятся фото и партнёрские ссылки.
+const CATALOG = [
+  // умывание
+  { id: 'nivea-gel', b: 'NIVEA MEN', n: 'Гель для умывания для нормальной кожи', pl: 'skin', slot: 'cleanser', type: 'tube', p: 350, w: 'Простой и дешёвый старт. Для нормальной кожи без серьёзных высыпаний.', m: ['nivea', 'умыв'] },
+  { id: 'seracin', b: 'Librederm', n: 'Серацин — гель для умывания', pl: 'skin', slot: 'cleanser', type: 'pump', p: 650, for: ['oily', 'acne'], w: 'Для жирной кожи и чёрных точек. Российская аптечная марка.', m: ['серацин'] },
+  { id: 'cerave-foam', b: 'CeraVe', n: 'Пенящийся очищающий гель', pl: 'skin', slot: 'cleanser', type: 'pump', p: 1300, for: ['oily', 'acne'], w: 'Умывает чисто и не пересушивает: церамиды и ниацинамид. Для нормальной и жирной кожи.', m: ['cerave', 'пенящ'] },
+  { id: 'cerave-hydr', b: 'CeraVe', n: 'Увлажняющий очищающий гель', pl: 'skin', slot: 'cleanser', type: 'pump', p: 1300, for: ['dry'], w: 'Мягкое умывание без стянутости. Для сухой и чувствительной кожи.', m: ['cerave', 'увлажняющий очищ'] },
+  { id: 'effaclar-gel', b: 'La Roche-Posay', n: 'Effaclar — очищающий гель', pl: 'skin', slot: 'cleanser', type: 'tube', p: 1500, for: ['oily', 'acne'], w: 'Классика для жирной кожи с воспалениями.', m: ['effaclar', 'гель'] },
+  // увлажнение
+  { id: 'nivea-cream', b: 'NIVEA MEN', n: 'Увлажняющий крем для лица', pl: 'skin', slot: 'moist', type: 'jar', p: 450, w: 'Бюджетный базовый крем. Лучше, чем никакого.', m: ['nivea', 'крем'] },
+  { id: 'cerave-lotion', b: 'CeraVe', n: 'Увлажняющий лосьон для лица', pl: 'skin', slot: 'moist', type: 'pump', p: 1400, for: ['oily', 'acne', 'dry'], w: 'Лёгкий, не забивает поры. Подходит почти всем.', m: ['cerave', 'лосьон'] },
+  { id: 'cerave-cream', b: 'CeraVe', n: 'Увлажняющий крем (баночка)', pl: 'skin', slot: 'moist', type: 'jar', p: 1600, for: ['dry'], w: 'Плотный крем для сухой кожи, хватает надолго.', m: ['cerave', 'крем'] },
+  // активы
+  { id: 'to-niacin', b: 'The Ordinary', n: 'Niacinamide 10% + Zinc 1%', pl: 'skin', slot: 'serum', type: 'dropper', p: 900, for: ['oily', 'acne'], w: 'Сыворотка: меньше жирного блеска, поры выглядят меньше. Утром перед кремом.', m: ['niacinamide'] },
+  { id: 'cosrx-bha', b: 'COSRX', n: 'BHA Blackhead Power Liquid', pl: 'skin', slot: 'bha', type: 'bottle', p: 1700, for: ['acne', 'oily'], w: 'Кислота против чёрных точек и закрытых комедонов. Вечером 2–3 раза в неделю.', m: ['cosrx'] },
+  { id: 'pc-bha', b: "Paula's Choice", n: '2% BHA Liquid Exfoliant', pl: 'skin', slot: 'bha', type: 'bottle', p: 3500, for: ['acne', 'oily'], w: 'Самая известная салициловая кислота. Дорого, но работает.', m: ['paula'] },
+  { id: 'duo', b: 'La Roche-Posay', n: 'Effaclar Duo+M', pl: 'skin', slot: 'acne', type: 'tube', p: 2100, for: ['acne'], w: 'Крем для кожи с воспалениями. Если за 2–3 месяца не лучше — к дерматологу.', m: ['duo'] },
+  { id: 'to-caffeine', b: 'The Ordinary', n: 'Caffeine Solution 5% + EGCG', pl: 'skin', slot: 'eyes', type: 'dropper', p: 900, for: ['puffy', 'darkcircles'], w: 'Кофеин под глаза: немного снимает утренние отёки. Чудес не делает — сон важнее.', m: ['caffeine', 'кофеин'] },
+  // SPF
+  { id: 'garnier-spf', b: 'Garnier Ambre Solaire', n: 'Крем для лица SPF 50', pl: 'skin', slot: 'spf', type: 'tube', p: 700, w: 'Самый доступный нормальный SPF для лица.', m: ['garnier'] },
+  { id: 'biore-spf', b: 'Bioré', n: 'UV Aqua Rich Watery Essence SPF 50+', pl: 'skin', slot: 'spf', type: 'tube', p: 1200, for: ['oily'], w: 'Очень лёгкий, как гель. Не жирнит и не белит.', m: ['biore'] },
+  { id: 'joseon-spf', b: 'Beauty of Joseon', n: 'Relief Sun SPF 50+', pl: 'skin', slot: 'spf', type: 'tube', p: 1500, w: 'Любимый SPF интернета: невидимый, ощущается как крем.', m: ['joseon'] },
+  { id: 'anthelios', b: 'La Roche-Posay', n: 'Anthelios UVmune 400 SPF 50+', pl: 'skin', slot: 'spf', type: 'tube', p: 2300, w: 'Аптечный SPF высшей защиты, флюид без жирности.', m: ['anthelios'] },
+  { id: 'carmex', b: 'Carmex', n: 'Бальзам для губ', pl: 'skin', slot: 'lips', type: 'stick', p: 400, w: 'Сухие обветренные губы видно сразу. Копеечное решение.', m: ['carmex'] },
+  // волосы
+  { id: 'volumania', b: 'got2b', n: 'Пудра для объёма Volumania', pl: 'hair', slot: 'styling', type: 'jar', p: 600, w: 'Объём у корней и матовый эффект за 10 секунд.', m: ['got2b'] },
+  { id: 'dustit', b: 'Schwarzkopf OSiS+', n: 'Dust It — пудра для объёма', pl: 'hair', slot: 'styling', type: 'jar', p: 1500, w: 'Профессиональная пудра: объём и текстура без блеска.', m: ['dust it'] },
+  { id: 'reuzel-clay', b: 'Reuzel', n: 'Clay Matte Pomade', pl: 'hair', slot: 'styling', type: 'jar', p: 2200, w: 'Матовая глина: держит форму весь день, выглядит естественно.', m: ['reuzel'] },
+  { id: 'nizoral', b: 'Низорал', n: 'Шампунь с кетоконазолом 2%', pl: 'hair', slot: 'dandruff', type: 'bottle', p: 900, for: ['dandruff'], w: 'Аптечное средство от перхоти: 2 раза в неделю, держать на коже 3–5 минут.', m: ['низорал'] },
+  { id: 'hs', b: 'Head & Shoulders', n: 'Шампунь против перхоти', pl: 'hair', slot: 'dandruff', type: 'bottle', p: 500, for: ['dandruff'], w: 'Для лёгкой перхоти на каждый день. Если не помогает 3–4 недели — Низорал.', m: ['head'] },
+  { id: 'proraso-oil', b: 'Proraso', n: 'Масло для бороды', pl: 'hair', slot: 'beard', type: 'dropper', p: 1300, w: 'Мягкая борода без зуда и колючек.', m: ['proraso'] },
+  { id: 'oneblade', b: 'Philips', n: 'OneBlade — триммер-бритва', pl: 'hair', slot: 'trimmer', type: 'tool', p: 4000, w: 'Ровная щетина и чёткие контуры бороды дома.', m: ['oneblade'] },
+  // запах и пот
+  { id: 'rexona', b: 'Rexona Men', n: 'Антиперспирант-стик', pl: 'style', slot: 'deo', type: 'stick', p: 350, for: ['sweat'], w: 'Наносить вечером на сухую кожу — так работает лучше.', m: ['rexona'] },
+  { id: 'drydry', b: 'Dry Dry', n: 'Средство от сильной потливости', pl: 'style', slot: 'deo', type: 'bottle', p: 900, for: ['sweat'], w: 'Для тех, кому обычные не помогают. Раз в несколько дней на ночь.', m: ['dry dry'] },
+  // гардероб
+  { id: 'tee', b: 'База', n: 'Плотные однотонные футболки 200+ г/м²', pl: 'style', slot: 'tee', type: 'tee', p: 1200, w: 'Не просвечивают и держат форму. Белая, чёрная, серая — основа всего.', m: ['футболк'] },
+  { id: 'jeans', b: 'База', n: 'Прямые тёмные джинсы без потёртостей', pl: 'style', slot: 'jeans', type: 'jeans', p: 3000, w: 'Универсальный низ: с футболкой, рубашкой, худи.', m: ['джинс'] },
+  { id: 'kicks', b: 'База', n: 'Белые кожаные кеды', pl: 'style', slot: 'shoes', type: 'shoe', p: 4000, w: 'Подходят почти ко всему. Держи чистыми.', m: ['кеды'] },
+  { id: 'steamer', b: 'Любой бренд', n: 'Ручной отпариватель', pl: 'style', slot: 'steamer', type: 'tool', p: 2500, for: ['messy'], w: 'Мятая вещь выглядит дешёвой. 2 минуты утром — и порядок.', m: ['отпаривател'] },
+  // тело
+  { id: 'bar', b: 'Спорт', n: 'Турник в дверной проём', pl: 'body', slot: 'pullup', type: 'tool', p: 1500, for: ['inactive'], w: 'Подтягивания дома — спина, руки, осанка.', m: ['турник'] },
+  { id: 'bands', b: 'Спорт', n: 'Набор резинок-эспандеров', pl: 'body', slot: 'bands', type: 'tool', p: 1200, for: ['inactive', 'slouch'], w: 'Полноценная тренировка дома и разминка для осанки.', m: ['эспандер', 'резин'] },
+  { id: 'dumbbells', b: 'Спорт', n: 'Разборные гантели 2 × 10 кг', pl: 'body', slot: 'weights', type: 'tool', p: 3500, w: 'База для силовых дома на месяцы вперёд.', m: ['гантел'] },
+  { id: 'rope', b: 'Спорт', n: 'Скакалка', pl: 'body', slot: 'cardio', type: 'tool', p: 400, w: '10 минут прыжков — отличное кардио за копейки.', m: ['скакалк'] },
+  // сон
+  { id: 'mask', b: 'Сон', n: 'Маска для сна 3D', pl: 'sleep', slot: 'mask', type: 'mask', p: 500, for: ['latesleep'], w: 'Полная темнота — быстрее засыпаешь, крепче спишь.', m: ['маска для сна'] },
+  { id: 'plugs', b: 'Moldex', n: 'Беруши', pl: 'sleep', slot: 'plugs', type: 'mask', p: 300, w: 'Если шумно за стеной или на улице.', m: ['беруш'] }
 ];
+const CAT_BY = Object.fromEntries(CATALOG.map((x) => [x.id, x]));
+const tierOf = (p) => p <= 700 ? 1 : p <= 1600 ? 2 : 3;
+// Потолок цены одного средства исходя из бюджета анкеты
+const priceCap = (b) => b >= 5000 ? 99999 : b >= 3000 ? 2500 : b >= 1500 ? 1600 : b > 0 ? 700 : 500;
+// Лучшее средство под задачу: подходит под проблемы, влезает в бюджет, самое сильное из доступных
+function bestFor(slot, issues, budget) {
+  const cap = priceCap(budget), list = CATALOG.filter((x) => x.slot === slot);
+  const fit = (x) => !x.for || !x.for.length || x.for.some((i) => issues.includes(i));
+  const ok = list.filter((x) => x.p <= cap && fit(x)).sort((a, b) => (b.for ? b.for.filter((i) => issues.includes(i)).length : 0) - (a.for ? a.for.filter((i) => issues.includes(i)).length : 0) || b.p - a.p);
+  return ok[0] || list.filter((x) => fit(x)).sort((a, b) => a.p - b.p)[0] || null;
+}
+// Средство юзера под задачу: то, что уже в его списке покупок, иначе лучшее под бюджет
+function myPick(slot) {
+  const it = ((S.plan && S.plan.shopping) || []).find((s) => s.slot === slot && s.pid && CAT_BY[s.pid]);
+  return it ? CAT_BY[it.pid] : bestFor(slot, S.issues || [], S.budget || 0);
+}
+const shopLinks = (x) => {
+  const q = encodeURIComponent((x.b && !/^(База|Спорт|Сон|Любой)/.test(x.b) ? x.b + ' ' : '') + x.n);
+  return [['Ozon', 'https://www.ozon.ru/search/?text=' + q], ['WB', 'https://www.wildberries.ru/catalog/0/search.aspx?search=' + q], ['Маркет', 'https://market.yandex.ru/search?text=' + q]];
+};
+// Иконки-упаковки: рисуем сами, чтобы не таскать чужие фото товаров
+function pimg(type) {
+  const s = 'fill="currentColor"', o = 'fill="none" stroke="currentColor" stroke-width="2"';
+  const m = {
+    tube: `<path ${s} opacity=".85" d="M14 8h20l-2 30H16z"/><rect ${s} x="18" y="38" width="12" height="6" rx="1.5"/><path ${s} opacity=".35" d="M13 6h22v4H13z"/>`,
+    pump: `<rect ${s} opacity=".85" x="14" y="18" width="20" height="26" rx="5"/><rect ${s} x="21" y="10" width="6" height="8"/><path ${o} d="M24 10V6h8"/>`,
+    jar: `<rect ${s} opacity=".85" x="10" y="20" width="28" height="20" rx="6"/><rect ${s} x="12" y="13" width="24" height="8" rx="3"/>`,
+    dropper: `<rect ${s} opacity=".85" x="15" y="22" width="18" height="22" rx="4"/><rect ${s} x="19" y="15" width="10" height="7"/><rect ${s} opacity=".6" x="21" y="5" width="6" height="10" rx="3"/>`,
+    bottle: `<path ${s} opacity=".85" d="M17 16h14l3 6v20a3 3 0 0 1-3 3H17a3 3 0 0 1-3-3V22z"/><rect ${s} x="19" y="7" width="10" height="9" rx="2"/>`,
+    stick: `<rect ${s} opacity=".85" x="17" y="14" width="14" height="30" rx="4"/><rect ${s} opacity=".5" x="17" y="5" width="14" height="10" rx="4"/>`,
+    tool: `<rect ${s} x="5" y="19" width="6" height="10" rx="2"/><rect ${s} x="37" y="19" width="6" height="10" rx="2"/><rect ${s} opacity=".85" x="10" y="16" width="5" height="16" rx="2"/><rect ${s} opacity=".85" x="33" y="16" width="5" height="16" rx="2"/><rect ${s} opacity=".5" x="15" y="22" width="18" height="4"/>`,
+    tee: `<path ${s} opacity=".85" d="M17 7l-10 6 4 8 4-2v22h18V19l4 2 4-8-10-6c-1 3-4 5-7 5s-6-2-7-5z"/>`,
+    jeans: `<path ${s} opacity=".85" d="M13 6h22l3 38h-9l-5-26-5 26h-9z"/><path ${s} opacity=".4" d="M13 6h22v5H13z"/>`,
+    shoe: `<path ${s} opacity=".85" d="M5 30c0-6 3-10 6-12l6 5c3 2 7 3 11 3 6 0 12 2 14 6v3H5z"/><rect ${s} opacity=".5" x="5" y="35" width="38" height="5" rx="2"/>`,
+    mask: `<path ${s} opacity=".85" d="M6 22c0-4 4-6 9-6h18c5 0 9 2 9 6s-3 9-8 9c-4 0-6-3-10-3s-6 3-10 3c-5 0-8-5-8-9z"/><path ${o} d="M6 22H2M42 22h4"/>`
+  };
+  return `<svg viewBox="0 0 48 48">${m[type] || m.jar}</svg>`;
+}
+function prodCard(x, mini) {
+  const c = PILLARS[x.pl].c, links = shopLinks(x);
+  if (mini) return `<div class="prodmini" style="--c:${c}"><div class="pi" style="color:${c}">${pimg(x.type)}</div><div style="flex:1;min-width:0"><div style="font-weight:800;font-size:13.5px;line-height:1.25">${x.b} · ${x.n}</div><div class="hint" style="font-size:12px">≈ ${x.p.toLocaleString('ru')} ₽</div><div>${links.slice(0, 2).map(([l, u]) => `<button class="buy" data-act="link" data-u="${esc(u)}">${l} ↗</button>`).join('')}</div></div></div>`;
+  return `<div class="pcard" style="--c:${c}"><div class="pi" style="color:${c}">${pimg(x.type)}</div><div style="flex:1;min-width:0">
+    <div class="n">${x.b !== 'База' && x.b !== 'Спорт' && x.b !== 'Сон' ? `<span style="color:${c}">${x.b}</span> · ` : ''}${x.n}</div>
+    <div class="w">${x.w}</div><div class="pr">≈ ${x.p.toLocaleString('ru')} ₽ · ${'₽'.repeat(tierOf(x.p))}</div>
+    <div>${links.map(([l, u]) => `<button class="buy" data-act="link" data-u="${esc(u)}">${l} ↗</button>`).join('')}</div></div></div>`;
+}
+// Средства, упомянутые в ответе тренера — показываем карточками под сообщением
+function prodsInText(t) {
+  const s = String(t || '').toLowerCase();
+  return CATALOG.filter((x) => (x.m || []).every((k) => s.includes(k))).slice(0, 3);
+}
 const ARTICLES = [
   { id: 'f1', tag: 'Мода', t: 'Как устроены недели моды', min: 4, art: 'a7', body: [
     'Главные недели моды — «большая четвёрка»: Нью-Йорк, Лондон, Милан и Париж. Они идут друг за другом дважды в год.',
@@ -1378,7 +1524,193 @@ const THEME_ACCENT = { matcha: '#cde59b', sunset: '#ffb07c', neon: '#ff7ccf', sa
 const VIVID = ['acid', 'mango', 'candy', 'ocean'];
 const PALETTE = ['#ffb07c', '#6ee7c8', '#b79cff', '#ffd166', '#ff7a9c', '#7dd3fc'];
 const DROP_BG = ['linear-gradient(135deg,#ff7a6b,#ffb07c 55%,#ffd166)', 'linear-gradient(135deg,#6ee7c8,#b5f5d9 60%,#fff1c9)', 'linear-gradient(135deg,#b79cff,#ffb3d1 60%,#ffd9b8)', 'linear-gradient(135deg,#7dd3fc,#c7f0ff 55%,#ffe8c2)'];
-const TAG_C = { 'Мода': '#b79cff', 'Тренд': '#6ee7c8', 'Стиль': '#ff7a9c', 'Уход': '#ffd166' };
+const TAG_C = { 'Мода': '#b79cff', 'Тренд': '#6ee7c8', 'Стиль': '#ff7a9c', 'Уход': '#ffd166', 'Осанка': '#ffd166', 'Волосы': '#b79cff', 'Сон': '#7dd3fc', 'Тело': '#6ee7c8', 'Общение': '#ff8a3d' };
+// Длинные статьи. wk — с какой недели в программе статья открывается (0 — сразу).
+// Так лента обновляется: каждую неделю приходят 2 новые статьи с пометкой «новое».
+const ARTICLES_LONG = [
+  { id: 'l1', wk: 0, tag: 'Уход', img: 'sink', art: 'a11', t: 'Уход за кожей для парней: схема на 5 минут в день', min: 8, body: [
+    'Большинство парней либо не делают с кожей ничего, либо покупают сразу десять баночек, через неделю бросают и решают, что «уход — это не для меня». Правда посередине: для заметного результата хватает трёх шагов и пяти минут в день. Главное — делать это каждый день, а не красиво.',
+    { h: 'Шаг 1. Умывание' },
+    'Обычное мыло сушит кожу и ломает её защитный барьер. Из-за этого кожа стягивается, шелушится — и, как ни странно, начинает жирнеть ещё сильнее, чтобы защититься. Нужен мягкий гель для умывания: утром и вечером, 30–60 секунд, тёплой (не горячей) водой.',
+    'Как понять, что гель подходит: после умывания кожа чистая, но не скрипит и не стягивается. Если стягивается — гель слишком агрессивный.',
+    { h: 'Шаг 2. Увлажнение' },
+    'Миф номер один: «у меня жирная кожа, мне крем не нужен». Нужен. Жирная кожа тоже бывает обезвоженной, и без крема она производит ещё больше себума. Просто выбирай лёгкую текстуру — лосьон или гель-крем.',
+    'Наноси на чуть влажную кожу сразу после умывания — так крем работает лучше. Хватит горошины на всё лицо.',
+    { h: 'Шаг 3. SPF — утром, всегда' },
+    'Солнце — главная причина морщин, пигментных пятен и «уставшей» кожи. И это не только про лето: ультрафиолет проходит через облака и окна. SPF 30–50 утром последним слоем, вместо или поверх крема.',
+    { q: 'Самый эффективный антивозрастной продукт — не дорогая сыворотка, а солнцезащитный крем.' },
+    { h: 'А когда добавлять что-то ещё' },
+    'Только когда база держится хотя бы 3–4 недели. Чёрные точки и прыщи — салициловая кислота (BHA) вечером 2–3 раза в неделю. Жирный блеск и расширенные поры — ниацинамид утром. Вводи по одному средству раз в 1–2 недели: если кожа отреагирует, будешь знать, на что.',
+    { h: 'Частые ошибки' },
+    'Тереть лицо полотенцем — промокай. Выдавливать прыщи — остаются пятна и рубцы. Менять средства каждую неделю — коже нужно 4–6 недель, чтобы показать результат. Спать на одной наволочке месяц — меняй раз в 3–4 дня.',
+    'Через месяц такого ухода кожа выглядит ровнее и свежее — и это видно на фото «до/после». Никакой магии, только регулярность.'
+  ] },
+  { id: 'l2', wk: 0, tag: 'Стиль', img: 'street', art: 'a9', t: 'Капсульный гардероб: 15 вещей, которые закрывают всё', min: 9, body: [
+    'Ощущение «нечего надеть» при забитом шкафе знакомо всем. Причина не в количестве вещей, а в том, что они не сочетаются между собой. Капсульный гардероб решает это: небольшой набор базовых вещей, где каждая сочетается почти с каждой.',
+    { h: 'Правило трёх цветов' },
+    'Основа капсулы — нейтральные цвета: чёрный, белый, серый, тёмно-синий, бежевый. Они сочетаются друг с другом без раздумий. Один-два акцентных цвета (оливковый, бордовый, горчичный) — максимум.',
+    { h: 'Сам список' },
+    'Верх: 3 плотные однотонные футболки (белая, чёрная, серая), 1 рубашка оксфорд (белая или голубая), 1 лонгслив или поло, 1 худи или свитшот без надписей, 1 тонкий свитер.',
+    'Низ: прямые тёмные джинсы, чиносы (бежевые или оливковые), спортивные штаны прямого кроя «на выход».',
+    'Верхняя одежда: куртка по сезону (бомбер, ветровка или пуховик без лишних деталей) и что-то поприличнее — пальто или овершот.',
+    'Обувь: белые кожаные кеды, ботинки (челси или дерби), кроссовки для спорта.',
+    { q: 'Пятнадцать вещей по размеру выглядят дороже, чем пятьдесят случайных.' },
+    { h: 'Посадка важнее бренда' },
+    'Шов плеча — на краю плеча. Футболка заканчивается на середине ширинки. Брюки не собираются гармошкой на обуви. Вещь, которая почти подходит, можно ушить у портного за 300–700 ₽ — и она начнёт выглядеть как дорогая.',
+    { h: 'Как собрать без больших трат' },
+    'Начни с ревизии: всё, что не носил год, плохо сидит или с огромными логотипами — в отдельный пакет. Потом закрой дыры из списка выше по одной вещи. Плотность футболки (от 200 г/м²) важнее надписи на бирке.',
+    { h: 'Уход за вещами — половина стиля' },
+    'Отпаренная рубашка и чистая обувь делают больше, чем новая куртка. Катышки снимаются машинкой за 300 ₽. Белые кеды чистятся зубной щёткой и пастой за 5 минут.',
+    'Собери капсулу за месяц — и утром будешь одеваться за две минуты, выглядя при этом собранно каждый день.'
+  ] },
+  { id: 'l3', wk: 1, tag: 'Осанка', img: 'arms', art: 'a3', t: 'Осанка за 4 недели: почему сутулишься и как это исправить', min: 8, body: [
+    'Сутулость — это не приговор и не генетика. В 9 из 10 случаев это привычка: часы за телефоном и компьютером, слабая спина и зажатая грудь. Хорошая новость — привычку можно переучить.',
+    { h: 'Что происходит в теле' },
+    'Когда ты долго сидишь, наклонившись вперёд, грудные мышцы укорачиваются и тянут плечи вперёд. Мышцы между лопатками растягиваются и слабеют. Голова уходит вперёд — и каждые 2–3 см наклона добавляют шее несколько килограммов нагрузки.',
+    'Визуально сутулость съедает рост, делает живот больше, а самого человека — неуверенным. Ровная спина работает наоборот.',
+    { h: 'Неделя 1–2: включить нужные мышцы' },
+    'Каждый день: 2 минуты у стены (затылок, лопатки и ягодицы касаются стены, подбородок чуть к себе). Растяжка грудных в дверном проёме — 2 × 30 секунд. «Ангелы у стены» — 2 × 10 медленных повторов.',
+    { h: 'Неделя 3–4: укрепить' },
+    'Добавь тягу резинки к лицу (face pull) 3 × 15, «супермена» на полу 3 × 12 и австралийские подтягивания или тягу резинки к поясу. Это мышцы, которые держат плечи на месте.',
+    { q: 'Мышцы держат осанку только тогда, когда они сильнее твоей привычки сутулиться.' },
+    { h: 'Привычка важнее упражнений' },
+    'Поставь 5 напоминаний в день: в этот момент выпрями спину, опусти плечи вниз и назад, подбородок к себе. Подними монитор до уровня глаз, телефон держи выше, а не на уровне живота.',
+    { h: 'Чего не делать' },
+    'Не «выпячивай» грудь колесом и не прогибай поясницу — это другая крайность. Не покупай корректоры осанки на весь день: мышцы расслабятся ещё сильнее. Если есть боль в спине, онемение рук — сначала к врачу.',
+    'Через 4 недели сравни фото сбоку «до» и «после». Разница обычно заметна даже тем, кто ничего не знал о твоих стараниях.'
+  ] },
+  { id: 'l4', wk: 1, tag: 'Волосы', img: 'barber', art: 'a5', t: 'Как выбрать стрижку и не стесняться барбера', min: 7, body: [
+    'Хорошая стрижка — самый быстрый апгрейд внешности. Она меняет впечатление за один час, и это видно сразу. Проблема в том, что большинство садится в кресло со словами «покороче» — и получает то же, что и всегда.',
+    { h: 'Начни с типа волос' },
+    'Прямые и тонкие — лучше короче по бокам и с текстурой сверху: длинные тонкие волосы ложатся плоско. Густые и жёсткие — можно оставить длину, они держат форму. Волнистые — не срезай всю длину: волна — твоё преимущество. Если волосы редеют — короткая стрижка смотрится аккуратнее, чем попытка что-то скрыть.',
+    { h: 'Принеси фото — это нормально' },
+    'Сохрани 3–5 фото стрижек на парнях с похожими волосами. Барберу так проще: «покороче» каждый понимает по-своему, а фото понимают все одинаково. Покажи, что нравится, и честно спроси: «Подойдёт ли это моим волосам?»',
+    { h: 'Слова, которые помогут' },
+    'Фейд (fade) — плавный переход от очень коротких висков к длине. Андеркат — резкий переход. Текстура — волосы сверху делают «рваными», чтобы легко укладывались. «Оставить длину сверху» — главная фраза, если не хочешь стрижку под ноль.',
+    { q: 'Свежая стрижка раз в 3–4 недели даёт больше, чем любая новая вещь в гардеробе.' },
+    { h: 'Укладка — это 2 минуты' },
+    'Подсуши волосы феном, направляя их как хочешь. Возьми горошину матовой глины или пасты, разотри между ладонями до прозрачности и распредели от корней. Пудра для объёма — если волосы тонкие и падают.',
+    'Совет: в конце стрижки попроси барбера показать, как он укладывает. Это бесплатный урок, который сэкономит месяцы экспериментов.'
+  ] },
+  { id: 'l5', wk: 2, tag: 'Сон', img: 'sleep', art: 'a13', t: 'Сон — бесплатный инструмент внешности', min: 7, body: [
+    'Мешки под глазами, тусклая кожа, тяга к сладкому, ноль сил на тренировку — всё это часто не про косметику и не про лень, а про сон. Недосып бьёт по всему сразу.',
+    { h: 'Что даёт нормальный сон' },
+    'Во сне восстанавливаются мышцы после тренировки и вырабатываются гормоны, нужные для роста и восстановления. Кожа тоже восстанавливается ночью. А после недосыпа повышается аппетит, особенно на сладкое и жирное — это не слабость воли, а гормоны голода.',
+    { h: 'Сколько нужно' },
+    'Большинству взрослых — 7–9 часов. Ориентир простой: если просыпаешься без будильника в выходные на 2 часа позже обычного — ты недосыпаешь в будни.',
+    { h: 'Как начать ложиться раньше' },
+    'Не пытайся лечь на 2 часа раньше с завтрашнего дня — не уснёшь. Сдвигай отбой на 15–20 минут каждые несколько дней. Вставай в одно и то же время даже в выходные — это якорь для всего режима.',
+    'За 30–60 минут до сна — без телефона в кровати. Дело не только в свете экрана: лента держит мозг в возбуждении. Положи телефон заряжаться в другой конец комнаты, а будильник поставь на часы.',
+    { q: 'Хороший день начинается вечером накануне.' },
+    { h: 'Спальня' },
+    'Темно, прохладно (18–20 °C) и тихо. Маска для сна и беруши стоят копейки и решают половину проблем. Кофе — не позже чем за 8 часов до сна: кофеин держится в крови дольше, чем кажется.',
+    'Попробуй неделю ложиться до полуночи — и сравни лицо утром на фото. Это самый дешёвый «уход», который существует.'
+  ] },
+  { id: 'l6', wk: 2, tag: 'Тело', img: 'gym', art: 'a4', t: 'Тело без зала: первые 8 недель дома', min: 9, body: [
+    'Зал не обязателен, чтобы выглядеть лучше. Первые месяцы собственного веса, турника и резинок хватает с запасом — особенно если до этого ты почти не тренировался.',
+    { h: 'Три тренировки в неделю' },
+    'Понедельник, среда, пятница — или любые три дня с отдыхом между ними. Мышцы растут не на тренировке, а во время восстановления.',
+    { h: 'Программа' },
+    'Отжимания — 3–4 подхода почти до отказа. Если тяжело — от стола или с колен. Приседания — 3–4 × 15–25, медленно вниз. Подтягивания или австралийские (под столом) — 3–4 подхода. Выпады — 3 × 10 на каждую ногу. Планка — 3 × 30–60 секунд.',
+    { h: 'Главное правило: прогрессия' },
+    'Каждую неделю делай чуть больше: на 1–2 повтора, на один подход, медленнее опускайся. Если всё время делать одно и то же — тело быстро привыкает, и рост останавливается.',
+    { q: 'Не нужно делать много. Нужно делать чуть больше, чем в прошлый раз.' },
+    { h: 'Еда решает половину' },
+    'Без белка мышцы не растут. Ориентир — белок в каждом приёме пищи: яйца, творог, курица, рыба, бобовые. Сладкую газировку и соки — убрать в первую очередь: это сотни пустых калорий.',
+    { h: 'Чего ждать' },
+    'Первые 2–3 недели — сила растёт быстрее, чем внешность: нервная система учится работать с мышцами. К 6–8 неделе изменения видно в зеркале и на фото: плечи, руки, осанка.',
+    'Делай фото раз в неделю при одном и том же свете. Через два месяца сам удивишься.'
+  ] },
+  { id: 'l7', wk: 3, tag: 'Уход', img: 'mirror', art: 'a2', t: 'Прыщи: что реально работает, а что — деньги на ветер', min: 9, body: [
+    'Прыщи бывают не только у подростков. И главное, что нужно о них знать: это не грязь и не «плохая кожа», а нормальный процесс, на который можно влиять.',
+    { h: 'Откуда они берутся' },
+    'Кожа производит кожное сало. Если поры забиваются ороговевшими клетками и салом — появляются чёрные точки и закрытые комедоны. Если туда добавляются бактерии и воспаление — красные прыщи.',
+    { h: 'Что работает' },
+    'Салициловая кислота (BHA) растворяет жир и чистит поры изнутри. Начинай с 2–3 раз в неделю вечером. Ниацинамид снижает жирность и успокаивает воспаления. Бензоилпероксид работает против бактерий — но может сушить и обесцвечивать ткань наволочки.',
+    'И самое скучное, но важное: мягкое умывание, лёгкий крем и SPF. Агрессивное очищение делает только хуже.',
+    { h: 'Что не работает' },
+    'Спирт, зубная паста, лимон, соль, сода на лицо — раздражают кожу и усиливают воспаление. Скрабы с крупными частицами — травмируют. Выдавливание — оставляет пятна, которые держатся месяцами.',
+    { q: 'Кислоты дают результат через 4–8 недель. Не через 4 дня.' },
+    { h: 'Когда идти к дерматологу' },
+    'Если прыщи глубокие и болезненные, оставляют рубцы, если за 2–3 месяца нормального ухода лучше не стало — это к врачу. Есть рецептурные средства, которые работают намного сильнее косметики. Это не стыдно, это быстрее.',
+    { h: 'Образ жизни' },
+    'Меняй наволочку раз в 3–4 дня, не трогай лицо руками, протирай экран телефона. У некоторых людей высыпания усиливаются от сладкого и молочного — понаблюдай за собой пару недель.',
+    'Терпение и регулярность — вот и весь секрет. Через два месяца сравни фото.'
+  ] },
+  { id: 'l8', wk: 3, tag: 'Общение', img: 'portrait', art: 'a13', t: 'Уверенность без понтов: язык тела', min: 7, body: [
+    'Люди составляют впечатление о тебе за первые секунды — и в основном не по словам, а по тому, как ты стоишь, смотришь и двигаешься. Хорошая новость: язык тела можно натренировать как мышцу.',
+    { h: 'Занимай своё место' },
+    'Неуверенный человек сжимается: плечи вперёд, руки скрещены, взгляд вниз. Уверенный — стоит ровно, плечи расправлены, руки свободно. Не нужно растопыриваться — просто не прячься.',
+    { h: 'Взгляд' },
+    'Смотри в глаза, когда говоришь и когда слушаешь. Не сверли — нормально отводить взгляд, задумываясь. Ориентир: смотришь в глаза примерно половину разговора.',
+    { h: 'Медленнее' },
+    'Суетливые движения и быстрая речь читаются как нервозность. Говори чуть медленнее, делай паузы, не бойся тишины. Паузы делают слова весомее.',
+    { q: 'Уверенность — это не отсутствие страха. Это когда страх не управляет твоим телом.' },
+    { h: 'Рукопожатие и улыбка' },
+    'Рука — крепко, но не до хруста, 2–3 секунды, взгляд в глаза. Искренняя улыбка при знакомстве — самый дешёвый способ понравиться. Она работает почти на всех.',
+    { h: 'Тренировка' },
+    'Каждый день — одна маленькая социальная задача: поздороваться первым, задать вопрос продавцу, сделать комплимент. Именно поэтому в mogg есть миссии общения. Каждая маленькая победа делает следующую проще.'
+  ] },
+  { id: 'l9', wk: 4, tag: 'Уход', img: 'beard', art: 'a8', t: 'Борода и щетина: отращивать или брить', min: 6, body: [
+    'Борода может сделать лицо мужественнее и скрыть то, что тебе не нравится. А может выглядеть неопрятно и добавить лет. Всё решает уход.',
+    { h: 'Сначала проверь, как растёт' },
+    'Дай бороде 3–4 недели и не трогай её. Первые две недели — самые неудобные: чешется и выглядит неряшливо. Это нормально. Через месяц станет понятно, густая она или растёт клочками.',
+    { h: 'Если растёт клочками' },
+    'Лучше короткая щетина 3–5 мм, подстриженная триммером раз в 3–4 дня, или чистое бритьё. Редкая длинная борода выглядит хуже, чем аккуратная щетина.',
+    { h: 'Контуры решают всё' },
+    'Линия на шее — примерно на два пальца выше кадыка. Всё, что ниже, — сбривать. Линия на щеках — естественная или чуть подровненная. Чёткие контуры сразу делают бороду «дорогой».',
+    { q: 'Неухоженная борода говорит «мне всё равно». Ухоженная — «я знаю, что делаю».' },
+    { h: 'Уход' },
+    'Мой бороду так же, как волосы. Масло для бороды — 2–3 капли после душа: убирает зуд и колючесть. Расчёсывай — так она ложится ровнее.',
+    { h: 'Если бреешься' },
+    'Брейся после душа, по росту волос, острым лезвием. Если появляется раздражение и вросшие волосы — попробуй триммер-бритву: она оставляет немного длины и почти не раздражает кожу.'
+  ] },
+  { id: 'l10', wk: 4, tag: 'Стиль', img: 'jacket', art: 'a10', t: 'Запах: то, что замечают все, но никто не скажет', min: 6, body: [
+    'Тебе никогда не скажут, что от тебя пахнет. Просто будут держаться подальше. Поэтому гигиена — это база, которую нужно закрыть раз и навсегда.',
+    { h: 'Дезодорант и антиперспирант — не одно и то же' },
+    'Дезодорант маскирует запах. Антиперспирант уменьшает количество пота. Если потеешь — нужен антиперспирант. Секрет, о котором мало кто знает: наносить его лучше вечером на сухую кожу. За ночь он успевает сработать, и утренний душ его не смоет.',
+    { h: 'Одежда' },
+    'Синтетика удерживает запах сильнее хлопка. Футболки после спорта стирай сразу, не оставляй в корзине на неделю. Обувь — давай ей сохнуть сутки между носками, используй стельки, которые можно стирать.',
+    { h: 'Парфюм' },
+    'Меньше — лучше. 1–2 нажатия: на шею или запястья. Не растирай. Если запах чувствуешь ты сам через час — значит, окружающие чувствуют его слишком сильно.',
+    { q: 'Лучший запах — чистое тело и свежая одежда. Парфюм — только сверху.' },
+    { h: 'Если потеешь сильно' },
+    'Попробуй аптечное средство от сильной потливости — его наносят раз в несколько дней. Если и оно не помогает — сходи к врачу: есть методы, которые решают проблему.',
+    'Свежее дыхание — туда же: щётка 2 раза в день, зубная нить, чистка языка. Мелочи, которые делают огромную разницу при общении.'
+  ] },
+  { id: 'l11', wk: 5, tag: 'Тело', img: 'run', art: 'a4', t: 'Еда без диет: что поменять, чтобы выглядеть лучше', min: 8, body: [
+    'Тебе не нужен подсчёт калорий и меню по граммам, чтобы выглядеть лучше. Хватит нескольких правил, которые закрывают 80% результата.',
+    { h: 'Белок в каждом приёме пищи' },
+    'Белок нужен мышцам, коже, волосам и даёт сытость. Яйца, творог, курица, индейка, рыба, говядина, бобовые. Простое правило: на каждой тарелке — ладонь белка.',
+    { h: 'Убрать жидкие калории' },
+    'Сладкая газировка, соки, энергетики, сладкий кофе — это сотни калорий, которые не насыщают. Просто заменив их на воду, чай или кофе без сахара, многие худеют без всяких диет.',
+    { h: 'Овощи и вода' },
+    'Овощи — половина тарелки, когда получается. Вода — 1,5–2,5 литра в день, больше в жару и после спорта. Обезвоживание видно по коже и по энергии.',
+    { q: 'Ты не можешь перетренировать плохое питание.' },
+    { h: 'Что с прыщами и сладким' },
+    'У части людей высыпания усиливаются от сахара и молочки. Это не у всех. Попробуй 2–3 недели сократить сладкое и посмотри на кожу — это лучший тест.',
+    { h: 'Не перегибай' },
+    'Жёсткие диеты срываются. Если хочется пиццы — съешь пиццу и вернись к обычному режиму на следующий приём пищи. Важно то, что ты делаешь большую часть времени, а не один ужин.'
+  ] },
+  { id: 'l12', wk: 5, tag: 'Уход', img: 'serum', art: 'a6', t: 'Отёки и круги под глазами: что можно исправить', min: 6, body: [
+    'Мешки и круги под глазами делают лицо уставшим, даже если ты выспался. Часть из них можно убрать, часть — только уменьшить. Разберёмся честно.',
+    { h: 'Отёки по утрам' },
+    'Чаще всего это вода: солёный ужин, алкоголь, недосып, сон на животе. Лечится режимом: меньше соли вечером, вода днём, а не на ночь, сон на спине с чуть приподнятой головой.',
+    'Быстрая помощь утром: умывание прохладной водой, холодная ложка или кубик льда в ткани на 1–2 минуты, средство с кофеином. Эффект временный, но заметный.',
+    { h: 'Тёмные круги' },
+    'Бывают от недосыпа, а бывают наследственные — из-за тонкой кожи и сосудов под ней. Наследственные круги кремом не убрать полностью, но сон, SPF и увлажнение делают их заметно мягче.',
+    { q: 'Ни один крем для глаз не заменит восемь часов сна.' },
+    { h: 'Чего не делать' },
+    'Не три глаза — тонкая кожа растягивается и темнеет. Не верь кремам, которые обещают «убрать мешки навсегда» — это маркетинг. Если отёки есть постоянно и днём тоже — стоит показаться врачу.',
+    'Неделя нормального сна и меньше соли вечером — и сравни утренние фото. Чаще всего разница видна сразу.'
+  ] }
+];
+ARTICLES.push(...ARTICLES_LONG);
+[['f1', 'suit'], ['f2', 'jacket'], ['f3', 'blazer'], ['f4', 'street'], ['f5', 'products']].forEach(([id, img]) => { const a = ARTICLES.find((x) => x.id === id); if (a) a.img = img; });
+// Неделя в программе: с неё открываются новые статьи
+const weekNo = () => Math.floor((dayNum(today()) - 1) / 7);
+const artsOpen = () => ARTICLES.filter((a) => (a.wk || 0) <= weekNo());
+const isNewArt = (a) => a.wk != null && a.wk === weekNo() && !(S.articles || []).includes(a.id);
 const THEMES = [
   ['acid', 'Кислота', 'linear-gradient(160deg,#c6ff3d,#ff3dd6 50%,#5b1cff)'],
   ['mango', 'Манго', 'linear-gradient(160deg,#ffd23d,#ff6a3d 50%,#c2185b)'],
@@ -1465,10 +1797,26 @@ function barcode() {
 function octa(act, label) {
   return `<button class="octa" data-act="${act}" aria-label="${label}"><svg class="o" viewBox="0 0 66 66" fill="none" stroke="currentColor" stroke-width="1.2"><polygon points="20,1 46,1 65,20 65,46 46,65 20,65 1,46 1,20"/></svg><span class="a">${IC.arrow}</span></button>`;
 }
-function art(key, word) {
+// Фото — бесплатные с Unsplash (лицензия Unsplash: можно в коммерции, без указания автора).
+// Если картинка не загрузилась (плохая сеть) — остаётся цветной градиент под ней.
+const IMG = {
+  hero: 'photo-1557862921-37829c790f19', suit: 'photo-1519085360753-af0119f7cbe7', portrait: 'photo-1600603406200-5b2a104684ac',
+  sink: 'photo-1567721971759-12402aedabf0', mirror: 'photo-1570554520913-ce2192a74574', serum: 'photo-1775127741091-cb7c89cedc78',
+  cream: 'photo-1715702129041-ff31d547e498', products: 'photo-1580870069867-74c57ee1bb07', dropper: 'photo-1608571423902-eed4a5ad8108', lotion: 'photo-1619451427882-6aaaded0cc61',
+  barber: 'photo-1503951914875-452162b0f3f1', razor: 'photo-1599351431202-1e0f0137899a', beard: 'photo-1630827020718-3433092696e7', beardtrim: 'photo-1599011176306-4a96f1516d4d',
+  gym: 'photo-1581009146145-b5ef050c2e1e', barbell: 'photo-1605296867304-46d5465a13f1', bwgym: 'photo-1526506118085-60ce8714f8c5', run: 'photo-1758506971986-b0d0edebd8d5',
+  arms: 'photo-1710019350627-205d74f373d5', hoodie: 'photo-1618425977996-bebc5afe88f9',
+  street: 'photo-1713943189183-c5a9dde63b45', jacket: 'photo-1462430638866-7ad892655344', sneakers: 'photo-1556906781-9a412961c28c', kicks: 'photo-1603808033192-082d6919d3e1',
+  sleep: 'photo-1585577529540-a8095ea25427', bed: 'photo-1502666689584-945597854f01',
+  read: 'photo-1758523668629-84908c91a66c', book: 'photo-1506880018603-83d5b814b5a6', glasses: 'photo-1616434116710-c45ce99c1a77', blazer: 'photo-1453396450673-3fe83d2db2c4'
+};
+const imgUrl = (k, w) => IMG[k] ? `https://images.unsplash.com/${IMG[k]}?w=${w || 800}&q=70&auto=format&fit=crop` : '';
+const pic = (k, w, cls) => IMG[k] ? `<img class="${cls || 'ph'}" src="${imgUrl(k, w)}" alt="" decoding="async" onerror="this.remove()">` : '';
+function art(key, word, img) {
   const [a, b, c] = ARTS[key] || ARTS.a1;
   return `<div class="art" style="background:radial-gradient(120% 80% at 80% 10%,${b}cc,transparent 60%),radial-gradient(90% 70% at 10% 90%,${c}55,transparent 60%),linear-gradient(160deg,${a},#000)">
-    ${word ? `<div style="position:absolute;left:-6px;bottom:30%;font-family:var(--disp);font-weight:700;font-size:150px;line-height:.8;color:transparent;-webkit-text-stroke:1px rgba(255,255,255,.22);text-transform:uppercase;white-space:nowrap">${word}</div>` : ''}
+    ${img ? pic(img, 900) : ''}
+    ${word ?`<div style="position:absolute;left:-6px;bottom:30%;font-family:var(--disp);font-weight:700;font-size:150px;line-height:.8;color:transparent;-webkit-text-stroke:1px rgba(255,255,255,.22);text-transform:uppercase;white-space:nowrap">${word}</div>` : ''}
     <div style="position:absolute;inset:0;background:linear-gradient(180deg,transparent 30%,rgba(0,0,0,.65))"></div>
   </div>`;
 }
@@ -1590,8 +1938,45 @@ function branches() {
   ];
 }
 function xp() {
-  return branches().reduce((a, b) => a + b.x, 0) + closedDays() * 20 + Object.keys(S.mood || {}).length * 3 + sumObj(S.chest) + Object.keys(S.claims || {}).length * 60 + (S.bonus || 0);
+  return branches().reduce((a, b) => a + b.x, 0) + closedDays() * 20 + Object.keys(S.mood || {}).length * 3 + sumObj(S.chest) + Object.keys(S.claims || {}).length * 60 + Object.keys(S.rfull || {}).length * 10 + (S.bonus || 0);
 }
+
+// ---------- рутина ухода утро / вечер ----------
+// Шаги собираются из анкеты и бюджета, под каждым — конкретное средство из каталога.
+function routine(part) {
+  const iss = S.issues || [], b = S.budget || 0, n = dayNum(today()), P = (slot) => myPick(slot);
+  const oily = iss.some((i) => ['oily', 'acne'].includes(i)), st = [];
+  st.push({ t: 'Умыться гелем', h: 'Тёплая вода, 30–60 секунд мягкими движениями. Промокнуть полотенцем, не тереть.', sec: 45, pr: P('cleanser') });
+  if (part === 'am') {
+    if (oily && b > 0) st.push({ t: 'Ниацинамид', h: '2–3 капли на всё лицо. Дай впитаться минуту.', sec: 60, pr: P('serum') });
+    if (iss.some((i) => ['puffy', 'darkcircles'].includes(i)) && b > 0) st.push({ t: 'Кофеин под глаза', h: 'Капля на безымянный палец — вбить лёгкими похлопываниями. Не тереть.', pr: P('eyes') });
+    st.push({ t: 'Увлажняющий крем', h: 'Горошина на всё лицо, на чуть влажную кожу.', pr: P('moist') });
+    st.push({ t: 'SPF', h: 'Последний шаг. Две полоски длиной в палец — на лицо и шею. Даже если пасмурно.', pr: P('spf') });
+    if ((S.plan.focus || []).includes('hair')) st.push({ t: 'Укладка', h: 'Подсушить феном, горошину средства растереть в ладонях до прозрачности и распределить от корней.', pr: P('styling'), opt: true });
+  } else {
+    if (iss.includes('acne') && b > 0 && n % 3 === 0) st.push({ t: 'Кислота (BHA)', h: 'Сегодня день кислоты. Тонким слоем на зоны с чёрными точками, подождать 10–15 минут до крема.', pr: P('bha') });
+    st.push({ t: 'Увлажняющий крем', h: 'Горошина на всё лицо. Вечером можно чуть больше.', pr: P('moist') });
+    st.push({ t: 'Бальзам для губ', h: 'Тонкий слой на ночь — утром губы не обветренные.', pr: P('lips'), opt: true });
+    st.push({ t: 'Телефон — на зарядку подальше', h: 'За 30 минут до сна. Утром лицо скажет спасибо.' });
+  }
+  return st;
+}
+const rPart = () => new Date().getHours() < 15 ? 'am' : 'pm';
+function routineCard() {
+  const part = rPart(), key = today() + ':' + part, st = routine(part), dn = ((S.rdone || {})[key] || []).length, full = (S.rfull || {})[key];
+  return `<button class="card row ${full ? '' : 'rcard'}" data-act="r-open" data-v="${part}" style="width:100%;text-align:left"><div class="iconbtn" style="font-size:22px">${part === 'am' ? '☀️' : '🌙'}</div><div style="flex:1"><b>Уход · ${part === 'am' ? 'утро' : 'вечер'}</b><div class="hint">${full ? 'сделано ✓' : `${Math.min(dn, st.length)}/${st.length} шагов · с таймером · +10 XP`}</div></div><span class="arrow">${IC.arrow}</span></button>`;
+}
+function renderRoutine() {
+  const part = modal.part, key = today() + ':' + part, dn = (S.rdone || {})[key] || [], st = routine(part);
+  return `<div class="modal"><div class="sheet exs">
+    <div class="row between"><span class="mono">[ рутина ухода ]</span><button class="wox" data-act="modal-close" aria-label="Закрыть">✕</button></div>
+    <div class="seg" style="margin:12px 0 14px">${[['am', '☀️ Утро'], ['pm', '🌙 Вечер']].map(([k, l]) => `<button class="${part === k ? 'on' : ''}" data-act="r-part" data-v="${k}">${l}</button>`).join('')}</div>
+    ${st.map((s, i) => `<button class="rstep ${dn.includes(i) ? 'done' : ''}" data-act="r-step" data-i="${i}"><span class="rn">${dn.includes(i) ? '✓' : i + 1}</span><span style="flex:1"><div class="rt">${s.t}${s.opt ? ' <span class="hint" style="font-weight:400;font-size:12px">· по желанию</span>' : ''}</div><div class="rh">${s.h}</div>${s.pr ? `<div class="rh" style="color:var(--text);opacity:.85">→ ${s.pr.b} · ${s.pr.n}</div>` : ''}${s.sec && !dn.includes(i) ? `<div class="rtimer" data-act="r-timer" data-s="${s.sec}" data-i="${i}">⏱ запустить таймер · ${s.sec} с</div>` : ''}</span></button>`).join('')}
+    <div class="hint" style="margin-top:8px;font-size:12.5px">Отметь все шаги — +10 XP. Средства подобраны под твой бюджет, все варианты — в Плане → Средства.</div>
+    <button class="btn" data-act="modal-close" style="margin-top:12px">Готово</button>
+  </div></div>`;
+}
+let rTimer = null;
 function rank() {
   const x = xp();
   let lvl = 1;
@@ -1643,7 +2028,7 @@ function afterRender(key) {
   lastScreen = key;
   const app = document.getElementById('app');
   app.classList.remove('enter'); void app.offsetWidth; app.classList.add('enter');
-  const els = [...app.querySelectorAll('.card,.tint,.mission,.lesson,.acard,.cc,.feature,.book,.outro,.sec,.badge,.excard,.banner')];
+  const els = [...app.querySelectorAll('.card,.tint,.mission,.lesson,.acard,.cc,.feature,.book,.outro,.sec,.badge,.excard,.banner,.wotile,.celebrate')];
   let batch = 0, timer;
   const io = new IntersectionObserver((ents) => {
     ents.forEach((e) => {
@@ -1668,6 +2053,8 @@ addEventListener('scroll', () => {
     document.querySelectorAll('#app .hero .spray').forEach((s) => { s.style.translate = `0 ${(y * 0.28).toFixed(1)}px`; });
     document.querySelectorAll('#app .hero svg.mtn').forEach((m) => { m.style.translate = `0 ${(y * 0.1).toFixed(1)}px`; });
     document.querySelectorAll('#app .hero .huge').forEach((h) => { h.style.translate = `0 ${(y * -0.06).toFixed(1)}px`; });
+    // картинки в карточках «Почитать» плывут медленнее карточки — эффект глубины
+    document.querySelectorAll('#app .feature > :first-child').forEach((a) => { const r = a.parentNode.getBoundingClientRect(); a.style.translate = `0 ${((r.top + r.height / 2 - innerHeight / 2) * -0.08).toFixed(1)}px`; a.style.scale = '1.12'; });
     ticking = false;
   });
 }, { passive: true });
@@ -1885,12 +2272,56 @@ function applyAI(a) {
   activateNext();
   modal = { kind: 'ai', fresh }; haptic('success'); save(); render();
 }
+// ---------- напоминания от бота ----------
+// Сервер раз в час пишет тем, у кого наступил выбранный час, а день ещё не закрыт.
+// Отправляем ему настройки и «закрыт ли сегодня день» — только когда что-то поменялось.
+const REM_HOURS = [8, 10, 13, 18, 20, 22];
+function remindSync(force) {
+  if (!AI_ENDPOINT || !S.remind || !S.onboarded) return Promise.resolve(null);
+  const real = fmt(new Date()), body = { on: !!S.remind.on, hour: S.remind.hour, tz: -new Date().getTimezoneOffset(), closed: closed(today()) ? real : '', streak: streak(), mode: S.coachTone || 'soft' };
+  const sig = JSON.stringify(body);
+  let last = ''; try { last = localStorage.getItem('mogg_rsig') || ''; } catch (e) {}
+  if (!force && (sig === last || Date.now() - remFail < 600000)) return Promise.resolve(null);
+  return aiCall('remind', body, 15000).then((r) => {
+    if (r && r.ok) { try { localStorage.setItem('mogg_rsig', sig); } catch (e) {} } else remFail = Date.now(); // при ошибке не долбим сервер 10 минут
+    return r;
+  });
+}
+let remFail = 0;
+let remT;
+const remindSoon = () => { clearTimeout(remT); remT = setTimeout(() => remindSync(), 2500); };
+function remindEnable(hour) {
+  const go = () => {
+    S.remind = { on: true, hour }; save(); render();
+    remindSync(true).then((r) => toast(r && r.ok ? `Напомню в ${hour}:00, если день не будет закрыт` : 'Не получилось включить — попробуй чуть позже'));
+  };
+  try { if (tg && tg.requestWriteAccess && tg.isVersionAtLeast && tg.isVersionAtLeast('6.9')) return tg.requestWriteAccess((ok) => ok ? go() : toast('Без разрешения бот не сможет присылать напоминания')); } catch (e) {}
+  go();
+}
+// Напоминания спрятаны, пока на сервере не настроены бакет, таймер и посредник. Настроили и проверили ping — ставим true.
+const REMIND_ON = false;
+function remindCard() {
+  if (!REMIND_ON) return '';
+  const R = S.remind || { on: false, hour: 20 };
+  return `<div class="card"><div class="row between"><span class="mono">🔔 Напоминания от бота</span>${R.on ? '<span class="mono" style="color:var(--ok)">включены</span>' : ''}</div>
+    <div class="hint" style="margin:6px 0 10px">Одно сообщение в выбранный час — только если день ещё не закрыт. Вечером напомню, если серия под угрозой.</div>
+    <div class="chips" style="margin-bottom:10px">${REM_HOURS.map((h) => `<button class="chip ${R.on && R.hour === h ? 'on' : ''}" data-act="rem-hour" data-h="${h}">${h}:00</button>`).join('')}</div>
+    ${R.on ? '<button class="btn sm ghost" data-act="rem-off" style="width:100%">Выключить напоминания</button>' : `<button class="btn sm" data-act="rem-hour" data-h="${R.hour}" style="width:100%">Включить в ${R.hour}:00</button>`}
+  </div>`;
+}
+function remindPrompt() {
+  if (!REMIND_ON || !AI_ENDPOINT || S.remind) return '';
+  return `<div class="card wocard" style="--c:#7dd3fc"><div class="row" style="align-items:flex-start"><span style="font-size:30px">🔔</span><div style="flex:1"><b>Напоминать о миссиях?</b>
+    <div class="hint" style="margin-top:4px">Бот напишет один раз в день, если ты ещё не закрыл день. Так серия не сгорит случайно.</div></div></div>
+    <div class="row" style="margin-top:12px;position:relative;z-index:1"><button class="btn sm" data-act="rem-hour" data-h="20" style="flex:1">Да, в 20:00</button><button class="btn sm ghost" data-act="rem-no">Не надо</button></div></div>`;
+}
+
 // Команды, на которые точнее отвечают правила приложения (статистика, план, заказы, реакция кожи)
 const LOCAL_CMD = /жж[её]|печ[её]т|покрасн|сыпь|чеш|болит|щипл|шелуш|статист|итог|мой путь|прогресс|отч[её]т|сводк|что сегодня|задани|план на|уров|опыт|xp|награ|открыть|открыва|заказал|купил|оформил|приш[её]л|пришл|получил|забрал|доставил/;
 async function askCoach(text) {
   if (AI_ENDPOINT && !LOCAL_CMD.test(text.toLowerCase())) {
     const r = rank(), P = S.protos || { active: [] };
-    const j = await aiCall('chat', { message: text, history: S.chat.slice(-11, -1), context: { day: dayNum(today()), streak: streak(), level: `${r.lvl} · ${r.name}`, focus: S.plan.focus.map((p) => PILLARS[p].name), tone: S.coachTone || 'soft', protocols: P.active.map((a) => PROTOCOLS[a.id].t), analysis: aiSummary(S.ai), journey: journey().slice(0, 10).map((x) => x.title) } }, 45000);
+    const j = await aiCall('chat', { message: text, history: S.chat.slice(-11, -1), context: { day: dayNum(today()), streak: streak(), level: `${r.lvl} · ${r.name}`, focus: S.plan.focus.map((p) => PILLARS[p].name), tone: S.coachTone || 'soft', protocols: P.active.map((a) => PROTOCOLS[a.id].t), analysis: aiSummary(S.ai), journey: journey().slice(0, 10).map((x) => x.title), budget: S.budget || 0, issues: (S.issues || []).map((k) => (ISSUES.find((x) => x[0] === k) || [])[1]).filter(Boolean), catalog: CATALOG.filter((x) => x.p <= Math.max(priceCap(S.budget || 0), 700) * 1.5).map((x) => `${x.b} ${x.n} — ≈${x.p} ₽ (${x.w.split('.')[0]})`) } }, 45000);
     if (j.text) {
       if (/сделал|нан[её]с|отжал|отжим|пробеж|присед|подтян|умыл|помыл|постриг|прош[её]л|планк/.test(text.toLowerCase())) addEvent('activity', '«' + text.slice(0, 80) + '»');
       return { text: j.text };
@@ -1931,7 +2362,17 @@ function analyze() {
     sleep: ['Недосып — это мешки под глазами, тусклая кожа и тяга к сладкому. Цель — 7–8 часов.']
   };
   let sum = 0;
-  const shopping = SHOP.filter((it) => focus.includes(it.pl) && (!it.need || has(it.need))).filter((it) => sum + it.p <= ob.budget && (sum += it.p, true)).map((it) => ({ ...it, st: 'none' }));
+  // Под каждую задачу берём конкретное средство из каталога, которое влезает в бюджет
+  // Сначала закрываем как можно больше задач самым доступным, потом на остаток денег улучшаем
+  const shopping = [], fit = (x) => !x.for || x.for.some((i) => has(i));
+  SHOP.filter((it) => focus.includes(it.pl) && (!it.need || has(it.need))).forEach((it) => {
+    const x = CATALOG.filter((c) => c.slot === it.slot && fit(c)).sort((a, b) => a.p - b.p)[0], p = x ? x.p : it.p;
+    if (sum + p <= ob.budget) { sum += p; shopping.push({ n: it.n, p, pl: it.pl, slot: it.slot, pid: x ? x.id : null, st: 'none' }); }
+  });
+  shopping.forEach((s) => {
+    const up = bestFor(s.slot, ob.issues, ob.budget);
+    if (up && up.p > s.p && sum - s.p + up.p <= ob.budget) { sum += up.p - s.p; s.p = up.p; s.pid = up.id; }
+  });
   return { focus, tips, shopping, sum };
 }
 function acceptPlan() {
@@ -1953,11 +2394,11 @@ function renderOnboarding() {
   const s = ob.step;
   if (s === 0) return `
     <div class="hero" style="min-height:520px">
-      ${mountains('o')}${sparks(8)}
-      <div class="spray" style="font-size:96px;left:-10px;top:250px;transform:rotate(-9deg)">UPGRD</div>
+      ${mountains('o')}${pic('hero', 900, 'heroph')}${sparks(8)}
+      <div class="spray" style="font-size:96px;left:-10px;top:250px;transform:rotate(-9deg)">MOGG</div>
       <div class="in" style="min-height:520px">
-        <div class="row between"><div class="logo" style="color:inherit">${IC.logo}<b>Апгрейд<span class="tm">™</span></b></div><span class="mono">[ SEASON 01 ]</span></div>
-        <div class="disp huge" style="font-size:76px;margin-top:40px;position:relative;z-index:2">Стань<br>лучшей<br>версией<span class="tm">™</span></div>
+        <div class="row between"><div class="logo" style="color:inherit">${IC.logo}<b>mogg<span class="tm">™</span></b></div><span class="mono">[ SEASON 01 ]</span></div>
+        <div class="disp huge" style="font-size:64px;margin-top:40px;position:relative;z-index:2">Стань<br>лучшей<br>версией<br>себя<span class="tm">™</span></div>
         <div class="bot row between" style="align-items:flex-end;position:relative;z-index:2"><div><div class="mono">Внешность · характер · общение · разум</div><div class="mono" style="margin-top:6px">20 уровней · награды · личный тренер</div></div>${barcode()}</div>
       </div>
     </div>
@@ -1986,12 +2427,11 @@ function renderOnboarding() {
     <button class="btn" data-act="next">Дальше</button>`;
   if (s === 4) return `${stepsBar(4)}
     <div class="mono">[ 04 / 05 ]</div><div class="disp h1" style="margin:8px 0 10px">Точка «до»</div>
-    <p class="hint" style="margin:0 0 16px">Дневной свет, лицо прямо, без фильтров. Камера на 1 метр и зум ×2.</p>
+    <p class="hint" style="margin:0 0 16px">Дневной свет, лицо прямо, без фильтров. Лучше всего — если снимет друг с метра.</p>
     ${ob.photoErr ? `<div class="banner" style="margin-bottom:14px">⚠️ ${esc(ob.photoErr)}</div>` : ''}
-    <label class="photo-drop" style="margin-bottom:14px">
-      ${ob.photo ? `<img src="${ob.photo}" alt="">` : `<div class="oval"></div><div style="position:relative">${IC.cam}<div style="font-weight:800;margin-top:6px">Загрузить фото</div><div class="hint">или сделать селфи</div></div>`}
-      <input type="file" accept="image/*" capture="user" hidden data-change="ob-photo">
-    </label>
+    <button type="button" class="photo-drop" data-act="photo" data-k="ob-photo" style="margin-bottom:14px;width:100%;color:inherit;font:inherit">
+      ${ob.photo ? `<img src="${ob.photo}" alt="">` : `<div class="oval"></div><div style="position:relative">${IC.cam}<div style="font-weight:800;margin-top:6px">Добавить фото</div><div class="hint">камера или галерея</div></div>`}
+    </button>
     <button class="btn" data-act="analyze">${ob.photo ? 'Сделать разбор' : 'Продолжить без фото'}</button>`;
   if (s === 5) return `${stepsBar(5)}
     <div class="spin"></div>
@@ -2006,7 +2446,7 @@ function renderOnboarding() {
       ${ob.ai ? aiCard(ob.ai) : ''}${ob.aiErr ? `<div class="banner">${esc(ob.aiErr)}</div>` : ''}
       ${r.focus.map((p, i) => `<div class="card"><div class="row between" style="margin-bottom:10px"><div class="row"><span class="tag" style="color:${PILLARS[p].c};border-color:${PILLARS[p].c}55">${PILLARS[p].code}</span><b class="disp" style="font-size:22px">${PILLARS[p].name}</b></div><span class="mono" style="color:${i < 2 ? 'var(--accent)' : 'var(--hint)'}">${i < 2 ? 'Главный фокус' : 'Поддержка'}</span></div>${r.tips[p].filter(Boolean).map((t) => `<div style="margin:5px 0;font-size:14px">— ${t}</div>`).join('')}</div>`).join('')}
       ${(() => { const pp = buildPlan(ob.issues, ob.budget); return pp.active.length ? `<div class="card"><div class="disp" style="font-size:22px;margin-bottom:6px">Твои протоколы</div><div class="hint" style="margin-bottom:6px">Пошаговый план под то, что ты отметил: что делать каждый день, чего избегать, упражнения с анимацией.</div>${pp.active.map((a) => `<div class="item"><div style="flex:1"><b>${PROTOCOLS[a.id].t}</b>${pp.notes[a.id] ? `<div class="hint" style="font-size:12.5px;margin-top:2px">${pp.notes[a.id]}</div>` : ''}</div><span class="mono">${PROTOCOLS[a.id].days} дн.</span></div>`).join('')}${pp.queue.length ? `<div class="hint" style="margin-top:8px">И ещё ${pp.queue.length} в очереди — начнутся, когда пройдёшь эти.</div>` : ''}</div>` : ''; })()}
-      <div class="card"><div class="disp" style="font-size:22px;margin-bottom:6px">Что заказать</div>${r.shopping.length ? r.shopping.map((it) => `<div class="item"><div style="flex:1">${it.n}</div><b>~${it.p} ₽</b></div>`).join('') + `<div class="row between" style="margin-top:12px"><span class="mono">Итого</span><b class="disp" style="font-size:22px">~${r.sum} ₽</b></div>` : '<div class="hint">Ничего покупать не нужно — весь план бесплатный.</div>'}</div>
+      <div class="card"><div class="disp" style="font-size:22px;margin-bottom:6px">Что заказать</div>${r.shopping.length ? r.shopping.map((it) => it.pid ? prodCard(CAT_BY[it.pid]) : `<div class="item"><div style="flex:1">${it.n}</div><b>~${it.p} ₽</b></div>`).join('') + `<div class="row between" style="margin-top:12px"><span class="mono">Итого</span><b class="disp" style="font-size:22px">~${r.sum} ₽</b></div>` : '<div class="hint">Ничего покупать не нужно — весь план бесплатный.</div>'}</div>
       <div class="disp" style="font-size:56px;text-align:center;margin:26px 0 14px">Делаем?</div>
       <button class="btn" data-act="accept">Да, погнали ${IC.send}</button>`;
   }
@@ -2015,7 +2455,7 @@ function renderOnboarding() {
 // ---------- шапка ----------
 function topbar(title) {
   const r = rank();
-  return `<div class="top"><div class="logo">${IC.logo}<b>${title || 'Апгрейд'}<span class="tm">™</span></b></div><span class="lvl ${isOpen('gold') ? 'gold' : ''}">LVL <em>${r.lvl}</em> · ${r.name}</span></div>`;
+  return `<div class="top"><div class="logo">${IC.logo}<b>${title || 'mogg'}<span class="tm">™</span></b></div><span class="lvl ${isOpen('gold') ? 'gold' : ''}">LVL <em>${r.lvl}</em> · ${r.name}</span></div>`;
 }
 
 // ---------- главная ----------
@@ -2046,64 +2486,65 @@ function renderHome() {
   const d = today(), n = dayNum(d), tasks = tasksFor(n), done = doneOn(d), s = streak(), r = rank();
   const lastPhoto = (S.photos || []).slice(-1)[0];
   const needPhoto = !lastPhoto || dayNum(d) - dayNum(lastPhoto.date) >= 7;
-  const shop = S.plan.shopping;
-  const st = { none: ['st-none', 'Заказать'], ordered: ['st-ordered', 'В пути'], arrived: ['st-arrived', 'Пришло'] };
-  const nextLesson = ALL_LESSONS.find((l) => !(S.lessons || []).includes(l.id));
   const book = readingBook(), pagesToday = (S.pages || {})[d] || 0;
   const cm = charFor(n), cmDone = (S.char || {})[d];
-  const nu = UNLOCKS.find((u) => u.lvl > r.lvl);
   const chestOpen = !(S.chest || {})[d];
+  // «Сегодня» — только то, что нужно сделать сегодня. Всё остальное — во вкладках «План» и «Я».
   const html = `
     ${topbar()}
-    ${chestOpen ? `<div class="card chest"><span class="ci">🎁</span><div style="flex:1"><b>Сундук дня</b><div class="hint">Заходи каждый день — внутри 10–30 XP</div></div><button class="btn sm" data-act="chest" style="background:var(--gold);color:#1c100b">Открыть</button></div>` : ''}
-    <div class="hero" style="min-height:400px">
+    <div class="hero" style="min-height:390px">
       ${mountains('h')}${sparks(9)}
-      <div class="spray" style="font-size:80px;right:-16px;top:112px;transform:rotate(-10deg)">UPGRD</div>
-      <div class="in" style="min-height:400px">
-        <div class="row between"><span class="mono">[ SEASON 01™ · LVL ${z(r.lvl)} ]</span><span class="mono">${human(d)}</span></div>
+      <div class="spray" style="font-size:80px;right:-16px;top:96px;transform:rotate(-10deg)">MOGG</div>
+      <div class="in" style="min-height:390px">
+        <div class="row between"><span class="mono">[ ${human(d)} ]</span><span class="mono">${s ? `🔥 ${s} ${plural(s, 'день', 'дня', 'дней')} подряд` : 'начни серию'}</span></div>
         <div class="disp huge" style="position:relative;z-index:2">День<br>${z(n)}<span class="tm">™</span></div>
         <div class="bot" style="position:relative;z-index:2">
-          <div class="row between" style="align-items:flex-end;margin-bottom:14px">
-            <div class="specs">
-              <div><div class="k">Фокус</div><div class="v">${S.plan.focus.map((p) => PILLARS[p].code).join(' ')}</div></div>
-              <div><div class="k">Режим</div><div class="v">${mode()[1]}</div></div>
-            </div>
+          <div class="row between" style="align-items:flex-end;margin-bottom:12px">
+            <div><div class="mono">Сегодня сделано</div><div class="disp" style="font-size:40px;line-height:1">${done.length}<span style="opacity:.45">/3</span></div></div>
             ${octa('to-missions', 'К миссиям')}
           </div>
-          <div class="row between"><span class="mono">${r.x - r.cur}/${r.next ? r.next - r.cur : '∞'} XP до ур. ${r.lvl + 1}</span><span class="mono">${done.length}/3 миссий</span></div>
+          <div class="row between"><span class="mono">ур. ${r.lvl} · ${r.name}</span><span class="mono">${r.next ? `ещё ${r.next - r.x} XP` : 'максимум'}</span></div>
           <div class="track"><i style="width:${r.next ? (r.x - r.cur) / (r.next - r.cur) * 100 : 100}%"></i></div>
         </div>
       </div>
     </div>
     ${celebrate ? `<div class="celebrate"><div><b>День закрыт</b><div style="font-weight:700;font-size:13px;opacity:.8">+50 XP · серия ${s}</div></div><div style="font-size:34px">🔥</div></div>` : ''}
-    <div class="tiles">
-      <div class="tint ${s ? 'flick' : ''}" style="--c:#ff8a3d"><div class="mono">${IC.fire} Серия</div><b data-count="${s}">${s}</b><small>${plural(s, 'день', 'дня', 'дней')} подряд</small></div>
-      <div class="tint" style="--c:#b79cff"><div class="mono">${IC.bolt} Опыт</div><b data-count="${r.x}">${r.x}</b><small>${r.next ? `до ур. ${r.lvl + 1}: ${r.next - r.x}` : 'максимум'}</small></div>
-    </div>
+    ${chestOpen ? `<div class="card chest"><span class="ci">🎁</span><div style="flex:1"><b>Подарок дня</b><div class="hint">Заходи каждый день — внутри 10–30 XP</div></div><button class="btn sm" data-act="chest" style="background:var(--gold);color:#1c100b">Открыть</button></div>` : ''}
     <div class="sec" id="missions"><span class="disp">Миссии дня</span><span class="chipline">[ ${done.length}/3 ]</span></div>
     ${tasks.map((t) => `<button class="mission ${done.includes(t.id) ? 'done' : ''} ${justDone === t.id ? 'just' : ''}" data-act="task" data-id="${t.id}"><span class="box">${done.includes(t.id) ? IC.check : ''}</span><span style="flex:1"><div class="t">${t.text}</div><div class="row" style="gap:6px;margin-top:5px"><span class="tag" style="color:${PILLARS[t.p].c};border-color:${PILLARS[t.p].c}55">${PILLARS[t.p].code}</span><span class="hint" style="font-size:12px">${PILLARS[t.p].name}</span></div></span><span class="xp">+10 XP</span></button>`).join('')}
     <button class="mission charm ${cmDone ? 'done' : ''} ${justDone === 'char' ? 'just' : ''}" data-act="char"><span class="box">${cmDone ? IC.check : ''}</span><span style="flex:1"><div class="t">${cm[1]}</div><div class="row" style="gap:6px;margin-top:5px"><span class="tag" style="color:#b79cff;border-color:#b79cff55">${cm[0] === 'soc' ? 'SOCIAL' : 'MIND'}</span><span class="hint" style="font-size:12px">Миссия ${cm[0] === 'soc' ? 'общения' : 'характера'}</span></div></span><span class="xp">+15 XP</span></button>
     ${book ? `<button class="mission bonus ${pagesToday >= 10 ? 'done' : ''} ${justDone === 'pages' ? 'just' : ''}" data-act="pages"><span class="box">${pagesToday >= 10 ? IC.check : ''}</span><span style="flex:1"><div class="t" style="${pagesToday >= 10 ? 'text-decoration:none;color:var(--text)' : ''}">10 страниц «${book.t}»</div><div class="row" style="gap:6px;margin-top:5px"><span class="tag" style="color:#7dd3fc;border-color:#7dd3fc55">READ</span><span class="hint" style="font-size:12px">сегодня ${pagesToday} стр. · тапни +10</span></div></span><span class="xp">+5 XP</span></button>` : ''}
     ${planCard()}
+    ${routineCard()}
+    <div class="sec"><span class="disp">Тренировка</span><span class="chipline">[ с таймером ]</span></div>
     ${woHomeCard()}
-    ${nu ? `<div class="card teaser"><div class="row"><span class="lock">${IC.lock}</span><span class="mono">Следующая награда · ур. ${nu.lvl}</span></div><div class="row" style="margin-top:10px"><span style="font-size:28px">${nu.ic}</span><div style="flex:1"><b style="font-size:16px">${nu.name}</b><div class="hint">${nu.d}</div></div></div><div class="bar2"><i style="width:${Math.min(100, (r.x - r.cur) / (LV(nu.lvl) - r.cur) * 100)}%"></i></div><div class="row between" style="margin-top:6px"><span class="mono">${r.x} XP</span><span class="mono">ещё ${LV(nu.lvl) - r.x} XP</span></div></div>` : ''}
-    ${featureCards()}
-    ${(() => { const dr = dropNow(); return `<div class="sec"><span class="disp">Дроп</span><span class="mono">${dr.slot} · новый через ${dr.left}</span></div>
-    <div class="card drop hot" style="background:${DROP_BG[(dr.n - 1) % DROP_BG.length]}"><div class="n">${z(dr.n)}</div><span class="mono">[ совет · ${dr.slot} ]</span><p>${dr.text}</p></div>`; })()}
-    ${nextLesson ? `<button class="card row" style="width:100%;text-align:left" data-act="open" data-kind="lesson" data-id="${nextLesson.id}"><div style="flex:1"><span class="mono">${courseOf(nextLesson).name} · урок ${courseOf(nextLesson).lessons.indexOf(nextLesson) + 1} · +25 XP</span><div style="font-weight:800;font-size:16px;margin-top:4px">${nextLesson.t}</div></div><span class="arrow">${IC.arrow}</span></button>` : ''}
-    ${needPhoto ? `<label class="card row" style="cursor:pointer;transition:transform .12s"><div class="iconbtn">${IC.cam}</div><div style="flex:1"><b>Фото недели</b><div class="hint">+15 XP · для сравнения «до / после»</div></div><span class="arrow">${IC.arrow}</span><input type="file" accept="image/*" capture="user" hidden data-change="week-photo"></label>` : ''}
-    <div class="sec"><span class="disp">Коллекция<span class="tm">™</span></span><span class="chipline">[ ${S.plan.focus.length} линии ]</span></div>
-    ${renderCollection()}
-    ${shop.length ? `<div class="sec"><span class="disp">Средства</span><span class="chipline">[ тапни статус ]</span></div><div class="card">${shop.map((it, i) => `<div class="item"><div style="flex:1"><div style="font-weight:600">${it.n}</div><div class="hint">~${it.p} ₽</div></div><button class="status ${st[it.st][0]}" data-act="shop" data-i="${i}">${st[it.st][1]}</button></div>`).join('')}</div>` : ''}
-    <div class="outro">
+    ${readCard()}
+    ${needPhoto ? `<button type="button" class="card row" data-act="photo" data-k="week-photo" style="width:100%;text-align:left;transition:transform .12s"><div class="iconbtn">${IC.cam}</div><div style="flex:1"><b>Фото недели</b><div class="hint">+15 XP · для сравнения «до / после»</div></div><span class="arrow">${IC.arrow}</span></button>` : ''}
+    ${remindPrompt()}
+    <div class="outro" style="min-height:0;padding-bottom:22px">
       ${mountains('f')}
-      <div class="spray" style="font-size:110px;left:-6px;top:70px;transform:rotate(-8deg)">UPGRD</div>
-      <div class="row between" style="position:relative;z-index:2"><span class="mono">[ Апгрейд™ · season 01 ]</span><span class="mono">№${z(n)}</span></div>
-      <div class="tag3">Собран для дисциплины<br>Сделан для роста<br>Закалён серией</div>
+      <div class="tag3" style="margin-top:0">На сегодня всё.<br>Завтра — новый день.</div>
       <div class="row between" style="margin-top:14px;position:relative;z-index:2;align-items:flex-end"><span class="mono">Для тех, кто качает себя,<br>а не ленту</span>${barcode()}</div>
     </div>`;
   celebrate = false;
   return html;
+}
+// Что почитать сегодня: в нечётные дни — следующий урок курса, в чётные — статья. Каждый день разное.
+function readCard() {
+  const n = dayNum(today()), rl = S.lessons || [], ra = S.articles || [];
+  const lesson = ALL_LESSONS.find((l) => !rl.includes(l.id));
+  const open = artsOpen(), fresh = open.filter((a) => isNewArt(a));
+  const arts = open.filter((a) => !ra.includes(a.id)).sort((a, b) => b.min - a.min), pool = arts.length ? arts : open;
+  // новая статья недели важнее урока; иначе чередуем урок и статью
+  const isL = !fresh.length && !!lesson && (n % 2 === 1 || !arts.length);
+  const it = isL ? lesson : fresh.length ? fresh[n % fresh.length] : pool[n % pool.length];
+  if (!it) return '';
+  const c = isL ? courseOf(it) : null, k = c ? c.lessons.indexOf(it) + 1 : 0;
+  const ck = c ? Object.keys(COURSES).find((key) => COURSES[key] === c) : null;
+  const more = open.filter((a) => a !== it && !ra.includes(a.id)).slice(0, 4);
+  return `<div class="sec"><span class="disp">Почитать</span><span class="chipline">[ ${it.min} мин ]</span></div>
+    <button class="feature" data-act="open" data-kind="${isL ? 'lesson' : 'article'}" data-id="${it.id}">${art(it.art, '', isL ? COURSE_IMG[ck] : it.img)}<div class="in"><span class="mono">[ ${c ? c.name + ' · урок ' + k : it.tag} · +${isL ? 25 : 5} XP ]${!isL && isNewArt(it) ? '<span class="newb">НОВОЕ</span>' : ''}</span><div class="disp" style="margin:8px 0 12px">${it.t}</div><span class="pillbtn" style="background:#fff;color:#000">Читать <i style="background:#000;color:#fff">${IC.arrow}</i></span></div></button>
+    ${more.length ? `<div class="strip">${more.map((a) => `<button class="phcard" data-act="open" data-kind="article" data-id="${a.id}" style="text-align:left">${pic(a.img, 600)}<span class="mono">[ ${a.tag} · ${a.min} мин ]</span><div style="font-weight:800;font-size:17px;line-height:1.2;margin-top:4px">${a.t}</div></button>`).join('')}</div>` : ''}`;
 }
 // ---------- мой план ----------
 // ---------- тренировки: карточки и проигрыватель ----------
@@ -2225,19 +2666,26 @@ function renderPlan() {
   const P = S.protos, act = P.active, iss = (S.issues || []).map((k) => (ISSUES.find((x) => x[0] === k) || [])[1]).filter(Boolean);
   const exIds = [...new Set(act.flatMap((a) => PROTOCOLS[a.id].steps.filter((s) => s.x).map((s) => s.x)))];
   const status = (id) => act.some((a) => a.id === id) ? 'активен' : P.queue.includes(id) ? 'в очереди' : P.done.some((d) => d.id === id) ? 'пройден ✓' : '';
-  return `${topbar('Мой план')}
-    <div class="banner"><span class="mono" style="color:var(--accent)">[ персональный план ]</span><div style="margin-top:4px">${iss.length ? `Собран по твоей анкете: ${iss.join(', ').toLowerCase()}.` : 'Ты не отметил проблем в анкете — выбери протокол ниже.'} Одновременно — не больше ${MAX_ACTIVE} протоколов, чтобы не распыляться.${AI_ENDPOINT ? '' : ' Скоро протоколы будут подбираться по фото и подстраиваться под тебя.'}</div></div>
+  const shop = (S.plan && S.plan.shopping) || [];
+  const st = { none: ['st-none', 'Заказать'], ordered: ['st-ordered', 'В пути'], arrived: ['st-arrived', 'Пришло'] };
+  return `${topbar('План')}
+    <div class="banner"><span class="mono" style="color:var(--accent)">[ персональный план ]</span><div style="margin-top:4px">${iss.length ? `Собран по твоей анкете: ${iss.join(', ').toLowerCase()}.` : 'Ты не отметил проблем в анкете — выбери протокол ниже.'} Одновременно — не больше ${MAX_ACTIVE} протоколов, чтобы не распыляться.</div></div>
     ${AI_ENDPOINT ? `<div class="card"><div class="row between"><b>Разбор по фото</b>${S.ai && !aiBusy ? '<button class="btn sm ghost" data-act="ai-open" style="height:32px">Открыть</button>' : ''}</div>
       <div class="hint" style="margin:4px 0 10px">${aiBusy ? 'Анализируем фото — это может занять до минуты…' : S.ai ? `Последний — ${human(S.ai.date)}. Новый разбор добавит в план то, что видно на фото.` : 'Разберём фото и добавим в план то, что реально видно.'}</div>
-      ${aiBusy ? '<div class="spin" style="margin:6px auto"></div>' : `<label class="btn sm" style="cursor:pointer">${S.ai ? 'Новый разбор' : 'Сделать разбор'}<input type="file" accept="image/*" capture="user" hidden data-change="ai-photo"></label>`}</div>` : ''}
+      ${aiBusy ? '<div class="spin" style="margin:6px auto"></div>' : `<button type="button" class="btn sm" data-act="photo" data-k="ai-photo">${S.ai ? 'Новый разбор' : 'Сделать разбор'}</button>`}</div>` : ''}
+    ${routineCard()}
+    <div class="sec"><span class="disp">Протоколы</span><span class="chipline">[ ${act.length} активн. ]</span></div>
+    ${act.length ? act.map(protoCard).join('') : '<div class="card"><b>Активных протоколов нет</b><div class="hint" style="margin-top:4px">Выбери один из списка внизу.</div></div>'}
     ${woCards()}
-    ${act.length ? act.map(protoCard).join('') : '<div class="card"><b>Активных протоколов нет</b><div class="hint" style="margin-top:4px">Выбери один из списка ниже.</div></div>'}
     ${exIds.length ? `<div class="sec"><span class="disp">Мои упражнения</span><span class="chipline">[ ${exIds.length} ]</span></div>
       <div class="exgrid">${exIds.map((id) => `<button class="excard" data-act="ex-open" data-x="${id}"><div class="pv">${EX_ANIM[id]()}</div><b>${EXERCISES[id].t}</b><small>${EXERCISES[id].dose}</small></button>`).join('')}</div>` : ''}
     ${P.queue.length ? `<div class="sec"><span class="disp">Дальше по плану</span><span class="chipline">[ очередь ]</span></div>
       <div class="card">${P.queue.map((id) => `<div class="item"><div style="flex:1"><b>${PROTOCOLS[id].t}</b><div class="hint" style="font-size:12px">${PROTOCOLS[id].days} дней · начнётся, когда освободится место</div></div></div>`).join('')}</div>` : ''}
-    <div class="sec"><span class="disp">Все протоколы</span><span class="chipline">[ ${PROTO_ORDER.length} ]</span></div>
-    <div class="card">${PROTO_ORDER.map((id) => { const pr = PROTOCOLS[id], st = status(id); return `<div class="item"><span class="tag" style="color:${PILLARS[pr.p].c};border-color:${PILLARS[pr.p].c}55">${PILLARS[pr.p].code}</span><div style="flex:1"><b style="font-size:14.5px">${pr.t}</b><div class="hint" style="font-size:12px">${pr.days} дней</div></div>${st && st !== 'пройден ✓' ? `<span class="mono">${st}</span>` : `<button class="btn sm ghost" data-act="proto-add" data-id="${id}" style="height:32px">${st ? 'Ещё раз' : 'Начать'}</button>`}</div>`; }).join('')}</div>`;
+    ${shop.length ? `<div class="sec"><span class="disp">Средства</span><span class="chipline">[ тапни статус ]</span></div><div class="card">${shop.map((it, i) => { const sl = it.slot || (SHOP.find((s) => s.n === it.n) || {}).slot, x = it.pid ? CAT_BY[it.pid] : sl ? bestFor(sl, S.issues || [], S.budget || 0) : null; return `<div class="item" style="align-items:flex-start"><div style="flex:1"><div style="font-weight:600">${it.n}</div>${x ? `<div class="hint" style="font-size:12.5px">${x.b} · ${x.n} · ≈ ${x.p} ₽</div><div>${shopLinks(x).slice(0, 2).map(([l, u]) => `<button class="buy" data-act="link" data-u="${esc(u)}">${l} ↗</button>`).join('')}</div>` : `<div class="hint">~${it.p} ₽</div>`}</div><button class="status ${st[it.st][0]}" data-act="shop" data-i="${i}">${st[it.st][1]}</button></div>`; }).join('')}<button class="btn sm ghost" data-act="lib" data-v="shelf" style="width:100%;margin-top:10px">Все средства под бюджет →</button></div>` : ''}
+    <div class="sec"><span class="disp">Библиотека</span><span class="chipline">[ читать ]</span></div>
+    <div class="libgrid">${[['feed', '📰', 'Статьи', `${artsOpen().length} статей · новые каждую неделю`, 'street'], ['shelf', '🛒', 'Средства', 'подборка под бюджет', 'products'], ['basics', '🧴', 'Внешность', 'курс из уроков', 'mirror'], ['mind', '🧠', 'Характер', 'дисциплина и сила', 'read'], ['social', '🗣', 'Общение', 'уверенность с людьми', 'portrait'], ['books', '📚', 'Книги', 'полка и трекер', 'book']].map(([k, ic, n, h, img]) => `<button class="card libtile" data-act="lib" data-v="${k}">${pic(img, 400, 'ph lt')}<span class="ic">${ic}</span><b>${n}</b><small>${h}</small></button>`).join('')}</div>
+    <details class="card allp"><summary><span class="disp" style="font-size:20px">Все протоколы</span><span class="mono">${PROTO_ORDER.length}</span></summary>
+    <div>${PROTO_ORDER.map((id) => { const pr = PROTOCOLS[id], st = status(id); return `<div class="item"><span class="tag" style="color:${PILLARS[pr.p].c};border-color:${PILLARS[pr.p].c}55">${PILLARS[pr.p].code}</span><div style="flex:1"><b style="font-size:14.5px">${pr.t}</b><div class="hint" style="font-size:12px">${pr.days} дней</div></div>${st && st !== 'пройден ✓' ? `<span class="mono">${st}</span>` : `<button class="btn sm ghost" data-act="proto-add" data-id="${id}" style="height:32px">${st ? 'Ещё раз' : 'Начать'}</button>`}</div>`; }).join('')}</div></details>`;
 }
 function toggleStep(key) {
   const d = today(), id = key.split(':')[0], a = S.protos.active.find((x) => x.id === id);
@@ -2291,11 +2739,11 @@ function renderCoach() {
     <div class="coach-head"><div class="ava">${esc(coachName().slice(0, 1))}</div><div style="flex:1"><b style="font-size:17px">${esc(coachName())}</b><div class="mono" style="margin-top:2px"><span style="color:var(--ok)">●</span> онлайн · ${mode()[0]} ${mode()[1].toLowerCase()}</div></div><button class="btn sm ghost" data-act="mode-toggle" style="height:32px">Режим</button></div>
     ${modeOpen ? modePicker() : ''}
     <div class="chat">
-      ${S.chat.map((m, i) => `<div class="msg ${m.from} ${newMsgs && i === total - 1 ? 'new' : ''}">${esc(m.text)}${m.card === 'journey' ? card() : ''}</div>`).join('')}
+      ${S.chat.map((m, i) => `<div class="msg ${m.from} ${newMsgs && i === total - 1 ? 'new' : ''}">${esc(m.text)}${m.card === 'journey' ? card() : ''}${m.from !== 'me' ? prodsInText(m.text).map((x) => prodCard(x, true)).join('') : ''}</div>`).join('')}
       ${typing ? '<div class="msg ai typing new"><span></span><span></span><span></span></div>' : ''}
     </div>
     <div class="composer"><div class="in">
-      <div class="qr">${['Что сегодня?', 'Мой путь', 'Что откроется?', 'Что почитать?', 'Заказал средства', 'Средства пришли', 'Лень сегодня'].map((q) => `<button data-act="quick" data-q="${q}">${q}</button>`).join('')}</div>
+      <div class="qr">${['Что сегодня?', 'Что мне купить под мой бюджет?', 'Мой путь', 'Что почитать?', 'Заказал средства', 'Средства пришли', 'Лень сегодня'].map((q) => `<button data-act="quick" data-q="${q}">${q}</button>`).join('')}</div>
       <form data-submit="chat"><input id="chatIn" placeholder="Напиши тренеру…" autocomplete="off"><button class="send" aria-label="Отправить">${IC.send}</button></form>
     </div></div>`;
 }
@@ -2307,7 +2755,7 @@ function courseView(key) {
   const done = c.lessons.filter((l) => read.includes(l.id)).length;
   return `
     <div class="hero" style="min-height:230px;background:none">
-      ${art(c.art, c.word)}
+      ${art(c.art, c.word, COURSE_IMG[key])}
       <div class="in" style="min-height:230px;color:#fff">
         <span class="mono">[ ${c.name} · ${c.lessons.length} уроков · ${c.lessons.reduce((a, l) => a + l.min, 0)} мин ]</span>
         <div class="bot"><div class="disp" style="font-size:44px">${c.title}</div>
@@ -2340,25 +2788,37 @@ function booksView() {
     <div class="sec"><span class="disp">Полка</span><span class="chipline">[ ${BOOKS.length} книг ]</span></div>
     <div class="books">${BOOKS.map((b) => { const s = st[b.id]; return `<button class="book" data-act="open" data-kind="book" data-id="${b.id}">${bookCover(b)}<span class="mono">${b.cat}</span>${s ? `<span class="bstat ${label[s][0]}">${label[s][1]}</span>` : ''}</button>`; }).join('')}</div>`;
 }
+let shelfCap = null;
+const SHELF_GROUPS = [['skin', 'Уход за кожей', 'products'], ['hair', 'Волосы и борода', 'barber'], ['style', 'Гардероб и запах', 'street'], ['body', 'Спорт дома', 'gym'], ['sleep', 'Сон', 'bed']];
 function shelfView() {
+  const iss = S.issues || [], cap = shelfCap == null ? priceCap(S.budget || 0) : shelfCap;
+  const slots = ['cleanser', 'moist', 'spf', ...(iss.some((i) => ['acne', 'oily'].includes(i)) ? ['serum', 'bha'] : []), ...(iss.includes('acne') ? ['acne'] : []), ...(iss.some((i) => ['puffy', 'darkcircles'].includes(i)) ? ['eyes'] : []), 'styling', ...(iss.includes('dandruff') ? ['dandruff'] : []), ...(iss.includes('sweat') ? ['deo'] : [])];
+  const mine = [...new Set(slots.map((s) => myPick(s)).filter(Boolean))];
   return `
-    <div class="banner"><span class="mono" style="color:var(--accent)">[ подборка редакции ]</span><div style="margin-top:4px">Не реклама. Перед покупкой проверь состав и отзывы, новое средство для кожи вводи по одному. ₽ — бюджетно, ₽₽₽ — дороже.</div></div>
-    ${PRODUCTS.map((g) => `
-      <div class="sec"><span class="disp">${g.cat}</span><span class="chipline" style="color:${g.c};border-color:${g.c}55">[ ${g.code} ]</span></div>
-      <div class="card">${g.items.map(([n, what, tier]) => `<div class="prod"><div class="sq" style="background:color-mix(in srgb,${g.c} 18%,transparent);color:${g.c}">${g.code}</div><div style="flex:1"><div class="n">${n}</div><div class="hint" style="font-size:12.5px;margin-top:2px">${what}</div></div><span class="tier" style="color:${g.c}">${'₽'.repeat(tier)}<span>${'₽'.repeat(3 - tier)}</span></span></div>`).join('')}</div>`).join('')}`;
+    <div class="phcard" style="min-height:200px">${pic('products', 900)}<span class="mono">[ проверенные средства ]</span><div class="disp" style="font-size:36px;margin-top:6px">Что купить<br>и не прогадать</div></div>
+    <div class="banner" style="margin-bottom:12px">Не реклама и не выдумки: только средства, которые реально работают и продаются в России. Цены примерные — точные на маркетплейсе. Новое средство для кожи вводи по одному.</div>
+    <div class="mono lbl">Цена за одно средство</div>
+    <div class="seg" style="margin-bottom:16px">${[[700, 'до 700 ₽'], [1600, 'до 1 600'], [99999, 'любая']].map(([v, l]) => `<button class="${cap === v || (v === 700 && cap < 700) ? 'on' : ''}" data-act="shelf-cap" data-v="${v}">${l}</button>`).join('')}</div>
+    ${mine.length ? `<div class="sec"><span class="disp">Под тебя</span><span class="chipline">[ по анкете и бюджету ]</span></div><div class="card">${mine.map((x) => prodCard(x)).join('')}</div>` : ''}
+    ${SHELF_GROUPS.map(([pl, title, img]) => { const list = CATALOG.filter((x) => x.pl === pl && x.p <= Math.max(cap, 700)); return list.length ? `
+      <div class="phcard" style="min-height:130px;margin-top:18px">${pic(img, 800)}<span class="mono">[ ${PILLARS[pl].code} ]</span><div class="disp" style="font-size:30px">${title}</div></div>
+      <div class="card">${list.map((x) => prodCard(x)).join('')}</div>` : ''; }).join('')}`;
 }
 function feedView() {
-  const ra = S.articles || [];
-  const [f, ...rest] = ARTICLES;
+  const ra = S.articles || [], open = artsOpen();
+  // сначала новые этой недели, потом непрочитанные длинные, прочитанные — в конец
+  const list = [...open].sort((a, b) => (isNewArt(b) - isNewArt(a)) || (ra.includes(a.id) - ra.includes(b.id)) || ((b.wk || 0) - (a.wk || 0)) || (b.min - a.min));
+  const [f, ...rest] = list, next = ARTICLES.filter((a) => (a.wk || 0) === weekNo() + 1).length, left = 7 - ((dayNum(today()) - 1) % 7);
   return `
-    <div class="banner"><span class="mono" style="color:var(--accent)">[ демо-лента ]</span><div style="margin-top:4px">В рабочей версии сюда автоматически приходят новости с показов и трендов. Сейчас — вечные статьи.</div></div>
-    <button class="feature" data-act="open" data-kind="article" data-id="${f.id}">${art(f.art, 'FASHION')}<div class="in"><span class="mono">[ ${f.tag} · ${f.min} мин ]</span><div class="disp" style="margin:8px 0 12px">${f.t}</div><span class="pillbtn" style="background:#fff;color:#000">Читать <i style="background:#000;color:#fff">${IC.arrow}</i></span></div></button>
-    ${rest.map((a) => `<button class="acard" data-act="open" data-kind="article" data-id="${a.id}"><div class="thumb">${art(a.art)}</div><div style="flex:1;padding:4px 4px 4px 0;display:flex;flex-direction:column"><span class="mono" style="color:${TAG_C[a.tag] || 'var(--hint)'}">[ ${a.tag} ]${ra.includes(a.id) ? ' · прочитано' : ''}</span><div class="t">${a.t}</div><div class="row between" style="margin-top:auto"><span class="hint" style="font-size:12px">${a.min} мин</span><span class="arrow" style="width:32px;height:32px">${IC.arrow}</span></div></div></button>`).join('')}`;
+    <div class="banner"><span class="mono" style="color:var(--accent)">[ лента ]</span><div style="margin-top:4px">Каждую неделю — новые статьи.${next ? ` Через ${left} ${plural(left, 'день', 'дня', 'дней')} откроется ещё ${next}.` : ''}</div></div>
+    <button class="feature" data-act="open" data-kind="article" data-id="${f.id}">${art(f.art, '', f.img)}<div class="in"><span class="mono">[ ${f.tag} · ${f.min} мин ]${isNewArt(f) ? '<span class="newb">НОВОЕ</span>' : ''}</span><div class="disp" style="margin:8px 0 12px">${f.t}</div><span class="pillbtn" style="background:#fff;color:#000">Читать <i style="background:#000;color:#fff">${IC.arrow}</i></span></div></button>
+    ${rest.map((a) => `<button class="acard" data-act="open" data-kind="article" data-id="${a.id}"><div class="thumb">${art(a.art, '', a.img)}</div><div style="flex:1;padding:4px 4px 4px 0;display:flex;flex-direction:column"><span class="mono" style="color:${TAG_C[a.tag] || 'var(--hint)'}">[ ${a.tag} ]${ra.includes(a.id) ? ' · прочитано' : ''}${isNewArt(a) ? '<span class="newb">НОВОЕ</span>' : ''}</span><div class="t">${a.t}</div><div class="row between" style="margin-top:auto"><span class="hint" style="font-size:12px">${a.min} мин</span><span class="arrow" style="width:32px;height:32px">${IC.arrow}</span></div></div></button>`).join('')}`;
 }
 function renderJournal() {
   const tabs = [['mind', 'Характер'], ['social', 'Общение'], ['books', 'Книги'], ['basics', 'Внешность'], ['shelf', 'Полка'], ['feed', 'Лента']];
   const body = COURSES[jtab] ? courseView(jtab) : jtab === 'books' ? booksView() : jtab === 'shelf' ? shelfView() : feedView();
-  return `${topbar('Журнал')}
+  return `${topbar('Библиотека')}
+    <button class="backlink" data-act="go" data-tab="plan">← План</button>
     <div class="jt">${tabs.map(([k, l]) => `<button class="${jtab === k ? 'on' : ''}" data-act="jtab" data-v="${k}">${l}</button>`).join('')}</div>
     ${body}`;
 }
@@ -2384,7 +2844,7 @@ function renderReader() {
   const course = reader.kind === 'lesson' ? courseOf(it) : null;
   const idx = course ? course.lessons.indexOf(it) : 0;
   return `<div class="reader">
-    <div class="rcover">${art(it.art, course ? z(idx + 1) : it.tag)}<button class="close" data-act="close-reader" aria-label="Закрыть">${IC.close}</button>
+    <div class="rcover">${art(it.art, '', course ? COURSE_IMG[Object.keys(COURSES).find((key) => COURSES[key] === course)] : it.img)}<button class="close" data-act="close-reader" aria-label="Закрыть">${IC.close}</button>
       <div class="in"><span class="mono" style="color:rgba(255,255,255,.75)">[ ${course ? course.name + ' · урок ' + (idx + 1) : it.tag} · ${it.min} мин ]</span><div class="disp" style="font-size:44px;margin-top:8px">${it.t}</div></div></div>
     <div class="body">
       ${it.body.map((b) => typeof b === 'string' ? `<p>${b}</p>` : b.q ? `<div class="quote">${b.q}</div>` : `<h3>${b.h}</h3>`).join('')}
@@ -2449,6 +2909,7 @@ function renderModal() {
     </div></div>`;
   }
   if (modal.kind === 'wo' && wo) return renderWorkout();
+  if (modal.kind === 'routine') return renderRoutine();
   if (modal.kind === 'ai' && S.ai) {
     const fr = (modal.fresh || []).map((id) => PROTOCOLS[id].t);
     return `<div class="modal"><div class="sheet exs" style="text-align:left">
@@ -2479,9 +2940,9 @@ function renderModal() {
     const r = rank();
     return `<div class="modal"><div class="sheet" style="padding:14px">
       <div class="share hero" style="margin:0;border-radius:24px">${mountains('s')}${sparks(6)}
-        <div class="spray" style="font-size:84px;left:-6px;top:150px;transform:rotate(-9deg)">UPGRD</div>
+        <div class="spray" style="font-size:84px;left:-6px;top:150px;transform:rotate(-9deg)">MOGG</div>
         <div style="position:relative;z-index:2;display:flex;flex-direction:column;min-height:400px">
-          <div class="row between"><span class="mono">[ Апгрейд™ ]</span><span class="mono">день ${z(dayNum(today()))}</span></div>
+          <div class="row between"><span class="mono">[ mogg™ ]</span><span class="mono">день ${z(dayNum(today()))}</span></div>
           <div class="disp" style="font-size:20px;margin-top:22px">Уровень</div>
           <div class="disp" style="font-size:110px;line-height:.85">${z(r.lvl)}</div>
           <div class="disp" style="font-size:26px">${r.name}</div>
@@ -2523,7 +2984,7 @@ function renderPath() {
   // Фото без картинки — восстановленные из облака на новом телефоне: их показать нечем
   const ph = (S.photos || []).filter((p) => p.data), first = ph[0], last = ph[ph.length - 1];
   const moodDays = [...Array(14)].map((_, i) => addDays(end, i - 13));
-  return `${topbar('Мой путь')}
+  return `${topbar('Я')}
     <div class="card ink" style="overflow:hidden">
       <div class="row between"><span class="mono">[ уровень · дорожка наград ]</span><span class="mono">${r.x} XP</span></div>
       <div class="row between" style="margin-top:6px"><div class="disp" style="font-size:40px">${r.name}</div><div class="disp" style="font-size:40px;color:var(--accent)">${z(r.lvl)}</div></div>
@@ -2548,7 +3009,7 @@ function renderPath() {
     ${isOpen('mood') ? `<div class="card"><div class="row between"><span class="disp" style="font-size:22px">Настроение</span><span class="mono">14 дней</span></div><div class="mchart">${moodDays.map((d, i) => { const m = (S.mood || {})[d]; return `<i style="height:${m ? m * 20 : 6}%;background:${m ? ['#ff6b6b', '#ffb07c', '#ffd166', '#a3e635', '#6ee7c8'][m - 1] : 'var(--line)'};animation-delay:${i * 30}ms" title="${human(d)}"></i>`; }).join('')}</div></div>` : ''}
     <div class="card"><div class="row between"><span class="disp" style="font-size:22px">Активность</span><span class="mono">5 недель</span></div><div class="heat">${cells.join('')}</div></div>
     <div class="card bars"><span class="disp" style="font-size:22px">Что качаем</span>${ps.map((x) => `<div class="b"><div class="row between"><span class="row" style="gap:8px"><span class="tag" style="color:${PILLARS[x.p].c};border-color:${PILLARS[x.p].c}55">${PILLARS[x.p].code}</span><span style="font-weight:600">${PILLARS[x.p].name}</span></span><b>${x.n}</b></div><div class="pbar"><i style="width:${x.n / max * 100}%;background:${PILLARS[x.p].c}"></i></div></div>`).join('')}</div>
-    <div class="card"><div class="row between"><span class="disp" style="font-size:22px">До / после</span><label class="btn sm" style="cursor:pointer">+ Фото<input type="file" accept="image/*" capture="user" hidden data-change="week-photo"></label></div>
+    <div class="card"><div class="row between"><span class="disp" style="font-size:22px">До / после</span><button type="button" class="btn sm" data-act="photo" data-k="week-photo">+ Фото</button></div>
       ${ph.length >= 2 ? `<div class="cmp" style="margin-top:12px"><figure style="margin:0"><img src="${first.data}"><div class="mono" style="text-align:center;margin-top:6px">День ${z(dayNum(first.date))}</div></figure><figure style="margin:0"><img src="${last.data}"><div class="mono" style="text-align:center;margin-top:6px">День ${z(dayNum(last.date))}</div></figure></div>` : `<div class="hint" style="margin-top:10px">Нужно минимум 2 фото, чтобы появилось сравнение.</div>`}
       ${ph.length > 2 ? `<div class="grid3">${ph.map((p) => `<img src="${p.data}" alt="">`).join('')}</div>` : ''}
     </div>
@@ -2559,35 +3020,41 @@ function renderPath() {
 
 // ---------- профиль ----------
 function renderMe() {
-  const r = rank(), cur = S.theme || 'matcha';
-  return `${topbar('Профиль')}
-    <div class="card">
+  const r = rank(), cur = S.theme || 'matcha', nu = UNLOCKS.find((u) => u.lvl > r.lvl), fc = featureCards();
+  // «Я» = прогресс (бывший «Путь») + открытые фишки + настройки, спрятанные под спойлер
+  return `${renderPath()}
+    ${nu ? `<div class="card teaser"><div class="row"><span class="lock">${IC.lock}</span><span class="mono">Следующая награда · ур. ${nu.lvl}</span></div><div class="row" style="margin-top:10px"><span style="font-size:28px">${nu.ic}</span><div style="flex:1"><b style="font-size:16px">${nu.name}</b><div class="hint">${nu.d}</div></div></div><div class="bar2"><i style="width:${Math.min(100, (r.x - r.cur) / (LV(nu.lvl) - r.cur) * 100)}%"></i></div><div class="row between" style="margin-top:6px"><span class="mono">${r.x} XP</span><span class="mono">ещё ${LV(nu.lvl) - r.x} XP</span></div></div>` : ''}
+    ${fc ? `<div class="sec"><span class="disp">Открытые фишки</span><span class="chipline">[ за уровни ]</span></div>${fc}` : ''}
+    <div class="sec"><span class="disp">Коллекция<span class="tm">™</span></span><span class="chipline">[ ${S.plan.focus.length} линии ]</span></div>
+    ${renderCollection()}
+    <div style="height:12px"></div>
+    ${AI_ENDPOINT ? remindCard() : ''}
+    <details class="card allp"><summary><span class="disp" style="font-size:20px">Настройки</span><span class="mono">темы · тренер</span></summary>
+    <div>
       <span class="mono">Тема · открыто ${THEMES.filter(([k]) => r.lvl >= themeLvl(k)).length}/${THEMES.length}</span>
       <div class="themes" style="margin-top:10px">${THEMES.map(([k, n, g]) => { const lk = r.lvl < themeLvl(k); return `<button class="${cur === k && !lk ? 'on' : ''} ${lk ? 'locked' : ''}" data-act="theme" data-v="${k}"><div class="pv" style="background:${g}"><div style="position:absolute;left:8px;bottom:8px;width:45%;height:7px;border-radius:4px;background:${LIGHT_ACCENT[k] ? '#2a1418' : '#fff'};opacity:.8"></div></div>${lk ? `<span class="lk">УР.${themeLvl(k)}</span>` : ''}<div class="nm">${n}</div></button>`; }).join('')}</div>
       <div class="mono lbl">Акцент</div>
       <div class="sw">${ACCENTS.map((c) => `<button class="${(S.accent || 'auto') === c ? 'on' : ''}" style="background:${c === 'auto' ? 'conic-gradient(#cde59b,#ffb07c,#ff7ccf,#9cc8ff,#cde59b)' : c}" data-act="accent" data-v="${c}" aria-label="${c === 'auto' ? 'Под тему' : c}"></button>`).join('')}</div>
       <div class="hint" style="margin-top:8px;font-size:12px">Первый кружок — цвет под тему автоматически.</div>
-    </div>
-    <div class="card">
-      <span class="mono">Награды за уровни</span>
-      ${UNLOCKS.map((u) => `<div class="item"><span style="font-size:22px;${r.lvl >= u.lvl ? '' : 'filter:grayscale(1);opacity:.4'}">${u.ic}</span><div style="flex:1"><div style="font-weight:700">${u.name}</div><div class="hint" style="font-size:12px">${u.d}</div></div>${r.lvl >= u.lvl ? `<span class="check">${IC.check}</span>` : `<span class="mono">ур. ${u.lvl}</span>`}</div>`).join('')}
-    </div>
-    <div class="card">
-      <span class="mono">Тренер</span>
+      <div class="mono lbl">Тренер</div>
       <input class="field" style="margin-top:10px" value="${esc(coachName())}" maxlength="20" data-input="coach-name" placeholder="Имя тренера">
       <div class="mono lbl">Режим общения</div>
       ${modePicker()}
-    </div>
+      <div class="mono lbl">Награды за уровни</div>
+      ${UNLOCKS.map((u) => `<div class="item"><span style="font-size:22px;${r.lvl >= u.lvl ? '' : 'filter:grayscale(1);opacity:.4'}">${u.ic}</span><div style="flex:1"><div style="font-weight:700">${u.name}</div><div class="hint" style="font-size:12px">${u.d}</div></div>${r.lvl >= u.lvl ? `<span class="check">${IC.check}</span>` : `<span class="mono">ур. ${u.lvl}</span>`}</div>`).join('')}
+    </div></details>
     ${DEV ? `<div class="card">
       <span class="mono">Для теста</span>
       <div class="row" style="margin-top:10px;flex-wrap:wrap"><button class="btn sm ghost" data-act="add-xp">+300 XP</button><button class="btn sm ghost" data-act="skip-day">Перемотать день →</button></div>
     </div>` : ''}
     <button class="btn sm ghost" data-act="reset" style="color:var(--danger);width:100%">Сбросить прогресс</button>
-    <p class="mono" style="text-align:center;margin-top:20px">Апгрейд · демо · season 01</p>`;
+    <p class="mono" style="text-align:center;margin-top:20px">mogg · season 01 · <a href="privacy.html" style="color:inherit">политика</a></p>`;
 }
 
+const TAB_PARENT = { journal: 'plan', path: 'me' }; // подэкраны: какая вкладка внизу подсвечена и куда ведёт «Назад»
 function renderTabs() {
-  return `<nav class="tabs"><div class="in">${[['home', 'Главная'], ['coach', 'Тренер'], ['journal', 'Журнал'], ['path', 'Путь'], ['me', 'Профиль']].map(([k, l]) => `<button class="tab ${tab === k ? 'on' : ''}" data-act="go" data-tab="${k}">${IC[k]}${l}</button>`).join('')}</div></nav>`;
+  const on = TAB_PARENT[tab] || tab;
+  return `<nav class="tabs"><div class="in">${[['home', 'Сегодня', IC.home], ['plan', 'План', IC.journal], ['coach', 'Тренер', IC.coach], ['me', 'Я', IC.me]].map(([k, l, ic]) => `<button class="tab ${on === k ? 'on' : ''}" data-act="go" data-tab="${k}">${ic}${l}</button>`).join('')}</div></nav>`;
 }
 
 function render() {
@@ -2602,6 +3069,7 @@ function render() {
     return;
   }
   if (ensureProtos()) save();
+  if (tab === 'path') tab = 'me'; // «Путь» теперь внутри «Я»
   app.className = 'app' + (app.classList.contains('enter') ? ' enter' : '');
   const screens = { home: renderHome, coach: renderCoach, journal: renderJournal, path: renderPath, me: renderMe, plan: renderPlan };
   app.innerHTML = screens[tab]() + renderTabs();
@@ -2613,6 +3081,7 @@ function render() {
   const fresh = lastScreen !== tab + (tab === 'journal' ? ':' + jtab : '');
   afterRender(tab + (tab === 'journal' ? ':' + jtab : ''));
   syncBackButton();
+  remindSoon();
   const tr = document.getElementById('lvtrack');
   if (tr && fresh) { const nowEl = tr.querySelector('.now'); if (nowEl) { tr.style.scrollBehavior = 'auto'; tr.scrollLeft = nowEl.offsetLeft - 140; tr.style.scrollBehavior = ''; } }
 }
@@ -2628,7 +3097,7 @@ try {
   tg && tg.BackButton && tg.BackButton.onClick(() => {
     if (modal) { if (modal.kind === 'focus') { clearInterval(focusT.id); focusT = { left: 1500, running: false, id: null }; } if (modal.kind === 'wo') woStop(); modal = null; }
     else if (reader) reader = null;
-    else tab = 'home';
+    else tab = TAB_PARENT[tab] || 'home';
     haptic('light'); render(); window.scrollTo(0, 0);
   });
 } catch (e) {}
@@ -2661,6 +3130,37 @@ const ACT = {
   'ob-goal'(el) { toggleIn(ob.goals, el.dataset.k); haptic('light'); render(); },
   'ob-issue'(el) { toggleIn(ob.issues, el.dataset.k); haptic('light'); render(); },
   'ob-budget'(el) { ob.budget = +el.dataset.v; render(); },
+  photo(el) { photoSheet(el.dataset.k); },
+  'r-open'(el) { modal = { kind: 'routine', part: el.dataset.v || rPart() }; haptic('light'); render(); },
+  'r-part'(el) { clearInterval(rTimer); modal.part = el.dataset.v; haptic('light'); render(); },
+  'r-step'(el) {
+    clearInterval(rTimer);
+    const part = modal.part, key = today() + ':' + part, i = +el.dataset.i, st = routine(part), before = xp();
+    S.rdone = S.rdone || {}; S.rfull = S.rfull || {};
+    const arr = S.rdone[key] = S.rdone[key] || [];
+    withRankCheck(() => {
+      const k = arr.indexOf(i); if (k >= 0) arr.splice(k, 1); else arr.push(i);
+      if (st.every((s, j) => s.opt || arr.includes(j))) S.rfull[key] = 1; else delete S.rfull[key];
+    });
+    if (xp() > before) { floatXP('+10 XP'); confetti(); haptic('success'); toast(part === 'am' ? 'Утренний уход готов' : 'Вечерний уход готов'); } else haptic('light');
+    save(); render();
+  },
+  'r-timer'(el) {
+    clearInterval(rTimer);
+    let s = +el.dataset.s; const i = +el.dataset.i;
+    const paint = () => { el.textContent = `⏱ ${Math.floor(s / 60)}:${z(s % 60)} · тапни шаг, когда закончишь`; };
+    paint(); haptic('light');
+    rTimer = setInterval(() => {
+      if (!document.contains(el)) return clearInterval(rTimer);
+      s--; if (s > 0) { paint(); if (s <= 3) haptic('light'); return; }
+      clearInterval(rTimer); haptic('success');
+      const key = today() + ':' + modal.part; S.rdone = S.rdone || {}; const arr = S.rdone[key] = S.rdone[key] || [];
+      if (!arr.includes(i)) ACT['r-step']({ dataset: { i } }); else render();
+    }, 1000);
+  },
+  'shelf-cap'(el) { shelfCap = +el.dataset.v; haptic('light'); render(); },
+  link(el) { const u = el.dataset.u; try { if (tg && tg.openLink) return tg.openLink(u); } catch (e) {} window.open(u, '_blank'); },
+  lib(el) { jtab = el.dataset.v; tab = 'journal'; reader = null; haptic('light'); render(); window.scrollTo(0, 0); },
   analyze() {
     ob.step = 5; ob.result = analyze(); ob.ai = null; ob.aiErr = null; render();
     [0, 1, 2, 3].forEach((i) => setTimeout(() => { const e = document.getElementById('cl' + i); e && e.classList.add('on'); }, 450 * (i + 1)));
@@ -2687,6 +3187,9 @@ const ACT = {
   'ex-open'(el) { modal = { kind: 'ex', id: el.dataset.x }; haptic('light'); render(); },
   'ai-open'() { modal = { kind: 'ai' }; haptic('light'); render(); },
   'wo-start'(el) { woStart(el.dataset.id); },
+  'rem-hour'(el) { const h = +el.dataset.h; haptic('light'); if (S.remind && S.remind.on) { S.remind.hour = h; save(); render(); remindSync(true).then((r) => toast(r && r.ok ? `Теперь напомню в ${h}:00` : 'Не получилось сохранить — попробуй позже')); } else remindEnable(h); },
+  'rem-off'() { S.remind = { ...(S.remind || { hour: 20 }), on: false }; save(); render(); remindSync(true); toast('Напоминания выключены'); },
+  'rem-no'() { S.remind = { on: false, hour: 20 }; save(); render(); },
   'wo-go'() { wo.phase = 'work'; wo.left = wo.w.items[0][1]; woRun(); haptic('medium'); render(); },
   'wo-pause'() { if (!wo.tid || wo.paused) woRun(); else wo.paused = true; haptic('light'); render(); },
   'wo-skip'() { woNext(); },
@@ -2837,8 +3340,99 @@ document.addEventListener('input', (e) => {
 document.addEventListener('change', async (e) => {
   const kind = e.target.dataset.change, f = e.target.files && e.target.files[0];
   if (!kind || !f) return;
+  try { await usePhoto(kind, await readPhoto(f)); } catch (err) { toast('Не получилось открыть фото'); }
+});
+
+// ---------- фото: камера или галерея ----------
+// Telegram на Android игнорирует capture и открывает галерею, на iPhone — сразу камеру.
+// Поэтому даём выбор сами, а камеру открываем прямо внутри приложения (если нельзя — камерой телефона).
+let camStream = null, pui = null;
+function pickFile(kind, cam) {
+  const i = document.createElement('input');
+  i.type = 'file'; i.accept = 'image/*'; i.style.display = 'none';
+  if (cam) i.setAttribute('capture', 'user');
+  i.onchange = async () => {
+    const f = i.files && i.files[0]; i.remove();
+    if (!f) return;
+    try { await usePhoto(kind, await readPhoto(f)); } catch (e) { toast('Не получилось открыть фото'); }
+  };
+  document.body.appendChild(i); i.click();
+}
+function camStop() { if (camStream) camStream.getTracks().forEach((t) => t.stop()); camStream = null; }
+function closePhotoUI() { camStop(); const w = document.getElementById('photoUI'); if (w) w.remove(); pui = null; }
+function photoSheet(kind) {
+  closePhotoUI();
+  pui = { kind, facing: 'user' };
+  const w = document.createElement('div');
+  w.id = 'photoUI'; w.className = 'modal';
+  w.innerHTML = `<div class="sheet"><span class="mono">[ фото ]</span>
+    <div class="disp" style="font-size:28px;margin:6px 0 4px">Откуда берём?</div>
+    <div class="hint" style="margin-bottom:18px">Дневной свет, лицо прямо, без фильтров</div>
+    <button class="btn" data-p="cam">📸 Сделать фото</button>
+    <button class="btn ghost" data-p="gal" style="margin-top:10px">🖼 Выбрать из галереи</button>
+    <button class="btn ghost" data-p="x" style="margin-top:10px;background:none;border:0;height:44px;color:var(--hint)">Отмена</button></div>`;
+  w.addEventListener('click', photoClick);
+  document.body.appendChild(w);
+  haptic('light');
+}
+function photoClick(e) {
+  const w = document.getElementById('photoUI'), b = e.target.closest('[data-p]');
+  if (!pui || !w) return;
+  if (!b) { if (e.target === w) closePhotoUI(); return; }
+  const kind = pui.kind, p = b.dataset.p;
+  if (p === 'x') closePhotoUI();
+  else if (p === 'gal') { closePhotoUI(); pickFile(kind, false); }
+  else if (p === 'native') { closePhotoUI(); pickFile(kind, true); }
+  else if (p === 'cam') camOpen();
+  else if (p === 'flip') { pui.facing = pui.facing === 'user' ? 'environment' : 'user'; haptic('light'); camStart(); }
+  else if (p === 'snap') camSnap();
+}
+function camOpen() {
+  const md = navigator.mediaDevices;
+  if (!md || !md.getUserMedia) { const k = pui.kind; closePhotoUI(); return pickFile(k, true); }
+  const w = document.getElementById('photoUI');
+  w.className = 'cam';
+  w.innerHTML = `<video id="camV" playsinline autoplay muted></video><div class="cam-oval"></div>
+    <div class="cam-top"><button class="cam-b" data-p="x" aria-label="Закрыть">✕</button><span class="mono">лицо в овал · дневной свет</span><button class="cam-b" data-p="flip" aria-label="Сменить камеру">⟲</button></div>
+    <div class="cam-bot"><button class="cam-shot" data-p="snap" aria-label="Сделать снимок"></button></div>
+    <div class="cam-err" hidden></div>`;
+  camStart();
+}
+async function camStart() {
+  camStop();
+  const me = pui;
   try {
-    const data = await readPhoto(f);
+    const s = await navigator.mediaDevices.getUserMedia({ video: { facingMode: me.facing, width: { ideal: 1280 }, height: { ideal: 1280 } }, audio: false });
+    const v = document.getElementById('camV');
+    if (pui !== me || !v) { s.getTracks().forEach((t) => t.stop()); return; } // окно уже закрыли
+    camStream = s; v.srcObject = s; v.classList.toggle('mirror', me.facing === 'user');
+    v.play().catch(() => {});
+  } catch (err) {
+    const er = document.querySelector('#photoUI .cam-err');
+    if (!er) return;
+    document.querySelectorAll('#photoUI .cam-bot, #photoUI .cam-oval, #photoUI [data-p=flip]').forEach((x) => { x.style.display = 'none'; });
+    er.hidden = false;
+    er.innerHTML = `<div style="font-weight:800;font-size:17px">Камера внутри не открылась</div>
+      <div class="hint" style="margin:6px 0 16px">${err && err.name === 'NotAllowedError' ? 'Нет разрешения на камеру. ' : ''}Можно снять обычной камерой телефона.</div>
+      <button class="btn" data-p="native">📸 Камера телефона</button>
+      <button class="btn ghost" data-p="gal" style="margin-top:10px">🖼 Из галереи</button>`;
+  }
+}
+function camSnap() {
+  const v = document.getElementById('camV');
+  if (!v || !v.videoWidth) return;
+  const k = Math.min(1, 600 / Math.max(v.videoWidth, v.videoHeight)), c = document.createElement('canvas');
+  c.width = Math.round(v.videoWidth * k); c.height = Math.round(v.videoHeight * k);
+  const x = c.getContext('2d');
+  if (pui.facing === 'user') { x.translate(c.width, 0); x.scale(-1, 1); } // как в зеркале — так, как человек себя видел
+  x.drawImage(v, 0, 0, c.width, c.height);
+  const data = c.toDataURL('image/jpeg', 0.78), kind = pui.kind;
+  haptic('medium'); closePhotoUI();
+  usePhoto(kind, data).catch(() => toast('Не получилось сохранить фото'));
+}
+
+async function usePhoto(kind, data) {
+  {
     if (kind === 'ob-photo') { ob.photo = data; ob.photoErr = null; render(); }
     if (kind === 'ai-photo') {
       if (aiBusy) return;
@@ -2850,8 +3444,8 @@ document.addEventListener('change', async (e) => {
       applyAI(a);
     }
     if (kind === 'week-photo') { withRankCheck(() => { S.photos.push({ date: today(), data }); addEvent('photo', 'Фото прогресса'); }); save(); render(); floatXP('+15 XP'); haptic('success'); }
-  } catch (err) { toast('Не получилось открыть фото'); }
-});
+  }
+}
 
 // Запуск: сначала то, что есть в телефоне, потом сверяемся с облаком Telegram
 function start() {
