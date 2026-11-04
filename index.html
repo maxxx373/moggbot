@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="ru" data-theme="matcha">
+<html lang="ru" data-theme="graphite">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,maximum-scale=1">
@@ -89,6 +89,38 @@
   --mA:#e3fffb; --mB:#7af2ff; --mC:#0a3c8f; --mD:#b8fff0; --mE:#06203d;
   --b1:#2ee6ff; --b2:#3b6dff; --b3:#40ffaa; --grad:linear-gradient(120deg,#2ee6ff,#8affd6);
 }
+/* Графит — тема по умолчанию: спокойный тёмный, лаймовый акцент и медленно плывущие пятна света */
+[data-theme="graphite"]{
+  --bg:#0e0f11; --glow1:rgba(200,240,74,.10); --glow2:rgba(120,150,255,.10);
+  --card:rgba(255,255,255,.045); --card-b:rgba(255,255,255,.09); --solid:#17191c;
+  --text:#f3f4f6; --hint:#8f949c; --line:rgba(255,255,255,.08); --ink:#000;
+  --mA:#f1f3f5; --mB:#b9c0c9; --mC:#3a414b; --mD:#dfe4ea; --mE:#22272e;
+}
+[data-theme="graphite"] body::after{content:'';position:fixed;inset:-20%;z-index:-1;pointer-events:none;opacity:.35;filter:blur(50px);
+  background:radial-gradient(26% 22% at 80% 12%,rgba(200,240,74,.35),transparent 70%),radial-gradient(30% 26% at 12% 80%,rgba(110,140,255,.28),transparent 70%);
+  animation:blobs 22s ease-in-out infinite alternate}
+[data-theme="graphite"] .hero{background:linear-gradient(180deg,#141619 0%,#2b3038 42%,#6c7685 78%,#c9d1db 100%)}
+/* живые фоны: видео на весь экран, поверх — затемнение для читаемости, карточки — тёмное стекло */
+.bgvid{position:fixed;inset:0;z-index:-1;pointer-events:none;overflow:hidden;background:#000}
+.bgvid video,.bgvid img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;animation:fade 1.2s ease both}
+#bgv::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.35),rgba(0,0,0,.25) 35%,rgba(0,0,0,.65))}
+#snowv{z-index:15;background:transparent;mix-blend-mode:screen;opacity:.6}
+[data-video]{
+  --bg:#0b0d10; --card:rgba(12,14,18,.52); --card-b:rgba(255,255,255,.14); --solid:#14171c;
+  --text:#f6f8fa; --hint:#b6bec9; --line:rgba(255,255,255,.12); --ink:rgba(0,0,0,.6);
+  --mA:#e9eef3; --mB:#9aa6b4; --mC:#2b333d; --mD:#cfd8e2; --mE:#1a2027;
+}
+[data-video] body{background:transparent}
+[data-video] .card,[data-video] .mission,[data-video] .acard,[data-video] .lesson{backdrop-filter:blur(18px) saturate(1.2);-webkit-backdrop-filter:blur(18px) saturate(1.2)}
+[data-video] .hero,[data-video] .outro{background:linear-gradient(180deg,rgba(0,0,0,.15),rgba(0,0,0,.45));backdrop-filter:blur(2px);-webkit-backdrop-filter:blur(2px)}
+[data-video] .hero svg.mtn{opacity:.75}
+[data-theme="ny"]{--card-b:rgba(255,204,77,.22)}
+[data-theme="ny"] .hero{background:linear-gradient(180deg,rgba(90,10,20,.35),rgba(10,40,25,.55))}
+.livegrid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.live{position:relative;aspect-ratio:3/4;border-radius:14px;background:#111 center/cover;overflow:hidden;border:2px solid transparent;transition:transform .15s,border-color .2s}
+.live:active{transform:scale(.95)}
+.live.on{border-color:var(--accent)}
+.live span{position:absolute;left:0;right:0;bottom:0;padding:14px 4px 5px;font-size:11px;font-weight:800;color:#fff;background:linear-gradient(transparent,rgba(0,0,0,.75));text-align:center}
 [data-vivid] body::before{content:'';position:fixed;inset:-25%;z-index:-1;pointer-events:none;opacity:.5;filter:blur(40px);
   background:radial-gradient(30% 26% at 22% 22%,var(--b1),transparent 70%),radial-gradient(28% 26% at 82% 55%,var(--b2),transparent 70%),radial-gradient(26% 22% at 38% 88%,var(--b3),transparent 70%);
   animation:blobs 16s ease-in-out infinite alternate}
@@ -479,6 +511,38 @@ button:hover .arrow{transform:rotate(45deg)}
 .rstep .rt{font-weight:800;font-size:15px}
 .rstep .rh{font-size:12.5px;color:var(--hint);margin-top:2px;line-height:1.4}
 .rtimer{font-family:var(--mono);font-size:12px;color:var(--accent);margin-top:6px}
+/* подробный разбор */
+.rep-top{position:relative;overflow:hidden}
+.rep-grid{display:flex;gap:12px;margin-top:12px;align-items:stretch}
+.rep-ph{width:112px;aspect-ratio:3/4;object-fit:cover;border-radius:16px;flex:none;animation:popin .6s cubic-bezier(.3,1.4,.5,1) both}
+.rep-sc{flex:1;display:flex;flex-direction:column;gap:10px}
+.rep-tile{flex:1;border-radius:16px;padding:10px 12px;background:color-mix(in srgb,var(--text) 5%,transparent);border:1px solid var(--card-b)}
+.rep-tile .mono{display:block;margin-bottom:2px}
+.rep-tile b{font-family:var(--disp);font-size:46px;line-height:1;margin-right:4px}
+.rep-tile small{color:var(--hint);font-size:12px}
+.rep-type{margin-top:14px;padding:12px 14px;border-radius:16px;border-left:3px solid var(--accent);background:color-mix(in srgb,var(--accent) 8%,transparent)}
+.rep-quote{margin-top:12px;font-size:14px;line-height:1.5;font-style:italic;color:var(--text);opacity:.9}
+.mbar{margin-top:14px;animation:fadeup .5s both}
+.mbar b{font-size:14px}
+.mbar .mv{font-family:var(--disp);font-size:22px;color:var(--c)}
+.mbar .mv small{font-size:11px;color:var(--hint);font-family:var(--mono)}
+.mbar .ml{font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--c)}
+.mbar .mt{height:8px;border-radius:8px;background:var(--card-b);margin-top:6px;overflow:hidden}
+.mbar .mt i{display:block;height:100%;width:var(--w);border-radius:8px;background:var(--c);animation:grow 1.1s cubic-bezier(.2,.8,.2,1) both}
+.mbar .mn{font-size:12.5px;color:var(--hint);margin-top:5px;font-style:italic}
+.rep-sum{display:flex;flex-wrap:wrap;gap:6px 12px;margin-top:16px;padding-top:12px;border-top:1px solid var(--line);font-family:var(--mono);font-size:10.5px;text-transform:uppercase;letter-spacing:.04em}
+.rep-pt{display:flex;gap:12px;padding:14px;border-radius:18px;background:var(--card);border:1px solid var(--card-b);border-left:4px solid var(--c);margin-bottom:10px}
+.rep-pt .n{width:26px;height:26px;flex:none;border-radius:50%;background:var(--c);color:#0b0b0c;display:grid;place-items:center;font-weight:800;font-size:13px}
+.rep-pt b{color:var(--c);font-size:15px}
+.rep-pt p{margin:4px 0 0;font-size:13.5px;line-height:1.5}
+.rep-tier{padding:0;overflow:hidden}
+.rep-th{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:10px 14px;color:#0b0b0c}
+.rep-th b{font-weight:800;font-size:13px;text-transform:uppercase;letter-spacing:.03em}
+.rep-th span{font-size:11.5px;opacity:.75}
+.rep-ti{padding:12px 14px;border-top:1px solid var(--line)}
+.rep-ti:first-of-type{border-top:0}
+.rep-ti b{font-size:14.5px}
+.rep-ti p{margin:4px 0 0;font-size:13.5px;line-height:1.5;color:var(--text);opacity:.9}
 /* план: библиотека и список протоколов */
 .libgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
 .libtile{display:flex;flex-direction:column;align-items:flex-start;text-align:left;margin:0;padding:14px;gap:2px;transition:transform .15s}
@@ -1520,7 +1584,7 @@ const BADGES = [
   ['👑', 'Легенда', 'Уровень 16', () => rank().lvl >= 16]
 ];
 const ACCENTS = ['auto', '#cde59b', '#ffb07c', '#ff7a6b', '#ffd166', '#6ee7c8', '#b79cff', '#ff7ccf', '#9cc8ff', '#4d7cff', '#ffffff'];
-const THEME_ACCENT = { matcha: '#cde59b', sunset: '#ffb07c', neon: '#ff7ccf', sakura: '#d94f7a', frost: '#9cc8ff', ice: '#9cc8ff', paper: '#0b0b0c', acid: '#c6ff3d', mango: '#ffc23d', candy: '#ff8ad6', ocean: '#2ee6ff' };
+const THEME_ACCENT = { graphite: '#c8f04a', rain: '#9fd3ff', fog: '#e9eef3', clouds: '#ffd38a', storm: '#c7a6ff', neonrain: '#ff5ec4', aurora: '#5effb1', ny: '#ffcc4d', matcha: '#cde59b', sunset: '#ffb07c', neon: '#ff7ccf', sakura: '#d94f7a', frost: '#9cc8ff', ice: '#9cc8ff', paper: '#0b0b0c', acid: '#c6ff3d', mango: '#ffc23d', candy: '#ff8ad6', ocean: '#2ee6ff' };
 const VIVID = ['acid', 'mango', 'candy', 'ocean'];
 const PALETTE = ['#ffb07c', '#6ee7c8', '#b79cff', '#ffd166', '#ff7a9c', '#7dd3fc'];
 const DROP_BG = ['linear-gradient(135deg,#ff7a6b,#ffb07c 55%,#ffd166)', 'linear-gradient(135deg,#6ee7c8,#b5f5d9 60%,#fff1c9)', 'linear-gradient(135deg,#b79cff,#ffb3d1 60%,#ffd9b8)', 'linear-gradient(135deg,#7dd3fc,#c7f0ff 55%,#ffe8c2)'];
@@ -1716,6 +1780,7 @@ const THEMES = [
   ['mango', 'Манго', 'linear-gradient(160deg,#ffd23d,#ff6a3d 50%,#c2185b)'],
   ['candy', 'Конфета', 'linear-gradient(160deg,#ffc2e8,#ff5ec4 45%,#7b2ff7)'],
   ['ocean', 'Океан', 'linear-gradient(160deg,#b8fff4,#2ee6ff 45%,#0a5cff)'],
+  ['graphite', 'Графит', 'linear-gradient(160deg,#3a3f47,#17191c 55%,#0e0f11),radial-gradient(60% 50% at 80% 10%,#c8f04a55,transparent)'],
   ['matcha', 'Матча', 'linear-gradient(160deg,#eef4d6,#7d9a68 45%,#141913)'],
   ['paper', 'Бумага', 'linear-gradient(160deg,#ffffff,#e6e9ee)'],
   ['sunset', 'Закат', 'linear-gradient(160deg,#ffc89a,#d9806a 40%,#2a1b2e)'],
@@ -1724,7 +1789,7 @@ const THEMES = [
   ['frost', 'Иней', 'linear-gradient(160deg,#7e95ac,#4e6276)'],
   ['ice', 'Лёд', 'linear-gradient(160deg,#0e1a2b,#080d14)']
 ];
-const THEME_BG = { matcha: '#141913', sunset: '#211915', neon: '#09080f', sakura: '#fbf0f1', frost: '#4e6276', ice: '#080d14', paper: '#eef0f3', acid: '#0d0a1a', mango: '#1a0d08', candy: '#150a20', ocean: '#04111c' };
+const THEME_BG = { graphite: '#0e0f11', rain: '#0b0f13', fog: '#14181c', clouds: '#0f1419', storm: '#0a0a12', neonrain: '#0a0810', aurora: '#05100f', ny: '#0b0f0c', matcha: '#141913', sunset: '#211915', neon: '#09080f', sakura: '#fbf0f1', frost: '#4e6276', ice: '#080d14', paper: '#eef0f3', acid: '#0d0a1a', mango: '#1a0d08', candy: '#150a20', ocean: '#04111c' };
 const LIGHT_ACCENT = { paper: '#0b0b0c', sakura: '#d94f7a' };
 const GOAL_AREAS = [['Учёба', 'Например: закрыть сессию без долгов'], ['Деньги', 'Например: первые 10 000 ₽ своими силами'], ['Спорт', 'Например: 15 подтягиваний'], ['Люди', 'Например: новый круг общения']];
 const MONTHS = ['янв', 'фев', 'мар', 'апр', 'мая', 'июн', 'июл', 'авг', 'сен', 'окт', 'ноя', 'дек'];
@@ -1755,17 +1820,66 @@ function toast(t) { const el = document.getElementById('toast'); el.textContent 
 // ---------- тема ----------
 const themeLvl = (k) => { const u = UNLOCKS.find((x) => x.theme === k); return u ? u.lvl : 1; };
 function applyTheme() {
-  let theme = S.theme || 'matcha';
-  if (S.onboarded && rank().lvl < themeLvl(theme)) theme = 'matcha';
+  let theme = S.theme || 'graphite';
+  if (!THEME_BG[theme] || (S.onboarded && rank().lvl < themeLvl(theme))) theme = 'graphite';
   let accent = !S.accent || S.accent === 'auto' ? THEME_ACCENT[theme] : S.accent;
   if (LIGHT_ACCENT[theme] && lum(accent) > 0.7) accent = LIGHT_ACCENT[theme];
   const r = document.documentElement;
   r.dataset.theme = theme;
   r.toggleAttribute('data-vivid', VIVID.includes(theme));
+  r.toggleAttribute('data-video', !!THEME_VIDEO[theme]);
   r.style.setProperty('--accent', accent);
   r.style.setProperty('--on-accent', lum(accent) > 0.6 ? '#06101c' : '#ffffff');
   try { tg.setHeaderColor(THEME_BG[theme]); tg.setBackgroundColor(THEME_BG[theme]); } catch (e) {}
+  bgVideo('bgv', THEME_VIDEO[theme]);
+  bgVideo('snowv', S.snow ? SNOW_VIDEO : null);
 }
+
+// ---------- живые фоны: настоящие видео с Pexels (лицензия Pexels: бесплатно, можно в коммерции, без указания автора) ----------
+// Видео грузится один раз и крутится по кругу без звука. Если интернет экономный или видео не загрузилось — остаётся картинка-заставка.
+const PX = (id, file) => `https://videos.pexels.com/video-files/${id}/${file}.mp4`;
+const PXP = (id, name, w) => `https://images.pexels.com/videos/${id}/${name}.jpeg?auto=compress&w=${w || 600}`;
+const LIVE_THEMES = [['rain', 'Дождь'], ['fog', 'Туман'], ['clouds', 'Облака'], ['storm', 'Гроза'], ['neonrain', 'Неон-дождь'], ['aurora', 'Сияние'], ['ny', 'Новый год']];
+const THEME_VIDEO = {
+  rain: { v: PX(34632628, '14678205_360_640_32fps'), p: PXP(34632628, 'pexels-photo-34632628') },
+  fog: { v: PX(28462197, '12390772_540_960_60fps'), p: PXP(28462197, '4k-forest-alps-mountains-aura-breathtaking-28462197') },
+  clouds: { v: PX(8062894, '8062894-sd_540_960_24fps'), p: PXP(8062894, 'beatiful-landscape-blue-mountains-blue-sky-cloud-8062894') },
+  storm: { v: PX(12107199, '12107199-sd_540_960_30fps'), p: PXP(12107199, 'pexels-photo-12107199') },
+  neonrain: { v: PX(38003076, '16127791_540_960_30fps'), p: PXP(38003076, 'pexels-photo-38003076') },
+  aurora: { v: PX(39885802, '17010210_540_960_24fps'), p: PXP(39885802, 'pexels-photo-39885802') },
+  ny: { v: PX(35469750, '15027143_360_640_30fps'), p: PXP(35469750, 'nigde-pine-tree-snow-snowing-35469750') }
+};
+const SNOW_VIDEO = { v: PX(35573084, '15073431_360_640_30fps'), p: '' };
+function bgVideo(id, src) {
+  let el = document.getElementById(id);
+  if (!src) { if (el) el.remove(); return; }
+  if (el && el.dataset.src === src.v) return;
+  if (!el) { el = document.createElement('div'); el.id = id; el.className = 'bgvid'; document.body.prepend(el); }
+  el.dataset.src = src.v;
+  // сразу показываем картинку-заставку, видео подменяет её, когда скачается
+  el.innerHTML = src.p ? `<img src="${src.p}" alt="">` : '';
+  const lite = reduceMotion || (navigator.connection && navigator.connection.saveData);
+  if (lite) return;
+  vidUrl(src.v).then((u) => {
+    if (!u || el.dataset.src !== src.v || !document.body.contains(el)) return;
+    const v = document.createElement('video');
+    Object.assign(v, { src: u, muted: true, loop: true, autoplay: true, playsInline: true });
+    v.setAttribute('playsinline', ''); v.setAttribute('muted', '');
+    v.addEventListener('canplay', () => { const old = el.querySelector('img'); el.appendChild(v); v.play().catch(() => {}); if (old) setTimeout(() => old.remove(), 1300); }, { once: true });
+    v.load();
+  });
+}
+// Видео качаем целиком и кладём в кэш телефона: второй раз не грузится из интернета
+async function vidUrl(url) {
+  try {
+    let r = null, c = null;
+    if (window.caches) { c = await caches.open('mogg-video-1'); r = await c.match(url); }
+    if (!r) { r = await fetch(url); if (!r.ok) return null; if (c) c.put(url, r.clone()).catch(() => {}); }
+    return URL.createObjectURL(await r.blob());
+  } catch (e) { return null; }
+}
+// В фоне Telegram может остановить видео — запускаем снова, когда вернулись
+document.addEventListener('visibilitychange', () => { if (!document.hidden) document.querySelectorAll('.bgvid video').forEach((v) => v.play().catch(() => {})); });
 
 // ---------- графика ----------
 const ARTS = {
@@ -2252,7 +2366,41 @@ async function aiCall(action, payload, ms) {
 }
 const aiErr = (e) => e === 'limit' ? 'Лимит разборов на сегодня исчерпан — попробуй завтра.' : e === 'not_telegram' ? 'Разбор работает только внутри Telegram.' : 'Не получилось сделать разбор — попробуй ещё раз чуть позже.';
 const aiSummary = (a) => a ? (a.areas || []).map((x) => `${(PILLARS[x.key] || { name: x.key }).name} ${x.score}/10 — ${x.seen}`).join('; ') + (a.priorities && a.priorities.length ? '. Приоритеты: ' + a.priorities.join('; ') : '') : '';
+// Подробный разбор: только изменяемое. Шкалы-светофоры, сильные стороны, точки роста, план по уровням важности.
+const METRIC_N = { skin_clear: 'Чистота кожи', skin_tone: 'Ровность тона', fresh: 'Свежесть лица', undereye: 'Зона под глазами', brows: 'Брови', facial_hair: 'Щетина / борода', haircut: 'Стрижка и укладка', posture: 'Осанка', outfit: 'Одежда', lips: 'Губы', presentation: 'Подача и взгляд' };
+let aiPhoto = null; // фото последнего разбора — только в памяти, чтобы показать в отчёте
+const mColor = (v) => v >= 70 ? '#3ddc97' : v >= 45 ? '#ffc94d' : '#ff6b6b';
+const mLabel = (v) => v >= 70 ? 'хорошо' : v >= 45 ? 'средне' : 'зона роста';
 function aiCard(a) {
+  if (!a.metrics || !a.metrics.length) return aiCardOld(a);
+  const ph = aiPhoto || ((S.photos || []).filter((p) => p.data).slice(-1)[0] || {}).data;
+  const tiers = [['t1', 'Тир 1 — главное', '#ff5a5f', 'делай в первую очередь'], ['t2', 'Тир 2 — усиление', '#ffc94d', 'после первых двух недель'], ['t3', 'Тир 3 — на дистанцию', '#3ddc97', 'держит результат']];
+  return `<div class="rep">
+    <div class="card rep-top">
+      <span class="mono">[ разбор по фото · ${human(a.date || today())} ]</span>
+      <div class="rep-grid">
+        ${ph ? `<img class="rep-ph" src="${ph}" alt="">` : ''}
+        <div class="rep-sc"><div class="rep-tile"><span class="mono">сейчас</span><b style="color:${mColor(a.score * 10)}">${(+a.score || 0).toFixed(1)}</b><small>/10</small></div>
+          <div class="rep-tile"><span class="mono">потенциал</span><b style="color:#3ddc97">${(+a.potential || 0).toFixed(1)}</b><small>/10 · 3 мес.</small></div></div>
+      </div>
+      ${a.style_type ? `<div class="rep-type"><span class="mono">стилевой типаж</span><div class="disp" style="font-size:26px;margin-top:4px">${esc(a.style_type.name)}</div><div class="hint" style="font-size:13px;margin-top:4px">${esc(a.style_type.why)}</div></div>` : ''}
+      ${a.summary ? `<div class="rep-quote">${esc(a.summary)}</div>` : ''}
+    </div>
+    <div class="card"><div class="row between"><span class="disp" style="font-size:22px">Шкалы</span><span class="mono">${a.metrics.length} параметров</span></div>
+      ${a.metrics.map((m, i) => `<div class="mbar" style="--c:${mColor(m.value)};--w:${m.value}%;animation-delay:${i * 70}ms"><div class="row between"><b>${METRIC_N[m.key] || m.key}</b><span class="mv">${m.value}<small>/100</small></span></div><div class="ml">${mLabel(m.value)}</div><div class="mt"><i></i></div>${m.note ? `<div class="mn">${esc(m.note)}</div>` : ''}</div>`).join('')}
+      <div class="rep-sum">${a.metrics.map((m) => `<span style="color:${mColor(m.value)}">● ${METRIC_N[m.key] || m.key}</span>`).join('')}</div>
+    </div>
+    ${(a.strengths_d || []).length ? `<div class="sec"><span class="disp" style="color:#3ddc97">Сильные стороны</span><span class="chipline">[ ${a.strengths_d.length} ]</span></div>
+      ${a.strengths_d.map((s, i) => `<div class="rep-pt" style="--c:#3ddc97"><span class="n">${i + 1}</span><div><b>${esc(s.title)}</b><p>${esc(s.text)}</p></div></div>`).join('')}` : ''}
+    ${(a.growth || []).length ? `<div class="sec"><span class="disp" style="color:#ff6b6b">Точки роста</span><span class="chipline">[ ${a.growth.length} ]</span></div>
+      ${a.growth.map((s, i) => `<div class="rep-pt" style="--c:${s.level === 'high' ? '#ff5a5f' : '#ffc94d'}"><span class="n">${i + 1}</span><div><b>${esc(s.title)}</b><p>${esc(s.text)}</p></div></div>`).join('')}` : ''}
+    ${a.plan && tiers.some(([k]) => (a.plan[k] || []).length) ? `<div class="sec"><span class="disp">План улучшений</span><span class="chipline">[ по влиянию ]</span></div>
+      ${tiers.map(([k, n, c, h]) => (a.plan[k] || []).length ? `<div class="card rep-tier"><div class="rep-th" style="background:${c}"><b>${n}</b><span>${h}</span></div>${a.plan[k].map((x) => `<div class="rep-ti"><b>▸ ${esc(x.title)}</b><p>${esc(x.text)}</p></div>`).join('')}</div>` : '').join('')}` : ''}
+    ${a.today ? `<div class="banner">Сегодня: ${esc(a.today)}</div>` : ''}
+    <div class="hint" style="font-size:11.5px;margin:10px 2px 0">Оцениваем только то, что можно изменить: уход, стрижку, осанку, стиль. Черты лица и рост — никогда.</div>
+  </div>`;
+}
+function aiCardOld(a) {
   return `<div class="card"><div class="disp" style="font-size:22px;margin-bottom:8px">Разбор по фото</div>
     ${a.strengths.length ? `<div class="mono lbl">Сильные стороны</div>${a.strengths.map((s) => `<div style="margin:4px 0;font-size:14px">+ ${esc(s)}</div>`).join('')}` : ''}
     ${a.areas.map((x) => { const p = PILLARS[x.key] || { name: x.key, c: 'var(--accent)' }; return `<div style="margin-top:12px"><div class="row between"><b>${p.name}</b><span class="mono">${x.score}/10 → ${x.potential}/10</span></div>
@@ -3020,7 +3168,7 @@ function renderPath() {
 
 // ---------- профиль ----------
 function renderMe() {
-  const r = rank(), cur = S.theme || 'matcha', nu = UNLOCKS.find((u) => u.lvl > r.lvl), fc = featureCards();
+  const r = rank(), cur = S.theme || 'graphite', nu = UNLOCKS.find((u) => u.lvl > r.lvl), fc = featureCards();
   // «Я» = прогресс (бывший «Путь») + открытые фишки + настройки, спрятанные под спойлер
   return `${renderPath()}
     ${nu ? `<div class="card teaser"><div class="row"><span class="lock">${IC.lock}</span><span class="mono">Следующая награда · ур. ${nu.lvl}</span></div><div class="row" style="margin-top:10px"><span style="font-size:28px">${nu.ic}</span><div style="flex:1"><b style="font-size:16px">${nu.name}</b><div class="hint">${nu.d}</div></div></div><div class="bar2"><i style="width:${Math.min(100, (r.x - r.cur) / (LV(nu.lvl) - r.cur) * 100)}%"></i></div><div class="row between" style="margin-top:6px"><span class="mono">${r.x} XP</span><span class="mono">ещё ${LV(nu.lvl) - r.x} XP</span></div></div>` : ''}
@@ -3029,6 +3177,11 @@ function renderMe() {
     ${renderCollection()}
     <div style="height:12px"></div>
     ${AI_ENDPOINT ? remindCard() : ''}
+    <div class="card"><div class="row between"><span class="disp" style="font-size:20px">Живые фоны</span><span class="mono">настоящее видео</span></div>
+      <div class="hint" style="margin:4px 0 12px;font-size:12.5px">Погода на заднем фоне. Видео грузится один раз (1–4 МБ).</div>
+      <div class="livegrid">${LIVE_THEMES.map(([k, n]) => `<button class="live ${cur === k ? 'on' : ''}" data-act="theme" data-v="${k}" style="background-image:url(${THEME_VIDEO[k].p.replace('w=600', 'w=240')})"><span>${n}</span></button>`).join('')}</div>
+      <button class="opt ${S.snow ? 'on' : ''}" data-act="snow" style="margin-top:12px"><span class="box">${S.snow ? IC.check : ''}</span><span>❄️ Снег поверх любой темы</span></button>
+    </div>
     <details class="card allp"><summary><span class="disp" style="font-size:20px">Настройки</span><span class="mono">темы · тренер</span></summary>
     <div>
       <span class="mono">Тема · открыто ${THEMES.filter(([k]) => r.lvl >= themeLvl(k)).length}/${THEMES.length}</span>
@@ -3131,6 +3284,7 @@ const ACT = {
   'ob-issue'(el) { toggleIn(ob.issues, el.dataset.k); haptic('light'); render(); },
   'ob-budget'(el) { ob.budget = +el.dataset.v; render(); },
   photo(el) { photoSheet(el.dataset.k); },
+  snow() { S.snow = !S.snow; haptic('light'); save(); render(); toast(S.snow ? 'Пошёл снег ❄️' : 'Снег выключен'); },
   'r-open'(el) { modal = { kind: 'routine', part: el.dataset.v || rPart() }; haptic('light'); render(); },
   'r-part'(el) { clearInterval(rTimer); modal.part = el.dataset.v; haptic('light'); render(); },
   'r-step'(el) {
@@ -3164,7 +3318,7 @@ const ACT = {
   analyze() {
     ob.step = 5; ob.result = analyze(); ob.ai = null; ob.aiErr = null; render();
     [0, 1, 2, 3].forEach((i) => setTimeout(() => { const e = document.getElementById('cl' + i); e && e.classList.add('on'); }, 450 * (i + 1)));
-    const ai = AI_ENDPOINT && ob.photo ? aiCall('analyze', { photo: ob.photo, issues: ob.issues, tone: 'soft' }, 90000) : null;
+    aiPhoto = ob.photo; const ai = AI_ENDPOINT && ob.photo ? aiCall('analyze', { photo: ob.photo, issues: ob.issues, tone: 'soft' }, 90000) : null;
     Promise.all([ai, new Promise((r) => setTimeout(r, 2300))]).then(([a]) => {
       if (a && !a.error && a.person && a.quality === 'ok') {
         ob.ai = a;
@@ -3436,7 +3590,7 @@ async function usePhoto(kind, data) {
     if (kind === 'ob-photo') { ob.photo = data; ob.photoErr = null; render(); }
     if (kind === 'ai-photo') {
       if (aiBusy) return;
-      aiBusy = true; render();
+      aiBusy = true; aiPhoto = data; render();
       const a = await aiCall('analyze', { photo: data, issues: S.issues || [], tone: S.coachTone || 'soft' }, 90000);
       aiBusy = false;
       if (a.error) { toast(aiErr(a.error)); render(); return; }
