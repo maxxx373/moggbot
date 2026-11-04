@@ -515,6 +515,13 @@ button:hover .arrow{transform:rotate(45deg)}
 .rstep .rt{font-weight:800;font-size:15px}
 .rstep .rh{font-size:12.5px;color:var(--hint);margin-top:2px;line-height:1.4}
 .rtimer{font-family:var(--mono);font-size:12px;color:var(--accent);margin-top:6px}
+/* mogg Pro */
+.procard{position:relative;overflow:hidden}
+.procard.cta{background:linear-gradient(135deg,color-mix(in srgb,var(--accent) 22%,transparent),var(--card) 70%);border-color:color-mix(in srgb,var(--accent) 45%,transparent)}
+.procard.cta:after{content:'';position:absolute;inset:0;background:linear-gradient(110deg,transparent 30%,rgba(255,255,255,.12) 50%,transparent 70%);transform:translateX(-100%);animation:shine 3.5s ease-in-out infinite}
+@keyframes shine{60%,100%{transform:translateX(100%)}}
+.procard.on{border-color:color-mix(in srgb,var(--accent) 40%,transparent)}
+.prolist{margin:8px 0 4px}
 /* подробный разбор */
 .rep-top{position:relative;overflow:hidden}
 .rep-grid{display:flex;gap:12px;margin-top:12px;align-items:stretch}
@@ -2759,12 +2766,68 @@ async function askCoach(text) {
     const j = await aiCall('chat', { message: text, history: S.chat.slice(-11, -1), context: { day: dayNum(today()), streak: streak(), level: `${r.lvl} · ${r.name}`, focus: S.plan.focus.map((p) => PILLARS[p].name), tone: S.coachTone || 'soft', protocols: P.active.map((a) => PROTOCOLS[a.id].t), analysis: aiSummary(S.ai), journey: journey().slice(0, 10).map((x) => x.title), budget: S.budget || 0, issues: (S.issues || []).map((k) => (ISSUES.find((x) => x[0] === k) || [])[1]).filter(Boolean), catalog: CATALOG.filter((x) => x.p <= Math.max(priceCap(S.budget || 0), 700) * 1.5).map((x) => `${x.b} ${x.n} — ≈${x.p} ₽ (${x.w.split('.')[0]})`) } }, 45000);
     if (j.text) {
       if (/сделал|нан[её]с|отжал|отжим|пробеж|присед|подтян|умыл|помыл|постриг|прош[её]л|планк/.test(text.toLowerCase())) addEvent('activity', '«' + text.slice(0, 80) + '»');
+      if (ME && ME.paywall) meRefresh();
       return { text: j.text };
     }
+    if (j.error === 'pro') { setTimeout(() => proOpen('chat'), 600); return { text: `Бесплатные сообщения на сегодня закончились (${(ME && ME.chat_limit) || 10} в день). В mogg Pro — до 100 в день. А пока отметь миссии на главной — они бесплатные.` }; }
     if (j.error === 'limit') return { text: 'На сегодня лимит сообщений тренеру исчерпан. Завтра продолжим — а пока отметь миссии на главной.' };
   }
   return localReply(text);
 }
+
+// ---------- mogg Pro: тариф и оплата ----------
+// Статус приходит с сервера. Пока на сервере не включён PAYWALL — идёт тест и у всех Pro.
+let ME = null, payWait = false;
+function meRefresh(check) {
+  if (!AI_ENDPOINT || !(tg && tg.initData)) return Promise.resolve(null);
+  const was = ME && ME.pro;
+  return aiCall('me', { check: !!check }, 12000).then((r) => {
+    if (r && !r.error) {
+      ME = r;
+      if (check && r.pro && !was && r.paywall) { modal = null; confetti(); haptic('success'); toast('mogg Pro активирован 🔥'); track('paid'); }
+      render();
+    }
+    return r;
+  });
+}
+const needPro = () => ME && ME.paywall && !ME.pro;
+function proOpen(reason) { modal = { kind: 'pro', reason }; haptic('light'); render(); }
+const PRO_WHY = { chat: 'Бесплатные сообщения тренеру на сегодня закончились.', analyze: 'Бесплатный разбор по фото уже использован.', workout: 'Персональная тренировка по разбору — в mogg Pro.' };
+function proCard() {
+  if (!ME) return '';
+  if (!ME.paywall) return `<div class="card procard"><div class="row between"><span class="mono">[ mogg pro ]</span><span class="mono" style="color:var(--accent)">тест</span></div><div style="font-weight:800;font-size:16px;margin-top:6px">Сейчас всё открыто бесплатно</div><div class="hint" style="font-size:12.5px;margin-top:2px">Идёт тест. Потом Pro будет стоить ${ME.price} ₽ за ${ME.days} дней — без автосписаний.</div></div>`;
+  if (ME.pro) return `<div class="card procard on"><div class="row between"><span class="mono">[ mogg pro ]</span><span class="mono" style="color:var(--accent)">активен</span></div><div style="font-weight:800;font-size:16px;margin-top:6px">Pro до ${new Date(ME.pro_until).toLocaleDateString('ru', { day: 'numeric', month: 'long' })}</div><div class="hint" style="font-size:12.5px;margin-top:2px">Сегодня: ${ME.chat_left} сообщений и ${ME.analyze_left} разбора</div><button class="btn sm ghost" data-act="pro-open" style="width:100%;margin-top:10px">Продлить на ${ME.days} дней</button></div>`;
+  return `<button class="card procard cta" data-act="pro-open" style="width:100%;text-align:left"><div class="row between"><span class="mono">[ mogg pro ]</span><span class="mono">${ME.price} ₽ / ${ME.days} дней</span></div><div class="disp" style="font-size:26px;margin-top:6px">Открой всё</div><div class="hint" style="font-size:12.5px;margin-top:2px">Разборы по фото, персональная тренировка, тренер до 100 сообщений в день</div></button>`;
+}
+function renderPro() {
+  const m = ME || { price: 149, days: 30 }, why = PRO_WHY[modal.reason];
+  return `<div class="modal"><div class="sheet exs" style="text-align:left">
+    <div class="row between"><span class="mono">[ mogg pro ]</span><button class="wox" data-act="modal-close" aria-label="Закрыть">✕</button></div>
+    ${why ? `<div class="banner" style="margin:12px 0 0">${why}</div>` : ''}
+    <div class="disp" style="font-size:40px;margin:14px 0 4px">${m.price} ₽</div>
+    <div class="hint">за ${m.days} дней · разовая оплата, <b>без автосписаний</b></div>
+    <div class="prolist">
+      ${[['📸', 'Разборы по фото', 'до 3 в день — следи, как меняются шкалы'], ['🏋️', 'Персональная тренировка', 'собрана под твой разбор'], ['💬', 'Тренер до 100 сообщений в день', 'вместо 10 бесплатных'], ['🔥', 'Всё бесплатное остаётся', 'миссии, протоколы, тренировки, статьи']].map(([i, t, h]) => `<div class="row" style="align-items:flex-start;margin-top:12px"><span style="font-size:22px">${i}</span><div><b>${t}</b><div class="hint" style="font-size:12.5px">${h}</div></div></div>`).join('')}
+    </div>
+    ${m.receipt ? `<div class="mono lbl">E-mail для чека</div><input class="field" id="payEmail" type="email" inputmode="email" autocomplete="email" placeholder="you@mail.ru" value="${esc(S.email || '')}">` : ''}
+    <button class="btn" data-act="pro-pay" style="margin-top:16px" ${m.pay_on === false ? 'disabled' : ''}>${m.pay_on === false ? 'Оплата скоро появится' : `Оплатить ${m.price} ₽`}</button>
+    <div class="hint" style="font-size:11.5px;margin-top:10px;text-align:center">Оплата через ЮKassa. Нажимая «Оплатить», ты принимаешь <a href="offer.html" style="color:var(--accent)">оферту</a> и <a href="privacy.html" style="color:var(--accent)">политику</a>.</div>
+  </div></div>`;
+}
+async function proPay() {
+  const btn = document.querySelector('[data-act="pro-pay"]'), em = document.getElementById('payEmail');
+  const email = em ? em.value.trim() : '';
+  if (ME && ME.receipt && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) { toast('Впиши e-mail — туда придёт чек'); em && em.focus(); return; }
+  if (email) { S.email = email; save(); }
+  if (btn) { btn.disabled = true; btn.textContent = 'Открываю оплату…'; }
+  const r = await aiCall('pay', { email }, 20000);
+  if (!r || r.error || !r.url) { toast(r && r.error === 'pay_off' ? 'Оплата ещё не подключена' : 'Не получилось открыть оплату — попробуй ещё раз'); if (btn) { btn.disabled = false; btn.textContent = `Оплатить ${(ME && ME.price) || 149} ₽`; } return; }
+  payWait = true; track('pay_open');
+  try { if (tg && tg.openLink) tg.openLink(r.url); else location.href = r.url; } catch (e) { location.href = r.url; }
+  if (btn) { btn.disabled = false; btn.textContent = 'Я оплатил — проверить'; btn.dataset.act = 'pro-check'; }
+}
+// Вернулся из оплаты — сразу проверяем, прошла ли она
+document.addEventListener('visibilitychange', () => { if (!document.hidden && payWait) { payWait = false; setTimeout(() => meRefresh(true), 800); } });
 async function sendChat(text) {
   text = text.trim();
   if (!text) return;
@@ -3002,6 +3065,7 @@ function woCards() {
 }
 let wo = null;
 function woStart(id) {
+  if (id === 'my' && needPro()) return proOpen('workout');
   const w = getWorkout(id);
   if (!w) return;
   woStop();
@@ -3345,6 +3409,7 @@ function renderModal() {
   }
   if (modal.kind === 'wo' && wo) return renderWorkout();
   if (modal.kind === 'routine') return renderRoutine();
+  if (modal.kind === 'pro') return renderPro();
   if (modal.kind === 'ai' && S.ai) {
     const fr = (modal.fresh || []).map((id) => PROTOCOLS[id].t);
     return `<div class="modal"><div class="sheet exs" style="text-align:left">
@@ -3420,6 +3485,7 @@ function renderPath() {
   const ph = (S.photos || []).filter((p) => p.data), first = ph[0], last = ph[ph.length - 1];
   const moodDays = [...Array(14)].map((_, i) => addDays(end, i - 13));
   return `${topbar('Я')}
+    ${proCard()}
     <div class="card ink" style="overflow:hidden">
       <div class="row between"><span class="mono">[ уровень · дорожка наград ]</span><span class="mono">${r.x} XP</span></div>
       <div class="row between" style="margin-top:6px"><div class="disp" style="font-size:40px">${r.name}</div><div class="disp" style="font-size:40px;color:var(--accent)">${z(r.lvl)}</div></div>
@@ -3572,6 +3638,9 @@ const ACT = {
   'ob-issue'(el) { toggleIn(ob.issues, el.dataset.k); haptic('light'); render(); },
   'ob-budget'(el) { ob.budget = +el.dataset.v; render(); },
   photo(el) { photoSheet(el.dataset.k); },
+  'pro-open'() { proOpen(); },
+  'pro-pay'() { proPay(); },
+  'pro-check'(el) { el.disabled = true; el.textContent = 'Проверяю…'; meRefresh(true).then((r) => { if (!(r && r.pro && r.paywall)) { el.disabled = false; el.textContent = 'Я оплатил — проверить'; toast('Оплата пока не видна. Если списали деньги — подожди минуту и проверь снова'); } }); },
   snow() { S.snow = !S.snow; haptic('light'); save(); render(); toast(S.snow ? 'Пошёл снег ❄️' : 'Снег выключен'); },
   'r-open'(el) { modal = { kind: 'routine', part: el.dataset.v || rPart() }; haptic('light'); render(); },
   'r-part'(el) { clearInterval(rTimer); modal.part = el.dataset.v; haptic('light'); render(); },
@@ -3881,7 +3950,9 @@ async function usePhoto(kind, data) {
       aiBusy = true; aiPhoto = data; render();
       const a = await aiCall('analyze', { photo: data, issues: S.issues || [], tone: S.coachTone || 'soft' }, 90000);
       aiBusy = false;
+      if (a.error === 'pro') { proOpen('analyze'); return; }
       if (a.error) { toast(aiErr(a.error)); render(); return; }
+      meRefresh();
       if (!a.person || a.quality === 'bad') { modal = { kind: 'ai-bad', note: !a.person ? 'На фото не видно человека.' : a.quality_note || 'Фото тёмное или размытое.' }; render(); return; }
       applyAI(a);
     }
@@ -3909,6 +3980,7 @@ function start() {
       show();
     }
   }).catch(show).then(() => { if (S.onboarded) track('open', { day: dayNum(today()) }); });
+  meRefresh(/paid=1/.test(location.search));
 }
 start();
 </script>
