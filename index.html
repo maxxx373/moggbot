@@ -103,19 +103,23 @@
 /* живые фоны: видео на весь экран, поверх — затемнение для читаемости, карточки — тёмное стекло */
 .bgvid{position:fixed;inset:0;z-index:-1;pointer-events:none;overflow:hidden;background:#000}
 .bgvid video,.bgvid img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;animation:fade 1.2s ease both}
-#bgv::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.35),rgba(0,0,0,.25) 35%,rgba(0,0,0,.65))}
+#bgv::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.28),rgba(0,0,0,.12) 40%,rgba(0,0,0,.4))}
 #snowv{z-index:15;background:transparent;mix-blend-mode:screen;opacity:.6}
 [data-video]{
-  --bg:#0b0d10; --card:rgba(12,14,18,.52); --card-b:rgba(255,255,255,.14); --solid:#14171c;
-  --text:#f6f8fa; --hint:#b6bec9; --line:rgba(255,255,255,.12); --ink:rgba(0,0,0,.6);
+  --bg:#0b0d10; --card:rgba(10,12,16,.26); --card-b:rgba(255,255,255,.18); --solid:#14171c;
+  --text:#ffffff; --hint:#d3dae3; --line:rgba(255,255,255,.14); --ink:rgba(0,0,0,.45);
   --mA:#e9eef3; --mB:#9aa6b4; --mC:#2b333d; --mD:#cfd8e2; --mE:#1a2027;
 }
 [data-video] body{background:transparent}
-[data-video] .card,[data-video] .mission,[data-video] .acard,[data-video] .lesson{backdrop-filter:blur(18px) saturate(1.2);-webkit-backdrop-filter:blur(18px) saturate(1.2)}
-[data-video] .hero,[data-video] .outro{background:linear-gradient(180deg,rgba(0,0,0,.15),rgba(0,0,0,.45));backdrop-filter:blur(2px);-webkit-backdrop-filter:blur(2px)}
-[data-video] .hero svg.mtn{opacity:.75}
-[data-theme="ny"]{--card-b:rgba(255,204,77,.22)}
-[data-theme="ny"] .hero{background:linear-gradient(180deg,rgba(90,10,20,.35),rgba(10,40,25,.55))}
+/* стекло тоньше: видео просвечивает сквозь карточки, текст читается за счёт лёгкой тени */
+[data-video] .card,[data-video] .mission,[data-video] .acard,[data-video] .lesson,[data-video] .tint,[data-video] .rep-pt{backdrop-filter:blur(6px) saturate(1.15);-webkit-backdrop-filter:blur(6px) saturate(1.15)}
+[data-video] .app{text-shadow:0 1px 2px rgba(0,0,0,.45)}
+[data-video] .btn,[data-video] .tabs{text-shadow:none}
+[data-video] .hero,[data-video] .outro{background:linear-gradient(180deg,rgba(0,0,0,.05),rgba(0,0,0,.3));backdrop-filter:none;-webkit-backdrop-filter:none}
+[data-video] .hero svg.mtn{opacity:.55}
+[data-video] .tabs .in{background:rgba(10,12,16,.45)}
+[data-theme="ny"],[data-theme="nyc"]{--card-b:rgba(255,204,77,.28)}
+[data-theme="ny"] .hero,[data-theme="nyc"] .hero{background:linear-gradient(180deg,rgba(90,10,20,.35),rgba(10,40,25,.55))}
 .livegrid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
 .live{position:relative;aspect-ratio:3/4;border-radius:14px;background:#111 center/cover;overflow:hidden;border:2px solid transparent;transition:transform .15s,border-color .2s}
 .live:active{transform:scale(.95)}
@@ -1584,7 +1588,7 @@ const BADGES = [
   ['👑', 'Легенда', 'Уровень 16', () => rank().lvl >= 16]
 ];
 const ACCENTS = ['auto', '#cde59b', '#ffb07c', '#ff7a6b', '#ffd166', '#6ee7c8', '#b79cff', '#ff7ccf', '#9cc8ff', '#4d7cff', '#ffffff'];
-const THEME_ACCENT = { graphite: '#c8f04a', rain: '#9fd3ff', fog: '#e9eef3', clouds: '#ffd38a', storm: '#c7a6ff', neonrain: '#ff5ec4', aurora: '#5effb1', ny: '#ffcc4d', matcha: '#cde59b', sunset: '#ffb07c', neon: '#ff7ccf', sakura: '#d94f7a', frost: '#9cc8ff', ice: '#9cc8ff', paper: '#0b0b0c', acid: '#c6ff3d', mango: '#ffc23d', candy: '#ff8ad6', ocean: '#2ee6ff' };
+const THEME_ACCENT = { graphite: '#c8f04a', rain: '#9fd3ff', fog: '#e9eef3', clouds: '#ffd38a', storm: '#c7a6ff', neonrain: '#ff5ec4', aurora: '#5effb1', ny: '#ffcc4d', nyc: '#ff5a5f', matcha: '#cde59b', sunset: '#ffb07c', neon: '#ff7ccf', sakura: '#d94f7a', frost: '#9cc8ff', ice: '#9cc8ff', paper: '#0b0b0c', acid: '#c6ff3d', mango: '#ffc23d', candy: '#ff8ad6', ocean: '#2ee6ff' };
 const VIVID = ['acid', 'mango', 'candy', 'ocean'];
 const PALETTE = ['#ffb07c', '#6ee7c8', '#b79cff', '#ffd166', '#ff7a9c', '#7dd3fc'];
 const DROP_BG = ['linear-gradient(135deg,#ff7a6b,#ffb07c 55%,#ffd166)', 'linear-gradient(135deg,#6ee7c8,#b5f5d9 60%,#fff1c9)', 'linear-gradient(135deg,#b79cff,#ffb3d1 60%,#ffd9b8)', 'linear-gradient(135deg,#7dd3fc,#c7f0ff 55%,#ffe8c2)'];
@@ -1789,7 +1793,7 @@ const THEMES = [
   ['frost', 'Иней', 'linear-gradient(160deg,#7e95ac,#4e6276)'],
   ['ice', 'Лёд', 'linear-gradient(160deg,#0e1a2b,#080d14)']
 ];
-const THEME_BG = { graphite: '#0e0f11', rain: '#0b0f13', fog: '#14181c', clouds: '#0f1419', storm: '#0a0a12', neonrain: '#0a0810', aurora: '#05100f', ny: '#0b0f0c', matcha: '#141913', sunset: '#211915', neon: '#09080f', sakura: '#fbf0f1', frost: '#4e6276', ice: '#080d14', paper: '#eef0f3', acid: '#0d0a1a', mango: '#1a0d08', candy: '#150a20', ocean: '#04111c' };
+const THEME_BG = { graphite: '#0e0f11', rain: '#0b0f13', fog: '#14181c', clouds: '#0f1419', storm: '#0a0a12', neonrain: '#0a0810', aurora: '#05100f', ny: '#0b0f0c', nyc: '#120a0a', matcha: '#141913', sunset: '#211915', neon: '#09080f', sakura: '#fbf0f1', frost: '#4e6276', ice: '#080d14', paper: '#eef0f3', acid: '#0d0a1a', mango: '#1a0d08', candy: '#150a20', ocean: '#04111c' };
 const LIGHT_ACCENT = { paper: '#0b0b0c', sakura: '#d94f7a' };
 const GOAL_AREAS = [['Учёба', 'Например: закрыть сессию без долгов'], ['Деньги', 'Например: первые 10 000 ₽ своими силами'], ['Спорт', 'Например: 15 подтягиваний'], ['Люди', 'Например: новый круг общения']];
 const MONTHS = ['янв', 'фев', 'мар', 'апр', 'мая', 'июн', 'июл', 'авг', 'сен', 'окт', 'ноя', 'дек'];
@@ -1839,7 +1843,7 @@ function applyTheme() {
 // Видео грузится один раз и крутится по кругу без звука. Если интернет экономный или видео не загрузилось — остаётся картинка-заставка.
 const PX = (id, file) => `https://videos.pexels.com/video-files/${id}/${file}.mp4`;
 const PXP = (id, name, w) => `https://images.pexels.com/videos/${id}/${name}.jpeg?auto=compress&w=${w || 600}`;
-const LIVE_THEMES = [['rain', 'Дождь'], ['fog', 'Туман'], ['clouds', 'Облака'], ['storm', 'Гроза'], ['neonrain', 'Неон-дождь'], ['aurora', 'Сияние'], ['ny', 'Новый год']];
+const LIVE_THEMES = [['rain', 'Дождь'], ['fog', 'Туман'], ['clouds', 'Облака'], ['storm', 'Гроза'], ['neonrain', 'Неон-дождь'], ['aurora', 'Сияние'], ['ny', 'Рождество · Лондон'], ['nyc', 'Рождество · Нью-Йорк']];
 const THEME_VIDEO = {
   rain: { v: PX(34632628, '14678205_360_640_32fps'), p: PXP(34632628, 'pexels-photo-34632628') },
   fog: { v: PX(28462197, '12390772_540_960_60fps'), p: PXP(28462197, '4k-forest-alps-mountains-aura-breathtaking-28462197') },
@@ -1847,7 +1851,8 @@ const THEME_VIDEO = {
   storm: { v: PX(12107199, '12107199-sd_540_960_30fps'), p: PXP(12107199, 'pexels-photo-12107199') },
   neonrain: { v: PX(38003076, '16127791_540_960_30fps'), p: PXP(38003076, 'pexels-photo-38003076') },
   aurora: { v: PX(39885802, '17010210_540_960_24fps'), p: PXP(39885802, 'pexels-photo-39885802') },
-  ny: { v: PX(35469750, '15027143_360_640_30fps'), p: PXP(35469750, 'nigde-pine-tree-snow-snowing-35469750') }
+  ny: { v: PX(34902568, '14786507_540_960_30fps'), p: PXP(34902568, 'pexels-photo-34902568') },
+  nyc: { v: PX(35131030, '14882315_540_960_30fps'), p: PXP(35131030, 'pexels-photo-35131030') }
 };
 const SNOW_VIDEO = { v: PX(35573084, '15073431_360_640_30fps'), p: '' };
 function bgVideo(id, src) {
@@ -3177,19 +3182,20 @@ function renderMe() {
     ${renderCollection()}
     <div style="height:12px"></div>
     ${AI_ENDPOINT ? remindCard() : ''}
-    <div class="card"><div class="row between"><span class="disp" style="font-size:20px">Живые фоны</span><span class="mono">настоящее видео</span></div>
-      <div class="hint" style="margin:4px 0 12px;font-size:12.5px">Погода на заднем фоне. Видео грузится один раз (1–4 МБ).</div>
+    <div class="card"><div class="row between"><span class="disp" style="font-size:22px">Оформление</span><span class="mono">${LIVE_THEMES.length + THEMES.length} тем</span></div>
+      <div class="mono lbl">Живые фоны · настоящее видео</div>
+      <div class="hint" style="margin:-2px 0 10px;font-size:12.5px">Погода на заднем фоне. Видео грузится один раз (1–4 МБ).</div>
       <div class="livegrid">${LIVE_THEMES.map(([k, n]) => `<button class="live ${cur === k ? 'on' : ''}" data-act="theme" data-v="${k}" style="background-image:url(${THEME_VIDEO[k].p.replace('w=600', 'w=240')})"><span>${n}</span></button>`).join('')}</div>
       <button class="opt ${S.snow ? 'on' : ''}" data-act="snow" style="margin-top:12px"><span class="box">${S.snow ? IC.check : ''}</span><span>❄️ Снег поверх любой темы</span></button>
-    </div>
-    <details class="card allp"><summary><span class="disp" style="font-size:20px">Настройки</span><span class="mono">темы · тренер</span></summary>
-    <div>
-      <span class="mono">Тема · открыто ${THEMES.filter(([k]) => r.lvl >= themeLvl(k)).length}/${THEMES.length}</span>
+      <div class="mono lbl" style="margin-top:18px">Цветные темы</div>
       <div class="themes" style="margin-top:10px">${THEMES.map(([k, n, g]) => { const lk = r.lvl < themeLvl(k); return `<button class="${cur === k && !lk ? 'on' : ''} ${lk ? 'locked' : ''}" data-act="theme" data-v="${k}"><div class="pv" style="background:${g}"><div style="position:absolute;left:8px;bottom:8px;width:45%;height:7px;border-radius:4px;background:${LIGHT_ACCENT[k] ? '#2a1418' : '#fff'};opacity:.8"></div></div>${lk ? `<span class="lk">УР.${themeLvl(k)}</span>` : ''}<div class="nm">${n}</div></button>`; }).join('')}</div>
       <div class="mono lbl">Акцент</div>
       <div class="sw">${ACCENTS.map((c) => `<button class="${(S.accent || 'auto') === c ? 'on' : ''}" style="background:${c === 'auto' ? 'conic-gradient(#cde59b,#ffb07c,#ff7ccf,#9cc8ff,#cde59b)' : c}" data-act="accent" data-v="${c}" aria-label="${c === 'auto' ? 'Под тему' : c}"></button>`).join('')}</div>
       <div class="hint" style="margin-top:8px;font-size:12px">Первый кружок — цвет под тему автоматически.</div>
-      <div class="mono lbl">Тренер</div>
+    </div>
+    <details class="card allp"><summary><span class="disp" style="font-size:20px">Настройки</span><span class="mono">тренер · награды</span></summary>
+    <div>
+      <div class="mono lbl" style="margin-top:0">Тренер</div>
       <input class="field" style="margin-top:10px" value="${esc(coachName())}" maxlength="20" data-input="coach-name" placeholder="Имя тренера">
       <div class="mono lbl">Режим общения</div>
       ${modePicker()}
