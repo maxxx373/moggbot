@@ -7,7 +7,7 @@
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&family=Permanent+Marker&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Onest:wght@400;500;600;700;800&family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&family=Permanent+Marker&display=swap" rel="stylesheet">
 <style>
 :root{
   --accent:#cde59b; --on-accent:#06101c;
@@ -89,17 +89,6 @@
   --mA:#e3fffb; --mB:#7af2ff; --mC:#0a3c8f; --mD:#b8fff0; --mE:#06203d;
   --b1:#2ee6ff; --b2:#3b6dff; --b3:#40ffaa; --grad:linear-gradient(120deg,#2ee6ff,#8affd6);
 }
-/* Графит — тема по умолчанию: спокойный тёмный, лаймовый акцент и медленно плывущие пятна света */
-[data-theme="graphite"]{
-  --bg:#0e0f11; --glow1:rgba(200,240,74,.10); --glow2:rgba(120,150,255,.10);
-  --card:rgba(255,255,255,.045); --card-b:rgba(255,255,255,.09); --solid:#17191c;
-  --text:#f3f4f6; --hint:#8f949c; --line:rgba(255,255,255,.08); --ink:#000;
-  --mA:#f1f3f5; --mB:#b9c0c9; --mC:#3a414b; --mD:#dfe4ea; --mE:#22272e;
-}
-[data-theme="graphite"] body::after{content:'';position:fixed;inset:-20%;z-index:-1;pointer-events:none;opacity:.35;filter:blur(50px);
-  background:radial-gradient(26% 22% at 80% 12%,rgba(200,240,74,.35),transparent 70%),radial-gradient(30% 26% at 12% 80%,rgba(110,140,255,.28),transparent 70%);
-  animation:blobs 22s ease-in-out infinite alternate}
-[data-theme="graphite"] .hero{background:linear-gradient(180deg,#141619 0%,#2b3038 42%,#6c7685 78%,#c9d1db 100%)}
 /* живые фоны: видео на весь экран, поверх — затемнение для читаемости, карточки — тёмное стекло */
 .bgvid{position:fixed;inset:0;z-index:-1;pointer-events:none;overflow:hidden;background:#000}
 .bgvid video,.bgvid img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;animation:fade 1.2s ease both}
@@ -692,6 +681,180 @@ button:active,label.card:active{transform:scale(.97)}
 .wos summary{font-weight:700;font-size:14px;cursor:pointer;list-style:none}
 .wos summary::-webkit-details-marker{display:none}
 .wos summary:after{content:' +';color:var(--accent)}
+/* ============================================================
+   MIX — тема по умолчанию (ключ graphite).
+   Светлая подложка с шарами + чёрные глянцевые карточки,
+   кислотные неоновые полосы, синий «терминальный» акцент с курсором _,
+   оранжевые блоки поверх ч/б фото. Остальные темы не затронуты.
+   ============================================================ */
+[data-theme="graphite"]{
+  --bg:#e9ebf0; --glow1:transparent; --glow2:transparent; --solid:#0b0c11; --ink:#05060a;
+  --blue:#3d63ff; --hot:#ff4a1c; --dk:#08090d;
+  --mA:#c4d3ff; --mB:#3d63ff; --mC:#0a1038; --mD:#7f9bff; --mE:#0b1240;
+  --r:26px;
+}
+/* светлая зона: всё, что лежит прямо на странице */
+[data-theme="graphite"] body{
+  --text:#07080c; --hint:#666b76; --card:#ffffff; --card-b:rgba(7,8,12,.09); --line:rgba(7,8,12,.09);
+  color:var(--text);font-family:'Onest','Manrope',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+  background:#e9ebf0 radial-gradient(rgba(7,8,12,.13) 1px,transparent 1.4px) 0 0/14px 14px;background-attachment:fixed}
+[data-theme="graphite"] body::after{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;
+  background:
+    radial-gradient(circle at 36% 30%,#fff 0,#f1f3f7 42%,#cdd2dc 69%,transparent 70%) 108% 6%/210px 210px no-repeat,
+    radial-gradient(circle at 36% 30%,#fff 0,#f1f3f7 42%,#cdd2dc 69%,transparent 70%) -14% 46%/150px 150px no-repeat,
+    radial-gradient(circle at 36% 30%,#fff 0,#f1f3f7 42%,#cdd2dc 69%,transparent 70%) 88% 82%/96px 96px no-repeat,
+    radial-gradient(circle at 36% 30%,#fff 0,#f1f3f7 42%,#cdd2dc 69%,transparent 70%) 22% 12%/34px 34px no-repeat,
+    radial-gradient(circle at 36% 30%,#fff 0,#f1f3f7 42%,#cdd2dc 69%,transparent 70%) 64% 60%/22px 22px no-repeat;
+  animation:mixfloat 14s ease-in-out infinite alternate}
+@keyframes mixfloat{from{transform:translateY(-10px)}to{transform:translateY(14px)}}
+@keyframes mixblink{50%{opacity:0}}
+
+/* тёмная зона: чёрные карточки-виджеты */
+[data-theme="graphite"] :is(.card,.lvl,.chipline,.tag,.tint,.cc,.wotile,.banner,.lesson,.rstep,.excard,.photo-drop,.modes button,.sheet,.mission.done,.msg.ai,.rep-pt,.cam-err,.xpfloat,.hero,.outro){
+  --text:#f4f5f7; --hint:#9096a3; --card:rgba(255,255,255,.07); --card-b:rgba(255,255,255,.13); --line:rgba(255,255,255,.1);
+  color:var(--text)}
+[data-theme="graphite"] :is(.card,.lesson,.rstep,.excard,.photo-drop,.modes button,.mission.done,.msg.ai,.rep-pt){
+  background:linear-gradient(155deg,#1b1d26 0%,#08090d 44%);border-color:transparent;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.14),0 22px 30px -20px rgba(8,12,30,.6);
+  backdrop-filter:none;-webkit-backdrop-filter:none}
+[data-theme="graphite"] .card .card,[data-theme="graphite"] .card :is(.lesson,.rstep,.excard,.rep-pt,.modes button),[data-theme="graphite"] .sheet :is(.card,.lesson,.rstep,.excard,.modes button){background:rgba(255,255,255,.06);box-shadow:none;border-color:rgba(255,255,255,.1)}
+[data-theme="graphite"] .rep-pt{border-left:4px solid var(--c)}
+[data-theme="graphite"] .modes button.on{border-color:var(--accent);background:linear-gradient(155deg,color-mix(in srgb,var(--accent) 26%,transparent),transparent 70%),#08090d}
+[data-theme="graphite"] .photo-drop{border:1.5px dashed rgba(255,255,255,.3)}
+[data-theme="graphite"] .wocard{background:linear-gradient(150deg,color-mix(in srgb,var(--c) 34%,transparent),transparent 62%),#08090d!important;border-color:transparent!important}
+[data-theme="graphite"] .procard.cta{background:linear-gradient(135deg,color-mix(in srgb,var(--accent) 30%,transparent),transparent 70%),#08090d}
+[data-theme="graphite"] .chest{background:linear-gradient(120deg,rgba(255,74,28,.55),transparent 62%),#08090d}
+[data-theme="graphite"] .rcard{box-shadow:0 0 0 1.5px var(--accent),0 22px 30px -20px rgba(8,12,30,.6)}
+[data-theme="graphite"] .banner{background:#08090d;border:0;border-radius:18px;box-shadow:inset 3px 0 0 var(--accent)}
+[data-theme="graphite"] .sheet{background:linear-gradient(160deg,#1a1c25,#08090d 40%);border-color:rgba(255,255,255,.1)}
+
+/* белая «неоморфная» мелочь */
+[data-theme="graphite"] :is(.mission,.acard,.opt,.chip,.seg,.jt button,.backlink,.iconbtn,.btn.ghost,.field,.gin,.buy){
+  box-shadow:-5px -5px 12px rgba(255,255,255,.85),7px 9px 20px rgba(150,158,178,.42)}
+[data-theme="graphite"] :is(.card,.sheet,.mission.done) :is(.mission,.acard,.opt,.chip,.seg,.jt button,.backlink,.iconbtn,.btn.ghost,.field,.gin,.buy){box-shadow:none}
+[data-theme="graphite"] .mission{border-radius:20px;border-color:rgba(7,8,12,.05)}
+[data-theme="graphite"] .mission .box{border-color:currentColor;border-radius:50%;opacity:.9}
+[data-theme="graphite"] .mission.done .box{opacity:1;box-shadow:0 0 14px color-mix(in srgb,var(--accent) 70%,transparent)}
+[data-theme="graphite"] .mission.charm{background:linear-gradient(120deg,color-mix(in srgb,#7b5cff 16%,#fff),#fff 70%);border-color:transparent}
+[data-theme="graphite"] .mission.bonus{border:1.5px dashed rgba(7,8,12,.3)}
+[data-theme="graphite"] .mission.done,[data-theme="graphite"] .mission.done.charm{background:linear-gradient(155deg,#1b1d26 0%,#08090d 44%);border-color:transparent}
+[data-theme="graphite"] .mission .xp{background:#07080c;padding:5px 8px;border-radius:9px;box-shadow:inset 0 0 0 1px rgba(255,255,255,.12)}
+[data-theme="graphite"] .tag{background:#07080c;border-radius:7px}
+[data-theme="graphite"] .opt.on{box-shadow:0 0 0 2px #07080c}
+[data-theme="graphite"] .opt .box,[data-theme="graphite"] .goal .box{border-color:currentColor}
+[data-theme="graphite"] .chip.on{background:#07080c;color:var(--accent);border-color:#07080c}
+[data-theme="graphite"] .card .chip.on,[data-theme="graphite"] .sheet .chip.on{background:var(--accent);color:var(--on-accent);border-color:var(--accent)}
+[data-theme="graphite"] .seg button.on,[data-theme="graphite"] .jt button.on{background:#07080c;color:var(--accent);border-color:#07080c}
+[data-theme="graphite"] .card .seg button.on{background:var(--accent);color:var(--on-accent)}
+
+/* типографика: квадрат-маркер и мигающий курсор */
+[data-theme="graphite"] .sec .disp{display:flex;align-items:center;font-size:26px}
+[data-theme="graphite"] .sec .disp::before{content:'';width:9px;height:9px;background:var(--blue);margin-right:9px;flex:none;border-radius:2px}
+[data-theme="graphite"] .sec .disp::after{content:'_';color:var(--blue);margin-left:1px;animation:mixblink 1.1s steps(1) infinite}
+[data-theme="graphite"] .chipline{background:#07080c;border:0;border-radius:9px;color:var(--accent);padding:6px 10px}
+[data-theme="graphite"] .card .chipline{background:rgba(255,255,255,.08)}
+[data-theme="graphite"] .lvl{background:#07080c;border:0;height:32px;border-radius:16px;padding:0 12px}
+[data-theme="graphite"] .lvl.gold{background:#07080c;box-shadow:0 0 0 1.5px var(--gold)}
+[data-theme="graphite"] .logo svg{width:38px;height:38px;padding:6px;border-radius:12px;background:#07080c;box-shadow:0 8px 14px -8px rgba(8,12,30,.7)}
+[data-theme="graphite"] .logo b{letter-spacing:.04em}
+[data-theme="graphite"] .tm{color:var(--blue)}
+[data-theme="graphite"] .hero .tm,[data-theme="graphite"] .cc .tm{color:var(--accent)}
+
+/* кнопки */
+[data-theme="graphite"] .btn{border-radius:18px;border:1.5px solid #07080c;box-shadow:inset 0 1px 0 rgba(255,255,255,.55),0 5px 0 #07080c;letter-spacing:.01em}
+[data-theme="graphite"] .btn:active{transform:translateY(4px);box-shadow:inset 0 1px 0 rgba(255,255,255,.55),0 1px 0 #07080c}
+[data-theme="graphite"] :is(.card,.sheet) .btn{box-shadow:inset 0 1px 0 rgba(255,255,255,.55),0 0 22px -4px color-mix(in srgb,var(--accent) 70%,transparent)}
+[data-theme="graphite"] .btn.ghost{border:1px solid var(--card-b);box-shadow:-5px -5px 12px rgba(255,255,255,.85),7px 9px 20px rgba(150,158,178,.42)}
+[data-theme="graphite"] :is(.card,.sheet) .btn.ghost{box-shadow:none}
+[data-theme="graphite"] .btn.sm{border-radius:12px;box-shadow:inset 0 1px 0 rgba(255,255,255,.5)}
+/* глянцевые круглые кнопки-«шайбы» */
+[data-theme="graphite"] :is(.arrow,.iconbtn,.wox,.woctl button:not(.main),.pillbtn i){
+  background:radial-gradient(120% 120% at 30% 18%,#5a5e6b 0,#1d1f27 52%,#0b0c10 100%);border:1px solid rgba(255,255,255,.16);border-radius:50%;color:#fff;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.3),0 6px 12px -4px rgba(0,0,0,.6)}
+[data-theme="graphite"] .woctl .main{box-shadow:inset 0 2px 0 rgba(255,255,255,.5),0 0 30px color-mix(in srgb,var(--accent) 55%,transparent)}
+[data-theme="graphite"] .octa{color:var(--accent)}
+[data-theme="graphite"] .send{box-shadow:inset 0 1px 0 rgba(255,255,255,.6),0 5px 0 #07080c;border:1.5px solid #07080c}
+
+/* неоновые полосы прогресса с пунктиром */
+[data-theme="graphite"] :is(.track,.pbar,.teaser .bar2,.mbar .mt){height:12px;border-radius:12px;overflow:visible;
+  background:radial-gradient(circle,rgba(255,255,255,.55) 1px,transparent 1.5px) 0 50%/7px 100% repeat-x}
+[data-theme="graphite"] :is(.track,.pbar,.teaser .bar2) i{border-radius:12px;min-width:12px;background:var(--accent);box-shadow:0 0 16px color-mix(in srgb,var(--accent) 75%,transparent)}
+[data-theme="graphite"] .mbar .mt i{border-radius:12px;box-shadow:0 0 14px var(--c)}
+[data-theme="graphite"] .steps i{height:5px;background:rgba(7,8,12,.12)}
+[data-theme="graphite"] .steps i.on{background:var(--blue)}
+[data-theme="graphite"] .heat i{border-radius:7px}
+[data-theme="graphite"] .heat i.f{box-shadow:0 0 10px color-mix(in srgb,var(--accent) 60%,transparent)}
+[data-theme="graphite"] .wobar i.on{box-shadow:0 0 10px color-mix(in srgb,var(--accent) 60%,transparent)}
+[data-theme="graphite"] .spin{border-color:rgba(7,8,12,.12);border-top-color:var(--blue)}
+[data-theme="graphite"] .check-line.on{color:var(--blue)}
+
+/* hero: тёмно-синее стекло и точечная матрица */
+[data-theme="graphite"] .hero{border:0;border-radius:30px;color:#fff;
+  background:radial-gradient(95% 70% at 100% 0%,rgba(61,99,255,.75),transparent 62%),radial-gradient(60% 40% at 0% 100%,rgba(61,99,255,.25),transparent 70%),#05060b;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.16),0 30px 40px -24px rgba(20,40,160,.65)}
+[data-theme="graphite"] .hero::before{content:'';position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(rgba(150,175,255,.55) 1px,transparent 1.5px) 0 0/9px 9px;
+  -webkit-mask:linear-gradient(115deg,transparent 30%,#000 100%);mask:linear-gradient(115deg,transparent 30%,#000 100%)}
+[data-theme="graphite"] .hero svg.mtn{opacity:.8;mix-blend-mode:screen}
+[data-theme="graphite"] .shade{background:linear-gradient(transparent,rgba(5,6,11,.92))}
+[data-theme="graphite"] .hero .huge{letter-spacing:-.02em;text-shadow:0 0 40px rgba(61,99,255,.6)}
+[data-theme="graphite"] .hero > img.heroph{opacity:.4;filter:grayscale(1) contrast(1.15);mix-blend-mode:luminosity}
+[data-theme="graphite"] .spark{background:#9db4ff;box-shadow:0 0 8px #3d63ff}
+[data-theme="graphite"] .spray{font-family:var(--disp);font-weight:700;text-transform:uppercase;color:transparent;-webkit-text-stroke:1px rgba(140,165,255,.6);filter:none;text-shadow:none;letter-spacing:.02em}
+[data-theme="graphite"] .hero .track{background:radial-gradient(circle,rgba(255,255,255,.6) 1px,transparent 1.5px) 0 50%/7px 100% repeat-x}
+[data-theme="graphite"] .hero .track i{background:var(--accent)}
+
+/* outro и фото: оранжевый блок поверх ч/б */
+[data-theme="graphite"] .outro{background:var(--hot);color:#07080c;border-radius:30px;--mA:#07080c;--mB:#07080c;--mC:#07080c;--mD:#b42c08;--mE:#7d1d03;box-shadow:0 26px 34px -22px rgba(255,74,28,.8)}
+[data-theme="graphite"] .outro .shade{display:none}
+[data-theme="graphite"] .outro svg.mtn{opacity:.28}
+[data-theme="graphite"] .outro .mono{color:rgba(7,8,12,.75)}
+[data-theme="graphite"] .outro .barcode{color:#07080c}
+[data-theme="graphite"] .outro .tag3::after{content:'_';animation:mixblink 1.1s steps(1) infinite}
+[data-theme="graphite"] :is(.phcard,.feature .art,.acard .thumb,.rcover .art) img.ph{filter:grayscale(1) contrast(1.12);opacity:1}
+[data-theme="graphite"] .phcard::after,[data-theme="graphite"] .feature::after{content:'';position:absolute;right:0;bottom:0;width:66%;height:52%;background:var(--hot);mix-blend-mode:multiply;z-index:1;pointer-events:none}
+[data-theme="graphite"] .feature{border-radius:30px;box-shadow:0 26px 34px -22px rgba(8,12,30,.7)}
+[data-theme="graphite"] .phcard{box-shadow:0 22px 30px -20px rgba(8,12,30,.6)}
+[data-theme="graphite"] .libtile img.lt{filter:grayscale(1) contrast(1.1);opacity:.4}
+[data-theme="graphite"] .newb{background:var(--hot);color:#fff}
+[data-theme="graphite"] .celebrate{border:1.5px solid #07080c;box-shadow:0 5px 0 #07080c}
+
+/* плитки-виджеты */
+[data-theme="graphite"] .tint{position:relative;border:0;border-radius:22px;padding:14px;
+  background:linear-gradient(160deg,color-mix(in srgb,var(--c) 26%,transparent),transparent 64%),#08090d;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.14),0 20px 26px -18px rgba(8,12,30,.6)}
+[data-theme="graphite"] .tint::after{content:'';position:absolute;right:13px;top:14px;width:26px;height:8px;border-radius:8px;background:var(--c);box-shadow:0 0 12px var(--c)}
+[data-theme="graphite"] .tint b{font-size:40px;font-weight:500;letter-spacing:-.01em}
+[data-theme="graphite"] .cc{border:0;border-radius:24px;background:linear-gradient(180deg,color-mix(in srgb,var(--c) 34%,transparent),transparent 72%),#08090d;box-shadow:0 22px 30px -20px rgba(8,12,30,.6)}
+[data-theme="graphite"] .wotile{border:0;border-radius:20px;background:linear-gradient(160deg,color-mix(in srgb,var(--c) 34%,transparent),transparent 72%),#08090d;box-shadow:0 18px 24px -16px rgba(8,12,30,.6)}
+[data-theme="graphite"] .lesson .num{text-shadow:0 0 18px color-mix(in srgb,var(--accent) 55%,transparent)}
+[data-theme="graphite"] .rep-tile b,[data-theme="graphite"] .wotimer b,[data-theme="graphite"] .ring .tt{font-weight:500}
+[data-theme="graphite"] .sw button{border-color:#0c0d12}
+[data-theme="graphite"] .tl .d:before{background:#0c0d12}
+[data-theme="graphite"] .xpfloat{background:#07080c;padding:2px 12px;border-radius:12px;text-shadow:none}
+
+/* таббар: белая «таблетка» */
+[data-theme="graphite"] .tabs .in{background:rgba(255,255,255,.92);border:0;border-radius:28px;padding:7px;box-shadow:0 18px 40px -10px rgba(8,12,30,.45),inset 0 0 0 1px rgba(7,8,12,.05)}
+[data-theme="graphite"] .tab{color:#666b76;border-radius:22px}
+[data-theme="graphite"] .tab.on{background:#07080c;color:var(--accent);box-shadow:inset 0 1px 0 rgba(255,255,255,.2)}
+
+/* чат */
+[data-theme="graphite"] .msg.me{border:1.5px solid #07080c;box-shadow:0 4px 0 #07080c}
+[data-theme="graphite"] .msg .mini{background:rgba(255,255,255,.07)}
+[data-theme="graphite"] .ava{border-radius:50%;border:1.5px solid #07080c;box-shadow:0 4px 0 #07080c}
+[data-theme="graphite"] .qr button{background:#07080c;color:#f4f5f7;border:0}
+[data-theme="graphite"] .composer input{background:#fff;border-color:rgba(7,8,12,.1);box-shadow:0 12px 26px -10px rgba(8,12,30,.35)}
+[data-theme="graphite"] .composer input:focus{border-color:var(--blue)}
+[data-theme="graphite"] :is(.field,.gin):focus{border-color:var(--blue)}
+[data-theme="graphite"] :is(.card,.sheet) :is(.field,.gin):focus{border-color:var(--accent)}
+
+[data-theme="graphite"] .acard .mono{color:var(--hint)!important}
+/* читалка и модалки */
+[data-theme="graphite"] .reader .body .quote{border-left:0;background:#07080c;color:#f4f5f7;padding:16px 18px;border-radius:18px;box-shadow:inset 4px 0 0 var(--hot)}
+[data-theme="graphite"] .reader .body h3{display:flex;align-items:center}
+[data-theme="graphite"] .reader .body h3::before{content:'';width:8px;height:8px;background:var(--blue);margin-right:8px;flex:none;border-radius:2px}
+[data-theme="graphite"] .modal{background:rgba(20,24,40,.55)}
+[data-theme="graphite"] .toast{background:#07080c;color:#f4f5f7;border-radius:16px;box-shadow:inset 3px 0 0 var(--accent),0 14px 30px -10px rgba(8,12,30,.6)}
 </style>
 </head>
 <body>
@@ -1811,7 +1974,7 @@ const BADGES = [
   ['👑', 'Легенда', 'Уровень 16', () => rank().lvl >= 16]
 ];
 const ACCENTS = ['auto', '#cde59b', '#ffb07c', '#ff7a6b', '#ffd166', '#6ee7c8', '#b79cff', '#ff7ccf', '#9cc8ff', '#4d7cff', '#ffffff'];
-const THEME_ACCENT = { graphite: '#c8f04a', rain: '#9fd3ff', fog: '#e9eef3', clouds: '#ffd38a', storm: '#c7a6ff', neonrain: '#ff5ec4', aurora: '#5effb1', ny: '#ffcc4d', nyc: '#ff5a5f', matcha: '#cde59b', sunset: '#ffb07c', neon: '#ff7ccf', sakura: '#d94f7a', frost: '#9cc8ff', ice: '#9cc8ff', paper: '#0b0b0c', acid: '#c6ff3d', mango: '#ffc23d', candy: '#ff8ad6', ocean: '#2ee6ff' };
+const THEME_ACCENT = { graphite: '#d4ff1a', rain: '#9fd3ff', fog: '#e9eef3', clouds: '#ffd38a', storm: '#c7a6ff', neonrain: '#ff5ec4', aurora: '#5effb1', ny: '#ffcc4d', nyc: '#ff5a5f', matcha: '#cde59b', sunset: '#ffb07c', neon: '#ff7ccf', sakura: '#d94f7a', frost: '#9cc8ff', ice: '#9cc8ff', paper: '#0b0b0c', acid: '#c6ff3d', mango: '#ffc23d', candy: '#ff8ad6', ocean: '#2ee6ff' };
 const VIVID = ['acid', 'mango', 'candy', 'ocean'];
 const PALETTE = ['#ffb07c', '#6ee7c8', '#b79cff', '#ffd166', '#ff7a9c', '#7dd3fc'];
 const DROP_BG = ['linear-gradient(135deg,#ff7a6b,#ffb07c 55%,#ffd166)', 'linear-gradient(135deg,#6ee7c8,#b5f5d9 60%,#fff1c9)', 'linear-gradient(135deg,#b79cff,#ffb3d1 60%,#ffd9b8)', 'linear-gradient(135deg,#7dd3fc,#c7f0ff 55%,#ffe8c2)'];
@@ -2073,7 +2236,7 @@ const THEMES = [
   ['mango', 'Манго', 'linear-gradient(160deg,#ffd23d,#ff6a3d 50%,#c2185b)'],
   ['candy', 'Конфета', 'linear-gradient(160deg,#ffc2e8,#ff5ec4 45%,#7b2ff7)'],
   ['ocean', 'Океан', 'linear-gradient(160deg,#b8fff4,#2ee6ff 45%,#0a5cff)'],
-  ['graphite', 'Графит', 'linear-gradient(160deg,#3a3f47,#17191c 55%,#0e0f11),radial-gradient(60% 50% at 80% 10%,#c8f04a55,transparent)'],
+  ['graphite', 'Микс', 'linear-gradient(160deg,#e9ebf0 0 34%,#07080c 34% 62%,#d4ff1a 62% 76%,#3d63ff 76% 90%,#ff4a1c 90%)'],
   ['matcha', 'Матча', 'linear-gradient(160deg,#eef4d6,#7d9a68 45%,#141913)'],
   ['paper', 'Бумага', 'linear-gradient(160deg,#ffffff,#e6e9ee)'],
   ['sunset', 'Закат', 'linear-gradient(160deg,#ffc89a,#d9806a 40%,#2a1b2e)'],
@@ -2082,7 +2245,7 @@ const THEMES = [
   ['frost', 'Иней', 'linear-gradient(160deg,#7e95ac,#4e6276)'],
   ['ice', 'Лёд', 'linear-gradient(160deg,#0e1a2b,#080d14)']
 ];
-const THEME_BG = { graphite: '#0e0f11', rain: '#0b0f13', fog: '#14181c', clouds: '#0f1419', storm: '#0a0a12', neonrain: '#0a0810', aurora: '#05100f', ny: '#0b0f0c', nyc: '#120a0a', matcha: '#141913', sunset: '#211915', neon: '#09080f', sakura: '#fbf0f1', frost: '#4e6276', ice: '#080d14', paper: '#eef0f3', acid: '#0d0a1a', mango: '#1a0d08', candy: '#150a20', ocean: '#04111c' };
+const THEME_BG = { graphite: '#e9ebf0', rain: '#0b0f13', fog: '#14181c', clouds: '#0f1419', storm: '#0a0a12', neonrain: '#0a0810', aurora: '#05100f', ny: '#0b0f0c', nyc: '#120a0a', matcha: '#141913', sunset: '#211915', neon: '#09080f', sakura: '#fbf0f1', frost: '#4e6276', ice: '#080d14', paper: '#eef0f3', acid: '#0d0a1a', mango: '#1a0d08', candy: '#150a20', ocean: '#04111c' };
 const LIGHT_ACCENT = { paper: '#0b0b0c', sakura: '#d94f7a' };
 const GOAL_AREAS = [['Учёба', 'Например: закрыть сессию без долгов'], ['Деньги', 'Например: первые 10 000 ₽ своими силами'], ['Спорт', 'Например: 15 подтягиваний'], ['Люди', 'Например: новый круг общения']];
 const MONTHS = ['янв', 'фев', 'мар', 'апр', 'мая', 'июн', 'июл', 'авг', 'сен', 'окт', 'ноя', 'дек'];
