@@ -655,7 +655,10 @@ button:active,label.card:active{transform:scale(.97)}
 :root .sec .disp{display:flex;align-items:center;font-size:26px}
 :root .sec .disp::before,:root .reader .body h3::before{content:'';width:15px;height:15px;background:var(--blue);margin-right:9px;flex:none;
   clip-path:polygon(50% 0,60% 40%,100% 50%,60% 60%,50% 100%,40% 60%,0 50%,40% 40%)}
-:root .sec .disp::after{content:'_';color:var(--blue);margin-left:1px;animation:mixblink 1.1s steps(1) infinite}
+:root .sec .disp::after{content:'_';color:var(--sc,var(--blue));margin-left:1px;animation:mixblink 1.1s steps(1) infinite}
+:root .sec:nth-child(3n+1){--sc:#ff5a1c}
+:root .sec:nth-child(3n+2){--sc:#8b5cff}
+:root .sec .disp::before{background:var(--sc,var(--blue))}
 :root .chipline{background:var(--chip);border:0;border-radius:9px;color:var(--accent);padding:6px 10px}
 :root .card .chipline{background:rgba(255,255,255,.08)}
 :root .lvl{background:var(--chip);border:0;height:34px;border-radius:17px;padding:0 12px;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block;line-height:34px}
@@ -689,34 +692,94 @@ button:active,label.card:active{transform:scale(.97)}
 :root .btn.ghost{border:1px solid var(--card-b);box-shadow:var(--neu)}
 :root :is(.card,.sheet,.st-dark) .btn.ghost{box-shadow:none}
 :root .btn.sm{border-radius:12px;box-shadow:inset 0 1px 0 rgba(255,255,255,.5)}
-/* цвета кнопок: у каждого типа действия свой цвет из палитры, лаймовый остаётся главным */
-:root{--c-blue:#3d63ff;--c-hot:#ff4a1c;--c-violet:#8b5cff;--c-pink:#ff4fa3;--c-cyan:#1fdcff;--c-green:#22e08a}
-:root .btn:not(.ghost){background:var(--bc,var(--accent));color:var(--bt,var(--on-accent))}
-:root[data-theme="dark"] .btn:not(.ghost){--edge:color-mix(in srgb,var(--bc,var(--accent)) 38%,#000)}
-:root .btn:is([data-act="analyze"],[data-act="photo"],[data-act="ai-open"],[data-act="lib"],[data-p="cam"],[data-p="native"],[data-p="gal"]){--bc:var(--c-blue);--bt:#fff}
-:root .btn:is([data-act="wo-go"],[data-act="wo-close"],[data-act="focus-toggle"],[data-act="focus-open"],[data-act="ex-open"],[data-act="skip-day"]){--bc:var(--c-hot);--bt:#fff}
-:root .btn:is([data-act="ask-summary"],[data-act="grat"],[data-act="mode-toggle"],[data-act="go"]){--bc:var(--c-violet);--bt:#fff}
-:root .btn:is([data-act="pro-pay"],[data-act="pro-open"],[data-act="claim"],[data-act="add-xp"]){--bc:var(--c-pink);--bt:#1a0410}
-:root .btn:is([data-act="pages"],[data-act="rem-hour"],[data-act="book-st"]){--bc:var(--c-cyan);--bt:#02222b}
-:root .btn:is([data-act="proto-finish"],[data-act="proto-add"],[data-act="accept"]){--bc:var(--c-green);--bt:#03230f}
-/* у «призрачных» кнопок цвет — точкой перед подписью */
-:root .btn.ghost[data-act]:not([data-act="modal-close"],[data-act="close-reader"],[data-act="focus-close"],[data-act="rem-no"],[data-act="rem-off"],[data-act="reset"],[data-act="proto-drop"])::before{content:'';flex:none;width:8px;height:8px;border-radius:50%;background:var(--bc,var(--accent));box-shadow:0 0 10px var(--bc,var(--accent))}
-:root .btn.ghost[data-p="gal"]::before{content:'';flex:none;width:8px;height:8px;border-radius:50%;background:var(--bc);box-shadow:0 0 10px var(--bc)}
-/* быстрые ответы в чате — по кругу четырьмя цветами */
-:root .qr button:nth-child(4n+1){background:var(--accent);color:var(--on-accent)}
-:root .qr button:nth-child(4n+2){background:var(--c-blue);color:#fff}
-:root .qr button:nth-child(4n+3){background:var(--c-hot);color:#fff}
-:root .qr button:nth-child(4n+4){background:var(--c-violet);color:#fff}
-/* вкладки: у каждой свой цвет активного состояния */
-.tab[data-tab="plan"]{--tc:#5b7bff;--tcd:var(--c-blue);--tct:#fff}
-.tab[data-tab="coach"]{--tc:#ff6a42;--tcd:var(--c-hot);--tct:#fff}
-.tab[data-tab="me"]{--tc:#a98bff;--tcd:var(--c-violet);--tct:#fff}
-:root:not([data-theme="dark"]) .tab.on{color:var(--tc,var(--accent))}
-:root[data-theme="dark"] .tab.on{background:var(--tcd,var(--accent));color:var(--tct,var(--on-accent))}
-/* глянцевые круглые кнопки-«шайбы» */
-:root :is(.arrow,.iconbtn,.wox,.woctl button:not(.main),.pillbtn i){
-  background:radial-gradient(120% 120% at 30% 18%,#5a5e6b 0,#1d1f27 52%,#0b0c10 100%);border:1px solid rgba(255,255,255,.16);border-radius:50%;color:#fff;
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.3),0 6px 12px -4px rgba(0,0,0,.6)}
+/* ---------- «дофаминовые» кнопки ----------
+   У каждого типа действия свой двухцветный градиент, глянец, цветное свечение и бегущий блик.
+   --bc / --bc2 — цвета градиента, --bt — цвет текста. */
+:root{--c-blue:#3d63ff;--c-hot:#ff4a1c;--c-violet:#8b5cff;--c-pink:#ff4fa3;--c-cyan:#1fdcff;--c-green:#22e08a;--c-yellow:#ffd21a}
+:root .btn:not(.ghost){position:relative;overflow:hidden;
+  --b1:var(--bc,var(--accent));--b2:var(--bc2,color-mix(in srgb,var(--accent) 50%,#2bffa0));
+  --edge:color-mix(in srgb,var(--b1) 52%,#000);
+  background:linear-gradient(135deg,var(--b1) 0%,var(--b2) 100%);color:var(--bt,var(--on-accent));
+  border:1.5px solid var(--edge);
+  box-shadow:inset 0 2px 0 rgba(255,255,255,.6),inset 0 -6px 12px -6px rgba(0,0,0,.25),0 5px 0 var(--edge),0 16px 26px -8px color-mix(in srgb,var(--b1) 75%,transparent);
+  text-shadow:0 1px 0 rgba(255,255,255,.25)}
+:root :is(.card,.sheet,.st-dark) .btn:not(.ghost){box-shadow:inset 0 2px 0 rgba(255,255,255,.6),inset 0 -6px 12px -6px rgba(0,0,0,.25),0 4px 0 var(--edge),0 0 28px -2px color-mix(in srgb,var(--b1) 80%,transparent)}
+:root .btn.sm:not(.ghost){box-shadow:inset 0 2px 0 rgba(255,255,255,.6),0 3px 0 var(--edge),0 0 20px -4px color-mix(in srgb,var(--b1) 85%,transparent)}
+:root .btn:not(.ghost):active{transform:translateY(4px) scale(.97);box-shadow:inset 0 2px 0 rgba(255,255,255,.6),0 1px 0 var(--edge),0 0 34px 0 color-mix(in srgb,var(--b1) 90%,transparent);filter:saturate(1.25) brightness(1.08)}
+/* бегущий блик */
+:root .btn:not(.ghost)::after{content:'';position:absolute;top:-20%;bottom:-20%;left:0;width:42%;pointer-events:none;
+  background:linear-gradient(100deg,transparent,rgba(255,255,255,.7),transparent);transform:translateX(-140%) skewX(-18deg);animation:btnshine 3.4s ease-in-out infinite}
+:root .btn.sm:not(.ghost)::after{animation-duration:4.2s;animation-delay:.8s}
+:root .btn[disabled]::after{display:none}
+@keyframes btnshine{0%,58%{transform:translateX(-140%) skewX(-18deg)}100%{transform:translateX(340%) skewX(-18deg)}}
+/* большая главная кнопка «дышит» свечением */
+:root .btn:not(.ghost):not(.sm):not([disabled]){animation:btnglow 2.2s ease-in-out infinite}
+@keyframes btnglow{50%{filter:brightness(1.1) saturate(1.2)}}
+/* палитра по типам действий */
+:root .btn:is([data-act="analyze"],[data-act="photo"],[data-act="ai-open"],[data-act="lib"],[data-p="cam"],[data-p="native"],[data-p="gal"]){--bc:#2f6bff;--bc2:#8a4dff;--bt:#fff}
+:root .btn:is([data-act="wo-go"],[data-act="wo-close"],[data-act="focus-toggle"],[data-act="focus-open"],[data-act="ex-open"],[data-act="skip-day"]){--bc:#ff5a1c;--bc2:#ff2d87;--bt:#fff}
+:root .btn:is([data-act="ask-summary"],[data-act="grat"],[data-act="mode-toggle"],[data-act="go"]){--bc:#8b5cff;--bc2:#ff4fd8;--bt:#fff}
+:root .btn:is([data-act="pro-pay"],[data-act="pro-open"],[data-act="claim"],[data-act="add-xp"]){--bc:#ff4fa3;--bc2:#ffb23d;--bt:#2a0616}
+:root .btn:is([data-act="pages"],[data-act="rem-hour"],[data-act="book-st"]){--bc:#1fdcff;--bc2:#3dffc0;--bt:#02222b}
+:root .btn:is([data-act="proto-finish"],[data-act="proto-add"],[data-act="accept"]){--bc:#22e08a;--bc2:#c8ff2a;--bt:#03230f}
+:root .btn[data-act="chest"]{background:linear-gradient(135deg,#ffd21a,#ff8a1c)!important;--b1:#ffb21a;color:#2a1300!important}
+:root .btn:is([data-act="analyze"],[data-act="photo"],[data-act="wo-go"],[data-act="wo-close"],[data-act="focus-toggle"],[data-act="focus-open"],[data-act="ask-summary"],[data-act="grat"],[data-act="go"],[data-p="cam"],[data-p="native"]){text-shadow:0 1px 0 rgba(0,0,0,.25)}
+/* у «призрачных» кнопок цвет — светящейся точкой перед подписью */
+:root .btn.ghost[data-act]:not([data-act="modal-close"],[data-act="close-reader"],[data-act="focus-close"],[data-act="rem-no"],[data-act="rem-off"],[data-act="reset"],[data-act="proto-drop"])::before,:root .btn.ghost[data-p="gal"]::before{content:'';flex:none;width:9px;height:9px;border-radius:50%;background:linear-gradient(135deg,var(--bc,var(--accent)),var(--bc2,var(--bc,var(--accent))));box-shadow:0 0 12px var(--bc,var(--accent))}
+/* быстрые ответы в чате — по кругу четырьмя градиентами */
+:root .qr button{box-shadow:inset 0 1px 0 rgba(255,255,255,.45),0 8px 16px -8px rgba(0,0,0,.5)}
+:root .qr button:nth-child(4n+1){background:linear-gradient(135deg,var(--accent),color-mix(in srgb,var(--accent) 50%,#2bffa0));color:var(--on-accent)}
+:root .qr button:nth-child(4n+2){background:linear-gradient(135deg,#2f6bff,#8a4dff);color:#fff}
+:root .qr button:nth-child(4n+3){background:linear-gradient(135deg,#ff5a1c,#ff2d87);color:#fff}
+:root .qr button:nth-child(4n+4){background:linear-gradient(135deg,#8b5cff,#ff4fd8);color:#fff}
+/* вкладки: активная — цветная «конфета» со свечением */
+.tab[data-tab="home"]{--t1:var(--accent);--t2:color-mix(in srgb,var(--accent) 50%,#2bffa0);--tt:var(--on-accent)}
+.tab[data-tab="plan"]{--t1:#2f6bff;--t2:#8a4dff;--tt:#fff}
+.tab[data-tab="coach"]{--t1:#ff5a1c;--t2:#ff2d87;--tt:#fff}
+.tab[data-tab="me"]{--t1:#8b5cff;--t2:#ff4fd8;--tt:#fff}
+:root .tabs .tab svg{color:color-mix(in srgb,var(--t1) 70%,var(--tabc))}
+:root .tabs .tab.on{background:linear-gradient(135deg,var(--t1),var(--t2));color:var(--tt);box-shadow:inset 0 2px 0 rgba(255,255,255,.5),0 8px 18px -6px color-mix(in srgb,var(--t1) 80%,transparent)}
+:root .tabs .tab.on svg{color:inherit}
+/* награды, выборы, отправка */
+:root .mission .xp{background:linear-gradient(135deg,var(--accent),color-mix(in srgb,var(--accent) 50%,#2bffa0));color:var(--on-accent);box-shadow:inset 0 1px 0 rgba(255,255,255,.6),0 0 14px -2px color-mix(in srgb,var(--accent) 80%,transparent)}
+:root .mission.charm .xp{background:linear-gradient(135deg,#8b5cff,#ff4fd8);color:#fff;box-shadow:inset 0 1px 0 rgba(255,255,255,.5),0 0 14px -2px #8b5cff}
+:root .mission.bonus .xp{background:linear-gradient(135deg,#1fdcff,#3dffc0);color:#02222b;box-shadow:inset 0 1px 0 rgba(255,255,255,.5),0 0 14px -2px #1fdcff}
+:root .mission.done .xp{filter:saturate(.5) brightness(.8)}
+:root .mission.done .box,:root .opt.on .box{background:linear-gradient(135deg,var(--accent),color-mix(in srgb,var(--accent) 50%,#2bffa0))}
+:root .chip.on,:root :is(.card,.sheet) .chip.on{background:linear-gradient(135deg,var(--accent),color-mix(in srgb,var(--accent) 50%,#2bffa0));color:var(--on-accent);border-color:transparent;box-shadow:inset 0 1px 0 rgba(255,255,255,.6),0 8px 16px -6px color-mix(in srgb,var(--accent) 80%,transparent)}
+:root .chips .chip:nth-child(4n+2).on{background:linear-gradient(135deg,#2f6bff,#8a4dff);color:#fff;box-shadow:inset 0 1px 0 rgba(255,255,255,.5),0 8px 16px -6px #2f6bff}
+:root .chips .chip:nth-child(4n+3).on{background:linear-gradient(135deg,#ff5a1c,#ff2d87);color:#fff;box-shadow:inset 0 1px 0 rgba(255,255,255,.5),0 8px 16px -6px #ff5a1c}
+:root .chips .chip:nth-child(4n+4).on{background:linear-gradient(135deg,#8b5cff,#ff4fd8);color:#fff;box-shadow:inset 0 1px 0 rgba(255,255,255,.5),0 8px 16px -6px #8b5cff}
+:root .seg button.on,:root .jt button.on,:root :is(.card,.sheet) .seg button.on{background:linear-gradient(135deg,#2f6bff,#8a4dff);color:#fff;border-color:transparent;box-shadow:inset 0 1px 0 rgba(255,255,255,.5),0 8px 16px -6px #2f6bff}
+:root .composer .send{background:linear-gradient(135deg,var(--accent),color-mix(in srgb,var(--accent) 50%,#2bffa0));--edge:color-mix(in srgb,var(--accent) 52%,#000);
+  box-shadow:inset 0 2px 0 rgba(255,255,255,.6),0 4px 0 var(--edge),0 0 22px -2px color-mix(in srgb,var(--accent) 80%,transparent)}
+:root .msg.me{background:linear-gradient(135deg,var(--accent),color-mix(in srgb,var(--accent) 50%,#2bffa0));--edge:color-mix(in srgb,var(--accent) 52%,#000)}
+:root .wogo{background:linear-gradient(135deg,var(--c),color-mix(in srgb,var(--c) 55%,#fff));box-shadow:inset 0 2px 0 rgba(255,255,255,.6),0 0 24px -2px var(--c)}
+:root .celebrate{background:linear-gradient(120deg,var(--accent),#3dffc0,#1fdcff,var(--accent));background-size:300% 100%;animation:celeb 4s linear infinite}
+@keyframes celeb{to{background-position:300% 0}}
+:root .tsw::before{background:linear-gradient(135deg,var(--accent),color-mix(in srgb,var(--accent) 50%,#2bffa0));box-shadow:inset 0 1px 0 rgba(255,255,255,.6),0 0 14px -2px color-mix(in srgb,var(--accent) 80%,transparent)}
+/* вспышка под пальцем: кольцо и разлетающиеся искры */
+.burst{position:fixed;z-index:90;pointer-events:none;width:0;height:0}
+.burst b{position:absolute;left:-12px;top:-12px;width:24px;height:24px;border-radius:50%;border:3px solid;animation:bring .5s ease-out forwards}
+@keyframes bring{to{transform:scale(4.4);opacity:0;border-width:.5px}}
+.burst i{position:absolute;left:-6px;top:-6px;width:12px;height:12px;animation:bfly .7s cubic-bezier(.15,.7,.3,1) forwards}
+.burst i.s{clip-path:polygon(50% 0,60% 40%,100% 50%,60% 60%,50% 100%,40% 60%,0 50%,40% 40%)}
+.burst i.d{border-radius:50%;width:7px;height:7px}
+@keyframes bfly{0%{transform:translate(0,0) scale(.3) rotate(0);opacity:1}65%{opacity:1}100%{transform:translate(var(--x),var(--y)) scale(1.15) rotate(var(--r));opacity:0}}
+/* отскок после нажатия */
+.pop{animation:btnpop .42s cubic-bezier(.3,1.9,.5,1)!important}
+@keyframes btnpop{0%{transform:scale(.9)}100%{transform:none}}
+/* глянцевые круглые кнопки-«шайбы»: цвет меняется от блока к блоку */
+:root :is(.arrow,.iconbtn,.wox,.woctl button:not(.main),.pillbtn i){--kc:#3d63ff;
+  background:radial-gradient(120% 120% at 30% 18%,color-mix(in srgb,var(--kc) 45%,#fff) 0,var(--kc) 48%,color-mix(in srgb,var(--kc) 50%,#000) 100%);border:1px solid rgba(255,255,255,.28);border-radius:50%;color:#fff;
+  box-shadow:inset 0 2px 0 rgba(255,255,255,.45),0 6px 14px -4px color-mix(in srgb,var(--kc) 85%,transparent)}
+:root .app > :nth-child(4n+1) :is(.arrow,.iconbtn),:root .app > .mission:nth-child(4n+1) .arrow{--kc:#ff5a1c}
+:root .app > :nth-child(4n+2) :is(.arrow,.iconbtn){--kc:#8b5cff}
+:root .app > :nth-child(4n+3) :is(.arrow,.iconbtn){--kc:#12c9a0}
+:root .card .iconbtn + div + .arrow{--kc:#ff2d87}
+:root .st-nav .arrow:first-child{--kc:#8b5cff}
+:root .st-nav .arrow:last-child{--kc:#ff5a1c}
+:root .pillbtn i{--kc:#ff5a1c}
 :root .woctl .main{box-shadow:inset 0 2px 0 rgba(255,255,255,.5),0 0 30px color-mix(in srgb,var(--accent) 55%,transparent)}
 :root .octa{color:var(--accent)}
 :root .send{box-shadow:inset 0 1px 0 rgba(255,255,255,.6),0 5px 0 var(--edge);border:1.5px solid var(--edge)}
@@ -2427,6 +2490,33 @@ function snowShake(el) {
 }
 addEventListener('resize', snowResize);
 document.addEventListener('pointerdown', (e) => { if (snowFx.cv && e.target.closest) { const el = e.target.closest(SNOW_SEL); if (el) snowShake(el); } }, { passive: true });
+
+// ---------- вспышка при нажатии ----------
+// Каждое нажатие на кнопку отвечает кольцом и искрами её цвета. Частицы живут в body, поэтому переживают перерисовку экрана.
+const BURST_SEL = '.btn:not([disabled]),.tab,.send,.chip,.qr button,.jt button,.seg button,.mission,.opt,.wogo,.tsw,.arrow,.octa,.pillbtn,.wotile,.libtile,.moods button,.sw button,.woctl button,.rstep,.lesson,.acard,.backlink';
+const BURST_COLORS = ['#d4ff1a', '#3d63ff', '#ff4a1c', '#ff4fa3', '#1fdcff', '#8b5cff', '#ffd21a'];
+function burst(x, y, color) {
+  if (reduceMotion) return;
+  const w = document.createElement('div'); w.className = 'burst'; w.style.left = x + 'px'; w.style.top = y + 'px';
+  let h = `<b style="border-color:${color}"></b>`;
+  for (let i = 0; i < 14; i++) {
+    const a = (i / 14) * 6.283 + Math.random() * 0.5, d = 34 + Math.random() * 46;
+    const c = i % 3 === 0 ? color : BURST_COLORS[(i + Math.floor(Math.random() * 7)) % 7];
+    h += `<i class="${i % 2 ? 's' : 'd'}" style="background:${c};--x:${(Math.cos(a) * d).toFixed(0)}px;--y:${(Math.sin(a) * d - 14).toFixed(0)}px;--r:${(Math.random() * 360 - 180).toFixed(0)}deg;animation-delay:${(Math.random() * 60).toFixed(0)}ms"></i>`;
+  }
+  w.innerHTML = h;
+  document.body.appendChild(w);
+  setTimeout(() => w.remove(), 900);
+}
+document.addEventListener('click', (e) => {
+  const el = e.target.closest && e.target.closest(BURST_SEL);
+  if (!el) return;
+  const cs = getComputedStyle(el);
+  const color = ['--bc', '--t1', '--kc', '--c'].map((k) => cs.getPropertyValue(k).trim()).find((v) => v && !v.startsWith('var(') && !v.startsWith('color-mix')) || cs.getPropertyValue('--accent').trim() || '#d4ff1a';
+  const r = el.getBoundingClientRect();
+  burst(e.clientX || r.left + r.width / 2, e.clientY || r.top + r.height / 2, color);
+  el.classList.remove('pop'); void el.offsetWidth; el.classList.add('pop'); setTimeout(() => el.classList.remove('pop'), 450);
+}, true);
 
 // ---------- графика ----------
 const ARTS = {
