@@ -685,10 +685,34 @@ button:active,label.card:active{transform:scale(.97)}
 /* кнопки */
 :root .btn{border-radius:18px;border:1.5px solid var(--edge);box-shadow:inset 0 1px 0 rgba(255,255,255,.55),0 5px 0 var(--edge);letter-spacing:.01em}
 :root .btn:active{transform:translateY(4px);box-shadow:inset 0 1px 0 rgba(255,255,255,.55),0 1px 0 var(--edge)}
-:root :is(.card,.sheet,.st-dark) .btn{box-shadow:inset 0 1px 0 rgba(255,255,255,.55),0 0 22px -4px color-mix(in srgb,var(--accent) 70%,transparent)}
+:root :is(.card,.sheet,.st-dark) .btn{box-shadow:inset 0 1px 0 rgba(255,255,255,.55),0 0 22px -4px color-mix(in srgb,var(--bc,var(--accent)) 70%,transparent)}
 :root .btn.ghost{border:1px solid var(--card-b);box-shadow:var(--neu)}
 :root :is(.card,.sheet,.st-dark) .btn.ghost{box-shadow:none}
 :root .btn.sm{border-radius:12px;box-shadow:inset 0 1px 0 rgba(255,255,255,.5)}
+/* цвета кнопок: у каждого типа действия свой цвет из палитры, лаймовый остаётся главным */
+:root{--c-blue:#3d63ff;--c-hot:#ff4a1c;--c-violet:#8b5cff;--c-pink:#ff4fa3;--c-cyan:#1fdcff;--c-green:#22e08a}
+:root .btn:not(.ghost){background:var(--bc,var(--accent));color:var(--bt,var(--on-accent))}
+:root[data-theme="dark"] .btn:not(.ghost){--edge:color-mix(in srgb,var(--bc,var(--accent)) 38%,#000)}
+:root .btn:is([data-act="analyze"],[data-act="photo"],[data-act="ai-open"],[data-act="lib"],[data-p="cam"],[data-p="native"],[data-p="gal"]){--bc:var(--c-blue);--bt:#fff}
+:root .btn:is([data-act="wo-go"],[data-act="wo-close"],[data-act="focus-toggle"],[data-act="focus-open"],[data-act="ex-open"],[data-act="skip-day"]){--bc:var(--c-hot);--bt:#fff}
+:root .btn:is([data-act="ask-summary"],[data-act="grat"],[data-act="mode-toggle"],[data-act="go"]){--bc:var(--c-violet);--bt:#fff}
+:root .btn:is([data-act="pro-pay"],[data-act="pro-open"],[data-act="claim"],[data-act="add-xp"]){--bc:var(--c-pink);--bt:#1a0410}
+:root .btn:is([data-act="pages"],[data-act="rem-hour"],[data-act="book-st"]){--bc:var(--c-cyan);--bt:#02222b}
+:root .btn:is([data-act="proto-finish"],[data-act="proto-add"],[data-act="accept"]){--bc:var(--c-green);--bt:#03230f}
+/* у «призрачных» кнопок цвет — точкой перед подписью */
+:root .btn.ghost[data-act]:not([data-act="modal-close"],[data-act="close-reader"],[data-act="focus-close"],[data-act="rem-no"],[data-act="rem-off"],[data-act="reset"],[data-act="proto-drop"])::before{content:'';flex:none;width:8px;height:8px;border-radius:50%;background:var(--bc,var(--accent));box-shadow:0 0 10px var(--bc,var(--accent))}
+:root .btn.ghost[data-p="gal"]::before{content:'';flex:none;width:8px;height:8px;border-radius:50%;background:var(--bc);box-shadow:0 0 10px var(--bc)}
+/* быстрые ответы в чате — по кругу четырьмя цветами */
+:root .qr button:nth-child(4n+1){background:var(--accent);color:var(--on-accent)}
+:root .qr button:nth-child(4n+2){background:var(--c-blue);color:#fff}
+:root .qr button:nth-child(4n+3){background:var(--c-hot);color:#fff}
+:root .qr button:nth-child(4n+4){background:var(--c-violet);color:#fff}
+/* вкладки: у каждой свой цвет активного состояния */
+.tab[data-tab="plan"]{--tc:#5b7bff;--tcd:var(--c-blue);--tct:#fff}
+.tab[data-tab="coach"]{--tc:#ff6a42;--tcd:var(--c-hot);--tct:#fff}
+.tab[data-tab="me"]{--tc:#a98bff;--tcd:var(--c-violet);--tct:#fff}
+:root:not([data-theme="dark"]) .tab.on{color:var(--tc,var(--accent))}
+:root[data-theme="dark"] .tab.on{background:var(--tcd,var(--accent));color:var(--tct,var(--on-accent))}
 /* глянцевые круглые кнопки-«шайбы» */
 :root :is(.arrow,.iconbtn,.wox,.woctl button:not(.main),.pillbtn i){
   background:radial-gradient(120% 120% at 30% 18%,#5a5e6b 0,#1d1f27 52%,#0b0c10 100%);border:1px solid rgba(255,255,255,.16);border-radius:50%;color:#fff;
