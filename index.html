@@ -3567,7 +3567,7 @@ function renderOnboarding() {
     <button type="button" class="photo-drop" data-act="photo" data-k="ob-photo" style="margin-bottom:14px;width:100%;color:inherit;font:inherit">
       ${ob.photo ? `<img src="${ob.photo}" alt="">` : `<div class="oval"></div><div style="position:relative">${IC.cam}<div style="font-weight:800;margin-top:6px">Добавить фото</div><div class="hint">камера или галерея</div></div>`}
     </button>
-    <button class="btn" data-act="analyze">${ob.photo ? 'Сделать разбор' : 'Продолжить без фото'}</button>`;
+    <button class="btn" data-act="analyze" ${ob.photo ? '' : 'disabled'}>${ob.photo ? 'Сделать разбор' : 'Сначала добавь фото'}</button>`;
   if (s === 5) return `${stepsBar(5)}
     <div class="spin"></div>
     <div style="max-width:280px;margin:0 auto">${['Смотрю на фото', 'Учитываю цели', 'Собираю миссии', 'Считаю бюджет'].map((t, i) => `<div class="check-line" id="cl${i}">[✓] ${t}</div>`).join('')}</div>
@@ -4585,9 +4585,10 @@ const ACT = {
   link(el) { const u = el.dataset.u; try { if (tg && tg.openLink) return tg.openLink(u); } catch (e) {} window.open(u, '_blank'); },
   lib(el) { jtab = el.dataset.v; tab = 'journal'; reader = null; haptic('light'); render(); window.scrollTo(0, 0); },
   analyze() {
+    if (!ob.photo) return toast('Добавь фото — без него план не будет личным'); // без фото дальше не пускаем
     ob.step = 5; ob.result = analyze(); ob.ai = null; ob.aiErr = null; render();
     [0, 1, 2, 3].forEach((i) => setTimeout(() => { const e = document.getElementById('cl' + i); e && e.classList.add('on'); }, 450 * (i + 1)));
-    aiPhoto = ob.photo; const ai = AI_ENDPOINT && ob.photo ? aiCall('analyze', { photo: ob.photo, issues: ob.issues, tone: 'soft' }, 90000) : null;
+    aiPhoto = ob.photo; const ai = AI_ENDPOINT && ob.photo ? aiCall('analyze', { photo: ob.photo, issues: ob.issues, tone: tone() }, 90000) : null;
     Promise.all([ai, new Promise((r) => setTimeout(r, 2300))]).then(([a]) => {
       if (a && !a.error && a.person && a.quality === 'ok') {
         ob.ai = a;
