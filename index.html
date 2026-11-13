@@ -696,7 +696,7 @@ button:active,label.card:active{transform:scale(.97)}
 /* ---------- «дофаминовые» кнопки ----------
    У каждого типа действия свой двухцветный градиент, глянец, цветное свечение и бегущий блик.
    --bc / --bc2 — цвета градиента, --bt — цвет текста. */
-:root{--c-blue:#3d63ff;--c-hot:#ff4a1c;--c-violet:#8b5cff;--c-pink:#ff4fa3;--c-cyan:#1fdcff;--c-green:#22e08a;--c-yellow:#ffd21a}
+:root{--kc:#3d63ff;--kc2:#8a4dff;--c-blue:#3d63ff;--c-hot:#ff4a1c;--c-violet:#8b5cff;--c-pink:#ff4fa3;--c-cyan:#1fdcff;--c-green:#22e08a;--c-yellow:#ffd21a}
 :root .btn:not(.ghost){position:relative;overflow:hidden;
   --b1:var(--bc,var(--accent));--b2:var(--bc2,color-mix(in srgb,var(--accent) 50%,#2bffa0));
   --edge:color-mix(in srgb,var(--b1) 52%,#000);
@@ -771,13 +771,9 @@ button:active,label.card:active{transform:scale(.97)}
 .pop{animation:btnpop .42s cubic-bezier(.3,1.9,.5,1)!important}
 @keyframes btnpop{0%{transform:scale(.9)}100%{transform:none}}
 /* глянцевые круглые кнопки-«шайбы»: цвет меняется от блока к блоку */
-:root :is(.arrow,.iconbtn,.wox,.woctl button:not(.main),.pillbtn i){--kc:#3d63ff;
+:root :is(.arrow,.iconbtn,.wox,.woctl button:not(.main),.pillbtn i){
   background:radial-gradient(120% 120% at 30% 18%,color-mix(in srgb,var(--kc) 45%,#fff) 0,var(--kc) 48%,color-mix(in srgb,var(--kc) 50%,#000) 100%);border:1px solid rgba(255,255,255,.28);border-radius:50%;color:#fff;
   box-shadow:inset 0 2px 0 rgba(255,255,255,.45),0 6px 14px -4px color-mix(in srgb,var(--kc) 85%,transparent)}
-:root .app > :nth-child(4n+1) :is(.arrow,.iconbtn),:root .app > .mission:nth-child(4n+1) .arrow{--kc:#ff5a1c}
-:root .app > :nth-child(4n+2) :is(.arrow,.iconbtn){--kc:#8b5cff}
-:root .app > :nth-child(4n+3) :is(.arrow,.iconbtn){--kc:#12c9a0}
-:root .card .iconbtn + div + .arrow{--kc:#ff2d87}
 :root .st-nav .arrow:first-child{--kc:#8b5cff}
 :root .st-nav .arrow:last-child{--kc:#ff5a1c}
 :root .pillbtn i{--kc:#ff5a1c}
@@ -958,7 +954,7 @@ button:active,label.card:active{transform:scale(.97)}
 .st-cover .cov{z-index:0}
 .st-cover .cov-em{font-size:clamp(120px,44vw,190px);right:6%;top:9%}
 :root .st-cover .st-card::after{display:none}
-:root .libtile[data-v="perfume"]{grid-column:span 2;min-height:124px;
+:root .card.libtile[data-v="perfume"]{grid-column:span 2;min-height:124px;
   background:radial-gradient(70% 90% at 100% 0%,#ff4fd8,transparent 60%),radial-gradient(70% 90% at 0% 100%,#2f6bff,transparent 60%),#3a1a8a}
 .libtile[data-v="perfume"] .ic{position:absolute;right:16px;top:10px;font-size:64px;transform:rotate(-10deg);filter:drop-shadow(0 10px 12px rgba(0,0,0,.35))}
 .libtile[data-v="perfume"] small{color:rgba(255,255,255,.8)}
@@ -1039,6 +1035,61 @@ button:active,label.card:active{transform:scale(.97)}
 :root .opt:not(.on) .box{border-color:var(--blue);border-width:2px}
 :root .opt.on{box-shadow:0 0 0 2px var(--accent),0 12px 22px -10px color-mix(in srgb,var(--accent) 80%,transparent)}
 :root .sec .chipline{color:var(--sc,#8fa6ff)}
+
+/* ---------- цвет везде, где можно нажать ---------- */
+/* у каждого блока экрана свой цвет: он красит круглую кнопку, фон карточки-строки и иконку */
+:root .app > :nth-child(4n+1){--kc:#ff5a1c;--kc2:#ff2d87}
+:root .app > :nth-child(4n+2){--kc:#8b5cff;--kc2:#ff4fd8}
+:root .app > :nth-child(4n+3){--kc:#12c9a0;--kc2:#1fdcff}
+:root .app > :nth-child(4n+4){--kc:#2f6bff;--kc2:#8a4dff}
+:root .app > button.card.row,:root .app > button.card:not(.libtile):not(.wocard):not(.procard){
+  background:linear-gradient(115deg,color-mix(in srgb,var(--kc) 55%,transparent) 0%,color-mix(in srgb,var(--kc2) 22%,transparent) 42%,transparent 72%),var(--dk);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.2),0 0 0 1.5px color-mix(in srgb,var(--kc) 60%,transparent),0 22px 30px -18px color-mix(in srgb,var(--kc) 75%,transparent)}
+:root .app > button.card .iconbtn{--kc:#fff;color:#07080c;background:radial-gradient(120% 120% at 30% 18%,#fff 0,#eef0f5 55%,#c9ced9 100%);border-color:transparent}
+/* неактивные чипы и вкладки: мягкая заливка своим цветом */
+:root .chips .chip:not(.on){background:color-mix(in srgb,var(--cc) 20%,var(--card))}
+:root .jt button:not(.on){background:color-mix(in srgb,var(--jc) 18%,var(--card))}
+:root .seg button:not(.on){color:var(--text)}
+:root .seg{background:linear-gradient(135deg,color-mix(in srgb,#2f6bff 18%,var(--card)),color-mix(in srgb,#ff4fd8 18%,var(--card)))}
+/* белые кнопки тоже цветные: заливка сильнее, рамка в цвет */
+:root .btn.ghost{background:color-mix(in srgb,var(--bc,#8b5cff) 14%,var(--card));border:1.5px solid color-mix(in srgb,var(--bc,#8b5cff) 55%,transparent)}
+:root .btn.ghost[data-act]:not([data-act="modal-close"],[data-act="close-reader"],[data-act="focus-close"],[data-act="rem-no"],[data-act="rem-off"],[data-act="reset"],[data-act="proto-drop"]),:root .btn.ghost[data-p="gal"]{
+  background:linear-gradient(135deg,color-mix(in srgb,var(--bc,var(--accent)) 30%,var(--card)),color-mix(in srgb,var(--bc2,var(--bc,var(--accent))) 30%,var(--card)));border-color:color-mix(in srgb,var(--bc,var(--accent)) 75%,transparent)}
+:root .btn.ghost[data-act="reset"]{--bc:#ff4a4a}
+/* варианты с галочкой: четыре цвета по кругу */
+:root .opt{--oc:#2f6bff;background:color-mix(in srgb,var(--oc) 12%,var(--card));border:1.5px solid color-mix(in srgb,var(--oc) 45%,transparent)}
+:root .opt:nth-of-type(4n+2){--oc:#ff5a1c}
+:root .opt:nth-of-type(4n+3){--oc:#8b5cff}
+:root .opt:nth-of-type(4n+4){--oc:#12c9a0}
+:root .opt:not(.on) .box{border-color:var(--oc)}
+:root .opt.on{background:color-mix(in srgb,var(--oc) 24%,var(--card));box-shadow:0 0 0 2px var(--oc),0 12px 22px -10px var(--oc)}
+:root .opt.on .box{background:linear-gradient(135deg,var(--oc),color-mix(in srgb,var(--oc) 55%,#fff));border-color:transparent;color:#fff}
+/* миссии: цветная полоса слева и лёгкий оттенок фона */
+:root .mission:not(.done){background:linear-gradient(100deg,color-mix(in srgb,var(--mc,var(--accent)) 22%,var(--card)),var(--card) 60%);box-shadow:inset 5px 0 0 var(--mc,var(--accent)),var(--neu)}
+:root .mission.charm:not(.done){--mc:#8b5cff}
+:root .mission.bonus:not(.done){--mc:#1fdcff}
+:root :is(.card,.sheet) .mission:not(.done){box-shadow:inset 5px 0 0 var(--mc,var(--accent))}
+/* плитки библиотеки: фото в цвете плитки вместо серого */
+:root .card.libtile{--lc:#2f6bff;--lc2:#8a4dff;background:linear-gradient(150deg,var(--lc),color-mix(in srgb,var(--lc2) 60%,#000) 85%);box-shadow:0 20px 28px -18px var(--lc)}
+:root .libgrid .libtile:nth-child(6n+2){--lc:#ff5a1c;--lc2:#ff2d87}
+:root .libgrid .libtile:nth-child(6n+3){--lc:#12c9a0;--lc2:#1f8cff}
+:root .libgrid .libtile:nth-child(6n+4){--lc:#8b5cff;--lc2:#ff4fd8}
+:root .libgrid .libtile:nth-child(6n+5){--lc:#e0a800;--lc2:#ff5a1c}
+:root .libgrid .libtile:nth-child(6n+6){--lc:#ff4fa3;--lc2:#8b5cff}
+:root .libgrid .libtile:nth-child(6n+7){--lc:#1fb8e0;--lc2:#2f6bff}
+:root .libtile img.lt{mix-blend-mode:luminosity;opacity:.38;filter:grayscale(1) contrast(1.15)}
+:root .libtile small{color:rgba(255,255,255,.85)}
+/* плитки тренировок, уровень, «Читать», чип секции */
+:root .wotile{background:linear-gradient(160deg,var(--c),color-mix(in srgb,var(--c) 35%,#000) 90%);box-shadow:0 18px 24px -16px var(--c)}
+:root .wotile small{color:rgba(255,255,255,.85)}
+:root .lvl{background:linear-gradient(135deg,#2f6bff,#8b5cff 55%,#ff4fd8);color:#fff;box-shadow:inset 0 1px 0 rgba(255,255,255,.4),0 8px 16px -8px #8b5cff}
+:root .lvl em{color:#fff;text-shadow:0 0 10px rgba(255,255,255,.7)}
+:root .pillbtn{background:linear-gradient(135deg,#d4ff1a,#3dffc0)!important;color:#06101c!important;box-shadow:inset 0 2px 0 rgba(255,255,255,.6),0 8px 18px -6px #3dffc0}
+:root .sec .chipline{background:color-mix(in srgb,var(--sc,#3d63ff) 22%,var(--chip));box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--sc,#3d63ff) 60%,transparent)}
+:root .tabs .tab svg{color:var(--t1)}
+:root .tabs .tab:not(.on){color:color-mix(in srgb,var(--t1) 55%,var(--tabc))}
+:root .lesson .num{color:var(--kc,var(--accent));text-shadow:0 0 18px color-mix(in srgb,var(--kc,var(--accent)) 55%,transparent)}
+:root .rstep .rn{background:linear-gradient(135deg,var(--accent),#3dffc0);color:var(--on-accent)}
 
 /* ---------- снег: холст поверх экрана, сугробы рисуются на кнопках ---------- */
 #snowc{position:fixed;inset:0;width:100%;height:100%;z-index:30;pointer-events:none}
@@ -3030,7 +3081,7 @@ addEventListener('scroll', () => {
     document.querySelectorAll('#app .hero svg.mtn').forEach((m) => { m.style.translate = `0 ${(y * 0.1).toFixed(1)}px`; });
     document.querySelectorAll('#app .hero .huge').forEach((h) => { h.style.translate = `0 ${(y * -0.06).toFixed(1)}px`; });
     // картинки в карточках «Почитать» плывут медленнее карточки — эффект глубины
-    document.querySelectorAll('#app .feature > :first-child').forEach((a) => { const r = a.parentNode.getBoundingClientRect(); a.style.translate = `0 ${((r.top + r.height / 2 - innerHeight / 2) * -0.08).toFixed(1)}px`; a.style.scale = '1.12'; });
+    document.querySelectorAll('#app .feature > .art').forEach((a) => { const r = a.parentNode.getBoundingClientRect(); a.style.translate = `0 ${((r.top + r.height / 2 - innerHeight / 2) * -0.08).toFixed(1)}px`; a.style.scale = '1.12'; });
     ticking = false;
   });
 }, { passive: true });
@@ -3111,7 +3162,7 @@ function journey() {
   (S.events || []).forEach((e) => get(e.date).ev.push(e));
   Object.entries(S.done || {}).forEach(([d, ids]) => { if (ids.length) get(d).tasks = ids; });
   Object.entries(S.pdone || {}).forEach(([d, keys]) => { if (keys.length) get(d).psteps = keys; });
-  const P = [['start', 'разобрались с целями'], ['order', 'заказали средства'], ['arrived', 'пришли средства'], ['char', 'выполнили миссию характера'], ['grat', 'записали благодарности'], ['read', 'почитали'], ['book', 'дочитали книгу'], ['lesson', 'прошли урок'], ['focus', 'провели фокус-сессию'], ['challenge', 'закрыли челлендж недели'], ['goal', 'достигли цели сезона'], ['photo', 'сделали фото прогресса'], ['proto', 'обновили план протоколов'], ['activity', 'отчитались тренеру'], ['care', 'сделали паузу в уходе'], ['rank', 'взяли новый уровень']];
+  const P = [['start', 'разобрались с целями'], ['order', 'заказали средства'], ['arrived', 'пришли средства'], ['char', 'выполнили миссию характера'], ['grat', 'записали благодарности'], ['read', 'почитали'], ['book', 'дочитали книгу'], ['lesson', 'прошли урок'], ['focus', 'провели фокус-сессию'], ['challenge', 'закрыли челлендж недели'], ['goal', 'достигли цели сезона'], ['photo', 'сделали фото прогресса'], ['proto', 'обновили план протоколов'], ['activity', 'написали бро'], ['care', 'сделали паузу в уходе'], ['rank', 'взяли новый уровень']];
   return Object.values(days).sort((a, b) => b.date.localeCompare(a.date)).map((day) => {
     const phrases = [], details = [];
     const types = day.ev.map((e) => e.type);
@@ -3154,26 +3205,34 @@ function weekChallenges() {
 
 // ---------- ИИ-тренер ----------
 const coachName = () => S.coachName || 'Макс';
-// Режимы тренера: как он разговаривает в чате и подаёт разбор
+// Режимы общения: как собеседник разговаривает в чате и подаёт разбор
 const MODES = {
-  soft: ['🧭', 'Тренер', 'поддерживает и ведёт по плану'],
-  friend: ['🤙', 'Друг', 'на равных, с юмором, по-пацански'],
+  friend: ['🤙', 'Бро', 'на равных, по-дружески, с юмором'],
+  soft: ['🧭', 'Тренер', 'спокойно ведёт по плану'],
   motivator: ['⚡', 'Мотиватор', 'заряжает и толкает вперёд'],
   hard: ['🔥', 'Жёсткий', 'без соплей, требует дисциплину'],
   critic: ['🧐', 'Критик', 'ищет слабые места, честно и колко'],
   mentor: ['🧘', 'Наставник', 'спокойно, мудро, про смысл']
 };
-const mode = () => MODES[S.coachTone] || MODES.soft;
+// По умолчанию — «Бро»: так общаются все, кто сам не выбрал другой режим
+const tone = () => S.coachTone || 'friend';
+const mode = () => MODES[tone()] || MODES.friend;
 const hard = () => S.coachTone === 'hard' || S.coachTone === 'critic';
-const modePicker = () => `<div class="modes">${Object.entries(MODES).map(([k, [ic, n, d]]) => `<button class="${(S.coachTone || 'soft') === k ? 'on' : ''}" data-act="tone" data-v="${k}"><span class="mi">${ic}</span><b>${n}</b><small>${d}</small></button>`).join('')}</div>`;
+const modePicker = () => `<div class="modes">${Object.entries(MODES).map(([k, [ic, n, d]]) => `<button class="${tone() === k ? 'on' : ''}" data-act="tone" data-v="${k}"><span class="mi">${ic}</span><b>${n}</b><small>${d}</small></button>`).join('')}</div>`;
 function shopSet(from, to) { let n = 0; S.plan.shopping.forEach((it) => { if (it.st === from) { it.st = to; n++; } }); return n; }
 
 function localReply(text) {
   const t = text.toLowerCase();
-  const s = streak();
+  const s = streak(), nm = tgUser && tgUser.first_name ? tgUser.first_name : '';
+  const bro = nm ? pick([nm, 'бро', 'брат']) : pick(['бро', 'брат', 'дружище']);
+  // здоровье кожи: тон дружеский, но по сути без шуток
   if (/жж[её]|печ[её]т|покрасн|сыпь|чеш|от[её]к|болит|щипл|шелуш/.test(t)) {
     addEvent('care', 'Кожа отреагировала — пауза в активном уходе');
-    return { text: 'Стоп. Жжение и покраснение — это не «грязь выходит», а раздражение.\n\n1. Смой средство прохладной водой.\n2. Сегодня ничего активного: только умывание и простой крем.\n3. Если за 1–2 дня не пройдёт или станет хуже — сразу к дерматологу.\n\nОстальные задания делай как обычно, серия не пострадает. Я отметил это в твоём пути.' };
+    return { text: `Так, ${bro}, стоп. Жжение и краснота — это не «грязь выходит», это раздражение, и терпеть его не надо.\n\n1. Смой средство прохладной водой.\n2. Сегодня ничего активного: только умывание и простой крем.\n3. Если за день-два не пройдёт или станет хуже — к дерматологу, без геройства.\n\nОстальное делай как обычно, серия не сгорит. Я отметил это у тебя в пути.` };
+  }
+  // когда человеку плохо: поддержать, а не мотивировать
+  if (/грустно|тоск|одинок|плохо мне|мне плохо|депресс|тревож|никому не нуж|ненавижу себя|всё достало|все достало/.test(t)) {
+    return { text: `Слушай, ${bro}, спасибо, что написал. Такие дни бывают у всех, и это не значит, что с тобой что-то не так.\n\nСегодня можно сбавить: сделай одно самое простое дело из списка или вообще ничего — один пропуск ничего не решает.\n\nЕсли накрывает давно или сильно, поговори с кем-то из близких или со специалистом. Это не слабость, а нормальный взрослый ход. А я тут, пиши.` };
   }
   if (/статист|итог|мой путь|путь|прогресс|отч[её]т|сводк/.test(t)) return { text: summaryText(), card: 'journey' };
   if (/что сегодня|задани|план на|что делать/.test(t)) {
@@ -3181,40 +3240,50 @@ function localReply(text) {
     const list = tasksFor(n).map((x, i) => `${doneOn(today()).includes(x.id) ? '✓' : (i + 1) + '.'} ${x.text}`).join('\n');
     const b = readingBook();
     const pl = ((S.protos && S.protos.active) || []).map((a) => { const t = protoToday(a); return t.over ? `• ${PROTOCOLS[a.id].t}: пройден, забери награду` : `• ${PROTOCOLS[a.id].t}: ${t.reqDone}/${t.req} шагов`; }).join('\n');
-    return { text: `День ${n}. Миссии на сегодня:\n\n${list}\n\nХарактер: ${charFor(n)[1]}${b ? `\nБонус: 10 страниц «${b.t}»` : ''}${pl ? `\n\nПротоколы (Главная → Мой план):\n${pl}` : ''}\n\n${hard() ? 'Без отговорок.' : 'Отмечай на главной — у тебя получится.'}` };
+    return { text: `${hard() ? `День ${n}. Миссии:` : `День ${n}, ${bro}. Вот что у нас сегодня:`}\n\n${list}\n\nХарактер: ${charFor(n)[1]}${b ? `\nБонус: 10 страниц «${b.t}»` : ''}${pl ? `\n\nПротоколы (Главная → Мой план):\n${pl}` : ''}\n\n${hard() ? 'Без отговорок.' : pick(['Начни с самого лёгкого — дальше пойдёт само. Отмечай на главной 🤙', 'Тут работы минут на пятнадцать. Закроешь — отпишись, порадуюсь за тебя.', 'Ничего сложного, ты это уже умеешь. Погнали 🔥'])}` };
+  }
+  if (/подбери парфюм|подобрать парфюм|мой парфюм|какой парфюм/.test(t)) {
+    if (S.perfume) { const top = pfPick(S.perfume).top; return { text: `По твоим ответам лучше всего зашёл ${top[0].p[1]} ${top[0].p[0]} — совпадение ${top[0].pct}%. ${top[0].p[11]}\n\nЗапасной вариант — ${top[1].p[1]} ${top[1].p[0]}.\n\nВесь список лежит в «План → Парфюм». Только не бери флакон вслепую: сначала отливант и неделю поносить.` }; }
+    return { text: `О, тема 🔥 Зайди в «План → Парфюм»: там восемь вопросов — возраст, куда носишь, какие ноты нравятся, бюджет. На выходе пять ароматов под тебя из ${PERFUMES.length}.\n\nПройдёшь — напиши, обсудим, что выпало.` };
   }
   if (/уров|опыт|xp|награ|открыть|открыва/.test(t)) {
     const r = rank(), nu = UNLOCKS.find((u) => u.lvl > r.lvl);
-    return { text: `Ты на уровне ${r.lvl} (${r.name}), ${r.x} XP.${nu ? `\n\nСледующая награда — «${nu.name}» на уровне ${nu.lvl}. До неё ${LV(nu.lvl) - r.x} XP.` : ''}\n\nОпыт дают закрытые дни, шаги протоколов, миссии характера и уроки. За чтение XP начисляется по лимиту в день — нафармить не выйдет.` };
+    return { text: `Ты сейчас на уровне ${r.lvl} (${r.name}), набрал ${r.x} XP.${nu ? `\n\nДальше открывается «${nu.name}» — на уровне ${nu.lvl}. Осталось ${LV(nu.lvl) - r.x} XP, это близко.` : ''}\n\nОпыт капает за закрытые дни, шаги протоколов, миссии характера и уроки. За чтение есть дневной лимит, так что нафармить за вечер не выйдет 😄` };
   }
   if (/книг|читал|почитать|страниц/.test(t)) {
     const b = readingBook();
-    return { text: b ? `Сейчас читаешь «${b.t}». Отмечай страницы на главной или в Журнале → Книги. Норма — 10 страниц в день, это около 12 книг в год.` : 'Выбери книгу в Журнале → Книги и нажми «Читаю». Начни с «Атомных привычек» — она про то же, что и всё приложение.' };
+    return { text: b ? `Ты сейчас читаешь «${b.t}» — отличный выбор. Отмечай страницы на главной или в «План → Книги». Десять страниц в день — это около двенадцати книг в год, не шутка.` : `Зайди в «План → Книги» и нажми «Читаю» на любой. Я бы начал с «Атомных привычек»: она ровно про то, чем мы тут занимаемся. А на пару минут — загляни в «Статьи», там есть годное про стиль и парфюм.` };
   }
   if (/заказал|купил|оформил|заказ/.test(t)) {
     const n = shopSet('none', 'ordered');
     addEvent('order', n ? `Заказали ${n} ${plural(n, 'средство', 'средства', 'средств')} из списка` : 'Оформили заказ');
-    return { text: n ? `Записал: в пути ${n} ${plural(n, 'позиция', 'позиции', 'позиций')}. Как придут — напиши «пришло».` : 'Записал заказ в твой путь.' };
+    return { text: n ? `Красава, записал: в пути ${n} ${plural(n, 'позиция', 'позиции', 'позиций')}. Как приедут — черкни «пришло», расскажу, с чего начать.` : 'Записал заказ в твой путь. Приедет — маякни.' };
   }
   if (/приш[её]л|пришл|получил|забрал|доставил/.test(t)) {
     const n = shopSet('ordered', 'arrived');
     addEvent('arrived', n ? `Пришли средства: ${n} ${plural(n, 'позиция', 'позиции', 'позиций')}` : 'Получили посылку');
-    return { text: 'Средства на руках. Вводи их по одному, раз в 3–4 дня — так увидишь, как кожа реагирует на каждое.' };
+    return { text: `О, приехало 📦 Только не мажь всё сразу, ${bro}. Вводи по одному средству раз в 3–4 дня — так поймёшь, как кожа реагирует на каждое, и если что-то не зайдёт, сразу будет ясно что.` };
   }
   if (/сделал|нан[её]с|отжал|отжим|пробеж|присед|подтян|умыл|помыл|постриг|л[её]г |прош[её]л|планк/.test(t)) {
     addEvent('activity', '«' + text.slice(0, 80) + '»');
-    return { text: (hard() ? pick(['Принято. Так и держать.', 'Засчитано. Завтра так же.', 'Записал. Дисциплина решает.']) : pick(['Красавчик, записал в твой путь.', 'Записал. Из таких дней и складывается результат.', 'Есть! Это уже привычка, а не случайность.'])) + (s ? `\nСерия: ${s} 🔥` : '') };
+    return { text: (hard() ? pick(['Принято. Так и держать.', 'Засчитано. Завтра так же.', 'Записал. Дисциплина решает.']) : pick([`Красавчик, ${bro}! Записал в твой путь.`, 'Вот это я понимаю 💪 Из таких дней всё и складывается.', 'Есть! Это уже привычка, а не случайность. Горжусь.', `Огонь, ${bro}. Записал.`])) + (s ? `\nСерия: ${s} 🔥` : '') };
   }
   if (/лень|не хочу|устал|сдаюсь|брос|не могу/.test(t)) {
-    return { text: hard() ? `Лень — не причина. ${s ? `У тебя ${s} ${plural(s, 'день', 'дня', 'дней')} серии. Сольёшь?` : 'Сделай одно задание. Одно.'} Пять минут — потом отдыхай.` : `Бывает, это нормально. Сделай хотя бы одно самое лёгкое задание — так мозг не потеряет привычку.${s ? ` Серия ${s} 🔥 ждёт.` : ''}` };
+    return { text: hard() ? `Лень — не причина. ${s ? `У тебя ${s} ${plural(s, 'день', 'дня', 'дней')} серии. Сольёшь?` : 'Сделай одно задание. Одно.'} Пять минут — потом отдыхай.` : `Понимаю, ${bro}, такое у всех бывает. Давай по-честному: не надо делать всё. Выбери одно самое лёгкое дело, две минуты — и свободен.${s ? ` Серию в ${s} ${plural(s, 'день', 'дня', 'дней')} жалко сливать из-за одного ленивого вечера 🔥` : ' Главное — не обнулять привычку.'}` };
   }
+  if (/спасиб|благодар|ты лучший|красав/.test(t)) return { text: pick([`Да не за что, ${bro} 🤙 Для этого я тут.`, 'Всегда пожалуйста. Мы же в одной команде.', 'Обращайся! Мне самому в кайф смотреть, как ты растёшь.']) };
+  if (/^(привет|здаров|здоров|хай|йо|ку|салам|добр[а-яё]* (день|вечер|утро))(?=[\s,!.?)]|$)|как дела|как ты\b|чем занят|что нового/.test(t)) {
+    const left = tasksFor(dayNum(today())).filter((x) => !doneOn(today()).includes(x.id)).length;
+    return { text: `${pick(['Здарова', 'Йо', 'Привет'])}${nm ? ', ' + nm : ''}! У меня всё ровно, сижу слежу за твоим прогрессом 😄\n\n${left ? `У тебя сегодня ещё ${left} ${plural(left, 'миссия', 'миссии', 'миссий')} не закрыто. Напиши «что сегодня» — скину список.` : 'Ты сегодня всё закрыл — красавчик. Можно выдохнуть.'}${s ? `\nСерия: ${s} 🔥` : ''}\n\nСам как?` };
+  }
+  if (/кто ты|ты кто|ты бот|ты человек|ты нейросет/.test(t)) return { text: `Я ${coachName()} — твой бро в этом приложении. Не человек, врать не буду, но за твой прогресс болею по-настоящему.\n\nМогу подсказать по уходу, стилю, тренировкам, парфюму — или просто поболтать, если день тяжёлый.` };
   addEvent('note', '«' + text.slice(0, 80) + '»');
-  return { text: pick(['Записал в дневник. Если что-то сделал по плану — напиши, отмечу в пути.', 'Понял тебя. Хочешь статистику? Напиши «мой путь».', 'Записал. Спроси «что сегодня», если нужен план.']) };
+  return { text: pick([`Понял тебя, ${bro}. Записал. Если что-то сделал по плану — напиши, отмечу в пути.`, 'Услышал 🤙 Хочешь, покажу, сколько ты уже прошёл? Напиши «мой путь».', `Записал. Нужен план на сегодня — спроси «что сегодня». Или просто рассказывай, как день, ${bro}.`]) };
 }
 function summaryText() {
   const n = dayNum(today()), cd = closedDays(), r = rank();
   const br = branches().map((b) => `${b.n.toLowerCase()} ${blv(b.x)}`).join(', ');
-  return `Твой путь за ${n} ${plural(n, 'день', 'дня', 'дней')}:\n• уровень: ${r.lvl} · ${r.name} (${r.x} XP)\n• закрыто дней: ${cd}, серия: ${streak()} 🔥\n• миссий характера: ${charCount()}\n• прочитано: ${totalPages()} стр., книг: ${booksDone()}\n• ветки: ${br}\n\n${cd >= n * 0.7 ? 'Ты в топе по дисциплине. Продолжай.' : hard() ? 'Можно лучше. Цель — минимум 5 закрытых дней из 7.' : 'Хорошее начало. Цель — 5 закрытых дней из 7.'}`;
+  return `${hard() ? 'Твой путь' : 'Смотри, что ты уже сделал'} за ${n} ${plural(n, 'день', 'дня', 'дней')}:\n• уровень: ${r.lvl} · ${r.name} (${r.x} XP)\n• закрыто дней: ${cd}, серия: ${streak()} 🔥\n• миссий характера: ${charCount()}\n• прочитано: ${totalPages()} стр., книг: ${booksDone()}\n• ветки: ${br}\n\n${cd >= n * 0.7 ? (hard() ? 'Ты в топе по дисциплине. Продолжай.' : 'Это серьёзный уровень дисциплины, без шуток. Так держать 💪') : hard() ? 'Можно лучше. Цель — минимум 5 закрытых дней из 7.' : 'Нормальный старт. Давай целиться в пять закрытых дней из семи — это реально, я в тебя верю.'}`;
 }
 // ---------- ИИ на сервере ----------
 async function aiCall(action, payload, ms) {
@@ -3288,7 +3357,7 @@ function applyAI(a) {
 const REM_HOURS = [8, 10, 13, 18, 20, 22];
 function remindSync(force) {
   if (!AI_ENDPOINT || !S.remind || !S.onboarded) return Promise.resolve(null);
-  const real = fmt(new Date()), body = { on: !!S.remind.on, hour: S.remind.hour, tz: -new Date().getTimezoneOffset(), closed: closed(today()) ? real : '', streak: streak(), mode: S.coachTone || 'soft' };
+  const real = fmt(new Date()), body = { on: !!S.remind.on, hour: S.remind.hour, tz: -new Date().getTimezoneOffset(), closed: closed(today()) ? real : '', streak: streak(), mode: tone() };
   const sig = JSON.stringify(body);
   let last = ''; try { last = localStorage.getItem('mogg_rsig') || ''; } catch (e) {}
   if (!force && (sig === last || Date.now() - remFail < 600000)) return Promise.resolve(null);
@@ -3327,18 +3396,18 @@ function remindPrompt() {
 }
 
 // Команды, на которые точнее отвечают правила приложения (статистика, план, заказы, реакция кожи)
-const LOCAL_CMD = /жж[её]|печ[её]т|покрасн|сыпь|чеш|болит|щипл|шелуш|статист|итог|мой путь|прогресс|отч[её]т|сводк|что сегодня|задани|план на|уров|опыт|xp|награ|открыть|открыва|заказал|купил|оформил|приш[её]л|пришл|получил|забрал|доставил/;
+const LOCAL_CMD = /подбери парфюм|подобрать парфюм|мой парфюм|какой парфюм|жж[её]|печ[её]т|покрасн|сыпь|чеш|болит|щипл|шелуш|статист|итог|мой путь|прогресс|отч[её]т|сводк|что сегодня|задани|план на|уров|опыт|xp|награ|открыть|открыва|заказал|купил|оформил|приш[её]л|пришл|получил|забрал|доставил/;
 async function askCoach(text) {
   if (AI_ENDPOINT && !LOCAL_CMD.test(text.toLowerCase())) {
     const r = rank(), P = S.protos || { active: [] };
-    const j = await aiCall('chat', { message: text, history: S.chat.slice(-11, -1), context: { day: dayNum(today()), streak: streak(), level: `${r.lvl} · ${r.name}`, focus: S.plan.focus.map((p) => PILLARS[p].name), tone: S.coachTone || 'soft', protocols: P.active.map((a) => PROTOCOLS[a.id].t), analysis: aiSummary(S.ai), journey: journey().slice(0, 10).map((x) => x.title), budget: S.budget || 0, issues: (S.issues || []).map((k) => (ISSUES.find((x) => x[0] === k) || [])[1]).filter(Boolean), catalog: CATALOG.filter((x) => x.p <= Math.max(priceCap(S.budget || 0), 700) * 1.5).map((x) => `${x.b} ${x.n} — ≈${x.p} ₽ (${x.w.split('.')[0]})`) } }, 45000);
+    const j = await aiCall('chat', { message: text, history: S.chat.slice(-11, -1), context: { day: dayNum(today()), streak: streak(), level: `${r.lvl} · ${r.name}`, focus: S.plan.focus.map((p) => PILLARS[p].name), tone: tone(), protocols: P.active.map((a) => PROTOCOLS[a.id].t), analysis: aiSummary(S.ai), journey: journey().slice(0, 10).map((x) => x.title), budget: S.budget || 0, issues: (S.issues || []).map((k) => (ISSUES.find((x) => x[0] === k) || [])[1]).filter(Boolean), catalog: CATALOG.filter((x) => x.p <= Math.max(priceCap(S.budget || 0), 700) * 1.5).map((x) => `${x.b} ${x.n} — ≈${x.p} ₽ (${x.w.split('.')[0]})`) } }, 45000);
     if (j.text) {
       if (/сделал|нан[её]с|отжал|отжим|пробеж|присед|подтян|умыл|помыл|постриг|прош[её]л|планк/.test(text.toLowerCase())) addEvent('activity', '«' + text.slice(0, 80) + '»');
       if (ME && ME.paywall) meRefresh();
       return { text: j.text };
     }
     if (j.error === 'pro') { setTimeout(() => proOpen('chat'), 600); return { text: `Бесплатные сообщения на сегодня закончились (${(ME && ME.chat_limit) || 10} в день). В mogg Pro — до 100 в день. А пока отметь миссии на главной — они бесплатные.` }; }
-    if (j.error === 'limit') return { text: 'На сегодня лимит сообщений тренеру исчерпан. Завтра продолжим — а пока отметь миссии на главной.' };
+    if (j.error === 'limit') return { text: 'Бро, на сегодня лимит сообщений кончился. Завтра продолжим — а пока закрой миссии на главной.' };
   }
   return localReply(text);
 }
@@ -3448,7 +3517,7 @@ function acceptPlan() {
   addEvent('plan', r.shopping.length ? `Получили план на 90 дней и список средств на ${r.sum} ₽` : 'Получили план на 90 дней — без покупок');
   if (ob.photo) { S.photos.push({ date: today(), data: ob.photo }); addEvent('photo', 'Стартовое фото'); }
   if (ob.ai) S.ai = { ...ob.ai, date: today() };
-  S.chat.push({ from: 'ai', text: `Привет${tgUser && tgUser.first_name ? ', ' + tgUser.first_name : ''}! Я ${coachName()}, твой тренер.\n\nФокус: ${r.focus.map((p) => PILLARS[p].name.toLowerCase()).join(', ')}. Каждый день — 3 миссии на внешность и одна на характер.\n\nЗа всё начисляется опыт, а с уровнями открываются новые функции: дневник благодарности, челленджи, фокус-таймер и другое. Темы оформления — в профиле, все открыты сразу. Спроси «что откроется», «мой путь» или «что сегодня».` });
+  S.chat.push({ from: 'ai', text: `Здарова${tgUser && tgUser.first_name ? ', ' + tgUser.first_name : ''}! Я ${coachName()} — твой бро в этом приложении 🤙\n\nБудем качать ${r.focus.map((p) => PILLARS[p].name.toLowerCase()).join(', ')}. Каждый день — три небольших дела на внешность и одно на характер. Ничего сложного, обещаю.\n\nЗа всё капает опыт, с уровнями открываются новые фишки. Пиши мне как другу: спроси «что сегодня», «мой путь», «подбери парфюм» — или просто расскажи, как день.` });
   tab = 'home'; haptic('success'); confetti(); save(); render(); window.scrollTo(0, 0);
   track('onboarded', { photo: !!ob.photo });
 }
@@ -3465,7 +3534,7 @@ function renderOnboarding() {
       <div class="in" style="min-height:520px">
         <div class="row between"><div class="logo" style="color:inherit">${IC.logo}<b>mogg<span class="tm">™</span></b></div><span class="mono">[ SEASON 01 ]</span></div>
         <div class="disp huge" style="font-size:64px;margin-top:40px;position:relative;z-index:2">Стань<br>лучшей<br>версией<br>себя<span class="tm">™</span></div>
-        <div class="bot row between" style="align-items:flex-end;position:relative;z-index:2"><div><div class="mono">Внешность · характер · общение · разум</div><div class="mono" style="margin-top:6px">20 уровней · награды · личный тренер</div></div>${barcode()}</div>
+        <div class="bot row between" style="align-items:flex-end;position:relative;z-index:2"><div><div class="mono">Внешность · характер · общение · разум</div><div class="mono" style="margin-top:6px">20 уровней · награды · свой бро в чате</div></div>${barcode()}</div>
       </div>
     </div>
     <div class="tiles" style="margin-bottom:14px">
@@ -3805,7 +3874,7 @@ function renderCoach() {
   };
   const total = S.chat.length;
   return `
-    ${topbar('Тренер')}
+    ${topbar('Бро')}
     <div class="coach-head"><div class="ava">${esc(coachName().slice(0, 1))}</div><div style="flex:1"><b style="font-size:17px">${esc(coachName())}</b><div class="mono" style="margin-top:2px"><span style="color:var(--ok)">●</span> онлайн · ${mode()[0]} ${mode()[1].toLowerCase()}</div></div><button class="btn sm ghost" data-act="mode-toggle" style="height:32px">Режим</button></div>
     ${modeOpen ? modePicker() : ''}
     <div class="chat">
@@ -3813,8 +3882,8 @@ function renderCoach() {
       ${typing ? '<div class="msg ai typing new"><span></span><span></span><span></span></div>' : ''}
     </div>
     <div class="composer"><div class="in">
-      <div class="qr">${['Что сегодня?', 'Что мне купить под мой бюджет?', 'Мой путь', 'Что почитать?', 'Заказал средства', 'Средства пришли', 'Лень сегодня'].map((q) => `<button data-act="quick" data-q="${q}">${q}</button>`).join('')}</div>
-      <form data-submit="chat"><input id="chatIn" placeholder="Напиши тренеру…" autocomplete="off"><button class="send" aria-label="Отправить">${IC.send}</button></form>
+      <div class="qr">${['Что сегодня?', 'Как дела?', 'Подбери парфюм', 'Мой путь', 'Что купить под мой бюджет?', 'Что почитать?', 'Заказал средства', 'Средства пришли', 'Лень сегодня'].map((q) => `<button data-act="quick" data-q="${q}">${q}</button>`).join('')}</div>
+      <form data-submit="chat"><input id="chatIn" placeholder="Напиши как другу…" autocomplete="off"><button class="send" aria-label="Отправить">${IC.send}</button></form>
     </div></div>`;
 }
 
@@ -4385,10 +4454,10 @@ function renderMe() {
       <div class="sw">${ACCENTS.map((c) => `<button class="${(S.accent || 'auto') === c ? 'on' : ''}" style="background:${c === 'auto' ? 'conic-gradient(#d4ff1a,#3d63ff,#ff4a1c,#d4ff1a)' : c}" data-act="accent" data-v="${c}" aria-label="${c === 'auto' ? 'Под тему' : c}"></button>`).join('')}</div>
       <div class="hint" style="margin-top:8px;font-size:12px">Первый кружок — фирменный лаймовый.</div>
     </div>
-    <details class="card allp"><summary><span class="disp" style="font-size:20px">Настройки</span><span class="mono">тренер · награды</span></summary>
+    <details class="card allp"><summary><span class="disp" style="font-size:20px">Настройки</span><span class="mono">бро · награды</span></summary>
     <div>
-      <div class="mono lbl" style="margin-top:0">Тренер</div>
-      <input class="field" style="margin-top:10px" value="${esc(coachName())}" maxlength="20" data-input="coach-name" placeholder="Имя тренера">
+      <div class="mono lbl" style="margin-top:0">Как зовут твоего бро</div>
+      <input class="field" style="margin-top:10px" value="${esc(coachName())}" maxlength="20" data-input="coach-name" placeholder="Имя">
       <div class="mono lbl">Режим общения</div>
       ${modePicker()}
       <div class="mono lbl">Награды за уровни</div>
@@ -4405,7 +4474,7 @@ function renderMe() {
 const TAB_PARENT = { journal: 'plan', path: 'me' }; // подэкраны: какая вкладка внизу подсвечена и куда ведёт «Назад»
 function renderTabs() {
   const on = TAB_PARENT[tab] || tab;
-  return `<nav class="tabs"><div class="in">${[['home', 'Сегодня', IC.home], ['plan', 'План', IC.journal], ['coach', 'Тренер', IC.coach], ['me', 'Я', IC.me]].map(([k, l, ic]) => `<button class="tab ${on === k ? 'on' : ''}" data-act="go" data-tab="${k}">${ic}${l}</button>`).join('')}</div></nav>`;
+  return `<nav class="tabs"><div class="in">${[['home', 'Сегодня', IC.home], ['plan', 'План', IC.journal], ['coach', 'Бро', IC.coach], ['me', 'Я', IC.me]].map(([k, l, ic]) => `<button class="tab ${on === k ? 'on' : ''}" data-act="go" data-tab="${k}">${ic}${l}</button>`).join('')}</div></nav>`;
 }
 
 function render() {
@@ -4815,7 +4884,7 @@ async function usePhoto(kind, data) {
     if (kind === 'ai-photo') {
       if (aiBusy) return;
       aiBusy = true; aiPhoto = data; render();
-      const a = await aiCall('analyze', { photo: data, issues: S.issues || [], tone: S.coachTone || 'soft' }, 90000);
+      const a = await aiCall('analyze', { photo: data, issues: S.issues || [], tone: tone() }, 90000);
       aiBusy = false;
       if (a.error === 'pro') { proOpen('analyze'); return; }
       if (a.error) { toast(aiErr(a.error)); render(); return; }
