@@ -1093,6 +1093,93 @@ button:active,label.card:active{transform:scale(.97)}
 
 /* ---------- снег: холст поверх экрана, сугробы рисуются на кнопках ---------- */
 #snowc{position:fixed;inset:0;width:100%;height:100%;z-index:30;pointer-events:none}
+/* ============================================================
+   ДУША — цветная подложка, живые карточки и отклик на палец.
+   Слой целиком поверх MIX: ничего выше не меняет.
+   ============================================================ */
+:root{--cardbase:linear-gradient(155deg,#1b1d26 0%,#08090d 44%);--g:#8b5cff;--g2:#1fdcff}
+:root[data-theme="dark"]{--cardbase:linear-gradient(155deg,#252835 0%,#12141b 46%)}
+
+/* 1. Аврора: медленно плывущие цветные пятна под всем экраном */
+.aurora{position:fixed;inset:0;z-index:-2;pointer-events:none;overflow:hidden}
+.aurora i{position:absolute;width:70vmax;height:70vmax;border-radius:50%;filter:blur(60px);opacity:.42;mix-blend-mode:multiply;will-change:transform}
+.aurora i:nth-child(1){background:#ff9ad5;left:-30vmax;top:-25vmax;animation:au1 22s ease-in-out infinite alternate}
+.aurora i:nth-child(2){background:#8fb8ff;right:-35vmax;top:5vmax;animation:au2 26s ease-in-out infinite alternate}
+.aurora i:nth-child(3){background:#c8ff6a;left:-20vmax;bottom:-35vmax;animation:au3 30s ease-in-out infinite alternate;opacity:.34}
+.aurora i:nth-child(4){background:#ffc38a;right:-25vmax;bottom:-30vmax;animation:au1 24s ease-in-out infinite alternate-reverse}
+:root[data-theme="dark"] .aurora i{mix-blend-mode:screen;opacity:.2}
+:root[data-theme="dark"] .aurora i:nth-child(1){background:#8b5cff}
+:root[data-theme="dark"] .aurora i:nth-child(2){background:#2f6bff}
+:root[data-theme="dark"] .aurora i:nth-child(3){background:#22e08a;opacity:.12}
+:root[data-theme="dark"] .aurora i:nth-child(4){background:#ff2d87;opacity:.16}
+@keyframes au1{to{transform:translate(18vmax,14vmax) scale(1.15)}}
+@keyframes au2{to{transform:translate(-16vmax,20vmax) scale(.9)}}
+@keyframes au3{to{transform:translate(22vmax,-12vmax) scale(1.2)}}
+
+/* шары на подложке — радужное стекло вместо серого */
+:root body::after{
+  --hl:radial-gradient(circle closest-side at 34% 28%,rgba(255,255,255,.95) 0,transparent 100%);
+  background:
+    var(--hl) 92% 9%/190px 190px no-repeat,radial-gradient(circle closest-side,#fff 0,#ffd3ec 30%,#c9a8ff 70%,#8fb8ff 98.5%,transparent 100%) 92% 9%/190px 190px no-repeat,
+    var(--hl) 4% 47%/140px 140px no-repeat,radial-gradient(circle closest-side,#fff 0,#e6ffc2 32%,#8ff0d0 72%,#6ec8ff 98.5%,transparent 100%) 4% 47%/140px 140px no-repeat,
+    var(--hl) 84% 83%/96px 96px no-repeat,radial-gradient(circle closest-side,#fff 0,#ffe3c4 32%,#ffa98a 72%,#ff7ccf 98.5%,transparent 100%) 84% 83%/96px 96px no-repeat,
+    var(--hl) 22% 13%/34px 34px no-repeat,radial-gradient(circle closest-side,#fff 0,#d4ff1a 60%,#8ad400 98.5%,transparent 100%) 22% 13%/34px 34px no-repeat,
+    var(--hl) 62% 61%/22px 22px no-repeat,radial-gradient(circle closest-side,#fff 0,#b79cff 60%,#7b5cff 98.5%,transparent 100%) 62% 61%/22px 22px no-repeat}
+:root[data-theme="dark"] body::after{opacity:.55;filter:saturate(1.3)}
+:root body::before{border:1.5px dashed color-mix(in srgb,#8b5cff 40%,transparent)}
+
+/* 2. Чёрные карточки: у каждой своё цветное свечение в углу и цветная тень */
+:root :is(.card,.lesson,.rstep,.excard,.msg.ai){
+  --cardbg:radial-gradient(90% 75% at 100% 0%,color-mix(in srgb,var(--g) 40%,transparent),transparent 62%),radial-gradient(70% 60% at 0% 100%,color-mix(in srgb,var(--g2) 18%,transparent),transparent 70%),var(--cardbase);
+  --cardsh:inset 0 1px 0 rgba(255,255,255,.14),inset 0 0 0 1px color-mix(in srgb,var(--g) 28%,transparent),0 22px 30px -20px color-mix(in srgb,var(--g) 70%,rgba(8,12,30,.6))}
+:root .card .card{--cardbg:rgba(255,255,255,.06)}
+
+/* 3. Заголовки секций: переливающийся градиент своего цвета */
+:root .sec{--blue:var(--g);--sc:var(--g2)}
+:root .sec .disp{background:linear-gradient(90deg,var(--p-text) 0%,var(--p-text) 30%,var(--g) 55%,var(--g2) 75%,var(--p-text) 100%) 0 0/250% 100%;
+  -webkit-background-clip:text;background-clip:text;color:transparent;animation:secflow 6s ease-in-out infinite alternate}
+:root .sec .disp::before{animation:starspin 4s linear infinite;background:linear-gradient(135deg,var(--g),var(--g2))}
+@keyframes secflow{to{background-position:100% 0}}
+@keyframes starspin{to{transform:rotate(360deg)}}
+
+/* 4. Живой отклик: карточка наклоняется за пальцем, по ней бежит блик */
+.tilt{transition:transform .55s cubic-bezier(.3,1.6,.5,1);will-change:transform}
+.tilt.held{transition:transform .08s linear}
+.tilt .glare{position:absolute;inset:0;border-radius:inherit;pointer-events:none;z-index:5;opacity:0;transition:opacity .3s;
+  background:radial-gradient(circle at var(--gx,50%) var(--gy,50%),rgba(255,255,255,.28),rgba(255,255,255,.06) 35%,transparent 60%);mix-blend-mode:soft-light}
+.tilt.held .glare{opacity:1}
+:root :is(.mission,.acard,.opt,.chip):not(.card *).tilt.held .glare{mix-blend-mode:normal;background:radial-gradient(circle at var(--gx,50%) var(--gy,50%),color-mix(in srgb,var(--g) 30%,transparent),transparent 60%)}
+.ink{position:absolute;border-radius:50%;pointer-events:none;z-index:4;transform:scale(0);opacity:.45;animation:ink .7s cubic-bezier(.2,.8,.2,1) forwards}
+@keyframes ink{to{transform:scale(1);opacity:0}}
+
+/* 5. Появление при прокрутке: блоки выезжают снизу по очереди */
+.rv{opacity:0;transform:translateY(26px) scale(.97)}
+.rv.in{opacity:1;transform:none;transition:opacity .6s ease,transform .7s cubic-bezier(.2,1.3,.4,1)}
+
+/* 6. Шапка: логотип крутится, уровень переливается */
+:root .logo svg{transition:transform .7s cubic-bezier(.3,1.6,.5,1)}
+:root .logo.spin svg{transform:rotate(360deg) scale(1.15)}
+:root .top .lvl{background-size:200% 100%!important;animation:lvlflow 5s linear infinite}
+@keyframes lvlflow{to{background-position:200% 0}}
+
+/* 7. Галочка миссии: волна цвета по всей карточке */
+:root .mission.just{animation:glowpulse .7s ease-out,missionwave .9s ease-out}
+@keyframes missionwave{0%{filter:brightness(1.6) saturate(1.6)}100%{filter:none}}
+
+/* «Почитать» на главной: компактный баннер вместо поста 4:5 во весь экран */
+:root .feature.ig{aspect-ratio:auto;min-height:210px;padding:12px;border-radius:26px}
+.feature.ig .cov{inset:0}
+.feature.ig .cov-em{font-size:80px;right:5%;top:8%}
+.feature.ig .ig-pill{height:26px;padding:0 10px;font-size:10px}
+.feature.ig .ig-glass{padding:12px 14px;border-radius:18px;margin-top:10px}
+.feature.ig .ig-glass .disp{font-size:clamp(20px,6vw,25px);line-height:1}
+.feature.ig .ig-foot{margin-top:10px}
+.feature.ig .pillbtn{height:34px}
+.feature.ig .pillbtn i{width:26px;height:26px}
+.strip .phcard{flex-basis:58%;min-height:170px;padding:14px}
+.strip .phcard .cov-em{font-size:54px;top:8%}
+.strip .phcard div{font-size:15px!important}
+@media (prefers-reduced-motion:reduce){.aurora i,.sec .disp,.sec .disp::before,.top .lvl{animation:none!important}.rv{opacity:1;transform:none}}
 </style>
 </head>
 <body>
@@ -3408,6 +3495,10 @@ async function askCoach(text) {
     }
     if (j.error === 'pro') { setTimeout(() => proOpen('chat'), 600); return { text: `Бесплатные сообщения на сегодня закончились (${(ME && ME.chat_limit) || 10} в день). В mogg Pro — до 100 в день. А пока отметь миссии на главной — они бесплатные.` }; }
     if (j.error === 'limit') return { text: 'Бро, на сегодня лимит сообщений кончился. Завтра продолжим — а пока закрой миссии на главной.' };
+    // ИИ не ответил — говорим честно и с кодом ошибки, а не делаем вид, что «записал»
+    const why = j.error === 'not_telegram' ? 'ИИ работает только внутри Telegram — открой mogg через бота.' : j.error === 'network' ? 'не достучался до сервера: нет связи или он думал дольше 45 секунд.' : /^http_5/.test(j.error || '') ? 'сервер ИИ сейчас упал.' : 'ИИ не ответил.';
+    console.warn('[mogg] chat AI error:', j);
+    return { text: `Бро, ${why} Попробуй ещё раз чуть позже.\n\n[ код: ${j.error || 'пустой ответ'} ]` };
   }
   return localReply(text);
 }
@@ -4463,10 +4554,7 @@ function renderMe() {
       <div class="mono lbl">Награды за уровни</div>
       ${UNLOCKS.map((u) => `<div class="item"><span style="font-size:22px;${r.lvl >= u.lvl ? '' : 'filter:grayscale(1);opacity:.4'}">${u.ic}</span><div style="flex:1"><div style="font-weight:700">${u.name}</div><div class="hint" style="font-size:12px">${u.d}</div></div>${r.lvl >= u.lvl ? `<span class="check">${IC.check}</span>` : `<span class="mono">ур. ${u.lvl}</span>`}</div>`).join('')}
     </div></details>
-    ${DEV ? `<div class="card">
-      <span class="mono">Для теста</span>
-      <div class="row" style="margin-top:10px;flex-wrap:wrap"><button class="btn sm ghost" data-act="add-xp">+300 XP</button><button class="btn sm ghost" data-act="skip-day">Перемотать день →</button></div>
-    </div>` : ''}
+
     <button class="btn sm ghost" data-act="reset" style="color:var(--danger);width:100%">Сбросить прогресс</button>
     <p class="mono" style="text-align:center;margin-top:20px">mogg · season 01 · <a href="privacy.html" style="color:inherit">политика</a></p>`;
 }
@@ -4919,6 +5007,85 @@ function start() {
   }).catch(show).then(() => { if (S.onboarded) track('open', { day: dayNum(today()) }); });
   meRefresh(/paid=1/.test(location.search));
 }
+// ---------- душа: аврора, цвета карточек, наклон за пальцем, появление при прокрутке ----------
+(() => {
+  const PAIRS = [['#8b5cff', '#ff4fd8'], ['#2f6bff', '#1fdcff'], ['#ff5a1c', '#ffd21a'], ['#22e08a', '#c8ff2a'], ['#ff4fa3', '#ffb23d'], ['#1fdcff', '#3dffc0']];
+  const au = document.createElement('div'); au.className = 'aurora'; au.innerHTML = '<i></i><i></i><i></i><i></i>';
+  document.body.prepend(au);
+
+  // У каждой карточки и секции свой цвет — по кругу, чтобы соседи не совпадали
+  const paint = () => {
+    let k = 0;
+    document.querySelectorAll('#app :is(.card,.lesson,.rstep,.excard,.sec,.mission,.acard,.opt), #modal .card').forEach((el) => {
+      const [a, b] = PAIRS[k++ % PAIRS.length];
+      el.style.setProperty('--g', a); el.style.setProperty('--g2', b);
+    });
+  };
+
+  // Блоки ниже экрана при открытии вкладки выезжают по очереди при прокрутке
+  const REV = '#app > :not(.tabs), #app > div > :is(.card,.mission,.acard,.lesson,.sec,.coll,.tiles,.strip,.books,.feature,.phcard)';
+  const io = 'IntersectionObserver' in window ? new IntersectionObserver((es) => {
+    let d = 0;
+    es.forEach((e) => { if (!e.isIntersecting) return; const el = e.target; io.unobserve(el); setTimeout(() => el.classList.add('in'), d); d += 70; });
+  }, { rootMargin: '0px 0px -8% 0px' }) : null;
+  const reveal = () => {
+    if (!io || reduceMotion) return;
+    const h = innerHeight;
+    document.querySelectorAll(REV).forEach((el) => {
+      if (el.classList.contains('rv') || el.getBoundingClientRect().top < h * .92) return;
+      el.classList.add('rv'); io.observe(el);
+    });
+  };
+  const app = document.getElementById('app');
+  new MutationObserver(() => paint()).observe(app, { childList: true });
+  new MutationObserver(() => paint()).observe(document.getElementById('modal'), { childList: true });
+  app.addEventListener('animationstart', (e) => { if (e.target === app && e.animationName === 'screenIn') requestAnimationFrame(reveal); });
+  paint();
+
+  // Наклон за пальцем + блик + цветная «капля» из точки касания
+  const TILT = '.card:not(.hero *):not(.sheet *),.mission,.acard,.lesson,.rstep,.cc,.hero,.feature,.phcard,.libtile,.wotile,.excard,.opt,.book .cover';
+  let cur = null, sx = 0, sy = 0;
+  const setT = (el, x, y, press) => {
+    const r = el.getBoundingClientRect(), px = (x - r.left) / r.width, py = (y - r.top) / r.height;
+    const max = r.height > 220 ? 4 : 7;
+    el.style.transform = `perspective(700px) rotateX(${((.5 - py) * max).toFixed(2)}deg) rotateY(${((px - .5) * max).toFixed(2)}deg) scale(${press ? .975 : 1})`;
+    el.style.setProperty('--gx', (px * 100).toFixed(1) + '%'); el.style.setProperty('--gy', (py * 100).toFixed(1) + '%');
+  };
+  const release = () => {
+    if (!cur) return; const el = cur; cur = null;
+    el.classList.remove('held'); el.style.transform = '';
+    setTimeout(() => { if (!el.classList.contains('held')) { const g = el.querySelector(':scope > .glare'); g && g.remove(); } }, 400);
+  };
+  document.addEventListener('pointerdown', (e) => {
+    if (reduceMotion || !e.target.closest) return;
+    if (e.target.closest('.btn,input,textarea,.tabs,.composer,a')) return;
+    const el = e.target.closest(TILT); if (!el) return;
+    if (getComputedStyle(el).position === 'static') el.style.position = 'relative';
+    el.classList.add('tilt', 'held'); cur = el; sx = e.clientX; sy = e.clientY;
+    if (!el.querySelector(':scope > .glare')) { const g = document.createElement('i'); g.className = 'glare'; el.appendChild(g); }
+    // капля цвета из-под пальца
+    const r = el.getBoundingClientRect(), s = Math.max(r.width, r.height) * 2.2, ink = document.createElement('i');
+    const c = getComputedStyle(el).getPropertyValue('--g').trim() || '#8b5cff';
+    ink.className = 'ink'; ink.style.cssText = `width:${s}px;height:${s}px;left:${e.clientX - r.left - s / 2}px;top:${e.clientY - r.top - s / 2}px;background:radial-gradient(circle,${c},transparent 65%)`;
+    el.appendChild(ink); setTimeout(() => ink.remove(), 750);
+    setT(el, e.clientX, e.clientY, true);
+    try { tg.HapticFeedback.selectionChanged(); } catch (err) {}
+  }, { passive: true });
+  document.addEventListener('pointermove', (e) => {
+    if (!cur) return;
+    if (Math.abs(e.clientY - sy) > 14 && Math.abs(e.clientY - sy) > Math.abs(e.clientX - sx)) return release(); // это прокрутка
+    setT(cur, e.clientX, e.clientY, true);
+  }, { passive: true });
+  ['pointerup', 'pointercancel', 'scroll'].forEach((t) => addEventListener(t, release, { passive: true, capture: true }));
+
+  // Логотип делает сальто
+  document.addEventListener('click', (e) => {
+    const l = e.target.closest && e.target.closest('.logo'); if (!l) return;
+    l.classList.remove('spin'); void l.offsetWidth; l.classList.add('spin'); setTimeout(() => l.classList.remove('spin'), 750);
+    try { tg.HapticFeedback.impactOccurred('soft'); } catch (err) {}
+  });
+})();
+
 start();
 </script>
 </body>
