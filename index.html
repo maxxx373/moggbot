@@ -1180,90 +1180,74 @@ button:active,label.card:active{transform:scale(.97)}
 .strip .phcard .cov-em{font-size:54px;top:8%}
 .strip .phcard div{font-size:15px!important}
 @media (prefers-reduced-motion:reduce){.aurora i,.sec .disp,.sec .disp::before,.top .lvl{animation:none!important}.rv{opacity:1;transform:none}}
-/* ---------- гардероб ---------- */
+/* ---------- гардероб: всё на белом, максимально просто ---------- */
 .tab[data-tab="wardrobe"]{--t1:#1fdcff;--t2:#3dffc0;--tt:#02222b}
 :root .tabs .tab{font-size:9.5px;min-width:0}
-.wfil{margin-bottom:12px;flex-wrap:nowrap;overflow-x:auto;margin-left:-16px;margin-right:-16px;padding:2px 16px 4px;scrollbar-width:none}
-.wfil::-webkit-scrollbar{display:none}
-.wfil .chip{flex:none;padding:9px 13px;font-size:13px}
-.wgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
-.wtile{position:relative;aspect-ratio:1;border-radius:18px;display:grid;place-items:center;padding:10px;overflow:hidden;
-  background:radial-gradient(circle at 50% 42%,rgba(255,255,255,.3),rgba(255,255,255,.07) 72%);border:1px solid rgba(255,255,255,.09);transition:transform .2s,box-shadow .2s}
-.wtile img{width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 8px 10px rgba(0,0,0,.45))}
-.wtile .wcap{position:absolute;left:6px;right:6px;bottom:5px;font-size:10px;font-weight:700;color:rgba(255,255,255,.75);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:center}
-.wtile:has(.wcap) img{height:84%;margin-top:-10%}
-.wph{font-size:34px;opacity:.6}
-.wrow{display:flex;gap:8px;overflow-x:auto;margin:0 -16px;padding:4px 16px 6px;scrollbar-width:none}
-.wrow::-webkit-scrollbar{display:none}
-.wtile.sm{flex:0 0 84px;height:84px;padding:8px;background:var(--cardbg,#111);box-shadow:var(--neu)}
-.wtile.sm.on{box-shadow:0 0 0 2.5px #1fdcff,0 10px 22px -8px #1fdcff;transform:translateY(-3px)}
-.wtile.sm.on::after{content:'✓';position:absolute;top:5px;right:6px;width:18px;height:18px;border-radius:50%;background:#1fdcff;color:#02222b;font-size:11px;font-weight:900;display:grid;place-items:center}
-.wempty{text-align:center;padding:26px 18px}
-.wem{font-size:44px;letter-spacing:4px}
-/* флэтлей */
-.flat{position:relative;aspect-ratio:4/4.4;border-radius:20px;overflow:hidden;
-  background:radial-gradient(60% 50% at 50% 45%,rgba(255,255,255,.22),transparent 75%),radial-gradient(70% 55% at 50% 40%,rgba(31,220,255,.16),transparent 70%),repeating-linear-gradient(45deg,rgba(255,255,255,.025) 0 10px,transparent 10px 20px),rgba(255,255,255,.04)}
+/* список образов */
+.wlist{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.wnew,.wlook{position:relative;aspect-ratio:4/5;border-radius:22px;background:#fff;box-shadow:0 10px 28px -14px rgba(8,12,30,.35),inset 0 0 0 1px rgba(7,8,12,.06);overflow:hidden;text-align:left;color:#07080c}
+.wnew{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;border:2px dashed rgba(7,8,12,.14);box-shadow:none;background:rgba(255,255,255,.7)}
+.wnew b{font-size:14px}
+.wplus{width:54px;height:54px;border-radius:50%;display:grid;place-items:center;font-size:34px;font-weight:300;line-height:1;color:#fff;background:#07080c;box-shadow:0 10px 20px -8px rgba(7,8,12,.6)}
+.wlook .flat{position:absolute;inset:0;aspect-ratio:auto;border-radius:0}
+.wlook .wscore{position:absolute;top:8px;right:8px}
+.wst{position:absolute;left:10px;bottom:9px;right:10px;font-size:11.5px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.wfirst{text-align:center;margin:16px 8px 0;font-size:13.5px}
+/* холст */
+.flat{position:relative;aspect-ratio:4/5;overflow:hidden;background:#fff;border-radius:24px}
+.flat.white{box-shadow:0 14px 34px -16px rgba(8,12,30,.35),inset 0 0 0 1px rgba(7,8,12,.06)}
 .fl{position:absolute;display:grid;place-items:center}
-.flat:not(.edit) .fl{animation:flin .45s cubic-bezier(.3,1.5,.5,1) both}
-.fl img{width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 12px 14px rgba(0,0,0,.5))}
-.fl .wph{font-size:46px}
-.fl-outer{left:2%;top:5%;width:44%;height:50%;z-index:1}
-.fl-top{left:29%;top:3%;width:44%;height:42%;z-index:2}
-.fl-bottom{left:31%;top:39%;width:40%;height:44%;z-index:3}
-.fl-shoes{left:56%;top:74%;width:36%;height:23%;z-index:4}
-.fl-acc{left:72%;top:6%;width:25%;height:24%;z-index:4}
-.fl-acc2{left:4%;top:62%;width:24%;height:24%;z-index:4}
-@keyframes flin{from{opacity:0;scale:.6}}
-.flat-empty{position:absolute;inset:0;display:grid;place-items:center;text-align:center;color:rgba(255,255,255,.5);font-size:13.5px;line-height:1.5;border:1.5px dashed rgba(255,255,255,.18);border-radius:20px}
-.flat.mini{aspect-ratio:1;border-radius:16px}
-.flat.mini .fl{animation:none}
-.flat.mini .wph{font-size:28px}
-/* оценка */
-.wscore{flex:none;display:inline-flex;align-items:baseline;gap:1px;padding:6px 11px;border-radius:14px;font-family:var(--disp);font-size:30px;line-height:1;color:#05060a;
-  background:linear-gradient(135deg,var(--sc),color-mix(in srgb,var(--sc) 55%,#fff));box-shadow:0 0 22px -4px var(--sc)}
-.wscore small{font-size:13px;opacity:.7}
-.wres{animation:fadeup .5s both}
-.wtip{margin-top:10px;padding:10px 12px;border-radius:14px;background:color-mix(in srgb,var(--c) 10%,transparent);border-left:3px solid var(--c);font-size:14px;line-height:1.4}
-.wtip .mono{color:var(--c);display:block;margin-bottom:2px}
-.wtxt{margin-top:10px;white-space:pre-wrap;font-size:14px;line-height:1.45}
-/* лента */
-.wfeed{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.wlook{position:relative;text-align:left;padding:8px;border-radius:22px;background:var(--cardbg);box-shadow:var(--cardsh);color:#f4f5f7}
-.wlb{display:flex;align-items:center;justify-content:space-between;gap:6px;padding:8px 4px 2px}
-.wlb b{font-size:13px;line-height:1.2}
-.wlb .wscore{font-size:18px;padding:4px 7px;border-radius:10px}
-.wlb .wscore small{font-size:9px}
-.wworn{position:absolute;top:14px;left:14px;padding:3px 7px;border-radius:7px;background:#22e08a;color:#03230f;font-size:9px}
-/* окно добавления */
-.wsheet .wpv{position:relative;height:260px;margin:10px 0 12px;border-radius:20px;overflow:hidden;display:grid;place-items:center;
-  background:conic-gradient(rgba(255,255,255,.07) 25%,transparent 0 50%,rgba(255,255,255,.07) 0 75%,transparent 0) 0 0/18px 18px}
-.wsheet .wpv img{max-width:100%;max-height:100%;object-fit:contain}
-.wsheet .wpv .wcut{animation:popin .5s cubic-bezier(.3,1.5,.5,1);filter:drop-shadow(0 14px 16px rgba(0,0,0,.5))}
-.wsheet .wpv .wsrc{opacity:.55;filter:saturate(.6)}
-.wscan{position:absolute;left:0;right:0;height:38%;top:-38%;background:linear-gradient(180deg,transparent,rgba(31,220,255,.45),transparent);animation:wscan 1.6s ease-in-out infinite}
-@keyframes wscan{to{top:100%}}
-.wprog{position:absolute;left:50%;bottom:12px;transform:translateX(-50%);white-space:nowrap;padding:6px 12px;border-radius:12px;background:rgba(0,0,0,.6);color:#fff;backdrop-filter:blur(8px)}
-.wsheet .chips .chip{padding:9px 12px;font-size:13px}
-/* редактор образа: выделение, уголок, слои */
+.fl img{width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 6px 8px rgba(0,0,0,.16));pointer-events:none;-webkit-user-drag:none}
+.wph{width:60%;height:60%;border-radius:12px;background:#eef0f4}
+.flat-empty{position:absolute;inset:0;display:grid;place-items:center;text-align:center;color:#9aa0ab;font-size:14px;line-height:1.5}
 .flat.edit{touch-action:none;user-select:none;-webkit-user-select:none}
 .flat.edit .fl{cursor:grab;touch-action:none}
-.flat.edit .fl img{pointer-events:none;-webkit-user-drag:none}
-.fl.sel{outline:1.5px dashed #1fdcff;outline-offset:2px;border-radius:6px}
-.fl .flh{display:none;position:absolute;right:-13px;bottom:-13px;width:26px;height:26px;border-radius:50%;background:#1fdcff;border:3px solid #05060a;box-shadow:0 0 12px #1fdcff;touch-action:none}
-.fl .flh::after{content:"⤡";position:absolute;inset:0;display:grid;place-items:center;font-size:12px;font-weight:900;color:#02222b;font-style:normal}
+.fl.sel{outline:1.5px dashed #1597c9;outline-offset:2px;border-radius:6px}
+.fl .flh{display:none;position:absolute;right:-13px;bottom:-13px;width:26px;height:26px;border-radius:50%;background:#07080c;border:3px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,.3);touch-action:none}
+.fl .flh::after{content:"⤡";position:absolute;inset:0;display:grid;place-items:center;font-size:12px;font-weight:900;color:#fff;font-style:normal}
 .fl.sel .flh{display:block}
-.wgest{font-size:12px;text-align:center;margin-top:8px}
-.wlayers{display:flex;align-items:center;gap:6px;margin-top:10px;overflow-x:auto;scrollbar-width:none}
-.wlayers::-webkit-scrollbar{display:none}
-.wlayers .mono{flex:none;margin-right:2px}
-.wly{flex:none;width:44px;height:44px;border-radius:12px;padding:4px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);display:grid;place-items:center}
-.wly img{width:100%;height:100%;object-fit:contain}
-.wly .wph{font-size:20px}
-.wly.on{border-color:#1fdcff;box-shadow:0 0 0 1.5px #1fdcff,0 0 14px -2px #1fdcff;background:rgba(31,220,255,.14)}
+/* шапка редактора */
+.wbar{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.wbar b{flex:1;font-family:var(--disp);text-transform:uppercase;font-size:24px;line-height:1}
+.wbar .btn.sm{width:auto;height:40px}
+.wback{width:42px;height:42px;border-radius:14px;background:#fff;color:#07080c;font-size:20px;font-weight:800;box-shadow:0 6px 16px -8px rgba(8,12,30,.4)}
+.wgest{font-size:12.5px;text-align:center;margin-top:10px}
+.wsm{font-size:12px;color:var(--hint)}
 .wtools{display:flex;gap:6px;margin-top:10px}
-.wtools button{flex:1;height:40px;border-radius:12px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);color:#fff;font-size:17px;font-weight:800}
+.wtools button{flex:1;height:42px;border-radius:14px;background:#fff;color:#07080c;font-size:18px;font-weight:800;box-shadow:0 6px 16px -10px rgba(8,12,30,.45),inset 0 0 0 1px rgba(7,8,12,.06)}
 .wtools button:active{transform:scale(.94)}
-.wtools button.del{color:#ff6b6b;border-color:rgba(255,107,107,.35)}
+.wtools button.del{color:#e8521c}
+.wrate{display:block;width:100%;height:46px;margin-top:10px;border-radius:16px;background:#07080c;color:#fff;font-weight:800;font-size:14.5px}
+.wrate[disabled]{opacity:.6}
+/* оценка */
+.wres{margin-top:10px;padding:14px;border-radius:20px;background:#fff;color:#07080c;box-shadow:0 10px 28px -14px rgba(8,12,30,.35);animation:fadeup .4s both}
+.wres .wsm{color:#7a808c}
+.wrh{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.wrh b{display:block;font-family:var(--disp);text-transform:uppercase;font-size:24px;line-height:1;margin-top:2px}
+.wscore{flex:none;display:inline-grid;place-items:center;min-width:44px;height:44px;padding:0 8px;border-radius:14px;font-family:var(--disp);font-size:24px;line-height:1;color:#fff;background:var(--sc)}
+.wlook .wscore{min-width:32px;height:32px;font-size:17px;border-radius:10px}
+.wtip{margin-top:8px;padding:9px 11px;border-radius:12px;background:color-mix(in srgb,var(--c) 9%,#fff);font-size:13.5px;line-height:1.4}
+.wtip b{display:block;font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--c);margin-bottom:2px}
+.wtxt{margin-top:8px;white-space:pre-wrap;font-size:13.5px;line-height:1.45}
+/* вещи снизу */
+.wrow{display:flex;gap:8px;overflow-x:auto;margin:14px -16px 0;padding:4px 16px 8px;scrollbar-width:none}
+.wrow::-webkit-scrollbar{display:none}
+.wadd,.wit{flex:0 0 84px;height:96px;border-radius:18px;background:#fff;box-shadow:0 6px 16px -10px rgba(8,12,30,.45),inset 0 0 0 1px rgba(7,8,12,.06);display:grid;place-items:center;padding:8px;color:#07080c;-webkit-touch-callout:none;user-select:none;-webkit-user-select:none}
+.wadd{display:flex;flex-direction:column;gap:6px;font-size:11px;font-weight:800;line-height:1.15;text-align:center}
+.wadd .wplus{width:34px;height:34px;font-size:22px}
+.wit img{width:100%;height:100%;object-fit:contain;pointer-events:none}
+.wit.on{box-shadow:0 0 0 2.5px #07080c,0 8px 18px -8px rgba(8,12,30,.5);transform:translateY(-2px)}
+.wdel{display:block;margin:18px auto 0;padding:10px 16px;color:#e8521c;font-weight:700;font-size:13.5px}
+/* окно добавления вещи */
+.wsheet{text-align:left;padding:16px 16px 18px}
+.wsheet .wpv{position:relative;height:300px;margin-bottom:10px;border-radius:20px;overflow:hidden;display:grid;place-items:center;background:#fff}
+.wsheet .wpv img{max-width:92%;max-height:92%;object-fit:contain}
+.wsheet .wpv .wcut{animation:popin .5s cubic-bezier(.3,1.5,.5,1);filter:drop-shadow(0 8px 12px rgba(0,0,0,.18))}
+.wsheet .wpv .wsrc{max-width:100%;max-height:100%;opacity:.5}
+.wsheet .wsm{min-height:16px;margin-bottom:10px}
+.wscan{position:absolute;left:0;right:0;height:38%;top:-38%;background:linear-gradient(180deg,transparent,rgba(21,151,201,.35),transparent);animation:wscan 1.6s ease-in-out infinite}
+@keyframes wscan{to{top:100%}}
+.wprog{position:absolute;left:50%;bottom:12px;transform:translateX(-50%);white-space:nowrap;padding:6px 12px;border-radius:12px;background:rgba(7,8,12,.75);color:#fff;font-size:12px;font-weight:700}
 </style>
 </head>
 <body>
@@ -4648,7 +4632,7 @@ function renderMe() {
 const TAB_PARENT = { journal: 'plan', path: 'me' }; // подэкраны: какая вкладка внизу подсвечена и куда ведёт «Назад»
 function renderTabs() {
   const on = TAB_PARENT[tab] || tab;
-  return `<nav class="tabs"><div class="in">${[['home', 'Сегодня', IC.home], ['plan', 'План', IC.journal], ['wardrobe', 'Шкаф', IC.hanger], ['coach', 'Бро', IC.coach], ['me', 'Я', IC.me]].map(([k, l, ic]) => `<button class="tab ${on === k ? 'on' : ''}" data-act="go" data-tab="${k}">${ic}${l}</button>`).join('')}</div></nav>`;
+  return `<nav class="tabs"><div class="in">${[['home', 'Сегодня', IC.home], ['plan', 'План', IC.journal], ['wardrobe', 'Гардероб', IC.hanger], ['coach', 'Бро', IC.coach], ['me', 'Я', IC.me]].map(([k, l, ic]) => `<button class="tab ${on === k ? 'on' : ''}" data-act="go" data-tab="${k}">${ic}${l}</button>`).join('')}</div></nav>`;
 }
 
 function render() {
@@ -4697,13 +4681,13 @@ try {
 } catch (e) {}
 
 // ---------- фото ----------
-function readPhoto(file) {
+function readPhoto(file, max) {
   return new Promise((res, rej) => {
     const r = new FileReader();
     r.onload = () => {
       const img = new Image();
       img.onload = () => {
-        const k = Math.min(1, 600 / Math.max(img.width, img.height));
+        const k = Math.min(1, (max || 600) / Math.max(img.width, img.height));
         const c = document.createElement('canvas');
         c.width = Math.round(img.width * k); c.height = Math.round(img.height * k);
         c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
@@ -4962,7 +4946,7 @@ document.addEventListener('input', (e) => {
 document.addEventListener('change', async (e) => {
   const kind = e.target.dataset.change, f = e.target.files && e.target.files[0];
   if (!kind || !f) return;
-  try { await usePhoto(kind, await readPhoto(f)); } catch (err) { toast('Не получилось открыть фото'); }
+  try { await usePhoto(kind, await readPhoto(f, kind === 'w-item' ? 1280 : 600)); } catch (err) { toast('Не получилось открыть фото'); }
 });
 
 // ---------- фото: камера или галерея ----------
@@ -4976,7 +4960,7 @@ function pickFile(kind, cam) {
   i.onchange = async () => {
     const f = i.files && i.files[0]; i.remove();
     if (!f) return;
-    try { await usePhoto(kind, await readPhoto(f)); } catch (e) { toast('Не получилось открыть фото'); }
+    try { await usePhoto(kind, await readPhoto(f, kind === 'w-item' ? 1280 : 600)); } catch (e) { toast('Не получилось открыть фото'); }
   };
   document.body.appendChild(i); i.click();
 }
@@ -4989,7 +4973,7 @@ function photoSheet(kind) {
   w.id = 'photoUI'; w.className = 'modal';
   w.innerHTML = `<div class="sheet"><span class="mono">[ фото ]</span>
     <div class="disp" style="font-size:28px;margin:6px 0 4px">Откуда берём?</div>
-    <div class="hint" style="margin-bottom:18px">${kind === 'w-item' ? 'Вещь целиком, на кровати или на полу — фон уберём сами' : 'Дневной свет, лицо прямо, без фильтров'}</div>
+    <div class="hint" style="margin-bottom:18px">${kind === 'w-item' ? 'Вещь целиком, на однотонном фоне — фон уберём сами' : 'Дневной свет, лицо прямо, без фильтров'}</div>
     <button class="btn" data-p="cam">📸 Сделать фото</button>
     <button class="btn ghost" data-p="gal" style="margin-top:10px">🖼 Выбрать из галереи</button>
     <button class="btn ghost" data-p="x" style="margin-top:10px;background:none;border:0;height:44px;color:var(--hint)">Отмена</button></div>`;
@@ -5043,7 +5027,7 @@ async function camStart() {
 function camSnap() {
   const v = document.getElementById('camV');
   if (!v || !v.videoWidth) return;
-  const k = Math.min(1, 600 / Math.max(v.videoWidth, v.videoHeight)), c = document.createElement('canvas');
+  const k = Math.min(1, (pui.kind === 'w-item' ? 1280 : 600) / Math.max(v.videoWidth, v.videoHeight)), c = document.createElement('canvas');
   c.width = Math.round(v.videoWidth * k); c.height = Math.round(v.videoHeight * k);
   const x = c.getContext('2d');
   if (pui.facing === 'user') { x.translate(c.width, 0); x.scale(-1, 1); } // как в зеркале — так, как человек себя видел
@@ -5145,7 +5129,7 @@ function start() {
   };
   document.addEventListener('pointerdown', (e) => {
     if (reduceMotion || !e.target.closest) return;
-    if (e.target.closest('.btn,input,textarea,.tabs,.composer,a,.flat.edit,.wtools,.wlayers,.wrow')) return;
+    if (e.target.closest('.btn,input,textarea,.tabs,.composer,a,.flat.edit,.wtools,.wrow,.wlist')) return;
     const el = e.target.closest(TILT); if (!el) return;
     if (getComputedStyle(el).position === 'static') el.style.position = 'relative';
     el.classList.add('tilt', 'held'); cur = el; sx = e.clientX; sy = e.clientY;
@@ -5173,17 +5157,15 @@ function start() {
   });
 })();
 
-// ---------- гардероб: вещи без фона, сборка образа, оценка ИИ, лента ----------
-// Вещи (категория, название, цвет) лежат в S.wd и синхронизируются с облаком, сами картинки — в IndexedDB.
-const W_CATS = [['outer', 'Верхняя', '🧥'], ['top', 'Верх', '👕'], ['bottom', 'Низ', '👖'], ['shoes', 'Обувь', '👟'], ['acc', 'Аксессуары', '🧢']];
-const W_CAT = Object.fromEntries(W_CATS.map((c) => [c[0], c]));
+// ---------- гардероб: вещи без фона и образы на белом холсте ----------
+// Вещи и образы лежат в S.wd (синхронизируется с облаком), картинки вещей — в IndexedDB.
+// Образ — раскладка lay: [{ id, x, y, w, h, r }] в процентах холста (x, y — центр), порядок = слои снизу вверх.
 const W_COLORS = [['чёрный', [22, 22, 24]], ['белый', [240, 240, 238]], ['серый', [128, 128, 130]], ['светло-серый', [190, 190, 192]], ['бежевый', [214, 194, 160]], ['коричневый', [110, 72, 44]], ['тёмно-синий', [28, 36, 78]], ['синий', [50, 90, 200]], ['голубой', [135, 180, 228]], ['зелёный', [52, 128, 72]], ['оливковый', [112, 110, 54]], ['хаки', [150, 140, 95]], ['красный', [192, 34, 42]], ['бордовый', [112, 24, 38]], ['розовый', [236, 152, 182]], ['фиолетовый', [112, 64, 160]], ['жёлтый', [232, 200, 52]], ['оранжевый', [230, 120, 40]], ['деним', [70, 100, 140]]];
-// wlay — раскладка образа: [{ id, x, y, w, h, r }] в процентах холста (x, y — центр), порядок = слои снизу вверх
-let wtab = 'items', wfilter = 'all', wlay = [], wsel = null, wres = null, wbusy = false, wLoading = false, bgLib = null;
+let wview = 'list', wedit = null, wlay = [], wsel = null, wres = null, wbusy = false, wLoading = false, bgLib = null, wHeld = false;
 const WIMG = {};
 const wd = () => (S.wd = S.wd || { items: [], looks: [] });
 const wItem = (id) => wd().items.find((i) => i.id === id);
-const wName = (i) => i.name || W_CAT[i.cat][1];
+const wId = () => 'w' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
 
 // Картинки подтягиваем из IndexedDB один раз и держим в памяти
 function wLoadImgs() {
@@ -5193,105 +5175,124 @@ function wLoadImgs() {
   Promise.all(miss.map((i) => photoDB.get(i.id).then((d) => { WIMG[i.id] = d || ''; }).catch(() => { WIMG[i.id] = ''; })))
     .then(() => { wLoading = false; if (tab === 'wardrobe' || modal) render(); });
 }
-const wImg = (id) => { const it = wItem(id); return WIMG[id] ? `<img src="${WIMG[id]}" alt="${esc(it ? wName(it) : '')}">` : `<span class="wph">${it ? W_CAT[it.cat][2] : '👕'}</span>`; };
+const wImg = (id) => WIMG[id] ? `<img src="${WIMG[id]}" alt="" draggable="false">` : '<span class="wph"></span>';
 
-// Вырезаем фон нейросетью прямо в телефоне (модель ~44 МБ, качается один раз и кэшируется)
+// ---------- вырезка фона ----------
+// Нейросеть работает прямо в телефоне. Точная модель (~88 МБ) качается один раз и дальше берётся из кэша.
 async function removeBg(src, onProgress) {
   bgLib = bgLib || import('https://cdn.jsdelivr.net/npm/@imgly/background-removal@1.7.0/+esm');
   const m = await bgLib;
-  const blob = await m.removeBackground(src, { model: 'isnet_quint8', output: { format: 'image/png' }, progress: (k, cur, tot) => onProgress && onProgress(k, cur, tot) });
+  const blob = await m.removeBackground(src, { model: 'isnet_fp16', output: { format: 'image/png' }, progress: (k, cur, tot) => onProgress && onProgress(k, cur, tot) });
   return new Promise((res, rej) => { const r = new FileReader(); r.onload = () => res(r.result); r.onerror = rej; r.readAsDataURL(blob); });
 }
-// Обрезаем пустые края, уменьшаем и определяем основной цвет вещи
-function wFinish(src) {
+// Чистим маску: убираем мелкие ошмётки фона, делаем край чётче, обрезаем пустые поля, определяем цвет
+function wFinish(src, raw) {
   return new Promise((res, rej) => {
     const img = new Image();
     img.onload = () => {
       const w = img.width, h = img.height, c = document.createElement('canvas');
       c.width = w; c.height = h;
       const x = c.getContext('2d'); x.drawImage(img, 0, 0);
-      const d = x.getImageData(0, 0, w, h).data, hist = {};
+      const id = x.getImageData(0, 0, w, h), d = id.data, n = w * h;
+      if (!raw) {
+        // связные области маски: оставляем вещь, выкидываем мелкие островки
+        const lab = new Int32Array(n), st = new Int32Array(n), sizes = [0];
+        let L = 0;
+        for (let p = 0; p < n; p++) {
+          if (lab[p] || d[p * 4 + 3] < 128) continue;
+          L++; let top = 0, cnt = 0; st[top++] = p; lab[p] = L;
+          while (top) {
+            const q = st[--top], qx = q % w; cnt++;
+            if (qx > 0 && !lab[q - 1] && d[(q - 1) * 4 + 3] >= 128) { lab[q - 1] = L; st[top++] = q - 1; }
+            if (qx < w - 1 && !lab[q + 1] && d[(q + 1) * 4 + 3] >= 128) { lab[q + 1] = L; st[top++] = q + 1; }
+            if (q >= w && !lab[q - w] && d[(q - w) * 4 + 3] >= 128) { lab[q - w] = L; st[top++] = q - w; }
+            if (q < n - w && !lab[q + w] && d[(q + w) * 4 + 3] >= 128) { lab[q + w] = L; st[top++] = q + w; }
+          }
+          sizes.push(cnt);
+        }
+        let big = 0; for (const s of sizes) if (s > big) big = s;
+        const keep = sizes.map((s) => s >= big * 0.12);
+        for (let p = 0; p < n; p++) {
+          let a = d[p * 4 + 3];
+          if (a >= 128 && !keep[lab[p]]) a = 0;
+          // мягкий край оставляем, полупрозрачную дымку убираем
+          a = a < 50 ? 0 : a > 205 ? 255 : Math.round(((a - 50) / 155) * 255);
+          d[p * 4 + 3] = a;
+        }
+        x.putImageData(id, 0, 0);
+      }
+      const hist = {};
       let x0 = w, y0 = h, x1 = -1, y1 = -1;
       for (let y = 0; y < h; y++) for (let i = 0; i < w; i++) {
         const p = (y * w + i) * 4;
         if (d[p + 3] < 60) continue;
         if (i < x0) x0 = i; if (i > x1) x1 = i; if (y < y0) y0 = y; if (y > y1) y1 = y;
-        if ((i + y) % 3) continue;
+        if ((i + y) % 5) continue;
         const k = (d[p] >> 4) + ',' + (d[p + 1] >> 4) + ',' + (d[p + 2] >> 4);
         hist[k] = (hist[k] || 0) + 1;
       }
       if (x1 < 0) { x0 = 0; y0 = 0; x1 = w - 1; y1 = h - 1; }
-      const pad = Math.round(Math.max(x1 - x0, y1 - y0) * 0.04), cw = x1 - x0 + 1 + pad * 2, ch = y1 - y0 + 1 + pad * 2;
-      const k = Math.min(1, 520 / Math.max(cw, ch)), o = document.createElement('canvas');
+      const pad = Math.round(Math.max(x1 - x0, y1 - y0) * 0.03), cw = x1 - x0 + 1 + pad * 2, ch = y1 - y0 + 1 + pad * 2;
+      const k = Math.min(1, 800 / Math.max(cw, ch)), o = document.createElement('canvas');
       o.width = Math.round(cw * k); o.height = Math.round(ch * k);
-      o.getContext('2d').drawImage(c, x0 - pad, y0 - pad, cw, ch, 0, 0, o.width, o.height);
-      let url = o.toDataURL('image/webp', 0.86);
+      const ox = o.getContext('2d'); ox.imageSmoothingQuality = 'high';
+      ox.drawImage(c, x0 - pad, y0 - pad, cw, ch, 0, 0, o.width, o.height);
+      let url = o.toDataURL('image/webp', 0.88);
       if (!url.startsWith('data:image/webp')) url = o.toDataURL('image/png');
-      // самый частый оттенок → ближайший понятный цвет
       const top = Object.entries(hist).sort((a, b) => b[1] - a[1])[0];
       let color = '';
       if (top) {
         const rgb = top[0].split(',').map((v) => v * 16 + 8);
-        color = W_COLORS.map(([n, c2]) => [n, (c2[0] - rgb[0]) ** 2 + (c2[1] - rgb[1]) ** 2 + (c2[2] - rgb[2]) ** 2]).sort((a, b) => a[1] - b[1])[0][0];
+        color = W_COLORS.map(([nm, c2]) => [nm, (c2[0] - rgb[0]) ** 2 + (c2[1] - rgb[1]) ** 2 + (c2[2] - rgb[2]) ** 2]).sort((a, b) => a[1] - b[1])[0][0];
       }
-      res({ url, color, ratio: ch / cw });
+      res({ url, color });
     };
     img.onerror = rej; img.src = src;
   });
 }
 const wPreview = (m) => m.busy
-  ? `<img src="${m.src}" alt="" class="wsrc"><div class="wscan"></div><div class="wprog mono" id="wprog">Вырезаю фон…</div>`
+  ? `<img src="${m.src}" alt="" class="wsrc"><div class="wscan"></div><div class="wprog" id="wprog">Убираю фон…</div>`
   : `<img src="${m.cut}" alt="" class="wcut">`;
+const wNote = (m) => m.busy ? 'Обычно 5–20 секунд. В первый раз дольше — телефон качает нейросеть.' : m.nocut ? 'Фон убрать не вышло — сохраним фото как есть.' : '';
 async function wAddPhoto(data) {
-  modal = { kind: 'w-add', src: data, cut: null, busy: true, cat: 'top', name: '', color: '' };
+  modal = { kind: 'w-add', src: data, cut: null, busy: true, name: '', color: '' };
   render();
   const me = modal;
   let out = null;
   try {
     out = await wFinish(await removeBg(data, (k, cur, tot) => {
       const el = document.getElementById('wprog');
-      if (el) el.textContent = /fetch/.test(k) && tot ? `Качаю нейросеть · ${Math.round((cur / tot) * 100)}%` : 'Вырезаю фон…';
+      if (el) el.textContent = /fetch/.test(k) && tot ? `Загружаю нейросеть · ${Math.round((cur / tot) * 100)}%` : 'Убираю фон…';
     }));
   } catch (e) {
     console.warn('[mogg] bg removal failed', e);
-    try { out = await wFinish(data); out.nocut = true; } catch (e2) {}
+    try { out = await wFinish(data, true); out.nocut = true; } catch (e2) {}
   }
   if (modal !== me) return;
   me.busy = false;
   if (!out) { modal = null; toast('Не получилось обработать фото'); render(); return; }
   me.cut = out.url; me.color = out.color; me.nocut = !!out.nocut;
-  if (out.ratio > 1.6 && me.cat === 'top') me.cat = 'bottom';
   haptic(out.nocut ? 'light' : 'success');
   // не перерисовываем всё окно, чтобы не сбить ввод названия
-  const pv = document.getElementById('wpv'), sv = document.getElementById('wsave');
-  if (pv && sv) { pv.innerHTML = wPreview(me); sv.disabled = false; const n = document.getElementById('wnote'); if (n) n.innerHTML = wNote(me); document.querySelectorAll('[data-act="w-cat"]').forEach((b) => b.classList.toggle('on', b.dataset.k === me.cat)); }
-  else render();
+  const pv = document.getElementById('wpv'), sv = document.getElementById('wsave'), nt = document.getElementById('wnote');
+  if (pv && sv) { pv.innerHTML = wPreview(me); sv.disabled = false; if (nt) nt.textContent = wNote(me); } else render();
 }
-const wNote = (m) => m.busy ? 'Обычно 5–20 секунд. В первый раз дольше — качается нейросеть.' : m.nocut ? 'Фон убрать не вышло — сохраним фото как есть.' : `Фон убран${m.color ? ' · цвет: ' + m.color : ''}`;
 
-// Раскладка «флэтлей»: у каждой категории своё место по умолчанию, дальше вещи можно двигать, крутить и менять размер
-const W_SLOT = { outer: [24, 30, 44, 50], top: [51, 24, 44, 42], bottom: [51, 61, 40, 44], shoes: [74, 85.5, 36, 23], acc: [84.5, 18, 25, 24], acc2: [16, 74, 24, 24] };
-const W_ORDER = ['outer', 'bottom', 'top', 'shoes', 'acc'];
-function wPlace(id, lay) {
-  const it = wItem(id), slot = it.cat === 'acc' && lay.some((l) => (wItem(l.id) || {}).cat === 'acc') ? 'acc2' : it.cat;
-  const [x, y, w, h] = W_SLOT[slot];
-  return { id, x, y, w, h, r: 0 };
-}
-function wDefLay(ids) {
-  const lay = [];
-  ids.map(wItem).filter(Boolean).sort((a, b) => W_ORDER.indexOf(a.cat) - W_ORDER.indexOf(b.cat)).forEach((i) => lay.push(wPlace(i.id, lay)));
-  return lay;
-}
-const wLookLay = (l) => (l.lay || wDefLay(l.items)).filter((p) => wItem(p.id));
+// ---------- холст ----------
 const wPos = (p) => `left:${p.x}%;top:${p.y}%;width:${p.w}%;height:${p.h}%;transform:translate(-50%,-50%) rotate(${p.r || 0}deg)`;
-function wFlat(lay, cls, edit) {
-  return `<div class="flat ${cls || ''} ${edit ? 'edit' : ''}">${lay.length ? lay.map((p, i) => `<div class="fl ${edit && p.id === wsel ? 'sel' : ''}" data-id="${p.id}" style="${wPos(p)};z-index:${i + 1}">${wImg(p.id)}${edit ? '<i class="flh"></i>' : ''}</div>`).join('') : '<div class="flat-empty">Нажимай на вещи ниже —<br>они лягут сюда</div>'}</div>`;
+const wLookLay = (l) => (l.lay || (l.items || []).map((id, i) => ({ id, x: 50, y: 30 + i * 20, w: 45, h: 40, r: 0 }))).filter((p) => wItem(p.id));
+function wPlace(id) {
+  const n = wlay.length, dx = [0, -14, 14, -10, 10][n % 5], dy = [0, 8, 8, -8, -8][n % 5];
+  return { id, x: 50 + dx, y: 46 + dy, w: 46, h: 46, r: 0 };
 }
-const wScore = (s) => s ? `<span class="wscore" style="--sc:${s >= 8 ? '#22e08a' : s >= 6 ? '#ffd21a' : '#ff5a1c'}">${String(s).replace('.', ',')}<small>/10</small></span>` : '';
+function wFlat(lay, cls, edit) {
+  return `<div class="flat ${cls || ''} ${edit ? 'edit' : ''}">${lay.map((p, i) => `<div class="fl ${edit && p.id === wsel ? 'sel' : ''}" data-id="${p.id}" style="${wPos(p)};z-index:${i + 1}">${wImg(p.id)}${edit ? '<i class="flh"></i>' : ''}</div>`).join('')}${edit && !lay.length ? '<div class="flat-empty">Добавь вещи снизу —<br>они появятся здесь</div>' : ''}</div>`;
+}
+const wScore = (s) => s ? `<span class="wscore" style="--sc:${s >= 8 ? '#16b86e' : s >= 6 ? '#e8a400' : '#e8521c'}">${String(s).replace('.', ',')}</span>` : '';
 function wResBody(r) {
   if (r.text) return `<div class="wtxt">${esc(r.text)}</div>`;
-  return [['Что работает', r.plus, '#22e08a'], ['Добавить', r.add, '#1fdcff'], ['Поменять', r.swap, '#ff5a1c']].filter((x) => x[1])
-    .map(([t, v, c]) => `<div class="wtip" style="--c:${c}"><span class="mono">${t}</span><div>${esc(v)}</div></div>`).join('');
+  return [['Что работает', r.plus, '#16b86e'], ['Добавить', r.add, '#1597c9'], ['Поменять', r.swap, '#e8521c']].filter((x) => x[1])
+    .map(([t, v, c]) => `<div class="wtip" style="--c:${c}"><b>${t}</b>${esc(v)}</div>`).join('');
 }
 function wParse(t) {
   t = t.replace(/\*+/g, '');
@@ -5302,131 +5303,104 @@ function wParse(t) {
   return r;
 }
 // Вне Telegram сервер ИИ не пускает — показываем пример, чтобы было видно, как это выглядит
-function wDemo(its) {
-  const has = (c) => its.some((i) => i.cat === c), dark = its.filter((i) => /чёрн|тёмно|серый/.test(i.color || '')).length;
-  return { score: has('shoes') && its.length >= 3 ? 8 : 6.5, style: has('outer') ? 'Смарт-кэжуал' : dark >= 2 ? 'Минимализм' : 'Кэжуал',
-    plus: 'Цвета не спорят друг с другом, силуэт собранный.', add: has('acc') ? 'Можно добавить часы или ремень в тон обуви.' : 'Не хватает акцента — кепка, часы или сумка.',
-    swap: has('shoes') ? 'Если низ широкий, обувь лучше массивнее.' : 'Добавь обувь — без неё образ не собран.' };
-}
+const wDemo = (n) => ({ score: n >= 3 ? 8 : 6.5, style: 'Кэжуал', plus: 'Цвета не спорят друг с другом, силуэт собранный.', add: 'Не хватает акцента — часы, кепка или сумка.', swap: 'Если низ широкий, обувь лучше массивнее.' });
 
+// ---------- экраны ----------
 function renderWardrobe() {
   wLoadImgs();
-  const W = wd(), seg = [['items', `Вещи${W.items.length ? ' · ' + W.items.length : ''}`], ['build', 'Собрать'], ['feed', `Лента${W.looks.length ? ' · ' + W.looks.length : ''}`]];
-  let body = '';
-  if (wtab === 'items') {
-    const list = W.items.filter((i) => wfilter === 'all' || i.cat === wfilter);
-    body = `<button class="btn" data-act="photo" data-k="w-item" style="margin-bottom:12px">📸 Добавить вещь</button>
-      ${W.items.length ? `<div class="chips wfil"><button class="chip ${wfilter === 'all' ? 'on' : ''}" data-act="w-fil" data-k="all">Все</button>${W_CATS.filter((c) => W.items.some((i) => i.cat === c[0])).map((c) => `<button class="chip ${wfilter === c[0] ? 'on' : ''}" data-act="w-fil" data-k="${c[0]}">${c[2]} ${c[1]}</button>`).join('')}</div>
-      <div class="card"><div class="wgrid">${list.map((i) => `<button class="wtile" data-act="w-open" data-id="${i.id}">${wImg(i.id)}<span class="wcap">${esc(wName(i))}</span></button>`).join('')}</div></div>`
-      : `<div class="card wempty"><div class="disp" style="font-size:26px;margin:0 0 6px">Шкаф пока пустой</div><div class="hint">Сфоткай вещь на кровати или на полу — фон уберём сами. Из вещей соберёшь образ, а ИИ его оценит.</div></div>`}`;
-  }
-  if (wtab === 'build') {
-    if (W.items.length < 2) body = `<div class="card wempty"><div class="disp" style="font-size:24px;margin:0 0 6px">Нужно хотя бы 2 вещи</div><div class="hint">Добавь вещи во вкладке «Вещи» — и собирай из них образы.</div><button class="btn sm" data-act="w-tab" data-k="items" style="margin-top:14px">К вещам</button></div>`;
-    else body = `<div class="card wbuild">${wFlat(wlay, '', true)}
-        ${wlay.length ? `<div class="hint wgest">${wsel ? 'Тяни — двигать · уголок или два пальца — размер и поворот' : 'Нажми на вещь, чтобы двигать её и менять размер'}</div>
-        <div class="wlayers"><span class="mono">Слои</span>${wlay.slice().reverse().map((p) => `<button class="wly ${p.id === wsel ? 'on' : ''}" data-act="w-sel" data-id="${p.id}">${wImg(p.id)}</button>`).join('')}</div>
-        ${wsel ? `<div class="wtools"><button data-act="w-z" data-d="top" title="Наверх">⤒</button><button data-act="w-z" data-d="up" title="Выше">↑</button><button data-act="w-z" data-d="down" title="Ниже">↓</button><button data-act="w-z" data-d="bottom" title="Вниз">⤓</button><button data-act="w-reset" title="Вернуть на место">↺</button><button data-act="w-rm" class="del" title="Убрать">✕</button></div>` : ''}` : ''}
-        <div class="row" style="margin-top:12px;gap:8px"><button class="btn ghost sm" data-act="w-shuffle" style="flex:1">🎲 Перемешать</button><button class="btn sm" data-act="w-rate" style="flex:1.4" ${wlay.length < 2 || wbusy ? 'disabled' : ''}>${wbusy ? 'Оцениваю…' : '✨ Оценить'}</button></div></div>
-      ${wbusy ? '<div class="card wres"><div class="spin" style="margin:6px auto"></div><div class="hint" style="text-align:center">Стилист смотрит на образ…</div></div>' : ''}
-      ${wres ? `<div class="card wres"><div class="row between"><div><span class="mono">[ оценка ИИ ]</span><div class="disp" style="font-size:26px;margin-top:4px">${esc(wres.style || 'Твой образ')}</div></div>${wScore(wres.score)}</div>
-        ${wResBody(wres)}${wres.demo ? '<div class="hint" style="font-size:12px;margin-top:8px">Это пример. В Telegram образ оценит ИИ.</div>' : ''}
-        <div class="row" style="margin-top:12px;gap:8px">${wres.saved ? '<div class="hint" style="flex:1;text-align:center">✓ В ленте</div>' : '<button class="btn sm" data-act="w-keep" style="flex:1">❤️ В мою ленту</button>'}<button class="btn ghost sm" data-act="w-clear">Заново</button></div></div>` : ''}
-      ${W_CATS.map((c) => { const its = W.items.filter((i) => i.cat === c[0]); return its.length ? `<div class="mono" style="margin:14px 2px 8px">${c[2]} ${c[1]}</div><div class="wrow">${its.map((i) => `<button class="wtile sm ${wlay.some((p) => p.id === i.id) ? 'on' : ''}" data-act="w-pick" data-id="${i.id}">${wImg(i.id)}</button>`).join('')}</div>` : ''; }).join('')}`;
-  }
-  if (wtab === 'feed') {
-    body = W.looks.length ? `<button class="btn" data-act="w-today" style="margin-bottom:12px">🤔 Что надеть сегодня?</button>
-      <div class="wfeed">${W.looks.map((l) => `<button class="wlook" data-act="w-look" data-id="${l.id}">${wFlat(wLookLay(l), 'mini')}<div class="wlb"><b>${esc(l.style || 'Образ')}</b>${wScore(l.score)}</div>${l.worn === today() ? '<span class="wworn mono">сегодня</span>' : ''}</button>`).join('')}</div>`
-      : `<div class="card wempty"><div class="disp" style="font-size:24px;margin:0 0 6px">Лента пустая</div><div class="hint">Собери образ, оцени его и нажми «В мою ленту». Когда не знаешь, что надеть, — загляни сюда.</div><button class="btn sm" data-act="w-tab" data-k="build" style="margin-top:14px">Собрать образ</button></div>`;
-  }
-  return `${topbar('Шкаф')}
-    <div class="seg">${seg.map(([k, l]) => `<button class="${wtab === k ? 'on' : ''}" data-act="w-tab" data-k="${k}">${l}</button>`).join('')}</div>
-    ${body}`;
+  if (wview === 'edit') return wEditView();
+  const L = wd().looks;
+  return `${topbar('Гардероб')}
+    <div class="wlist">
+      <button class="wnew" data-act="w-new"><span class="wplus">+</span><b>Новый образ</b></button>
+      ${L.map((l) => `<button class="wlook" data-act="w-open-look" data-id="${l.id}">${wFlat(wLookLay(l), 'white mini')}${wScore(l.score)}${l.style ? `<span class="wst">${esc(l.style)}</span>` : ''}</button>`).join('')}
+    </div>
+    ${L.length ? '' : '<p class="hint wfirst">Нажми на плюс, добавь вещи и разложи их как нравится. Готовые образы будут здесь — смотри сюда, когда не знаешь, что надеть.</p>'}`;
 }
-
+function wEditView() {
+  const items = wd().items;
+  return `<div class="wbar"><button class="wback" data-act="w-back" aria-label="Назад">←</button><b>${wedit ? 'Образ' : 'Новый образ'}</b><button class="btn sm" data-act="w-save-look" ${wlay.length ? '' : 'disabled'}>Сохранить</button></div>
+    ${wFlat(wlay, 'white', true)}
+    ${wsel ? `<div class="wtools"><button data-act="w-z" data-d="top" aria-label="На самый верх">⤒</button><button data-act="w-z" data-d="up" aria-label="Выше">↑</button><button data-act="w-z" data-d="down" aria-label="Ниже">↓</button><button data-act="w-z" data-d="bottom" aria-label="В самый низ">⤓</button><button data-act="w-rm" class="del" aria-label="Убрать с холста">✕</button></div>`
+      : `<div class="hint wgest">${wlay.length ? 'Нажми на вещь: тяни, чтобы двигать, уголок — размер и поворот' : 'Нажимай на вещи внизу'}</div>`}
+    ${wlay.length >= 2 ? `<button class="wrate" data-act="w-rate" ${wbusy ? 'disabled' : ''}>${wbusy ? 'Оцениваю…' : '✨ Оценить образ'}</button>` : ''}
+    ${wres ? `<div class="wres"><div class="wrh"><div><span class="wsm">оценка ИИ</span><b>${esc(wres.style || 'Твой образ')}</b></div>${wScore(wres.score)}</div>${wResBody(wres)}${wres.demo ? '<div class="wsm" style="margin-top:8px">Это пример. В Telegram образ оценит ИИ.</div>' : ''}</div>` : ''}
+    <div class="wrow">
+      <button class="wadd" data-act="photo" data-k="w-item"><span class="wplus">+</span>Добавить вещь</button>
+      ${items.map((i) => `<button class="wit ${wlay.some((p) => p.id === i.id) ? 'on' : ''}" data-act="w-pick" data-id="${i.id}">${wImg(i.id)}</button>`).join('')}
+    </div>
+    ${items.length ? '<div class="wsm" style="text-align:center;margin-top:6px">Удержи вещь, чтобы удалить её из гардероба</div>' : ''}
+    ${wedit ? '<button class="wdel" data-act="w-del-look">Удалить образ</button>' : ''}`;
+}
 function wModal() {
   const m = modal;
-  if (m.kind === 'w-add') return `<div class="modal"><div class="sheet exs wsheet"><span class="mono">[ новая вещь ]</span>
+  if (m.kind === 'w-add') return `<div class="modal"><div class="sheet wsheet">
       <div class="wpv" id="wpv">${wPreview(m)}</div>
-      <div class="hint" id="wnote" style="font-size:12.5px;margin:-4px 0 12px">${wNote(m)}</div>
-      <div class="mono" style="margin-bottom:8px">Что это?</div>
-      <div class="chips">${W_CATS.map((c) => `<button class="chip ${m.cat === c[0] ? 'on' : ''}" data-act="w-cat" data-k="${c[0]}">${c[2]} ${c[1]}</button>`).join('')}</div>
-      <input class="field" style="margin-top:12px" data-input="w-name" value="${esc(m.name || '')}" maxlength="40" placeholder="Название, например: белая оверсайз футболка">
-      <button class="btn" id="wsave" data-act="w-save" style="margin-top:14px" ${m.busy ? 'disabled' : ''}>Положить в шкаф</button>
-      <button class="btn ghost" data-act="modal-close" style="margin-top:8px;background:none;border:0;height:44px;color:var(--hint)">Отмена</button></div></div>`;
-  if (m.kind === 'w-item') {
+      <div class="wsm" id="wnote">${wNote(m)}</div>
+      <input class="field" data-input="w-name" value="${esc(m.name || '')}" maxlength="40" placeholder="Что это? Например: белая футболка">
+      <button class="btn" id="wsave" data-act="w-save" style="margin-top:12px" ${m.busy ? 'disabled' : ''}>Добавить</button>
+      <button class="btn ghost" data-act="modal-close" style="margin-top:6px;background:none;border:0;height:44px;color:var(--hint)">Отмена</button></div></div>`;
+  if (m.kind === 'w-item-del') {
     const i = wItem(m.id);
     if (!i) return '';
-    return `<div class="modal"><div class="sheet exs wsheet"><span class="mono">[ ${W_CAT[i.cat][1]} ]</span>
-      <div class="wpv">${wImg(i.id)}</div>
-      <div class="disp" style="font-size:26px">${esc(wName(i))}</div>
-      <div class="hint" style="margin-top:4px">${i.color ? 'Цвет: ' + i.color + ' · ' : ''}в шкафу с ${human(i.date)} · в образах: ${wd().looks.filter((l) => l.items.includes(i.id)).length}</div>
-      <button class="btn sm" data-act="w-use" data-id="${i.id}" style="margin-top:14px;width:100%">🧩 Собрать образ с этой вещью</button>
-      <button class="btn ghost sm" data-act="w-del" data-id="${i.id}" style="margin-top:8px;width:100%;color:var(--danger)">Убрать из шкафа</button>
-      <button class="btn ghost" data-act="modal-close" style="margin-top:4px;background:none;border:0;height:44px;color:var(--hint)">Закрыть</button></div></div>`;
-  }
-  if (m.kind === 'w-look') {
-    const l = wd().looks.find((x) => x.id === m.id);
-    if (!l) return '';
-    return `<div class="modal"><div class="sheet exs wsheet"><span class="mono">[ ${m.today ? 'сегодня предлагаю' : 'образ из ленты'} ]</span>
-      ${wFlat(wLookLay(l))}
-      <div class="row between" style="margin-top:12px"><div class="disp" style="font-size:26px">${esc(l.style || 'Образ')}</div>${wScore(l.score)}</div>
-      ${wResBody(l)}
-      <div class="hint" style="font-size:12px;margin-top:8px">${l.items.map(wItem).filter(Boolean).map((i) => esc(wName(i))).join(' · ')}${l.worn ? ' · последний раз: ' + human(l.worn) : ''}</div>
-      ${l.worn === today() ? '<div class="hint" style="text-align:center;margin-top:14px">✓ Сегодня в нём</div>' : `<button class="btn" data-act="w-wear" data-id="${l.id}" style="margin-top:14px">👌 Надеваю сегодня</button>`}
-      ${m.today && wd().looks.length > 1 ? '<button class="btn ghost sm" data-act="w-today" style="margin-top:8px;width:100%">🎲 Другой вариант</button>' : ''}
-      <button class="btn ghost sm" data-act="w-unlook" data-id="${l.id}" style="margin-top:8px;width:100%;color:var(--danger)">Убрать из ленты</button>
-      <button class="btn ghost" data-act="modal-close" style="margin-top:4px;background:none;border:0;height:44px;color:var(--hint)">Закрыть</button></div></div>`;
+    return `<div class="modal"><div class="sheet wsheet"><div class="wpv">${wImg(i.id)}</div>
+      <div style="font-weight:800;font-size:17px;margin-bottom:4px">Удалить вещь из гардероба?</div>
+      <div class="wsm">Она пропадёт и из сохранённых образов.</div>
+      <button class="btn" data-act="w-del-item" data-id="${i.id}" style="margin-top:14px;--bc:#ff5a1c;--bc2:#ff2d87;--bt:#fff">Удалить</button>
+      <button class="btn ghost" data-act="modal-close" style="margin-top:6px;background:none;border:0;height:44px;color:var(--hint)">Отмена</button></div></div>`;
   }
   return '';
 }
 
-const wId = () => 'w' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
 Object.assign(ACT, {
-  'w-tab'(el) { wtab = el.dataset.k; haptic('light'); render(); window.scrollTo(0, 0); },
-  'w-fil'(el) { wfilter = el.dataset.k; haptic('light'); render(); },
-  'w-cat'(el) { if (!modal) return; modal.cat = el.dataset.k; haptic('light'); document.querySelectorAll('[data-act="w-cat"]').forEach((b) => b.classList.toggle('on', b.dataset.k === modal.cat)); },
+  'w-new'() { wview = 'edit'; wedit = null; wlay = []; wsel = null; wres = null; haptic('light'); render(); window.scrollTo(0, 0); },
+  'w-open-look'(el) {
+    const l = wd().looks.find((x) => x.id === el.dataset.id);
+    if (!l) return;
+    wview = 'edit'; wedit = l.id; wlay = wLookLay(l).map((p) => ({ ...p })); wsel = null;
+    wres = l.score || l.style || l.text ? { score: l.score, style: l.style, plus: l.plus, add: l.add, swap: l.swap, text: l.text } : null;
+    haptic('light'); render(); window.scrollTo(0, 0);
+  },
+  'w-back'() { wview = 'list'; wsel = null; haptic('light'); render(); window.scrollTo(0, 0); },
+  'w-save-look'() {
+    if (!wlay.length) return;
+    const W = wd(), lay = wlay.map((p) => ({ id: p.id, x: +p.x.toFixed(1), y: +p.y.toFixed(1), w: +p.w.toFixed(1), h: +p.h.toFixed(1), r: Math.round(p.r || 0) }));
+    const r = wres && !wres.demo ? wres : {};
+    const data = { items: lay.map((p) => p.id), lay, score: r.score || null, style: r.style || '', plus: r.plus || '', add: r.add || '', swap: r.swap || '', text: r.text || '' };
+    const old = wedit && W.looks.find((l) => l.id === wedit);
+    if (old) Object.assign(old, data); else W.looks.unshift({ id: wId(), date: today(), ...data });
+    wview = 'list'; wsel = null; haptic('success'); save(); render(); window.scrollTo(0, 0);
+    toast(old ? 'Образ обновлён' : 'Образ сохранён ❤️'); if (!old) track('wardrobe_look');
+  },
+  'w-del-look'() { const W = wd(); W.looks = W.looks.filter((l) => l.id !== wedit); wview = 'list'; wedit = null; save(); render(); toast('Образ удалён'); },
   'w-save'() {
     const m = modal;
     if (!m || m.busy || !m.cut) return;
     const id = wId();
-    wd().items.unshift({ id, cat: m.cat, name: (m.name || '').trim().slice(0, 40), color: m.color || '', date: today() });
+    wd().items.unshift({ id, name: (m.name || '').trim().slice(0, 40), color: m.color || '', date: today() });
     WIMG[id] = m.cut;
     photoDB.put(id, m.cut).catch(() => toast('Не хватило памяти телефона для фото'));
-    modal = null; wtab = 'items'; haptic('success'); save(); render(); toast('Вещь в шкафу 👌'); track('wardrobe_item');
+    modal = null;
+    if (wview === 'edit') { wlay.push(wPlace(id)); wsel = id; wres = null; }
+    haptic('success'); save(); render(); track('wardrobe_item');
   },
-  'w-open'(el) { modal = { kind: 'w-item', id: el.dataset.id }; haptic('light'); render(); },
-  'w-del'(el) {
-    const id = el.dataset.id, W = wd();
-    W.items = W.items.filter((i) => i.id !== id);
-    W.looks.forEach((l) => { l.items = l.items.filter((x) => x !== id); if (l.lay) l.lay = l.lay.filter((p) => p.id !== id); });
-    W.looks = W.looks.filter((l) => l.items.length >= 2);
-    wlay = wlay.filter((p) => p.id !== id); if (wsel === id) wsel = null; delete WIMG[id];
-    photoDB.put(id, '').catch(() => {});
-    modal = null; save(); render(); toast('Убрал из шкафа');
-  },
-  'w-use'(el) { modal = null; wtab = 'build'; wres = null; ACT['w-pick'](el, true); window.scrollTo(0, 0); },
-  'w-pick'(el, keep) {
-    const id = el.dataset.id, it = wItem(id);
-    if (!it) return;
-    if (wlay.some((p) => p.id === id)) { if (!keep) { wlay = wlay.filter((p) => p.id !== id); if (wsel === id) wsel = null; } }
-    else {
-      // одна вещь на категорию (аксессуаров — две): новая встаёт на место старой
-      const same = wlay.filter((p) => (wItem(p.id) || {}).cat === it.cat);
-      if (it.cat !== 'acc' || same.length >= 2) wlay = wlay.filter((p) => p.id !== same[0]?.id);
-      const p = wPlace(id, wlay), below = wlay.findIndex((q) => W_ORDER.indexOf((wItem(q.id) || {}).cat) > W_ORDER.indexOf(it.cat));
-      below < 0 ? wlay.push(p) : wlay.splice(below, 0, p);
-      wsel = id;
-    }
+  'w-pick'(el) {
+    if (wHeld) { wHeld = false; return; }
+    const id = el.dataset.id;
+    if (!wItem(id)) return;
+    if (wlay.some((p) => p.id === id)) { wlay = wlay.filter((p) => p.id !== id); if (wsel === id) wsel = null; }
+    else { wlay.push(wPlace(id)); wsel = id; }
     wres = null; haptic('light'); render();
   },
-  'w-shuffle'() {
-    const W = wd(), any = (c) => { const a = W.items.filter((i) => i.cat === c); return a.length ? a[Math.floor(Math.random() * a.length)].id : null; };
-    let ids = [any('top'), any('bottom'), any('shoes'), Math.random() < 0.5 ? any('outer') : null, Math.random() < 0.5 ? any('acc') : null].filter(Boolean);
-    if (ids.length < 2) ids = W.items.slice().sort(() => Math.random() - 0.5).slice(0, 2).map((i) => i.id);
-    wlay = wDefLay(ids); wsel = null; wres = null; haptic('medium'); render();
+  'w-del-item'(el) {
+    const id = el.dataset.id, W = wd();
+    W.items = W.items.filter((i) => i.id !== id);
+    W.looks.forEach((l) => { l.items = (l.items || []).filter((x) => x !== id); if (l.lay) l.lay = l.lay.filter((p) => p.id !== id); });
+    W.looks = W.looks.filter((l) => l.items.length);
+    wlay = wlay.filter((p) => p.id !== id); if (wsel === id) wsel = null; delete WIMG[id];
+    photoDB.put(id, '').catch(() => {});
+    modal = null; save(); render(); toast('Вещь удалена');
   },
-  'w-clear'() { wlay = []; wsel = null; wres = null; render(); },
-  'w-sel'(el) { wsel = wsel === el.dataset.id ? null : el.dataset.id; haptic('light'); render(); },
   'w-z'(el) {
     const i = wlay.findIndex((p) => p.id === wsel);
     if (i < 0) return;
@@ -5434,47 +5408,42 @@ Object.assign(ACT, {
     const to = d === 'top' ? wlay.length : d === 'bottom' ? 0 : d === 'up' ? Math.min(wlay.length, i + 1) : Math.max(0, i - 1);
     wlay.splice(to, 0, p); haptic('light'); render();
   },
-  'w-reset'() { const i = wlay.findIndex((p) => p.id === wsel); if (i < 0) return; const rest = wlay.filter((p) => p.id !== wsel); wlay[i] = wPlace(wsel, rest); haptic('light'); render(); },
   'w-rm'() { wlay = wlay.filter((p) => p.id !== wsel); wsel = null; wres = null; haptic('light'); render(); },
   async 'w-rate'() {
     const its = wlay.map((p) => wItem(p.id)).filter(Boolean);
     if (wbusy || its.length < 2) return;
     wbusy = true; wres = null; render();
-    const desc = its.map((i) => `${W_CAT[i.cat][1].toLowerCase()} — ${i.name || 'без названия'}${i.color ? ' (' + i.color + ')' : ''}`).join('; ');
-    const message = `Оцени мой аутфит как стилист. Вещи: ${desc}. Ответь строго по шаблону, каждый пункт с новой строки, коротко и по делу:\nОЦЕНКА: число от 1 до 10\nСТИЛЬ: как называется этот стиль, 1–3 слова\nПЛЮСЫ: что в образе работает\nДОБАВИТЬ: чего не хватает\nПОМЕНЯТЬ: что заменить и на что`;
+    const message = `Оцени мой аутфит как стилист. Вещи: ${its.map((i) => (i.name || 'вещь без названия') + (i.color ? ' (' + i.color + ')' : '')).join('; ')}. Ответь строго по шаблону, каждый пункт с новой строки, коротко и по делу:\nОЦЕНКА: число от 1 до 10\nСТИЛЬ: как называется этот стиль, 1–3 слова\nПЛЮСЫ: что в образе работает\nДОБАВИТЬ: чего не хватает\nПОМЕНЯТЬ: что заменить и на что`;
     const r = rank();
     const j = AI_ENDPOINT ? await aiCall('chat', { message, history: [], context: { day: dayNum(today()), streak: streak(), level: `${r.lvl} · ${r.name}`, focus: S.plan.focus.map((p) => PILLARS[p].name), tone: tone(), protocols: [], analysis: '', journey: [], budget: S.budget || 0, issues: [], catalog: [] } }, 45000) : { error: 'off' };
     wbusy = false;
     if (j.text) { wres = wParse(j.text); haptic('success'); if (ME && ME.paywall) meRefresh(); }
     else if (j.error === 'pro') { render(); proOpen('chat'); return; }
     else if (j.error === 'limit') toast('Лимит сообщений ИИ на сегодня кончился — завтра оценю');
-    else if (j.error === 'not_telegram' || j.error === 'off') wres = { ...wDemo(its), demo: true };
+    else if (j.error === 'not_telegram' || j.error === 'off') wres = { ...wDemo(its.length), demo: true };
     else toast(`ИИ не ответил (${j.error || 'пустой ответ'}) — попробуй ещё раз`);
-    if (wres) wres.items = wlay.map((p) => p.id);
     render();
     if (wres) setTimeout(() => { const c = document.querySelector('.wres'); c && c.scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 60);
-  },
-  'w-keep'() {
-    if (!wres || wres.saved) return;
-    wd().looks.unshift({ id: wId(), items: wlay.map((p) => p.id), lay: wlay.map((p) => ({ ...p, x: +p.x.toFixed(1), y: +p.y.toFixed(1), w: +p.w.toFixed(1), h: +p.h.toFixed(1), r: Math.round(p.r || 0) })), score: wres.score, style: wres.style, plus: wres.plus, add: wres.add, swap: wres.swap, text: wres.text, date: today() });
-    wres.saved = true; haptic('success'); save(); render(); toast('Образ в твоей ленте ❤️'); track('wardrobe_look');
-  },
-  'w-look'(el) { modal = { kind: 'w-look', id: el.dataset.id }; haptic('light'); render(); },
-  'w-today'() {
-    const L = wd().looks;
-    if (!L.length) return;
-    const cur = modal && modal.kind === 'w-look' ? modal.id : null;
-    // сначала то, что давно не надевал и выше оценено
-    const pool = L.filter((l) => l.id !== cur || L.length === 1).map((l) => ({ l, w: (l.score || 6) + (l.worn ? Math.min(10, (parse(today()) - parse(l.worn)) / DAY) : 10) + Math.random() * 6 }));
-    pool.sort((a, b) => b.w - a.w);
-    modal = { kind: 'w-look', id: pool[0].l.id, today: true }; haptic('medium'); render();
-  },
-  'w-wear'(el) { const l = wd().looks.find((x) => x.id === el.dataset.id); if (!l) return; l.worn = today(); haptic('success'); save(); render(); toast('Отличный выбор 🔥'); },
-  'w-unlook'(el) { const W = wd(); W.looks = W.looks.filter((l) => l.id !== el.dataset.id); modal = null; save(); render(); toast('Убрал из ленты'); }
+  }
 });
 document.addEventListener('input', (e) => { if (e.target.dataset.input === 'w-name' && modal && modal.kind === 'w-add') modal.name = e.target.value; });
 
-// Жесты на холсте образа: один палец — двигать, уголок — размер, два пальца — размер и поворот
+// Долгое нажатие на вещь внизу — удалить из гардероба
+(() => {
+  let t = null, sx = 0, sy = 0;
+  const stop = () => { clearTimeout(t); t = null; };
+  document.addEventListener('pointerdown', (e) => {
+    const b = e.target.closest && e.target.closest('.wit');
+    if (!b) return;
+    sx = e.clientX; sy = e.clientY; wHeld = false; stop();
+    t = setTimeout(() => { t = null; wHeld = true; haptic('medium'); modal = { kind: 'w-item-del', id: b.dataset.id }; render(); }, 550);
+  });
+  document.addEventListener('pointermove', (e) => { if (t && Math.hypot(e.clientX - sx, e.clientY - sy) > 10) stop(); });
+  addEventListener('pointerup', stop, true); addEventListener('pointercancel', stop, true);
+  document.addEventListener('contextmenu', (e) => { if (e.target.closest && e.target.closest('.wit, .flat.edit')) e.preventDefault(); });
+})();
+
+// Жесты на холсте: один палец — двигать, уголок — размер и поворот, два пальца — то же щипком
 (() => {
   const ptr = new Map();
   let g = null;
