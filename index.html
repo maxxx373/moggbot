@@ -1249,6 +1249,11 @@ button:active,label.card:active{transform:scale(.97)}
 @keyframes wscan{to{top:100%}}
 .wprog{position:absolute;left:50%;bottom:12px;transform:translateX(-50%);white-space:nowrap;padding:6px 12px;border-radius:12px;background:rgba(7,8,12,.75);color:#fff;font-size:12px;font-weight:700}
 .wraw{display:block;margin-top:8px;padding:8px 14px;border-radius:12px;background:#fff;color:#07080c;font-weight:800;font-size:13px;box-shadow:inset 0 0 0 1px rgba(7,8,12,.12)}
+/* плитки вещей снизу: картинка всегда внутри квадрата */
+.wit{position:relative;overflow:hidden}
+.wit img{position:absolute;left:10px;top:10px;width:calc(100% - 20px);height:calc(100% - 20px);object-fit:contain}
+.wres.bad{background:#fff7f2}
+.wbad{display:block;font-family:var(--disp);text-transform:uppercase;font-size:24px;line-height:1;margin-top:2px;color:#e8521c}
 /* ---------- друзья ---------- */
 .fcard{width:100%;text-align:left}
 .fbadge{padding:4px 10px;border-radius:10px;background:#ff5a1c;color:#fff;font-size:12px;font-weight:800;animation:fpulse 1.6s ease-in-out infinite}
@@ -5217,7 +5222,7 @@ function bgProg(k, cur) {
   const el = document.getElementById('wprog');
   if (!el) return;
   const mb = Object.values(bgParts).reduce((a, x) => a + x, 0) / 1e6;
-  el.textContent = /fetch/.test(k) && mb < BG_MB * 0.98 ? `Загружаю нейросеть · ${Math.min(99, Math.round(mb / BG_MB * 100))}%` : 'Убираю фон…';
+  el.textContent = /fetch/.test(k) && mb < BG_MB * 0.98 ? `Подготовка · ${Math.min(99, Math.round(mb / BG_MB * 100))}%` : 'Убираю фон…';
 }
 const bgLoad = () => (bgLib = bgLib || import('https://cdn.jsdelivr.net/npm/@imgly/background-removal@1.7.0/+esm').catch((e) => { bgLib = null; throw e; }));
 // Начинаем качать заранее — пока человек открывает редактор и выбирает фото
@@ -5300,7 +5305,7 @@ function wFinish(src, raw) {
 const wPreview = (m) => m.busy
   ? `<img src="${m.src}" alt="" class="wsrc"><div class="wscan"></div><div class="wprog" id="wprog">Убираю фон…</div>`
   : `<img src="${m.cut}" alt="" class="wcut">`;
-const wNote = (m) => m.busy ? (m.slow ? 'Долго? Можно не ждать и добавить вещь с фоном.' : 'Обычно 5–20 секунд. В первый раз дольше — телефон качает нейросеть.') : m.nocut ? 'Фон убрать не вышло — сохраним фото как есть.' : '';
+const wNote = (m) => m.busy ? (m.slow ? 'Долго? Можно не ждать и добавить вещь с фоном.' : 'Обычно несколько секунд. Самая первая вещь — чуть дольше.') : m.nocut ? 'Фон убрать не вышло — сохраним фото как есть.' : '';
 const wSlowBtn = '<button class="wraw" data-act="w-raw">Добавить с фоном</button>';
 // Показываем готовую вещь, не перерисовывая всё окно — чтобы не сбить ввод названия
 function wShow(me) {
@@ -5352,7 +5357,25 @@ function wParse(t) {
   if (!r.style && !r.plus && !r.add) r.text = t.trim();
   return r;
 }
-// Вне Telegram сервер ИИ не пускает — показываем пример, чтобы было видно, как это выглядит
+// Снимок образа для стилиста: вещи на белом фоне ровно так, как человек их разложил (с размерами, поворотами и слоями)
+async function wSnap() {
+  const W = 720, H = 900, c = document.createElement('canvas');
+  c.width = W; c.height = H;
+  const x = c.getContext('2d');
+  x.fillStyle = '#fff'; x.fillRect(0, 0, W, H);
+  for (const p of wlay) {
+    const src = WIMG[p.id];
+    if (!src) continue;
+    const img = new Image(); img.src = src;
+    await img.decode().catch(() => {});
+    if (!img.width) continue;
+    const bw = (p.w / 100) * W, bh = (p.h / 100) * H, k = Math.min(bw / img.width, bh / img.height), dw = img.width * k, dh = img.height * k;
+    x.save(); x.translate((p.x / 100) * W, (p.y / 100) * H); x.rotate(((p.r || 0) * Math.PI) / 180);
+    x.drawImage(img, -dw / 2, -dh / 2, dw, dh); x.restore();
+  }
+  return c.toDataURL('image/jpeg', 0.82);
+}
+// Вне Telegram сервер не пускает — показываем пример, чтобы было видно, как это выглядит
 const wDemo = (n) => ({ score: n >= 3 ? 8 : 6.5, style: 'Кэжуал', plus: 'Цвета не спорят друг с другом, силуэт собранный.', add: 'Не хватает акцента — часы, кепка или сумка.', swap: 'Если низ широкий, обувь лучше массивнее.' });
 
 // ---------- экраны ----------
@@ -5374,7 +5397,9 @@ function wEditView() {
     ${wsel ? `<div class="wtools"><button data-act="w-z" data-d="top" aria-label="На самый верх">⤒</button><button data-act="w-z" data-d="up" aria-label="Выше">↑</button><button data-act="w-z" data-d="down" aria-label="Ниже">↓</button><button data-act="w-z" data-d="bottom" aria-label="В самый низ">⤓</button><button data-act="w-rm" class="del" aria-label="Убрать с холста">✕</button></div>`
       : `<div class="hint wgest">${wlay.length ? 'Нажми на вещь: тяни, чтобы двигать, уголок — размер и поворот' : 'Нажимай на вещи внизу'}</div>`}
     ${wlay.length >= 2 ? `<button class="wrate" data-act="w-rate" ${wbusy ? 'disabled' : ''}>${wbusy ? 'Оцениваю…' : '✨ Оценить образ'}</button>` : ''}
-    ${wres ? `<div class="wres"><div class="wrh"><div><span class="wsm">оценка ИИ</span><b>${esc(wres.style || 'Твой образ')}</b></div>${wScore(wres.score)}</div>${wResBody(wres)}${wres.demo ? '<div class="wsm" style="margin-top:8px">Это пример. В Telegram образ оценит ИИ.</div>' : ''}</div>` : ''}
+    ${wres ? (wres.invalid
+      ? `<div class="wres bad"><span class="wsm">оценка стилиста</span><b class="wbad">Это пока не образ</b><div class="wtxt">${esc(wres.problem || '')}</div></div>`
+      : `<div class="wres"><div class="wrh"><div><span class="wsm">оценка стилиста</span><b>${esc(wres.style || 'Твой образ')}</b></div>${wScore(wres.score)}</div>${wResBody(wres)}${wres.demo ? '<div class="wsm" style="margin-top:8px">Это пример оценки. В Telegram стилист посмотрит на твой образ.</div>' : ''}</div>`) : ''}
     <div class="wrow">
       <button class="wadd" data-act="photo" data-k="w-item"><span class="wplus">+</span>Добавить вещь</button>
       ${items.map((i) => `<button class="wit ${wlay.some((p) => p.id === i.id) ? 'on' : ''}" data-act="w-pick" data-id="${i.id}">${wImg(i.id)}</button>`).join('')}
@@ -5423,7 +5448,7 @@ Object.assign(ACT, {
   'w-save-look'() {
     if (!wlay.length) return;
     const W = wd(), lay = wlay.map((p) => ({ id: p.id, x: +p.x.toFixed(1), y: +p.y.toFixed(1), w: +p.w.toFixed(1), h: +p.h.toFixed(1), r: Math.round(p.r || 0) }));
-    const r = wres && !wres.demo ? wres : {};
+    const r = wres && !wres.demo && !wres.invalid ? wres : {};
     const data = { items: lay.map((p) => p.id), lay, score: r.score || null, style: r.style || '', plus: r.plus || '', add: r.add || '', swap: r.swap || '', text: r.text || '' };
     const old = wedit && W.looks.find((l) => l.id === wedit);
     if (old) Object.assign(old, data); else W.looks.unshift({ id: wId(), date: today(), ...data });
@@ -5471,15 +5496,16 @@ Object.assign(ACT, {
     const its = wlay.map((p) => wItem(p.id)).filter(Boolean);
     if (wbusy || its.length < 2) return;
     wbusy = true; wres = null; render();
-    const message = `Оцени мой аутфит как стилист. Вещи: ${its.map((i) => (i.name || 'вещь без названия') + (i.color ? ' (' + i.color + ')' : '')).join('; ')}. Ответь строго по шаблону, каждый пункт с новой строки, коротко и по делу:\nОЦЕНКА: число от 1 до 10\nСТИЛЬ: как называется этот стиль, 1–3 слова\nПЛЮСЫ: что в образе работает\nДОБАВИТЬ: чего не хватает\nПОМЕНЯТЬ: что заменить и на что`;
-    const r = rank();
-    const j = AI_ENDPOINT ? await aiCall('chat', { message, history: [], context: { day: dayNum(today()), streak: streak(), level: `${r.lvl} · ${r.name}`, focus: S.plan.focus.map((p) => PILLARS[p].name), tone: tone(), protocols: [], analysis: '', journey: [], budget: S.budget || 0, issues: [], catalog: [] } }, 45000) : { error: 'off' };
+    // Стилист смотрит на сам образ: снимаем холст картинкой и отправляем вместе с подписями вещей
+    const image = await wSnap().catch(() => '');
+    const j = !image ? { error: 'snap' } : AI_ENDPOINT ? await aiCall('outfit', { image, items: its.map((i) => (i.name || '') + (i.color ? ' (' + i.color + ')' : '')), tone: tone() }, 60000) : { error: 'off' };
     wbusy = false;
-    if (j.text) { wres = wParse(j.text); haptic('success'); if (ME && ME.paywall) meRefresh(); }
+    if (j.valid === true) { wres = { score: j.score, style: j.style, plus: j.plus, add: j.add, swap: j.swap }; haptic('success'); if (ME && ME.paywall) meRefresh(); }
+    else if (j.valid === false) { wres = { invalid: true, problem: j.problem }; haptic('light'); }
     else if (j.error === 'pro') { render(); proOpen('chat'); return; }
-    else if (j.error === 'limit') toast('Лимит сообщений ИИ на сегодня кончился — завтра оценю');
+    else if (j.error === 'limit') toast('Оценки на сегодня закончились — завтра посмотрим');
     else if (j.error === 'not_telegram' || j.error === 'off') wres = { ...wDemo(its.length), demo: true };
-    else toast(`ИИ не ответил (${j.error || 'пустой ответ'}) — попробуй ещё раз`);
+    else toast(`Не получилось оценить (${j.error || 'нет ответа'}) — попробуй ещё раз`);
     render();
     if (wres) setTimeout(() => { const c = document.querySelector('.wres'); c && c.scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 60);
   }
