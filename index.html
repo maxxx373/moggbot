@@ -5232,12 +5232,44 @@ let bgWarmed = false;
 function bgWarm() {
   if (bgWarmed) return;
   bgWarmed = true;
-  bgLoad().then((m) => m.preload && m.preload(bgCfg())).catch((e) => { bgWarmed = false; console.warn('[mogg] bg preload', e); });
+  u2Load().catch((e) => { bgWarmed = false; console.warn('[mogg] bg preload', e); });
 }
 async function removeBg(src) {
   const m = await bgLoad();
   const blob = await m.removeBackground(src, bgCfg());
   return new Promise((res, rej) => { const r = new FileReader(); r.onload = () => res(r.result); r.onerror = rej; r.readAsDataURL(blob); });
+}
+// Быстрая вырезка: лёгкая модель u2netp (4,6 МБ, лежит рядом с приложением) — около секунды на вещь.
+// Тяжёлая модель выше остаётся для кнопки «Вырезать точнее».
+const ORT = 'https://cdn.jsdelivr.net/npm/onnxruntime-web@1.20.1/dist/';
+let u2Sess = null;
+function u2Load() {
+  return u2Sess || (u2Sess = new Promise((res, rej) => {
+    if (window.ort) return res();
+    const s = document.createElement('script'); s.src = ORT + 'ort.min.js'; s.onload = res; s.onerror = rej; document.head.appendChild(s);
+  }).then(() => { ort.env.wasm.wasmPaths = ORT; return ort.InferenceSession.create('u2netp.onnx', { executionProviders: ['wasm'] }); })
+    .catch((e) => { u2Sess = null; throw e; }));
+}
+async function removeBgFast(src) {
+  const sess = await u2Load(), S = 320;
+  const img = new Image(); img.src = src; await img.decode();
+  const cv = document.createElement('canvas'); cv.width = S; cv.height = S;
+  const cx = cv.getContext('2d'); cx.drawImage(img, 0, 0, S, S);
+  const d = cx.getImageData(0, 0, S, S).data, f = new Float32Array(3 * S * S), mean = [0.485, 0.456, 0.406], sd = [0.229, 0.224, 0.225];
+  for (let i = 0; i < S * S; i++) for (let k = 0; k < 3; k++) f[k * S * S + i] = (d[i * 4 + k] / 255 - mean[k]) / sd[k];
+  const out = await sess.run({ [sess.inputNames[0]]: new ort.Tensor('float32', f, [1, 3, S, S]) });
+  const m = out[sess.outputNames[0]].data;
+  let mn = Infinity, mx = -Infinity;
+  for (const v of m) { if (v < mn) mn = v; if (v > mx) mx = v; }
+  const mc = document.createElement('canvas'); mc.width = S; mc.height = S;
+  const mctx = mc.getContext('2d'), md = mctx.createImageData(S, S);
+  for (let i = 0; i < S * S; i++) md.data[i * 4 + 3] = Math.round(((m[i] - mn) / (mx - mn || 1)) * 255);
+  mctx.putImageData(md, 0, 0);
+  // маску растягиваем до размера фото и вырезаем ею вещь
+  const o = document.createElement('canvas'); o.width = img.width; o.height = img.height;
+  const ox = o.getContext('2d'); ox.drawImage(img, 0, 0);
+  ox.globalCompositeOperation = 'destination-in'; ox.imageSmoothingQuality = 'high'; ox.drawImage(mc, 0, 0, img.width, img.height);
+  return o.toDataURL('image/png');
 }
 // Чистим маску: убираем мелкие ошмётки фона, делаем край чётче, обрезаем пустые поля, определяем цвет
 function wFinish(src, raw) {
@@ -5307,12 +5339,14 @@ function wFinish(src, raw) {
 const wPreview = (m) => m.busy
   ? `<img src="${m.src}" alt="" class="wsrc"><div class="wscan"></div><div class="wprog" id="wprog">Убираю фон…</div>`
   : `<img src="${m.cut}" alt="" class="wcut">`;
-const wNote = (m) => m.busy ? (m.slow ? 'Долго? Можно не ждать и добавить вещь с фоном.' : 'Обычно несколько секунд. Самая первая вещь — чуть дольше.') : m.nocut ? 'Фон убрать не вышло — сохраним фото как есть.' : '';
+const wNote = (m) => m.busy ? (m.fine ? 'Точная вырезка дольше — до полминуты, в первый раз ещё дольше.' : m.slow ? 'Долго? Можно не ждать и добавить вещь с фоном.' : 'Обычно несколько секунд. Самая первая вещь — чуть дольше.') : m.nocut ? 'Фон убрать не вышло — сохраним фото как есть.' : '';
 const wSlowBtn = '<button class="wraw" data-act="w-raw">Добавить с фоном</button>';
 // Показываем готовую вещь, не перерисовывая всё окно — чтобы не сбить ввод названия
+const wFineBtn = '<button class="wraw" data-act="w-precise">Вырезать точнее</button>';
+const wNoteHtml = (m) => esc(wNote(m)) + (m.busy && m.slow ? wSlowBtn : '') + (!m.busy && !m.nocut && !m.fine ? wFineBtn : '');
 function wShow(me) {
   const pv = document.getElementById('wpv'), sv = document.getElementById('wsave'), nt = document.getElementById('wnote');
-  if (pv && sv) { pv.innerHTML = wPreview(me); sv.disabled = me.busy; if (nt) nt.innerHTML = esc(wNote(me)) + (me.busy && me.slow ? wSlowBtn : ''); } else render();
+  if (pv && sv) { pv.innerHTML = wPreview(me); sv.disabled = me.busy; if (nt) nt.innerHTML = wNoteHtml(me); } else render();
 }
 async function wAddPhoto(data) {
   modal = { kind: 'w-add', src: data, cut: null, busy: true, name: '', color: '' };
@@ -5321,7 +5355,7 @@ async function wAddPhoto(data) {
   // через 25 секунд даём выход: добавить вещь как есть, не дожидаясь нейросети
   const slowT = setTimeout(() => { if (modal === me && me.busy) { me.slow = true; wShow(me); } }, 25000);
   let out = null;
-  try { out = await wFinish(await removeBg(data)); }
+  try { out = await wFinish(await removeBgFast(data)); }
   catch (e) {
     console.warn('[mogg] bg removal failed', e);
     try { out = await wFinish(data, true); out.nocut = true; } catch (e2) {}
@@ -5413,7 +5447,7 @@ function wModal() {
   const m = modal;
   if (m.kind === 'w-add') return `<div class="modal"><div class="sheet wsheet">
       <div class="wpv" id="wpv">${wPreview(m)}</div>
-      <div class="wsm" id="wnote">${wNote(m)}</div>
+      <div class="wsm" id="wnote">${wNoteHtml(m)}</div>
       <input class="field" data-input="w-name" value="${esc(m.name || '')}" maxlength="40" placeholder="Что это? Например: белая футболка">
       <button class="btn" id="wsave" data-act="w-save" style="margin-top:12px" ${m.busy ? 'disabled' : ''}>Добавить</button>
       <button class="btn ghost" data-act="modal-close" style="margin-top:6px;background:none;border:0;height:44px;color:var(--hint)">Отмена</button></div></div>`;
@@ -5431,6 +5465,17 @@ function wModal() {
 
 Object.assign(ACT, {
   'w-new'() { wview = 'edit'; wedit = null; wlay = []; wsel = null; wres = null; bgWarm(); haptic('light'); render(); window.scrollTo(0, 0); },
+  // Сложное фото: перевырезаем тяжёлой моделью (дольше, зато точнее край)
+  async 'w-precise'() {
+    const m = modal;
+    if (!m || m.kind !== 'w-add' || m.busy) return;
+    m.busy = true; m.fine = true; wShow(m);
+    const out = await removeBg(m.src).then((u) => wFinish(u)).catch((e) => { console.warn('[mogg] precise failed', e); return null; });
+    if (modal !== m) return;
+    m.busy = false;
+    if (out) { m.cut = out.url; m.color = out.color || m.color; haptic('success'); } else toast('Точнее не вышло — оставил как было');
+    wShow(m);
+  },
   async 'w-raw'() {
     const m = modal;
     if (!m || m.kind !== 'w-add' || !m.busy) return;
