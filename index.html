@@ -1491,6 +1491,43 @@ button:active,label.card:active{transform:scale(.97)}
 .pmini{width:100%;aspect-ratio:1/1.05;display:grid;place-items:center;border-radius:16px;background:radial-gradient(circle at 50% 40%,#fffaf3,#f3e9dc 75%);overflow:hidden}
 .pet.mini{width:100%;max-width:100%}
 @media (prefers-reduced-motion:reduce){.pet,.pet *{animation:none!important}}
+/* ---------- правки 2: фото обложек, факт дня, вкладка «Парфюм» ---------- */
+.cov-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:1}
+.cov.has-img::after{content:"";position:absolute;inset:0;z-index:2;background:linear-gradient(180deg,rgba(0,0,0,.04) 35%,rgba(0,0,0,.55))}
+.cov.has-img .cov-em{display:none}
+/* факт дня */
+:root .card.fact{background:linear-gradient(135deg,#ffd84a,#ff9a3d 60%,#ff6a8a)!important;color:#1c100b!important;border:0!important;box-shadow:0 10px 30px rgba(255,140,60,.25)}
+:root .card.fact .mono{color:rgba(28,16,11,.62)!important}
+:root .card.fact p{color:#1c100b}
+.fact p{max-width:100%;font-size:16.5px;margin:10px 0 12px}
+.fact .buy{background:rgba(28,16,11,.12);color:#1c100b;border-color:transparent}
+/* вкладка парфюм */
+.tab[data-tab="perfume"]{--t1:#ff4fa3;--t2:#8b5cff;--tt:#fff}
+.pfhero{position:relative;overflow:hidden;padding-top:18px}
+.pfhero::before{content:"";position:absolute;inset:-40% -20% auto auto;width:260px;height:260px;border-radius:50%;background:radial-gradient(circle,rgba(255,79,163,.35),transparent 65%);pointer-events:none}
+.pfhero-bottles{position:absolute;right:12px;top:14px;display:flex;gap:4px;transform:rotate(-6deg)}
+.pfhero-bottles .pfpic{width:34px;height:46px;border-radius:9px}
+.pfhero-bottles .pfpic>b{font-size:20px}
+.pfhero .disp{position:relative;font-size:30px!important;max-width:72%}
+.pfhero p,.pfhero .mono{position:relative}
+.pfhero .btn{position:relative}
+.pfpic{position:relative;display:grid;place-items:center;overflow:hidden;border-radius:16px;background:#fff;aspect-ratio:3/4}
+.pfpic>b{position:absolute;font-family:var(--disp);font-size:40px;color:hsl(var(--h) 60% 45%);opacity:.35}
+.pfpic img{position:absolute;inset:4px;width:calc(100% - 8px);height:calc(100% - 8px);object-fit:contain;mix-blend-mode:multiply}
+.pfpic.big{width:150px;margin:0 auto;border-radius:20px}
+.pfgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:10px}
+.pftile{position:relative;display:flex;flex-direction:column;gap:3px;padding:8px 8px 12px;border-radius:20px;background:var(--card);border:1px solid var(--card-b);text-align:left;color:inherit;min-width:0}
+.pftile:active{transform:scale(.97)}
+.pftile .pfpic{width:100%;aspect-ratio:1;margin-bottom:6px}
+.pftile .pfb{font-family:var(--mono);font-size:9.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--hint);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pftile b{font-size:15px;line-height:1.15}
+.pftile small{font-size:11px;line-height:1.3;color:var(--hint)}
+.pfpct{position:absolute;top:14px;left:14px;padding:3px 8px;border-radius:9px;background:linear-gradient(135deg,#ff4fa3,#8b5cff);color:#fff;font-size:11px;font-weight:800}
+.pfcats{display:flex;gap:6px;overflow-x:auto;margin:0 -16px 10px;padding:0 16px 2px;scrollbar-width:none}
+.pfcats::-webkit-scrollbar{display:none}
+.pfcats button{flex:none;padding:8px 12px;border-radius:14px;background:var(--card);border:1px solid var(--card-b);color:inherit;font-size:13px;font-weight:700}
+.pfcats button.on{background:linear-gradient(135deg,#ff4fa3,#8b5cff);color:#fff;border-color:transparent}
+.pfsheet{max-height:86vh;overflow-y:auto}
 </style>
 </head>
 <body>
@@ -1986,7 +2023,7 @@ const COURSES = {
   social: { name: 'Общение', title: 'Сила<br>общения', word: 'SOCIAL', art: 'a13', lessons: SOCIAL }
 };
 const ALL_LESSONS = [...LESSONS, ...MIND, ...SOCIAL];
-const COURSE_IMG = { basics: 'mirror', mind: 'read', social: 'portrait' };
+const COURSE_IMG = { basics: 'mirror', mind: 'mind2', social: 'social2' };
 
 const BOOKS = [
   { id: 'b1', a: 'Джеймс Клир', t: 'Атомные привычки', cat: 'Привычки', c: ['#ff7a6b', '#ffb07c'], why: ['Как маленькие ежедневные изменения складываются в большой результат.', 'Ровно на этой идее построено приложение: небольшие миссии каждый день вместо подвигов раз в месяц.'] },
@@ -3221,7 +3258,8 @@ const IMG = {
   arms: 'photo-1710019350627-205d74f373d5', hoodie: 'photo-1618425977996-bebc5afe88f9',
   street: 'photo-1713943189183-c5a9dde63b45', jacket: 'photo-1462430638866-7ad892655344', sneakers: 'photo-1556906781-9a412961c28c', kicks: 'photo-1603808033192-082d6919d3e1',
   sleep: 'photo-1585577529540-a8095ea25427', bed: 'photo-1502666689584-945597854f01',
-  read: 'photo-1758523668629-84908c91a66c', book: 'photo-1506880018603-83d5b814b5a6', glasses: 'photo-1616434116710-c45ce99c1a77', blazer: 'photo-1453396450673-3fe83d2db2c4'
+  read: 'photo-1758523668629-84908c91a66c', book: 'photo-1506880018603-83d5b814b5a6', glasses: 'photo-1616434116710-c45ce99c1a77', blazer: 'photo-1453396450673-3fe83d2db2c4',
+  mind2: 'photo-1714510380386-df1dc3111533', social2: 'photo-1743794259789-db81e5342f64'
 };
 const imgUrl = (k, w) => IMG[k] ? `https://images.unsplash.com/${IMG[k]}?w=${w || 800}&q=70&auto=format&fit=crop` : '';
 const pic = (k, w, cls) => IMG[k] ? `<img class="${cls || 'ph'}" src="${imgUrl(k, w)}" alt="" decoding="async" onerror="this.remove()">` : '';
@@ -3233,7 +3271,8 @@ const COURSE_EM = { basics: '✨', mind: '🧠', social: '💬' };
 function cover(it, courseKey) {
   let h = 0; for (const ch of String(it.id || it.t || '')) h = (h * 31 + ch.charCodeAt(0)) % 997;
   const k = COVER_PAL[h % COVER_PAL.length], em = it.em || COVER_EM[it.id] || (courseKey && COURSE_EM[courseKey]) || TAG_EM[it.tag] || '✨';
-  return `<div class="cov" style="--k1:${k[0]};--k2:${k[1]};--k3:${k[2]};--k0:${k[3]}"><span class="cov-em">${em}</span></div>`;
+  const ph = COVER_IMG[it.id];
+  return `<div class="cov ${ph ? 'has-img' : ''}" style="--k1:${k[0]};--k2:${k[1]};--k3:${k[2]};--k0:${k[3]}"><span class="cov-em">${em}</span>${ph ? `<img class="cov-img" src="https://images.unsplash.com/photo-${ph}?w=700&q=70&auto=format&fit=crop" alt="" loading="lazy" decoding="async" onerror="this.remove()">` : ''}</div>`;
 }
 function art(key, word, img) {
   const [a, b, c] = ARTS[key] || ARTS.a1;
@@ -3262,6 +3301,7 @@ const IC = {
   box: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M3 7l9-4 9 4-9 4z"/><path d="M3 7v10l9 4 9-4V7"/></svg>',
   book: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2z"/><path d="M4 21V5"/></svg>',
   lock: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>',
+  perfume: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="9" width="14" height="12" rx="3"/><path d="M9 9V6h6v3M10 3h4v3h-4zM9 14h6"/></svg>',
   hanger: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 6.5a2 2 0 1 1 2.6 1.9c-.4.1-.6.5-.6.9V11"/><path d="M12 11l8.6 6.2c.8.6.4 1.8-.6 1.8H4c-1 0-1.4-1.2-.6-1.8z"/></svg>',
   cam: '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="14" rx="3"/><circle cx="12" cy="13" r="3.5"/><path d="M8 6l1.5-2h5L16 6"/></svg>'
 };
@@ -3561,7 +3601,7 @@ function journey() {
   (S.events || []).forEach((e) => get(e.date).ev.push(e));
   Object.entries(S.done || {}).forEach(([d, ids]) => { if (ids.length) get(d).tasks = ids; });
   Object.entries(S.pdone || {}).forEach(([d, keys]) => { if (keys.length) get(d).psteps = keys; });
-  const P = [['start', 'разобрались с целями'], ['order', 'заказали средства'], ['arrived', 'пришли средства'], ['char', 'выполнили миссию характера'], ['grat', 'записали благодарности'], ['read', 'почитали'], ['book', 'дочитали книгу'], ['lesson', 'прошли урок'], ['focus', 'провели фокус-сессию'], ['challenge', 'закрыли челлендж недели'], ['goal', 'достигли цели сезона'], ['photo', 'сделали фото прогресса'], ['proto', 'обновили план протоколов'], ['activity', 'написали бро'], ['care', 'сделали паузу в уходе'], ['rank', 'взяли новый уровень']];
+  const P = [['start', 'разобрались с целями'], ['order', 'заказали средства'], ['arrived', 'пришли средства'], ['char', 'выполнили миссию характера'], ['grat', 'записали благодарности'], ['read', 'почитали'], ['book', 'дочитали книгу'], ['lesson', 'прошли урок'], ['focus', 'провели фокус-сессию'], ['challenge', 'закрыли челлендж недели'], ['goal', 'достигли цели сезона'], ['photo', 'сделали фото прогресса'], ['proto', 'обновили план протоколов'], ['activity', 'написали в чат'], ['care', 'сделали паузу в уходе'], ['rank', 'взяли новый уровень']];
   return Object.values(days).sort((a, b) => b.date.localeCompare(a.date)).map((day) => {
     const phrases = [], details = [];
     const types = day.ev.map((e) => e.type);
@@ -3606,7 +3646,7 @@ function weekChallenges() {
 const coachName = () => S.coachName || 'Макс';
 // Режимы общения: как собеседник разговаривает в чате и подаёт разбор
 const MODES = {
-  friend: ['🤙', 'Бро', 'на равных, по-дружески, с юмором'],
+  friend: ['🤙', 'Друг', 'на равных, по-дружески, с юмором'],
   soft: ['🧭', 'Тренер', 'спокойно ведёт по плану'],
   motivator: ['⚡', 'Мотиватор', 'заряжает и толкает вперёд'],
   hard: ['🔥', 'Жёсткий', 'без соплей, требует дисциплину'],
@@ -3675,7 +3715,7 @@ function localReply(text) {
     const left = tasksFor(dayNum(today())).filter((x) => !doneOn(today()).includes(x.id)).length;
     return { text: `${pick(['Здарова', 'Йо', 'Привет'])}${nm ? ', ' + nm : ''}! У меня всё ровно, сижу слежу за твоим прогрессом 😄\n\n${left ? `У тебя сегодня ещё ${left} ${plural(left, 'миссия', 'миссии', 'миссий')} не закрыто. Напиши «что сегодня» — скину список.` : 'Ты сегодня всё закрыл — красавчик. Можно выдохнуть.'}${s ? `\nСерия: ${s} 🔥` : ''}\n\nСам как?` };
   }
-  if (/кто ты|ты кто|ты бот|ты человек|ты нейросет/.test(t)) return { text: `Я ${coachName()} — твой бро в этом приложении. Не человек, врать не буду, но за твой прогресс болею по-настоящему.\n\nМогу подсказать по уходу, стилю, тренировкам, парфюму — или просто поболтать, если день тяжёлый.` };
+  if (/кто ты|ты кто|ты бот|ты человек|ты нейросет/.test(t)) return { text: `Я ${coachName()} — твой личный коуч в mogg. Не человек, врать не буду, но за твой прогресс болею по-настоящему.\n\nМогу подсказать по уходу, стилю, тренировкам, парфюму — или просто поболтать, если день тяжёлый.` };
   addEvent('note', '«' + text.slice(0, 80) + '»');
   return { text: pick([`Понял тебя, ${bro}. Записал. Если что-то сделал по плану — напиши, отмечу в пути.`, 'Услышал 🤙 Хочешь, покажу, сколько ты уже прошёл? Напиши «мой путь».', `Записал. Нужен план на сегодня — спроси «что сегодня». Или просто рассказывай, как день, ${bro}.`]) };
 }
@@ -3806,11 +3846,11 @@ async function askCoach(text) {
       return { text: j.text };
     }
     if (j.error === 'pro') { setTimeout(() => proOpen('chat'), 600); return { text: `Бесплатные сообщения на сегодня закончились (${(ME && ME.chat_limit) || 10} в день). В mogg Pro — до 100 в день. А пока отметь миссии на главной — они бесплатные.` }; }
-    if (j.error === 'limit') return { text: 'Бро, на сегодня лимит сообщений кончился. Завтра продолжим — а пока закрой миссии на главной.' };
+    if (j.error === 'limit') return { text: 'На сегодня лимит сообщений кончился. Завтра продолжим — а пока закрой миссии на главной.' };
     // ИИ не ответил — говорим честно и с кодом ошибки, а не делаем вид, что «записал»
     const why = j.error === 'not_telegram' ? 'ИИ работает только внутри Telegram — открой mogg через бота.' : j.error === 'network' ? 'не достучался до сервера: нет связи или он думал дольше 45 секунд.' : /^http_5/.test(j.error || '') ? 'сервер ИИ сейчас упал.' : 'ИИ не ответил.';
     console.warn('[mogg] chat AI error:', j);
-    return { text: `Бро, ${why} Попробуй ещё раз чуть позже.\n\n[ код: ${j.error || 'пустой ответ'} ]` };
+    return { text: `Слушай, ${why} Попробуй ещё раз чуть позже.\n\n[ код: ${j.error || 'пустой ответ'} ]` };
   }
   return localReply(text);
 }
@@ -3920,7 +3960,7 @@ function acceptPlan() {
   addEvent('plan', r.shopping.length ? `Получили план на 90 дней и список средств на ${r.sum} ₽` : 'Получили план на 90 дней — без покупок');
   if (ob.photo) { S.photos.push({ date: today(), data: ob.photo }); addEvent('photo', 'Стартовое фото'); }
   if (ob.ai) S.ai = { ...ob.ai, date: today() };
-  S.chat.push({ from: 'ai', text: `Здарова${tgUser && tgUser.first_name ? ', ' + tgUser.first_name : ''}! Я ${coachName()} — твой бро в этом приложении 🤙\n\nБудем качать ${r.focus.map((p) => PILLARS[p].name.toLowerCase()).join(', ')}. Каждый день — три небольших дела на внешность и одно на характер. Ничего сложного, обещаю.\n\nЗа всё капает опыт, с уровнями открываются новые фишки. Пиши мне как другу: спроси «что сегодня», «мой путь», «подбери парфюм» — или просто расскажи, как день.` });
+  S.chat.push({ from: 'ai', text: `Привет${tgUser && tgUser.first_name ? ', ' + tgUser.first_name : ''}! Я ${coachName()} — твой личный коуч в mogg 👋\n\nБудем качать ${r.focus.map((p) => PILLARS[p].name.toLowerCase()).join(', ')}. Каждый день — три небольших дела на внешность и одно на характер. Ничего сложного, обещаю.\n\nЗа всё капает опыт, с уровнями открываются новые фишки. Пиши мне как другу: спроси «что сегодня», «мой путь», «подбери парфюм» — или просто расскажи, как день.` });
   tab = 'home'; haptic('success'); confetti(); save(); render(); window.scrollTo(0, 0);
   track('onboarded', { photo: !!ob.photo });
 }
@@ -4047,6 +4087,7 @@ function renderHome() {
       </div>
     </div>
     ${auraCard()}
+    ${factCard()}
     ${celebrate ? `<div class="celebrate"><div><b>День закрыт</b><div style="font-weight:700;font-size:13px;opacity:.8">+50 XP · серия ${s}</div></div><div style="font-size:34px">🔥</div></div>` : ''}
     ${chestOpen ? `<div class="card chest"><span class="ci">🎁</span><div style="flex:1"><b>Подарок дня</b><div class="hint">Заходи каждый день — внутри 10–30 XP</div></div><button class="btn sm" data-act="chest" style="background:var(--gold);color:#1c100b">Открыть</button></div>` : ''}
     <div class="sec" id="missions"><span class="disp">Миссии дня</span><span class="chipline">[ ${done.length}/3 ]</span></div>
@@ -4063,7 +4104,6 @@ function renderHome() {
     ${remindPrompt()}
     <div class="outro" style="min-height:0;padding-bottom:22px">
       ${mountains('f')}
-      <div class="tag3" style="margin-top:0">На сегодня всё.<br>Завтра — новый день.</div>
       <div class="row between" style="margin-top:14px;position:relative;z-index:2;align-items:flex-end"><span class="mono">Для тех, кто качает себя,<br>а не ленту</span>${barcode()}</div>
     </div>`;
   celebrate = false;
@@ -4278,7 +4318,7 @@ function renderCoach() {
   };
   const total = S.chat.length;
   return `
-    ${topbar('Бро')}
+    ${topbar('Чат')}
     <div class="coach-head"><div class="ava">${esc(coachName().slice(0, 1))}</div><div style="flex:1"><b style="font-size:17px">${esc(coachName())}</b><div class="mono" style="margin-top:2px"><span style="color:var(--ok)">●</span> онлайн · ${mode()[0]} ${mode()[1].toLowerCase()}</div></div><button class="btn sm ghost" data-act="mode-toggle" style="height:32px">Режим</button></div>
     ${modeOpen ? modePicker() : ''}
     <div class="chat">
@@ -4455,7 +4495,105 @@ const PERFUMES = [
   ['Hacivat', 'Nishane', 4, 'a', 3, 20, 45, 'fcwg', 'eod', 'k', 'ананас, грейпфрут, бергамот, дубовый мох, пачули, дерево', 'Ананас и мох: свежий, стойкий, в духе Aventus, но зеленее.'],
   ['Wood Sage & Sea Salt', 'Jo Malone', 3, 'w', 1, 16, 50, 'qagc', 'esg', 'c', 'морская соль, шалфей, амбретта, грейпфрут', 'Солёный ветер и шалфей. Очень лёгкий унисекс: почти запах кожи после моря.'],
   ['Fleur Narcotique', 'Ex Nihilo', 4, 'w', 2, 18, 45, 'fic', 'ed', 'c', 'личи, бергамот, пион, цветок апельсина, мускус', 'Свежие цветы с личи. Унисекс, который в России стал массовой любовью.'],
-  ['Black Pepper & Amber, Neroli', 'Zielinski & Rozen', 3, 'a', 2, 18, 45, 'smci', 'ed', 'zm', 'чёрный перец, нероли, амбра, пачули', 'Перец с амброй и нероли. Тёплый унисекс от бренда, популярного в России.']
+  ['Black Pepper & Amber, Neroli', 'Zielinski & Rozen', 3, 'a', 2, 18, 45, 'smci', 'ed', 'zm', 'чёрный перец, нероли, амбра, пачули', 'Перец с амброй и нероли. Тёплый унисекс от бренда, популярного в России.'],
+  // ---- ниша и хайп: то, что сейчас знают все ----
+  ['Love, Don’t Be Shy', 'Kilian', 4, 'c', 2, 18, 40, 'vif', 'dpt', 'zb', 'нероли, флёрдоранж, маршмеллоу, ваниль, мускус', 'Тот самый «зефирный» Kilian: сладкий, мягкий и очень заметный. Унисекс.'],
+  ['Black Phantom', 'Kilian', 4, 'c', 3, 20, 45, 'vmw', 'dpt', 'm', 'ром, кофе, тёмный шоколад, сахарный тростник, сандал', 'Ром, кофе и шоколад — тёмный и густой аромат на вечер.'],
+  ['Straight to Heaven', 'Kilian', 4, 'c', 2, 22, 50, 'vwm', 'dtx', 'km', 'ром, мускатный орех, сухофрукты, кедр, пачули, ваниль', 'Ромовое дерево с сухофруктами. Взрослый и благородный.'],
+  ['Moonlight in Heaven', 'Kilian', 4, 'w', 2, 18, 40, 'cfv', 'edp', 'b', 'грейпфрут, кокос, рис, манго, ваниль, ветивер', 'Тропический десерт у моря: кокос, манго и рис. Летний хит.'],
+  ['Old Fashioned', 'Kilian', 4, 'c', 2, 22, 50, 'lvw', 'dtx', 'km', 'виски, апельсин, табак, дуб, ваниль', 'Аромат коктейля в баре с деревянной стойкой: виски, табак и ваниль.'],
+  ['Tuscan Leather', 'Tom Ford', 4, 'c', 3, 22, 50, 'lfo', 'dtx', 'km', 'малина, шафран, кожа, замша, амбровое дерево', 'Сырая кожа с малиной и шафраном. Брутальный, громкий, легендарный.'],
+  ['Ébène Fumé', 'Tom Ford', 4, 'c', 2, 22, 50, 'owl', 'dtx', 'm', 'пало санто, ладан, перец, кожа, гваяк', 'Дымное дерево и ладан. Тихий, но очень «дорогой» и загадочный.'],
+  ['Fucking Fabulous', 'Tom Ford', 4, 'c', 3, 22, 45, 'lia', 'dpx', 'b', 'лаванда, кожа, бобы тонка, миндаль, ирис', 'Кожа с лавандой и миндалём. Звучит дерзко — как и называется.'],
+  ['Lost Cherry', 'Tom Ford', 4, 'c', 3, 18, 40, 'fvm', 'dpt', 'b', 'вишня, горький миндаль, ликёр, бобы тонка, сандал', 'Пьяная вишня в ликёре. Сладкий унисекс-хит соцсетей.'],
+  ['Bitter Peach', 'Tom Ford', 4, 'a', 3, 18, 40, 'fvm', 'dpt', 'zb', 'персик, ром, кардамон, ваниль, пачули', 'Сочный персик с ромом. Сладко, тепло, заметно.'],
+  ['Costa Azzurra', 'Tom Ford', 4, 'w', 2, 20, 45, 'qwg', 'eos', 'c', 'водоросли, кипарис, лимон, мирт, амбра', 'Средиземноморский берег: соль, хвоя и цитрус.'],
+  ['Grey Vetiver', 'Tom Ford', 4, 'a', 2, 22, 55, 'wgc', 'ote', 'kc', 'грейпфрут, ветивер, мускатный орех, ирис, амбра', 'Строгий ветивер для делового образа. Чисто и по-взрослому.'],
+  ['Gypsy Water', 'Byredo', 4, 'a', 2, 18, 45, 'wac', 'eod', 'zc', 'бергамот, можжевельник, сосна, ладан, ваниль, сандал', 'Костёр в сосновом лесу и немного ванили. Культовый унисекс.'],
+  ['Mojave Ghost', 'Byredo', 4, 'a', 2, 18, 45, 'iwm', 'eod', 'cz', 'амбретта, сапота, магнолия, сандал, амбра', 'Пудровые цветы и сандал. Мягкий «аромат кожи», который хочется вдыхать.'],
+  ['Bibliothèque', 'Byredo', 4, 'c', 2, 20, 50, 'fvl', 'dt', 'zm', 'слива, персик, пион, кожа, ваниль', 'Старая библиотека: кожаные переплёты, фрукты и ваниль.'],
+  ['Super Cedar', 'Byredo', 4, 'a', 1, 18, 50, 'wic', 'eos', 'c', 'роза, кедр, ветивер, мускус', 'Чистый кедр с розой. Тихий, аккуратный, для каждого дня.'],
+  ['Another 13', 'Le Labo', 4, 'a', 2, 18, 45, 'mwi', 'eod', 'c', 'амброксан, мускус, жасмин, мох, груша', 'Минеральный мускус: пахнет как очень дорогая чистая кожа.'],
+  ['Thé Noir 29', 'Le Labo', 4, 'a', 2, 20, 50, 'wlf', 'eot', 'km', 'чёрный чай, инжир, бергамот, табак, ветивер', 'Чёрный чай с инжиром и табаком. Сухой, сдержанный, стильный.'],
+  ['Bergamote 22', 'Le Labo', 4, 'w', 2, 18, 50, 'cwi', 'eos', 'c', 'бергамот, грейпфрут, ветивер, амбра, мускус', 'Сочный бергамот на мягкой древесине. Свежо и дорого.'],
+  ['Rose 31', 'Le Labo', 4, 'a', 2, 20, 50, 'iswo', 'dt', 'm', 'роза, тмин, кедр, уд, ветивер', 'Пряная роза с древесиной и удом — мужская роза.'],
+  ['Grand Soir', 'Maison Francis Kurkdjian', 4, 'c', 3, 22, 50, 'mv', 'dtx', 'km', 'бензоин, амбра, бобы тонка, ваниль, лабданум', 'Тёплая медовая амбра — аромат вечера в большом городе.'],
+  ['Oud Satin Mood', 'Maison Francis Kurkdjian', 4, 'c', 3, 22, 50, 'oiv', 'tx', 'm', 'уд, роза, фиалка, ваниль, бензоин', 'Уд в бархате розы и ванили. Роскошно и плотно.'],
+  ['Aqua Universalis', 'Maison Francis Kurkdjian', 4, 'w', 1, 16, 50, 'cia', 'eos', 'c', 'бергамот, лимон, ландыш, белые цветы, мускус', 'Запах свежевыстиранного белья. Самый «чистый» аромат.'],
+  ['Gentle Fluidity Silver', 'Maison Francis Kurkdjian', 4, 'a', 2, 18, 50, 'asw', 'eod', 'c', 'можжевельник, мускатный орех, кориандр, амбра, мускус', 'Пряная свежесть с можжевельником. Минималистично и дорого.'],
+  ['Viking', 'Creed', 4, 'a', 3, 20, 45, 'scw', 'dpx', 'kb', 'бергамот, перец, мята, роза, ветивер, сандал', 'Перец с мятой и деревом. Уверенный и громкий Creed.'],
+  ['Royal Oud', 'Creed', 4, 'c', 2, 25, 55, 'ows', 'tx', 'km', 'лимон, розовый перец, кедр, уд, сандал', 'Сухой уд с кедром — без восточной приторности.'],
+  ['Millésime Impérial', 'Creed', 4, 'w', 2, 20, 55, 'qci', 'eot', 'kc', 'бергамот, лимон, морская соль, ирис, мускус', 'Солёная свежесть с ирисом. Летняя классика ниши.'],
+  ['Althaïr', 'Parfums de Marly', 4, 'c', 3, 18, 40, 'vsm', 'dpt', 'zb', 'бергамот, кардамон, флёрдоранж, ваниль, пралине, мускус', 'Ванильное пралине с кардамоном. Сладкий, тёплый, очень комплиментарный.'],
+  ['Percival', 'Parfums de Marly', 4, 'a', 2, 18, 45, 'acm', 'eod', 'c', 'мандарин, лаванда, кардамон, амброксан, мускус', 'Свежий и чистый аромат на каждый день. Безопасный выбор ниши.'],
+  ['Greenley', 'Parfums de Marly', 4, 'w', 2, 18, 45, 'gfcw', 'eod', 'c', 'зелёное яблоко, мандарин, кедр, пачули, мох', 'Зелёное яблоко и кедр. Бодрый, светлый, офисный.'],
+  ['Haltane', 'Parfums de Marly', 4, 'c', 2, 22, 50, 'awm', 'dtx', 'km', 'шалфей, лаванда, уд, пралине, амбра', 'Лаванда с удом и пралине. Солидно и тепло.'],
+  ['Erba Pura', 'Xerjoff', 4, 'a', 3, 18, 40, 'fvm', 'dp', 'b', 'сицилийский апельсин, лимон, фрукты, ваниль, белый мускус', 'Фруктовая бомба с ванилью. Шлейф, который замечают все.'],
+  ['Alexandria II', 'Xerjoff', 4, 'c', 3, 25, 55, 'owsi', 'tx', 'km', 'розовое дерево, лаванда, корица, уд, роза, амбра', 'Королевский уд с розой и корицей. Для особых вечеров.'],
+  ['40 Knots', 'Xerjoff', 4, 'w', 2, 20, 50, 'qwc', 'eos', 'c', 'морская соль, водоросли, бергамот, кедр, амбра', 'Яхта, соль и ветер. Морская свежесть класса люкс.'],
+  ['Side Effect', 'Initio', 4, 'c', 3, 22, 45, 'vls', 'dpt', 'mb', 'ром, табак, ваниль, корица', 'Ром, табак и ваниль — тёплый и дерзкий вечерний аромат.'],
+  ['Rehab', 'Initio', 4, 'a', 2, 20, 45, 'alm', 'eod', 'zk', 'лаванда, бергамот, табак, мускус, сандал', 'Лаванда с табаком и мускусом. Спокойный и уверенный.'],
+  ['Absolute Aphrodisiac', 'Initio', 4, 'c', 3, 22, 45, 'vm', 'dpt', 'm', 'ваниль, мускус, амбра, бобы тонка', 'Животный мускус с ванилью. Создан для свиданий.'],
+  ['Interlude Man', 'Amouage', 4, 'c', 3, 25, 55, 'osml', 'tx', 'm', 'орегано, ладан, амбра, опопонакс, уд, кожа', 'Дым, ладан и смола. Мощный аромат для холодов — один пшик.'],
+  ['Jubilation XXV', 'Amouage', 4, 'c', 2, 25, 55, 'msf', 'tx', 'km', 'апельсин, ладан, мирра, мёд, уд', 'Ладан с мёдом и фруктами. Богато и торжественно.'],
+  ['Ani', 'Nishane', 4, 'c', 3, 18, 45, 'vsm', 'dpt', 'zb', 'бергамот, имбирь, кардамон, ваниль, бензоин', 'Пряная ваниль с имбирём. Тёплый и очень стойкий.'],
+  ['Wulong Chá', 'Nishane', 4, 'w', 2, 18, 50, 'gcf', 'eos', 'c', 'улун, бергамот, инжир, мускус', 'Зелёный чай с цитрусом и инжиром. Свежо и спокойно.'],
+  ['Tam Dao', 'Diptyque', 3, 'a', 1, 20, 55, 'wm', 'eot', 'zc', 'сандал, кедр, кипарис, амбра', 'Сливочный сандал. Тихий, уютный, интеллигентный.'],
+  ['Philosykos', 'Diptyque', 3, 'w', 1, 18, 55, 'gfw', 'eos', 'c', 'инжирный лист, инжир, кокос, кедр', 'Зелёный инжир в жаркий день. Лёгкий и солнечный.'],
+  ['Orphéon', 'Diptyque', 3, 'a', 2, 20, 50, 'wia', 'eot', 'zk', 'можжевельник, жасмин, бобы тонка, кедр', 'Джаз-бар в Париже: можжевельник, дерево и пудра.'],
+  ['Eau Duelle', 'Diptyque', 3, 'c', 2, 18, 50, 'vsm', 'edt', 'z', 'ваниль, ладан, кардамон, чай, розовый перец', 'Сухая пряная ваниль без приторности.'],
+  ['Portrait of a Lady', 'Frédéric Malle', 4, 'c', 3, 22, 50, 'iom', 'tx', 'm', 'роза, пачули, ладан, сандал, малина', 'Тёмная роза с пачули и ладаном. Носят и мужчины — смело и красиво.'],
+  ['Musc Ravageur', 'Frédéric Malle', 4, 'c', 3, 22, 50, 'vsm', 'dtx', 'm', 'лаванда, корица, гвоздика, ваниль, мускус, амбра', 'Пряный мускус с ванилью. Чувственный аромат для близкой дистанции.'],
+  ['Vetiver Extraordinaire', 'Frédéric Malle', 4, 'a', 2, 22, 55, 'wgc', 'ote', 'k', 'ветивер, бергамот, перец, мирра', 'Лучший ветивер для костюма. Сухо, строго, дорого.'],
+  ['Blue Talisman', 'Ex Nihilo', 4, 'a', 2, 18, 45, 'fcm', 'eod', 'cb', 'груша, бергамот, имбирь, амброксан, мускус', 'Груша с амброксаном. Свежий, сочный, очень модный.'],
+  ['Escentric 01', 'Escentric Molecules', 3, 'a', 1, 16, 50, 'wcs', 'eos', 'c', 'Iso E Super, лайм, розовый перец, ладан', 'Чуть свежее брата Molecule 01: та же «вторая кожа» с цитрусом.'],
+  ['Not a Perfume', 'Juliette Has a Gun', 3, 'a', 1, 16, 50, 'mw', 'eos', 'c', 'амброксан', 'Одна нота — амброксан. Пахнет чистой кожей, раскрывается на каждом по-своему.'],
+  ['African Leather', 'Memo Paris', 4, 'c', 2, 22, 50, 'ls', 'tx', 'm', 'шафран, кардамон, тмин, кожа, пачули', 'Пряная кожа и пустыня. Необычно и стильно.'],
+  ['Imagination', 'Louis Vuitton', 4, 'w', 2, 20, 50, 'csw', 'eod', 'kc', 'цитрон, апельсин, нероли, имбирь, чёрный чай, амброксан', 'Сияющий цитрус с чаем и имбирём. Свежесть премиум-класса.'],
+  ['Ombre Nomade', 'Louis Vuitton', 4, 'c', 3, 25, 55, 'ofm', 'tx', 'm', 'уд, роза, малина, ладан, бензоин', 'Уд с малиной и ладаном. Один из самых дорогих мужских ароматов.'],
+  ['L’Immensité', 'Louis Vuitton', 4, 'w', 2, 20, 50, 'csm', 'eod', 'kc', 'грейпфрут, имбирь, амброксан, лабданум', 'Грейпфрут с амброй — как Sauvage, только благороднее.'],
+  ['Afternoon Swim', 'Louis Vuitton', 4, 'w', 2, 16, 45, 'cq', 'esg', 'c', 'мандарин, апельсин, бергамот, имбирь, амбра', 'Апельсиновый сок у бассейна. Яркий летний цитрус.'],
+  ['Replica Lazy Sunday Morning', 'Maison Margiela', 3, 'a', 1, 16, 45, 'if', 'eso', 'c', 'груша, лилия, ирис, белый мускус', 'Чистые простыни воскресным утром. Тихий и уютный.'],
+  ['Replica Sailing Day', 'Maison Margiela', 3, 'w', 2, 16, 45, 'qcg', 'eos', 'c', 'морские ноты, кориандр, амбретта, водоросли', 'Солёный ветер на палубе. Летняя морская свежесть.'],
+  ['Replica Under the Lemon Trees', 'Maison Margiela', 3, 'w', 1, 16, 45, 'cga', 'eos', 'c', 'лимон, базилик, кардамон, кедр', 'Лимон с базиликом в тени деревьев. Лёгкий и бодрый.'],
+  ['Replica Coffee Break', 'Maison Margiela', 3, 'c', 2, 18, 45, 'va', 'ed', 'z', 'кофе, лаванда, молоко, ваниль', 'Капучино с лавандой. Уютный аромат на холод.'],
+  ['Megamare', 'Orto Parisi', 4, 'w', 3, 22, 50, 'qm', 'ep', 'b', 'водоросли, морские ноты, амбра, мускус', 'Шторм в флаконе: одна из самых громких «морских» ниш.'],
+  ['Vanilla 28', 'Kayali', 3, 'c', 2, 16, 40, 'vm', 'edp', 'z', 'ваниль, амбра, бобы тонка, коричневый сахар', 'Сладкая тёплая ваниль из TikTok. Скорее женский, но носят все.'],
+  ['Mango Skin', 'Vilhelm Parfumerie', 4, 'w', 2, 18, 40, 'fiv', 'edp', 'b', 'манго, чёрная смородина, роза, ваниль', 'Спелое манго с цветами. Солнечный и яркий.'],
+  ['Pacific Rock Moss', 'Goldfield & Banks', 4, 'w', 2, 18, 50, 'qga', 'eos', 'c', 'морская соль, шалфей, лимон, мох, кедр', 'Скалы и мох у океана. Натуральная свежесть.'],
+  ['Ganymede', 'Marc-Antoine Barrois', 4, 'a', 2, 22, 55, 'wls', 'eot', 'km', 'мандарин, шафран, фиалка, бессмертник, замша', 'Минеральная замша с шафраном. Нишевый хит последних лет.'],
+  ['Bois Impérial', 'Essential Parfums', 3, 'a', 2, 18, 50, 'wsa', 'eod', 'kc', 'базилик, чёрный перец, ветивер, пачули, акигалавуд', 'Свежее дерево с перцем. Отличное соотношение цены и ниши.'],
+  ['Red Tobacco', 'Mancera', 3, 'c', 3, 20, 45, 'lsv', 'dpx', 'mb', 'корица, шафран, табак, уд, ваниль', 'Пряный табак с удом. Мощный, стойкий, на холод.'],
+  ['Instant Crush', 'Mancera', 3, 'a', 3, 18, 40, 'vfm', 'dp', 'b', 'шафран, имбирь, мандарин, амбра, ваниль', 'Сладкая амбра с имбирём. Громкий и комплиментарный.'],
+  ['Arabians Tonka', 'Montale', 3, 'c', 3, 20, 45, 'ovs', 'dpx', 'mb', 'бергамот, уд, роза, бобы тонка, сахар', 'Сладкий уд с тонкой. Шлейф на весь этаж — дозируй.'],
+  ['Vetiver & Lemon', 'Zielinski & Rozen', 2, 'w', 2, 16, 50, 'cwg', 'eos', 'c', 'лимон, ветивер, кедр', 'Лимон и ветивер. Простой свежий аромат на лето.'],
+  ['Tobacolor', 'Dior', 4, 'c', 2, 22, 55, 'lvf', 'tx', 'zk', 'табак, мёд, сухофрукты, ваниль', 'Медовый табак из коллекции La Collection Privée. Тёплый и благородный.'],
+  ['Bois d’Argent', 'Dior', 4, 'a', 2, 22, 55, 'iwl', 'ote', 'k', 'ирис, мирра, пачули, кожа, мёд', 'Серебристый ирис с кожей и мёдом. Тонкий и дорогой.'],
+  ['Born Screaming', 'Toskovat’', 4, 'a', 2, 20, 45, 'fiom', 'dt', 'm', 'вишня, ежевика, латекс, дым, роза, мирра, пачули', 'Румынская ниша с культовым статусом: вишня, дым и «пластик». Аромат-воспоминание, а не просто «приятно».'],
+  ['Last Birthday Cake', 'Toskovat’', 4, 'c', 2, 18, 40, 'vmo', 'dt', 'm', 'горький миндаль, молоко, торт, бренди, ваниль, ладан, порох', 'Торт с бренди и задутыми свечами — сладко и немного грустно. Самый обсуждаемый Toskovat’.'],
+  ['Amaretto in the Melting Room', 'Toskovat’', 4, 'c', 2, 20, 45, 'vsl', 'dt', 'zm', 'хлеб, персик, амаретто, воск свечи, мёд, ваниль, табак', 'Амаретто, мёд и табак у тающих свечей. Тёплый и тёмный гурманский аромат.'],
+  // ---- дизайнерские хиты последних лет ----
+  ['Dior Homme Parfum', 'Dior', 3, 'c', 2, 22, 55, 'ilw', 'tx', 'km', 'ирис, кожа, сандал, уд, амбра', 'Пудровый ирис на коже — элегантнее не бывает. Для вечера и холодов.'],
+  ['Sauvage EDP', 'Dior', 3, 'a', 3, 18, 40, 'smc', 'edpo', 'kb', 'бергамот, перец, мускатный орех, ваниль, амброксан', 'Sauvage потеплее: больше ванили и пряностей, меньше «металла».'],
+  ['Allure Homme Édition Blanche', 'Chanel', 3, 'w', 2, 20, 50, 'cvw', 'eot', 'c', 'лимон, бергамот, ваниль, сандал', 'Лимонный пирог в белой рубашке. Свежий и уютный одновременно.'],
+  ['MYSLF', 'Yves Saint Laurent', 3, 'a', 2, 18, 40, 'iwc', 'eod', 'kc', 'бергамот, флёрдоранж, пачули, амбровое дерево', 'Флёрдоранж для мужчин. Чисто, современно, модно.'],
+  ['Paradigme', 'Prada', 3, 'a', 2, 18, 45, 'cmw', 'eod', 'k', 'бергамот, нероли, бензоин, амбра, сандал', 'Новая классика Prada: мягкая амбра с цитрусом.'],
+  ['Luna Rossa Ocean', 'Prada', 3, 'w', 2, 18, 45, 'ciw', 'eod', 'c', 'бергамот, ирис, шалфей, замша, ветивер', 'Свежесть с замшей и ирисом. Аккуратный на каждый день.'],
+  ['Le Beau', 'Jean Paul Gaultier', 2, 'w', 3, 16, 35, 'fvq', 'edp', 'b', 'бергамот, кокос, бобы тонка, амбровое дерево', 'Кокос с тонкой — летний пляжный хит.'],
+  ['Le Male Elixir', 'Jean Paul Gaultier', 3, 'c', 3, 18, 40, 'vaml', 'dp', 'mb', 'лаванда, мята, ваниль, бензоин, бобы тонка, табак', 'Медово-ванильная бомба. Громкий и сладкий — для вечеринок и холода.'],
+  ['Born in Roma Intense', 'Valentino', 3, 'c', 3, 18, 40, 'vaw', 'dp', 'zb', 'ваниль, лаванда, ветивер', 'Ваниль с лавандой и ветивером. Сладко, стойко, заметно.'],
+  ['Armani Code Parfum', 'Giorgio Armani', 3, 'c', 2, 20, 50, 'imw', 'dto', 'k', 'бергамот, ирис, бобы тонка, кедр, амбра', 'Ирис с тонкой. Элегантный аромат для свиданий и ужина.'],
+  ['Stronger With You Intensely', 'Emporio Armani', 3, 'c', 3, 18, 40, 'vsm', 'dpt', 'zb', 'розовый перец, корица, ваниль, ириска, амбра', 'Карамель с корицей и ванилью. Очень уютный и комплиментарный.'],
+  ['Phantom', 'Rabanne', 2, 'a', 3, 16, 30, 'avc', 'edp', 'b', 'лимон, лаванда, ваниль, ветивер', 'Лаванда с лимоном и ванилью в флаконе-роботе. Для молодых.'],
+  ['H24', 'Hermès', 3, 'a', 2, 20, 50, 'gaw', 'eot', 'c', 'шалфей, нарцисс, розовое дерево, склареолид', 'Зелёный и «технологичный» — запах свежего утюга и трав.'],
+  ['Gentleman Réserve Privée', 'Givenchy', 3, 'c', 2, 20, 50, 'ilw', 'dtx', 'k', 'бергамот, ирис, виски, кожа, амбра', 'Ирис с виски и кожей. Гладко и солидно.'],
+  ['Boss Bottled Elixir', 'Hugo Boss', 3, 'c', 2, 20, 50, 'osw', 'dtx', 'k', 'ладан, кардамон, ветивер, пачули, кедр', 'Ладан и кедр. Самый взрослый Boss.'],
+  ['Eros Flame', 'Versace', 2, 'c', 3, 16, 35, 'csv', 'dp', 'b', 'лимон, чёрный перец, роза, ваниль, бобы тонка', 'Цитрус с перцем и ванилью. Энергичный вечерний аромат.'],
+  // ---- бюджетные хиты ----
+  ['Club de Nuit Iconic', 'Armaf', 1, 'a', 3, 18, 40, 'cws', 'edo', 'kb', 'грейпфрут, имбирь, ладан, кедр', 'Очень похож на Bleu de Chanel, но в разы дешевле.'],
+  ['9AM Dive', 'Afnan', 1, 'w', 2, 16, 35, 'cqa', 'eosg', 'cb', 'лимон, мята, чёрная смородина, ладан, кедр', 'Свежий цитрус с мятой. Бюджетный летний вариант.'],
+  ['Qaed Al Fursan', 'Lattafa', 1, 'a', 2, 16, 40, 'fo', 'ed', 'b', 'ананас, шафран, уд, амбра', 'Ананас с удом. Бюджетная альтернатива хайповым нишам.'],
+  ['Amber Oud Gold Edition', 'Al Haramain', 2, 'c', 3, 18, 45, 'fvm', 'dp', 'b', 'бергамот, дыня, ваниль, амбра, мускус', 'Сладкий фруктовый шлейф. Похож на Erba Pura, только дешевле.']
 ];
 const PF_NOTES = [['c', '🍋 Цитрус'], ['q', '🌊 Море и свежесть'], ['w', '🌲 Дерево'], ['s', '🌶 Пряности'], ['v', '🍯 Сладкое и ваниль'], ['l', '🧥 Кожа и табак'], ['a', '🌿 Травы и лаванда'], ['m', '🔥 Амбра, восточные'], ['f', '🍏 Фрукты'], ['g', '🍃 Зелень'], ['o', '🪵 Уд и дым'], ['i', '🌸 Цветы и пудра']];
 const PF_OCC = [['s', '🎒 Школа, универ'], ['o', '💼 Работа, офис'], ['d', '❤️ Свидание'], ['p', '🎉 Вечеринка, клуб'], ['t', '🎭 Театр, ресторан'], ['g', '🏋️ Спорт, зал'], ['e', '👟 Каждый день'], ['x', '🎩 Особый случай']];
@@ -4572,7 +4710,7 @@ function perfumeView() {
     <div class="row" style="gap:10px;margin-top:6px"><button class="btn ghost" data-act="pf-back" style="width:auto;padding:0 20px">←</button><button class="btn" data-act="pf-next" ${ready ? '' : 'disabled'}>${last ? 'Показать ароматы' : st.skip && !cur.length ? 'Пропустить' : 'Дальше'}</button></div>`;
 }
 function renderJournal() {
-  const tabs = [['perfume', 'Парфюм'], ['mind', 'Характер'], ['social', 'Общение'], ['books', 'Книги'], ['basics', 'Внешность'], ['shelf', 'Полка'], ['feed', 'Лента']];
+  const tabs = [['mind', 'Характер'], ['social', 'Общение'], ['books', 'Книги'], ['basics', 'Внешность'], ['shelf', 'Полка'], ['feed', 'Лента']];
   const body = COURSES[jtab] ? courseView(jtab) : jtab === 'books' ? booksView() : jtab === 'shelf' ? shelfView() : jtab === 'perfume' ? perfumeView() : feedView();
   return `${topbar('Библиотека')}
     <button class="backlink" data-act="go" data-tab="plan">← План</button>
@@ -4707,6 +4845,7 @@ function renderModal() {
   if (String(modal.kind).startsWith('w-')) return wModal();
   if (String(modal.kind).startsWith('fr-')) return frModal();
   if (modal.kind === 'aura') return auraModal();
+  if (modal.kind === 'pf-view') return pfViewModal();
   if (modal.kind === 'levelup') {
     const r = rank(), got = UNLOCKS.filter((u) => u.lvl > modal.from && u.lvl <= modal.lvl);
     return `<div class="modal"><div class="sheet"><div class="rays"></div>
@@ -4862,7 +5001,7 @@ function renderMe() {
       <div class="sw">${ACCENTS.map((c) => `<button class="${(S.accent || 'auto') === c ? 'on' : ''}" style="background:${c === 'auto' ? 'conic-gradient(#d4ff1a,#3d63ff,#ff4a1c,#d4ff1a)' : c}" data-act="accent" data-v="${c}" aria-label="${c === 'auto' ? 'Под тему' : c}"></button>`).join('')}</div>
       <div class="hint" style="margin-top:8px;font-size:12px">Первый кружок — фирменный лаймовый.</div>
     </div>
-    <details class="card allp"><summary><span class="disp" style="font-size:20px">Настройки</span><span class="mono">бро · награды</span></summary>
+    <details class="card allp"><summary><span class="disp" style="font-size:20px">Настройки</span><span class="mono">чат · награды</span></summary>
     <div>
       <div class="mono lbl" style="margin-top:0">Как зовут твоего бро</div>
       <input class="field" style="margin-top:10px" value="${esc(coachName())}" maxlength="20" data-input="coach-name" placeholder="Имя">
@@ -4879,7 +5018,7 @@ function renderMe() {
 const TAB_PARENT = { journal: 'plan', path: 'me', friends: 'me' }; // подэкраны: какая вкладка внизу подсвечена и куда ведёт «Назад»
 function renderTabs() {
   const on = TAB_PARENT[tab] || tab;
-  return `<nav class="tabs"><div class="in">${[['home', 'Сегодня', IC.home], ['plan', 'План', IC.journal], ['wardrobe', 'Гардероб', IC.hanger], ['coach', 'Бро', IC.coach], ['me', 'Я', IC.me]].map(([k, l, ic]) => `<button class="tab ${on === k ? 'on' : ''}" data-act="go" data-tab="${k}">${ic}${l}</button>`).join('')}</div></nav>`;
+  return `<nav class="tabs"><div class="in">${[['home', 'Сегодня', IC.home], ['plan', 'План', IC.journal], ['wardrobe', 'Гардероб', IC.hanger], ['perfume', 'Парфюм', IC.perfume], ['coach', 'Чат', IC.coach], ['me', 'Я', IC.me]].map(([k, l, ic]) => `<button class="tab ${on === k ? 'on' : ''}" data-act="go" data-tab="${k}">${ic}${l}</button>`).join('')}</div></nav>`;
 }
 
 function render() {
@@ -4896,7 +5035,7 @@ function render() {
   if (ensureProtos()) save();
   if (tab === 'path') tab = 'me'; // «Путь» теперь внутри «Я»
   app.className = 'app' + (app.classList.contains('enter') ? ' enter' : '');
-  const screens = { home: renderHome, coach: renderCoach, journal: renderJournal, path: renderPath, me: renderMe, plan: renderPlan, wardrobe: renderWardrobe, friends: renderFriends };
+  const screens = { home: renderHome, coach: renderCoach, journal: renderJournal, path: renderPath, me: renderMe, plan: renderPlan, wardrobe: renderWardrobe, friends: renderFriends, perfume: renderPerfume };
   app.innerHTML = screens[tab]() + renderTabs();
   document.getElementById('overlay').innerHTML = renderReader();
   armReader();
@@ -6420,6 +6559,212 @@ function frModal() {
 // Подтягиваем друзей в фоне при запуске и отправляем свою статистику, чтобы друзья видели актуальную ауру
 setTimeout(() => { if (S.onboarded) frLoad(true); }, 1500);
 document.addEventListener('visibilitychange', () => { if (document.hidden && S.onboarded && FR && !frDemo) aiCall('friends', { stats: frStats() }, 8000).catch(() => {}); });
+
+// Обложки статей и уроков — фото с Unsplash (бесплатно, можно в коммерции). Не загрузилось — остаётся градиент со стикером.
+const COVER_IMG = {
+  f1: '1762430815537-e140755eedf9', f2: '1788882680281-771821a1ba8d', f3: '1617137977259-bb83e191f377', f4: '1618886614638-80e3c103d31a', f5: '1623676714504-edd78728155e',
+  x1: '1775127741091-cb7c89cedc78', x2: '1515938736719-95b568dc8dd8', x3: '1596075780750-81249df16d19', x4: '1605497788044-5a32c7078486', x5: '1585577529540-a8095ea25427',
+  x6: '1764426445448-95103b0024a6', x7: '1567721971759-12402aedabf0', x8: '1757620765404-a1ee66df5e27', x9: '1664871475935-39a9b861514f', x10: '1523293182086-7651a899d37f',
+  x11: '1512621776951-a57141f2eefd', x12: '1597826322461-9b11d306d08f',
+  pf1: '1621814374283-57cc5d0d39c2', pf2: '1458538977777-0549b2370168', pf3: '1615634260167-c8cdede054de', pf4: '1784183972601-17a1b00ea05e', pf5: '1594035910387-fea47794261f',
+  l1: '1786052909851-156d445bebf5', l2: '1614321375197-c5083895b054', l3: '1617127365659-c47fa864d8bc', l4: '1609231124359-9cf5f13cdbe0', l5: '1598266663439-2056e6900339', l6: '1571999583334-edaa08cba45b',
+  m1: '1600091166971-7f9faad6c1e2', m2: '1634225251578-d5f6ffced78a', m3: '1781040493590-2c73dd49f8b2', m4: '1714510380386-df1dc3111533', m5: '1790610810226-7dd859bb4e96',
+  s1: '1503443207922-dff7d543fd0e', s2: '1743794259789-db81e5342f64', s3: '1601737317921-1c5fe2e34431', s4: '1714510389999-cf5a58b4fc57', s5: '1622497170185-5d668f816a56'
+};
+
+// ---------- факт дня ----------
+// Каждый день новый факт из разных тем; кнопкой «Ещё факт» можно листать дальше. Порядок перемешан, но одинаков для всех дней,
+// поэтому факты не повторяются, пока не пройдёшь весь список.
+const FACTS = [
+  ['Уход', 'Солнце отвечает примерно за 80% видимого старения кожи. Поэтому SPF каждое утро делает больше, чем любой крем от морщин.'],
+  ['Уход', 'Кожа обновляется примерно за 28 дней. Новое средство оценивают не раньше чем через месяц.'],
+  ['Уход', 'Умываться горячей водой — плохая идея: она смывает защитный жир, и кожа начинает блестеть ещё сильнее.'],
+  ['Уход', 'Прыщи почти не зависят от того, как часто ты умываешься. Умывание чаще двух раз в день только сушит кожу.'],
+  ['Уход', 'Наволочка за неделю собирает кожный жир, пот и бактерии. Меняй её хотя бы раз в 5–7 дней, если есть высыпания.'],
+  ['Уход', 'Бальзам для губ с SPF — недооценённая вещь: губы обгорают так же, как кожа, а потемнеть могут навсегда.'],
+  ['Уход', 'Синяки под глазами часто — это просто тонкая кожа и сосуды. Сон и холодная ложка утром помогают больше, чем дорогие кремы.'],
+  ['Уход', 'Выдавленный прыщ заживает в среднем вдвое дольше и чаще оставляет след. Лучше точечное средство и терпение.'],
+  ['Уход', 'Увлажняющий крем нужен и жирной коже: пересушенная кожа начинает вырабатывать ещё больше жира.'],
+  ['Уход', 'Ретинол — одно из немногих средств, эффект которого против морщин и акне доказан исследованиями. Начинать стоит с малой концентрации.'],
+  ['Волосы', 'Стрижка раз в 3–5 недель держит форму. Ровно отросшая стрижка выглядит аккуратнее, чем модная, но запущенная.'],
+  ['Волосы', 'Шампунь нужен коже головы, а не длине волос. Достаточно намылить корни — пена сама промоет остальное.'],
+  ['Волосы', 'Мокрые волосы растягиваются и рвутся легче сухих. Не расчёсывай их сразу после душа с силой.'],
+  ['Волосы', 'Укладку проще сделать на почти сухие волосы: средство распределяется ровнее, а форма держится дольше.'],
+  ['Волосы', 'Линия бороды на шее — частая ошибка. Правильная граница проходит примерно на два пальца выше кадыка.'],
+  ['Волосы', 'Перхоть — чаще всего не сухость, а грибок. Шампунь с кетоконазолом решает её быстрее обычного.'],
+  ['Волосы', 'За день человек теряет 50–100 волос — это нормально. Тревожиться стоит, если их заметно больше несколько недель подряд.'],
+  ['Волосы', 'Брови тоже можно подправить у барбера: аккуратная форма меняет лицо сильнее, чем кажется.'],
+  ['Тело', 'Мышцы растут не на тренировке, а во время отдыха и сна. Без восстановления нагрузка не превращается в результат.'],
+  ['Тело', 'Чтобы выглядеть заметно лучше, хватает 3 тренировок в неделю по 30–40 минут, если делать их регулярно.'],
+  ['Тело', 'Пресс есть у всех. Чтобы его было видно, решает процент жира, а не количество скручиваний.'],
+  ['Тело', 'Белок нужен телу каждый день: ориентир — около 1,6 г на килограмм веса, если ты тренируешься.'],
+  ['Тело', 'Ходьба 8–10 тысяч шагов в день сжигает больше энергии, чем многие думают: это сотни калорий без тренировки.'],
+  ['Тело', 'Отжимания с хорошей техникой работают лучше, чем много отжиманий с плохой. Качество важнее числа.'],
+  ['Тело', 'Широкие плечи и прямая спина визуально делают талию уже. Поэтому тренировки спины и плеч так меняют силуэт.'],
+  ['Тело', 'Вода не сжигает жир, но лёгкое обезвоживание снижает силу и концентрацию уже на 1–2% потери веса.'],
+  ['Тело', 'Растяжка после тренировки почти не влияет на крепатуру, но помогает сохранять подвижность суставов.'],
+  ['Осанка', 'Голова весит около 5 кг. Когда ты наклоняешь её к телефону, нагрузка на шею вырастает в несколько раз.'],
+  ['Осанка', 'Прямая осанка добавляет визуально пару сантиметров роста и делает фигуру увереннее на любых фото.'],
+  ['Осанка', 'Сутулость часто держится не на лени, а на слабой спине и зажатой груди. Их можно натренировать за несколько недель.'],
+  ['Осанка', 'Каждые 30–40 минут сидения стоит встать и пройтись — это помогает спине больше, чем «правильный» стул.'],
+  ['Сон', 'После ночи без сна люди на фото выглядят менее привлекательными и уставшими — это проверяли в исследованиях.'],
+  ['Сон', 'Синий свет экрана перед сном сдвигает выработку мелатонина. Убери телефон за 30–60 минут до сна.'],
+  ['Сон', 'Лучшая температура для сна — прохладная комната, примерно 18–20 °C.'],
+  ['Сон', 'Ложиться и вставать в одно и то же время важнее, чем «отсыпаться» на выходных.'],
+  ['Сон', 'Кофе действует 5–6 часов и дольше. Чашка в пять вечера может мешать уснуть в одиннадцать.'],
+  ['Сон', 'Короткий дневной сон до 20 минут бодрит. Дольше — и проснёшься разбитым.'],
+  ['Стиль', 'Посадка важнее бренда: вещь за 3 тысячи по фигуре выглядит дороже вещи за 30, которая висит.'],
+  ['Стиль', 'Рукав пиджака должен заканчиваться у запястья так, чтобы был виден сантиметр манжеты рубашки.'],
+  ['Стиль', 'Белые кожаные кеды подходят почти ко всему — от джинсов до костюма. Главное, чтобы они были чистыми.'],
+  ['Стиль', 'Тёмные цвета визуально стройнят, а вертикальные линии вытягивают силуэт.'],
+  ['Стиль', 'Ремень и обувь лучше подбирать в одном цвете — так образ выглядит собранным.'],
+  ['Стиль', 'Плотная однотонная футболка выглядит дороже тонкой с принтом. Ищи плотность от 200 г/м².'],
+  ['Стиль', 'Брюки должны слегка касаться обуви или заканчиваться чуть выше. Гармошка на ботинках укорачивает ноги.'],
+  ['Стиль', 'Капсульный гардероб из 15 базовых вещей даёт десятки сочетаний, если все они дружат по цвету.'],
+  ['Стиль', 'Отпаренная вещь выглядит новой. Отпариватель — самое дешёвое «обновление гардероба».'],
+  ['Мода', 'Главные недели моды проходят в четырёх городах: Нью-Йорк, Лондон, Милан и Париж. Мужские показы — отдельно.'],
+  ['Мода', 'Gorpcore назвали в честь походного перекуса GORP — «good old raisins and peanuts», изюм с арахисом.'],
+  ['Мода', 'Джинсы изначально были рабочей одеждой для шахтёров и рабочих — их запатентовали Леви Страусс и Джейкоб Дэвис в 1873 году.'],
+  ['Мода', 'Тренч придумали для британских офицеров — отсюда погоны и пряжки на поясе.'],
+  ['Мода', 'Белая футболка стала самостоятельной вещью после фильмов 1950-х — до этого её носили как нижнее бельё.'],
+  ['Мода', '«Тихая роскошь» — это про качество ткани и посадку без логотипов. Её узнают по деталям, а не по бренду.'],
+  ['Парфюм', 'Слово «парфюм» происходит от латинского per fumum — «через дым». Первые ароматы сжигали как благовония.'],
+  ['Парфюм', 'Нос привыкает к своему аромату за 15–20 минут — поэтому кажется, что он пропал, хотя другие его слышат.'],
+  ['Парфюм', 'Аромат держится лучше на увлажнённой коже. Нанеси крем без запаха перед парфюмом.'],
+  ['Парфюм', 'Не растирай запястья после нанесения: трение ускоряет испарение верхних нот.'],
+  ['Парфюм', 'Baccarat Rouge 540 создали в 2014 году к 250-летию хрустального дома Baccarat — сначала тиражом всего в 250 флаконов.'],
+  ['Парфюм', 'Molecule 01 почти целиком состоит из одной молекулы — Iso E Super. Многие люди её почти не чувствуют на себе.'],
+  ['Парфюм', 'Creed Aventus стал эталоном ниши: у него, пожалуй, больше всего «клонов» среди мужских ароматов.'],
+  ['Парфюм', 'Нишевая парфюмерия — это небольшие дома, которые делают ароматы не для массового рынка, а «для своих».'],
+  ['Парфюм', 'Хранить парфюм в ванной — плохая идея: перепады температуры и свет портят аромат быстрее.'],
+  ['Парфюм', 'Один и тот же аромат на разных людях звучит по-разному — влияют кожа, питание и даже температура тела.'],
+  ['Парфюм', 'Уд — смола, которая образуется в дереве аквилярии при заражении грибком. Натуральный уд дороже золота.'],
+  ['Парфюм', 'Слово «шлейф» — это след, который аромат оставляет за тобой. Стойкость — сколько он держится на тебе.'],
+  ['Парфюм', 'Летом хватает 1–2 пшиков: в жару аромат раскрывается громче. Зимой можно 3–4.'],
+  ['Парфюм', 'Зона за ушами и шея — классика, но аромат на одежде держится ещё дольше, чем на коже.'],
+  ['Парфюм', 'Отливант — пробник 5–10 мл из большого флакона. Это лучший способ проверить аромат перед покупкой.'],
+  ['Парфюм', 'Тосковать — так назвал свой бренд румынский парфюмер: Toskovat’ стал культовым в нише за пару лет.'],
+  ['Еда', 'Сахар в напитках — самый незаметный источник лишних калорий. Банка газировки — это около 8 ложек сахара.'],
+  ['Еда', 'Сытость приходит примерно через 20 минут после начала еды. Если есть медленнее, съешь меньше.'],
+  ['Еда', 'Овощи в каждом приёме пищи — самый простой способ есть больше и при этом не набирать вес.'],
+  ['Еда', 'Резкое снижение калорий почти всегда заканчивается срывом. Минус 300–500 ккал в день работает надёжнее.'],
+  ['Еда', 'Солёная еда вечером может дать отёки под глазами утром — организм удерживает воду.'],
+  ['Общение', 'Люди лучше запоминают тех, кто называет их по имени. Повтори имя собеседника в разговоре.'],
+  ['Общение', 'Первое впечатление складывается за несколько секунд — и в нём больше осанки и взгляда, чем слов.'],
+  ['Общение', 'Задавать вопросы — недооценённый навык: людям больше нравятся собеседники, которые интересуются ими.'],
+  ['Общение', 'Крепкое, но не сжимающее рукопожатие воспринимается как уверенность. Вялое — как неуверенность.'],
+  ['Общение', 'Улыбка заразительна: мозг почти автоматически отвечает улыбкой на улыбку.'],
+  ['Общение', 'Пауза в разговоре не страшна. Уверенные люди не спешат заполнять тишину.'],
+  ['Общение', 'Скрещённые руки часто читают как закрытость, даже если тебе просто холодно.'],
+  ['Общение', 'Смотреть в глаза примерно 60–70% разговора — комфортно для собеседника. Больше уже давит.'],
+  ['Характер', 'Привычка закрепляется в среднем за 2 месяца, а не за 21 день, как принято думать. Сроки сильно зависят от человека.'],
+  ['Характер', 'Маленькие ежедневные шаги складываются: 1% лучше каждый день — это в 37 раз лучше за год.'],
+  ['Характер', 'Мотивация приходит после действия, а не до него. Начни с двух минут — дальше будет легче.'],
+  ['Характер', 'Сила воли — ограниченный ресурс в течение дня. Важное лучше делать утром.'],
+  ['Характер', 'Записанная цель выполняется чаще, чем цель «в голове».'],
+  ['Характер', 'Сравнивать себя стоит с собой вчерашним, а не с чужой лентой: там только лучшие кадры.'],
+  ['Характер', 'Дневник благодарности — одна из самых изученных практик для настроения: хватает трёх пунктов в день.'],
+  ['Внешность', 'Симметрия лица — не главное. Людей больше привлекают ухоженность, здоровая кожа и уверенная мимика.'],
+  ['Внешность', 'Эффект ореола: если человек хорошо выглядит, ему подсознательно приписывают и другие плюсы — ум, доброту, надёжность.'],
+  ['Внешность', 'На фото с близкого расстояния нос и лицо искажаются. Отойди дальше и приблизь камеру — лицо будет естественнее.'],
+  ['Внешность', 'Лучший свет для фото — мягкий дневной у окна. Верхний свет даёт тени под глазами.'],
+  ['Внешность', 'Ухоженные руки и чистые ногти замечают сразу, особенно на свиданиях и собеседованиях.'],
+  ['Внешность', 'Белые ровные зубы сильно влияют на впечатление. Чистка у стоматолога раз в полгода — простой апгрейд.'],
+  ['Внешность', 'Очки подбирают по форме лица: квадратному — округлые оправы, круглому — более угловатые.'],
+  ['Внешность', 'Пара килограммов воды и соли может изменить лицо за ночь. Отёки уходят с хорошим сном и меньшим количеством соли.'],
+  ['Здоровье', 'Чистить зубы стоит 2 минуты. Большинство людей чистят меньше минуты.'],
+  ['Здоровье', 'Прогулка на свежем воздухе 20 минут снижает стресс и улучшает настроение — это одна из самых простых привычек.'],
+  ['Здоровье', 'Утренний дневной свет помогает быстрее проснуться и лучше уснуть вечером.'],
+  ['Здоровье', 'Даже 10 минут активности в день уже лучше, чем ноль. Не жди идеального часа для тренировки.']
+];
+let factShift = 0;
+function factOrder() {
+  // одинаковая для всех «перемешка», чтобы соседние дни были про разное
+  const n = FACTS.length, step = 37 % n === 0 ? 41 : 37;
+  return (i) => (i * step) % n;
+}
+function factCard() {
+  const k = (dayNum(today()) - 1 + factShift) % FACTS.length, [tag, text] = FACTS[factOrder()(k < 0 ? k + FACTS.length : k)];
+  return `<div class="card drop hot fact"><div class="row between"><span class="mono">[ факт дня · ${tag.toLowerCase()} ]</span><span class="mono">${z(((k % FACTS.length) + FACTS.length) % FACTS.length + 1)}/${FACTS.length}</span></div>
+    <p>${text}</p><button class="buy" data-act="fact-next">Ещё факт →</button></div>`;
+}
+ACT['fact-next'] = () => { factShift++; haptic('light'); const el = document.querySelector('.fact'); if (el) el.outerHTML = factCard(); else render(); };
+
+// ---------- вкладка «Парфюм» ----------
+// Подбор аромата, твоя подборка и каталог всей базы. Фото флаконов — с Fragrantica (по номеру аромата);
+// если картинка не загрузилась, вместо неё остаётся цветная плашка с первой буквой бренда.
+const PF_IMG = {"Dior|Sauvage EDT": 31861, "Dior|Sauvage Elixir": 68415, "Chanel|Bleu de Chanel EDP": 25967, "Yves Saint Laurent|Y Eau de Parfum": 50757, "Versace|Dylan Blue": 40031, "Versace|Eros": 16657, "Versace|Versace Pour Homme": 2318, "Giorgio Armani|Acqua di Giò": 410, "Giorgio Armani|Acqua di Giò Profondo": 59532, "Prada|L’Homme": 39029, "Prada|Luna Rossa Carbon": 43402, "Paco Rabanne|1 Million": 3747, "Paco Rabanne|Invictus": 18471, "Jean Paul Gaultier|Le Male": 430, "Jean Paul Gaultier|Le Male Le Parfum": 61856, "Jean Paul Gaultier|Ultra Male": 30947, "Giorgio Armani|Armani Code": 412, "Emporio Armani|Stronger With You": 52802, "Hugo Boss|Boss Bottled": 383, "Hugo Boss|Boss The Scent": 31445, "Dolce & Gabbana|Light Blue Pour Homme": 1068, "Dolce & Gabbana|The One EDP": 31909, "Azzaro|The Most Wanted": 66826, "Azzaro|Wanted": 38686, "Azzaro|Chrome": 788, "Montblanc|Legend": 11784, "Montblanc|Explorer": 52002, "Calvin Klein|CK One": 276, "Calvin Klein|Eternity for Men": 258, "Davidoff|Cool Water": 507, "Lacoste|L.12.12 Blanc": 65874, "Bvlgari|Man in Black": 26358, "Bvlgari|Aqva Pour Homme": 153, "Hermès|Terre d’Hermès EDT": 35918, "Givenchy|Gentleman EDP": 48476, "Valentino|Uomo Born in Roma": 78740, "Burberry|Hero EDT": 68627, "Tom Ford|Noir Extreme": 29675, "Tom Ford|Ombré Leather": 40809, "Tom Ford|Tobacco Vanille": 1825, "Tom Ford|Oud Wood": 1826, "Tom Ford|Neroli Portofino": 12192, "Creed|Aventus": 9828, "Creed|Green Irish Tweed": 474, "Creed|Silver Mountain Water": 472, "Parfums de Marly|Layton": 39314, "Parfums de Marly|Herod": 16939, "Parfums de Marly|Pegasus": 16938, "Maison Francis Kurkdjian|Baccarat Rouge 540": 33519, "Maison Margiela|Replica Jazz Club": 20541, "Maison Margiela|Replica By the Fireplace": 31623, "Le Labo|Santal 33": 12201, "Byredo|Bal d’Afrique": 6458, "Escentric Molecules|Molecule 01": 845, "Xerjoff|Naxos": 30529, "Amouage|Reflection Man": 920, "Tiziana Terenzi|Kirke": 32172, "Mancera|Cedrat Boise": 15211, "Montale|Intense Cafe": 18021, "Armaf|Club de Nuit Intense Man": 34696, "Lattafa|Khamrah": 75805, "Lattafa|Asad": 72821, "Rasasi|Hawas for Him": 46890, "Afnan|9PM": 65414, "Zara|Vibrant Leather": 41963, "Lattafa|Fakhar Black": 70465, "Al Haramain|L’Aventure": 40405, "Lalique|Encre Noire": 1834, "Nautica|Voyage": 913, "Bentley|Bentley for Men Intense": 17666, "Antonio Banderas|Blue Seduction": 1088, "Issey Miyake|L’Eau d’Issey Pour Homme": 721, "Guerlain|L’Homme Idéal EDP": 37735, "Dior|Dior Homme Intense": 1771, "Dior|Fahrenheit": 228, "Chanel|Allure Homme Sport": 607, "Chanel|Égoïste Platinum": 614, "Yves Saint Laurent|La Nuit de l’Homme": 5521, "Yves Saint Laurent|L’Homme": 734, "Viktor & Rolf|Spicebomb Extreme": 30499, "Carolina Herrera|Bad Boy": 55449, "Carolina Herrera|212 VIP Men": 12865, "Abercrombie & Fitch|Fierce": 3508, "Mugler|A*Men": 705, "Kilian|Angels’ Share": 62615, "Initio|Oud for Greatness": 53641, "Nishane|Hacivat": 44174, "Jo Malone|Wood Sage & Sea Salt": 25529, "Ex Nihilo|Fleur Narcotique": 27571, "Zielinski & Rozen|Black Pepper & Amber, Neroli": 65064, "Kilian|Love, Don’t Be Shy": 4322, "Kilian|Black Phantom": 43632, "Kilian|Straight to Heaven": 4323, "Kilian|Moonlight in Heaven": 35973, "Kilian|Old Fashioned": 96096, "Tom Ford|Tuscan Leather": 1849, "Tom Ford|Ébène Fumé": 69008, "Tom Ford|Fucking Fabulous": 46513, "Tom Ford|Lost Cherry": 51411, "Tom Ford|Bitter Peach": 62707, "Tom Ford|Costa Azzurra": 25482, "Tom Ford|Grey Vetiver": 6697, "Byredo|Gypsy Water": 3575, "Byredo|Mojave Ghost": 27040, "Byredo|Bibliothèque": 43324, "Byredo|Super Cedar": 35530, "Le Labo|Another 13": 10131, "Le Labo|Thé Noir 29": 31872, "Le Labo|Bergamote 22": 6327, "Le Labo|Rose 31": 3678, "Maison Francis Kurkdjian|Grand Soir": 40816, "Maison Francis Kurkdjian|Oud Satin Mood": 30352, "Maison Francis Kurkdjian|Aqua Universalis": 6804, "Maison Francis Kurkdjian|Gentle Fluidity Silver": 53400, "Creed|Viking": 41698, "Creed|Royal Oud": 12317, "Creed|Millésime Impérial": 466, "Parfums de Marly|Althaïr": 84109, "Parfums de Marly|Percival": 51037, "Parfums de Marly|Greenley": 62101, "Parfums de Marly|Haltane": 70776, "Xerjoff|Erba Pura": 55157, "Xerjoff|Alexandria II": 17786, "Xerjoff|40 Knots": 16445, "Initio|Side Effect": 42260, "Initio|Rehab": 50351, "Initio|Absolute Aphrodisiac": 30989, "Amouage|Interlude Man": 15294, "Amouage|Jubilation XXV": 2366, "Nishane|Ani": 54785, "Nishane|Wulong Chá": 30567, "Diptyque|Tam Dao": 3956, "Diptyque|Philosykos": 3865, "Diptyque|Orphéon": 125429, "Diptyque|Eau Duelle": 9241, "Frédéric Malle|Portrait of a Lady": 10464, "Frédéric Malle|Musc Ravageur": 1801, "Frédéric Malle|Vetiver Extraordinaire": 4774, "Ex Nihilo|Blue Talisman": 84224, "Escentric Molecules|Escentric 01": 846, "Juliette Has a Gun|Not a Perfume": 10296, "Memo Paris|African Leather": 31383, "Louis Vuitton|Imagination": 67370, "Louis Vuitton|Ombre Nomade": 49755, "Louis Vuitton|L’Immensité": 49751, "Louis Vuitton|Afternoon Swim": 53947, "Maison Margiela|Replica Lazy Sunday Morning": 20542, "Maison Margiela|Replica Sailing Day": 47891, "Maison Margiela|Replica Under the Lemon Trees": 53379, "Maison Margiela|Replica Coffee Break": 55926, "Orto Parisi|Megamare": 53471, "Kayali|Vanilla 28": 52616, "Vilhelm Parfumerie|Mango Skin": 49305, "Goldfield & Banks|Pacific Rock Moss": 44120, "Marc-Antoine Barrois|Ganymede": 54720, "Essential Parfums|Bois Impérial": 64338, "Mancera|Red Tobacco": 46663, "Mancera|Instant Crush": 54885, "Montale|Arabians Tonka": 57384, "Zielinski & Rozen|Vetiver & Lemon": 65055, "Dior|Tobacolor": 65551, "Dior|Bois d’Argent": 48396, "Toskovat’|Last Birthday Cake": 88875, "Dior|Dior Homme Parfum": 27417, "Dior|Sauvage EDP": 48100, "Chanel|Allure Homme Édition Blanche": 2653, "Yves Saint Laurent|MYSLF": 84094, "Prada|Paradigme": 110661, "Prada|Luna Rossa Ocean": 81280, "Jean Paul Gaultier|Le Beau": 72158, "Jean Paul Gaultier|Le Male Elixir": 81642, "Valentino|Born in Roma Intense": 78740, "Giorgio Armani|Armani Code Parfum": 75126, "Emporio Armani|Stronger With You Intensely": 52802, "Rabanne|Phantom": 68226, "Hermès|H24": 65147, "Givenchy|Gentleman Réserve Privée": 71272, "Hugo Boss|Boss Bottled Elixir": 84074, "Versace|Eros Flame": 52180, "Armaf|Club de Nuit Iconic": 78475, "Afnan|9AM Dive": 78611, "Lattafa|Qaed Al Fursan": 67996, "Al Haramain|Amber Oud Gold Edition": 51816, "Toskovat’|Born Screaming": 88874, "Toskovat’|Amaretto in the Melting Room": 112540};
+const pfKey = (p) => p[1] + '|' + p[0];
+const pfPhoto = (p) => { const id = PF_IMG[pfKey(p)]; return id ? `https://fimgs.net/mdimg/perfume/375x500.${id}.jpg` : ''; };
+const pfHue = (p) => [...p[1]].reduce((a, c) => a + c.charCodeAt(0), 0) * 37 % 360;
+function pfPic(p, cls) {
+  const u = pfPhoto(p);
+  return `<div class="pfpic ${cls || ''}" style="--h:${pfHue(p)}"><b>${esc(p[1].slice(0, 1))}</b>${u ? `<img src="${u}" alt="" loading="lazy" decoding="async" onerror="this.remove()">` : ''}</div>`;
+}
+// Плитка: фото, бренд, название, ноты мелко
+function pfTile(p, extra) {
+  const i = PERFUMES.indexOf(p);
+  return `<button class="pftile" data-act="pf-view" data-i="${i}">${pfPic(p)}${extra || ''}
+    <span class="pfb">${esc(p[1])}</span><b>${esc(p[0])}</b><small>${esc(p[10].split(', ').slice(0, 4).join(' · '))}</small></button>`;
+}
+// Каталог: фильтры по семействам
+const PF_CATS = [
+  ['all', 'Все', () => true],
+  ['niche', '💎 Ниша', (p) => p[2] === 4],
+  ['fresh', '🌊 Свежие', (p) => /[cqg]/.test(p[7])],
+  ['sweet', '🍯 Сладкие', (p) => p[7].includes('v')],
+  ['wood', '🌲 Дерево', (p) => p[7].includes('w')],
+  ['leather', '🧥 Кожа и табак', (p) => p[7].includes('l')],
+  ['oud', '🪵 Уд и дым', (p) => p[7].includes('o')],
+  ['cheap', '💸 До 3 000 ₽', (p) => p[2] === 1]
+];
+let pfCat = 'all', pfMore = 12;
+function renderPerfume() {
+  // идёт подбор — показываем вопросы (из библиотечного экрана подбора)
+  if (pf.step > 0) return `${topbar('Парфюм')}${perfumeView()}`;
+  const res = S.perfume ? pfPick(S.perfume) : null;
+  const picks = res ? [...res.top, ...(res.cheap ? [res.cheap] : [])] : [];
+  const cat = PF_CATS.find((c) => c[0] === pfCat) || PF_CATS[0], list = PERFUMES.filter(cat[2]).sort((a, b) => (b[2] === 4) - (a[2] === 4)); // ниша — первой
+  const arts = ARTICLES.filter((x) => x.tag === 'Парфюм'), ra = S.articles || [];
+  return `${topbar('Парфюм')}
+    <div class="card pfhero">
+      <div class="pfhero-bottles">${['Aventus', 'Baccarat Rouge 540', 'Santal 33'].map((n) => { const p = PERFUMES.find((x) => x[0] === n); return p ? pfPic(p, 'sm') : ''; }).join('')}</div>
+      <span class="mono">[ подбор аромата ]</span>
+      <div class="disp" style="font-size:34px;margin:8px 0 6px">${res ? 'Твой запах найден' : 'Найди свой запах'}</div>
+      <p class="hint" style="margin:0 0 14px;font-size:14px">${res ? 'Можно пройти заново — например, на лето или для свиданий.' : `Восемь коротких вопросов: куда носишь, какие ноты нравятся, бюджет. В базе ${PERFUMES.length} ароматов — от Zara до Kilian и Toskovat’.`}</p>
+      <button class="btn" data-act="${res ? 'pf-again' : 'pf-start'}">${res ? 'Подобрать заново' : 'Подобрать аромат'} ${IC.send}</button>
+    </div>
+    ${res ? `<div class="sec"><span class="disp">Твоя подборка</span><span class="chipline">[ ${picks.length} ]</span></div>
+      <div class="pfgrid">${picks.map((r, i) => pfTile(r.p, `<span class="pfpct">${i === res.top.length ? 'бюджетно' : r.pct + '%'}</span>`)).join('')}</div>` : ''}
+    <div class="sec"><span class="disp">Каталог</span><span class="chipline">[ ${list.length} ]</span></div>
+    <div class="pfcats">${PF_CATS.map(([k, l]) => `<button class="${pfCat === k ? 'on' : ''}" data-act="pf-cat" data-v="${k}">${l}</button>`).join('')}</div>
+    <div class="pfgrid">${list.slice(0, pfMore).map((p) => pfTile(p)).join('')}</div>
+    ${list.length > pfMore ? `<button class="btn ghost" data-act="pf-more" style="margin-top:4px">Показать ещё · ${list.length - pfMore}</button>` : ''}
+    <div class="sec"><span class="disp">Про парфюм</span><span class="chipline">[ ${arts.length} статей ]</span></div>
+    <div class="strip">${arts.map((x) => `<button class="phcard" data-act="open" data-kind="article" data-id="${x.id}" style="text-align:left">${cover(x)}<span class="mono">[ ${x.min} мин${ra.includes(x.id) ? ' · прочитано' : ''} ]</span><div style="font-weight:800;font-size:17px;line-height:1.2;margin-top:4px">${x.t}</div></button>`).join('')}</div>`;
+}
+// Карточка аромата во всплывающем окне
+function pfViewModal() {
+  const p = PERFUMES[modal.i];
+  if (!p) return '';
+  const r = S.perfume ? pfScore(p, S.perfume) : null;
+  return `<div class="modal"><div class="sheet pfsheet">
+    ${pfPic(p, 'big')}
+    <div class="mono" style="margin-top:12px;color:var(--accent)">${esc(p[1])}</div>
+    <div class="disp" style="font-size:30px;margin-top:2px">${esc(p[0])}</div>
+    <p style="margin:10px 0 0;font-size:14.5px;line-height:1.5">${esc(p[11])}</p>
+    <div class="pf-notes">${p[10].split(', ').map((n) => `<span>${esc(n)}</span>`).join('')}</div>
+    ${r && r.why.length ? `<ul class="pf-why">${r.why.slice(0, 3).map((w) => `<li>${w}</li>`).join('')}</ul>` : ''}
+    <div class="row between" style="margin-top:12px;flex-wrap:wrap;gap:8px"><span class="mono">≈ ${PF_TIER[p[2]]}${r ? ` · тебе подходит на ${r.pct}%` : ''}</span><span>${pfLinks(p).map(([l, u]) => `<a class="buy" data-ext href="${esc(u)}" target="_blank" rel="noopener">${l} ↗</a>`).join('')}</span></div>
+    <button class="btn ghost" data-act="modal-close" style="margin-top:14px">Закрыть</button></div></div>`;
+}
+Object.assign(ACT, {
+  'pf-view'(el) { modal = { kind: 'pf-view', i: +el.dataset.i }; haptic('light'); render(); },
+  'pf-cat'(el) { pfCat = el.dataset.v; pfMore = 12; haptic('light'); render(); },
+  'pf-more'() { pfMore += 12; haptic('light'); render(); }
+});
+// Старые ссылки «Библиотека → Парфюм» ведут во вкладку
+{ const lib0 = ACT.lib; ACT.lib = (el) => { if (el.dataset.v === 'perfume') { tab = 'perfume'; reader = null; haptic('light'); render(); window.scrollTo(0, 0); } else lib0(el); }; }
 
 start();
 </script>
