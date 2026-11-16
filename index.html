@@ -1529,6 +1529,22 @@ button:active,label.card:active{transform:scale(.97)}
 .pfcats button{flex:none;padding:8px 12px;border-radius:14px;background:var(--card);border:1px solid var(--card-b);color:inherit;font-size:13px;font-weight:700}
 .pfcats button.on{background:linear-gradient(135deg,#ff4fa3,#8b5cff);color:#fff;border-color:transparent}
 .pfsheet{max-height:86vh;overflow-y:auto}
+@media (max-width:360px){:root .tabs .tab{font-size:8.5px;letter-spacing:0}}
+/* ---------- минималистичный фон с душой: ровная подложка + два мягких свечения + лёгкое зерно ---------- */
+.aurora{display:none!important}
+:root body{background:var(--bgmin-top) linear-gradient(180deg,var(--bgmin-top) 0,var(--bgmin) 420px) no-repeat!important;background-color:var(--bgmin)!important;background-attachment:scroll!important}
+:root{--bgmin:#eef0f3;--bgmin-top:#f7f8fa;--glowA:rgba(139,92,255,.55);--glowB:rgba(190,255,60,.6);--grain:.05}
+:root[data-theme="dark"]{--bgmin:#0a0b0e;--bgmin-top:#111217;--glowA:rgba(139,92,255,.5);--glowB:rgba(190,255,60,.22);--grain:.03}
+/* свечения: фиолетовое сверху справа, салатовое снизу слева — тихо «дышат» */
+:root body::before{content:''!important;display:block!important;position:fixed;inset:0;left:0;top:0;width:auto;height:auto;border:0!important;border-radius:0;transform:none;z-index:-1;pointer-events:none;
+  background:radial-gradient(75vmax 60vmax at 100% 0%,var(--glowA),transparent 68%),radial-gradient(70vmax 55vmax at 0% 100%,var(--glowB),transparent 68%)!important;
+  animation:bgbreath 12s ease-in-out infinite alternate!important}
+@keyframes bgbreath{from{opacity:.75}to{opacity:1}}
+/* зерно — как у плёночной фотографии, почти незаметно */
+:root body::after{content:''!important;display:block!important;position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:var(--grain);filter:none!important;animation:none!important;mix-blend-mode:normal;
+  background:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>") 0 0/180px 180px!important}
+:root[data-theme="dark"] body::after{background:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 1 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>") 0 0/180px 180px!important}
+@media (prefers-reduced-motion:reduce){:root body::before{animation:none!important}}
 </style>
 </head>
 <body>
@@ -3608,13 +3624,13 @@ function journey() {
     const types = day.ev.map((e) => e.type);
     P.slice(0, 3).forEach(([t, p]) => types.includes(t) && phrases.push(p));
     if (day.tasks.length) {
-      const pl = [...new Set(day.tasks.map((id) => id.split(':')[0]))].map((p) => PILLARS[p].verb);
+      const pl = [...new Set(day.tasks.map((id) => id.split(':')[0]))].filter((p) => PILLARS[p]).map((p) => PILLARS[p].verb);
       phrases.push((types.includes('closed') ? 'закрыли день: ' : 'сделали ') + pl.join(' и '));
     }
     if (day.psteps) phrases.push(`сделали ${day.psteps.length} ${plural(day.psteps.length, 'шаг', 'шага', 'шагов')} по протоколам`);
     P.slice(3).forEach(([t, p]) => types.includes(t) && phrases.push(p));
     if (!phrases.length && types.includes('note')) phrases.push('записали ощущения');
-    day.tasks.forEach((id) => { const [p, k] = id.split(':'); details.push(PILLARS[p].code + ' · ' + TASKS[p][k]); });
+    day.tasks.forEach((id) => { const [p, k] = id.split(':'); if (PILLARS[p] && TASKS[p] && TASKS[p][k]) details.push(PILLARS[p].code + ' · ' + TASKS[p][k]); });
     (day.psteps || []).forEach((key) => { const [id, i] = key.split(':'), pr = PROTOCOLS[id]; if (pr && pr.steps[i]) details.push(pr.t + ' · ' + pr.steps[i].t); });
     day.ev.filter((e) => e.type !== 'closed').forEach((e) => details.push(e.text));
     return { date: day.date, n: dayNum(day.date), title: cap(phrases.join(', ') || 'Без отметок'), details, closed: closed(day.date) };
@@ -3961,7 +3977,7 @@ function acceptPlan() {
   addEvent('plan', r.shopping.length ? `Получили план на 90 дней и список средств на ${r.sum} ₽` : 'Получили план на 90 дней — без покупок');
   if (ob.photo) { S.photos.push({ date: today(), data: ob.photo }); addEvent('photo', 'Стартовое фото'); }
   if (ob.ai) S.ai = { ...ob.ai, date: today() };
-  S.chat.push({ from: 'ai', text: `Привет${tgUser && tgUser.first_name ? ', ' + tgUser.first_name : ''}! Я ${coachName()} — твой личный коуч в mogg 👋\n\nБудем качать ${r.focus.map((p) => PILLARS[p].name.toLowerCase()).join(', ')}. Каждый день — три небольших дела на внешность и одно на характер. Ничего сложного, обещаю.\n\nЗа всё капает опыт, с уровнями открываются новые фишки. Пиши мне как другу: спроси «что сегодня», «мой путь», «подбери парфюм» — или просто расскажи, как день.` });
+  S.chat.push({ from: 'ai', text: `Привет${tgUser && tgUser.first_name ? ', ' + tgUser.first_name : ''}! Я ${coachName()} — твой личный коуч в mogg 👋\n\nЧто качаем: ${r.focus.map((p) => PILLARS[p].name.toLowerCase()).join(', ')}. Каждый день — три небольших дела на внешность и одно на характер. Ничего сложного, обещаю.\n\nЗа всё капает опыт, с уровнями открываются новые фишки. Пиши мне как другу: спроси «что сегодня», «мой путь», «подбери парфюм» — или просто расскажи, как день.` });
   tab = 'home'; haptic('success'); confetti(); save(); render(); window.scrollTo(0, 0);
   track('onboarded', { photo: !!ob.photo });
 }
@@ -3978,7 +3994,7 @@ function renderOnboarding() {
       <div class="in" style="min-height:520px">
         <div class="row between"><div class="logo" style="color:inherit">${IC.logo}<b>mogg<span class="tm">™</span></b></div><span class="mono">[ SEASON 01 ]</span></div>
         <div class="disp huge" style="font-size:64px;margin-top:40px;position:relative;z-index:2">Стань<br>лучшей<br>версией<br>себя<span class="tm">™</span></div>
-        <div class="bot row between" style="align-items:flex-end;position:relative;z-index:2"><div><div class="mono">Внешность · характер · общение · разум</div><div class="mono" style="margin-top:6px">20 уровней · награды · свой бро в чате</div></div>${barcode()}</div>
+        <div class="bot row between" style="align-items:flex-end;position:relative;z-index:2"><div><div class="mono">Внешность · характер · общение · разум</div><div class="mono" style="margin-top:6px">20 уровней · награды · личный коуч в чате</div></div>${barcode()}</div>
       </div>
     </div>
     <div class="tiles" style="margin-bottom:14px">
@@ -5101,6 +5117,8 @@ try {
   tg && tg.BackButton && tg.BackButton.onClick(() => {
     if (modal) { if (modal.kind === 'focus') { clearInterval(focusT.id); focusT = { left: 1500, running: false, id: null }; } if (modal.kind === 'wo') woStop(); modal = null; }
     else if (reader) reader = null;
+    else if (tab === 'perfume' && pf.step > 0) { pf.step--; if (pf.step <= 0) pf = pfFresh(); }
+    else if (tab === 'friends' && frOpen) frOpen = null;
     else tab = TAB_PARENT[tab] || 'home';
     haptic('light'); render(); window.scrollTo(0, 0);
   });
