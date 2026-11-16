@@ -1149,8 +1149,8 @@ button:active,label.card:active{transform:scale(.97)}
   background:radial-gradient(circle at var(--gx,50%) var(--gy,50%),rgba(255,255,255,.28),rgba(255,255,255,.06) 35%,transparent 60%);mix-blend-mode:soft-light}
 .tilt.held .glare{opacity:1}
 :root :is(.mission,.acard,.opt,.chip):not(.card *).tilt.held .glare{mix-blend-mode:normal;background:radial-gradient(circle at var(--gx,50%) var(--gy,50%),color-mix(in srgb,var(--g) 30%,transparent),transparent 60%)}
-.ink{position:absolute;border-radius:50%;pointer-events:none;z-index:4;transform:scale(0);opacity:.45;animation:ink .7s cubic-bezier(.2,.8,.2,1) forwards}
-@keyframes ink{to{transform:scale(1);opacity:0}}
+.tapink{position:absolute;border-radius:50%;pointer-events:none;z-index:4;transform:scale(0);opacity:.45;animation:tapink .7s cubic-bezier(.2,.8,.2,1) forwards}
+@keyframes tapink{to{transform:scale(1);opacity:0}}
 
 /* 5. Появление при прокрутке: блоки выезжают снизу по очереди */
 .rv{opacity:0;transform:translateY(26px) scale(.97)}
@@ -1248,6 +1248,31 @@ button:active,label.card:active{transform:scale(.97)}
 .wscan{position:absolute;left:0;right:0;height:38%;top:-38%;background:linear-gradient(180deg,transparent,rgba(21,151,201,.35),transparent);animation:wscan 1.6s ease-in-out infinite}
 @keyframes wscan{to{top:100%}}
 .wprog{position:absolute;left:50%;bottom:12px;transform:translateX(-50%);white-space:nowrap;padding:6px 12px;border-radius:12px;background:rgba(7,8,12,.75);color:#fff;font-size:12px;font-weight:700}
+/* ---------- друзья ---------- */
+.fcard{width:100%;text-align:left}
+.fbadge{padding:4px 10px;border-radius:10px;background:#ff5a1c;color:#fff;font-size:12px;font-weight:800;animation:fpulse 1.6s ease-in-out infinite}
+@keyframes fpulse{50%{box-shadow:0 0 0 6px rgba(255,90,28,.18)}}
+.favs{display:flex;flex:none}
+.favs .fava + .fava{margin-left:-10px}
+.fava{flex:none;width:40px;height:40px;border-radius:50%;display:grid;place-items:center;font-weight:800;font-size:16px;color:#fff;
+  background:linear-gradient(135deg,hsl(var(--h,260) 85% 62%),hsl(calc(var(--h,260) + 40) 85% 52%));box-shadow:0 0 0 2px #0b0c11}
+.fava.empty{background:rgba(255,255,255,.1);color:rgba(255,255,255,.6);font-size:22px;font-weight:400}
+.fcode{font-family:var(--mono);letter-spacing:.08em;color:var(--accent)}
+.fme .fbig{font-family:var(--mono);font-size:34px;font-weight:700;letter-spacing:.14em;color:var(--accent)}
+.fme .btn.sm{width:auto}
+.fadd{display:flex;gap:8px;margin-top:10px}
+.fadd .field{flex:1;min-width:0;font-family:var(--mono);letter-spacing:.12em;text-transform:uppercase}
+.fadd .btn.sm{width:auto;height:48px;flex:none}
+.frow{display:flex;align-items:center;gap:12px;padding:10px 0;border-top:1px solid var(--line)}
+.frow:first-child{border-top:0;padding-top:0}
+.frow:last-child{padding-bottom:0}
+.fnm{flex:1;min-width:0;display:flex;flex-direction:column}
+.fnm b{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.fnm .mono{font-size:10px;margin-top:2px}
+.fbtns{display:flex;gap:6px}
+.fbtns .btn.sm{width:auto;height:36px;padding:0 12px}
+.frow .btn.sm.ghost{width:auto}
+.fx{width:36px;height:36px;border-radius:12px;background:rgba(255,255,255,.08);color:var(--hint);font-size:18px;font-weight:800}
 </style>
 </head>
 <body>
@@ -4461,6 +4486,7 @@ let focusT = { left: 1500, running: false, id: null };
 function renderModal() {
   if (!modal) return '';
   if (String(modal.kind).startsWith('w-')) return wModal();
+  if (String(modal.kind).startsWith('fr-')) return frModal();
   if (modal.kind === 'levelup') {
     const r = rank(), got = UNLOCKS.filter((u) => u.lvl > modal.from && u.lvl <= modal.lvl);
     return `<div class="modal"><div class="sheet"><div class="rays"></div>
@@ -4563,6 +4589,7 @@ function renderPath() {
   const ph = (S.photos || []).filter((p) => p.data), first = ph[0], last = ph[ph.length - 1];
   const moodDays = [...Array(14)].map((_, i) => addDays(end, i - 13));
   return `${topbar('Я')}
+    ${friendsCard()}
     ${proCard()}
     <div class="card ink" style="overflow:hidden">
       <div class="row between"><span class="mono">[ уровень · дорожка наград ]</span><span class="mono">${r.x} XP</span></div>
@@ -4629,7 +4656,7 @@ function renderMe() {
     <p class="mono" style="text-align:center;margin-top:20px">mogg · season 01 · <a href="privacy.html" style="color:inherit">политика</a></p>`;
 }
 
-const TAB_PARENT = { journal: 'plan', path: 'me' }; // подэкраны: какая вкладка внизу подсвечена и куда ведёт «Назад»
+const TAB_PARENT = { journal: 'plan', path: 'me', friends: 'me' }; // подэкраны: какая вкладка внизу подсвечена и куда ведёт «Назад»
 function renderTabs() {
   const on = TAB_PARENT[tab] || tab;
   return `<nav class="tabs"><div class="in">${[['home', 'Сегодня', IC.home], ['plan', 'План', IC.journal], ['wardrobe', 'Гардероб', IC.hanger], ['coach', 'Бро', IC.coach], ['me', 'Я', IC.me]].map(([k, l, ic]) => `<button class="tab ${on === k ? 'on' : ''}" data-act="go" data-tab="${k}">${ic}${l}</button>`).join('')}</div></nav>`;
@@ -4649,7 +4676,7 @@ function render() {
   if (ensureProtos()) save();
   if (tab === 'path') tab = 'me'; // «Путь» теперь внутри «Я»
   app.className = 'app' + (app.classList.contains('enter') ? ' enter' : '');
-  const screens = { home: renderHome, coach: renderCoach, journal: renderJournal, path: renderPath, me: renderMe, plan: renderPlan, wardrobe: renderWardrobe };
+  const screens = { home: renderHome, coach: renderCoach, journal: renderJournal, path: renderPath, me: renderMe, plan: renderPlan, wardrobe: renderWardrobe, friends: renderFriends };
   app.innerHTML = screens[tab]() + renderTabs();
   document.getElementById('overlay').innerHTML = renderReader();
   armReader();
@@ -5137,7 +5164,7 @@ function start() {
     // капля цвета из-под пальца
     const r = el.getBoundingClientRect(), s = Math.max(r.width, r.height) * 2.2, ink = document.createElement('i');
     const c = getComputedStyle(el).getPropertyValue('--g').trim() || '#8b5cff';
-    ink.className = 'ink'; ink.style.cssText = `width:${s}px;height:${s}px;left:${e.clientX - r.left - s / 2}px;top:${e.clientY - r.top - s / 2}px;background:radial-gradient(circle,${c},transparent 65%)`;
+    ink.className = 'tapink'; ink.style.cssText = `width:${s}px;height:${s}px;left:${e.clientX - r.left - s / 2}px;top:${e.clientY - r.top - s / 2}px;background:radial-gradient(circle,${c},transparent 65%)`;
     el.appendChild(ink); setTimeout(() => ink.remove(), 750);
     setT(el, e.clientX, e.clientY, true);
     try { tg.HapticFeedback.selectionChanged(); } catch (err) {}
@@ -5504,6 +5531,130 @@ document.addEventListener('input', (e) => { if (e.target.dataset.input === 'w-na
   addEventListener('pointerup', up, true);
   addEventListener('pointercancel', up, true);
 })();
+
+// ---------- друзья: у каждого свой ID, заявка по ID, входящие, список друзей ----------
+// Всё хранит сервер (та же функция Yandex Cloud, что и ИИ). Нужные ей действия:
+//   friends                  → { me: { code, name }, friends: [{ code, name }], incoming: [{ code, name }], outgoing: [{ code, name }] }
+//   friend_add { code }      → то же состояние | { error: 'not_found' | 'self' | 'already' | 'pending' }
+//   friend_answer { code, accept } → состояние
+//   friend_remove { code }   → состояние (у обоих; для исходящей заявки — отменяет её)
+// ID — 6 символов без похожих букв (без 0/O, 1/I/L), выдаётся сервером один раз и навсегда.
+let FR = null, frBusy = false, frIn = '', frDemo = false;
+const frClean = (v) => String(v || '').toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 6);
+// Вне Telegram сервер не пускает — показываем пример, чтобы было видно, как это работает
+const FR_DEMO = () => ({ me: { code: 'K7P2QX', name: (tgUser && tgUser.first_name) || 'Ты' }, friends: [{ code: 'Z4X9MN', name: 'Даня' }], incoming: [{ code: 'B4N8TR', name: 'Артём' }], outgoing: [] });
+function frDemoCall(action, p) {
+  const s = FR || FR_DEMO(), f = (l) => l.find((x) => x.code === p.code);
+  if (action === 'friend_add') {
+    if (p.code === s.me.code) return { error: 'self' };
+    if (f(s.friends)) return { error: 'already' };
+    if (f(s.outgoing)) return { error: 'pending' };
+    const inc = f(s.incoming);
+    if (inc) { s.incoming = s.incoming.filter((x) => x !== inc); s.friends.unshift(inc); return s; }
+    if (p.code.length !== 6) return { error: 'not_found' };
+    s.outgoing.unshift({ code: p.code, name: 'Игрок ' + p.code.slice(0, 2) });
+  }
+  if (action === 'friend_answer') { const x = f(s.incoming); s.incoming = s.incoming.filter((y) => y !== x); if (x && p.accept) s.friends.unshift(x); }
+  if (action === 'friend_remove') { s.friends = s.friends.filter((x) => x.code !== p.code); s.outgoing = s.outgoing.filter((x) => x.code !== p.code); }
+  return JSON.parse(JSON.stringify(s));
+}
+async function frCall(action, p) {
+  if (frDemo) return frDemoCall(action, p || {});
+  const r = AI_ENDPOINT ? await aiCall(action, p || {}, 15000) : { error: 'off' };
+  if (r.error === 'not_telegram' || r.error === 'off') { frDemo = true; if (!FR) FR = FR_DEMO(); return frDemoCall(action, p || {}); }
+  return r;
+}
+async function frLoad(silent) {
+  if (frBusy) return;
+  frBusy = true;
+  const r = await frCall('friends');
+  frBusy = false;
+  if (r && r.me) { FR = r; S.frCode = r.me.code; save(); }
+  else if (!silent) toast(`Не получилось загрузить друзей (${(r && r.error) || 'нет ответа'})`);
+  if (tab === 'friends' || tab === 'me') render();
+}
+const frAva = (p, cls) => `<span class="fava ${cls || ''}" style="--h:${[...p.code].reduce((a, c) => a + c.charCodeAt(0), 0) * 47 % 360}">${esc((p.name || '?').slice(0, 1).toUpperCase())}</span>`;
+
+// Карточка во вкладке «Я»
+function friendsCard() {
+  const n = FR ? FR.friends.length : 0, inc = FR ? FR.incoming.length : 0, code = (FR && FR.me.code) || S.frCode;
+  return `<button class="card fcard" data-act="go" data-tab="friends">
+    <div class="row between"><span class="disp" style="font-size:22px">Друзья</span>${inc ? `<span class="fbadge">${inc} ${plural(inc, 'заявка', 'заявки', 'заявок')}</span>` : `<span class="mono">${n || ''}</span>`}</div>
+    <div class="row" style="margin-top:10px;gap:10px">
+      <div class="favs">${FR && FR.friends.length ? FR.friends.slice(0, 4).map((p) => frAva(p)).join('') : '<span class="fava empty">+</span>'}</div>
+      <div style="flex:1;min-width:0"><div style="font-weight:700">${n ? `${n} ${plural(n, 'друг', 'друга', 'друзей')}` : 'Добавь друзей по ID'}</div><div class="hint" style="font-size:12.5px">${code ? `Твой ID: <b class="fcode">${code}</b>` : 'Твой ID появится здесь'}</div></div>
+      <span class="arrow">${IC.arrow}</span>
+    </div></button>`;
+}
+
+// Экран друзей
+function renderFriends() {
+  if (!FR && !frBusy) frLoad();
+  const me = FR && FR.me, ok = /^[A-Z0-9]{6}$/.test(frIn);
+  const row = (p, btns) => `<div class="frow">${frAva(p)}<div class="fnm"><b>${esc(p.name || 'Без имени')}</b><span class="mono">ID ${p.code}</span></div>${btns}</div>`;
+  return `<div class="wbar"><button class="wback" data-act="go" data-tab="me" aria-label="Назад">←</button><b>Друзья</b></div>
+    <div class="card fme">
+      <span class="mono">[ твой ID ]</span>
+      <div class="row between" style="margin-top:6px"><div class="fbig">${me ? me.code : '······'}</div><button class="btn sm" data-act="fr-copy" ${me ? '' : 'disabled'}>Скопировать</button></div>
+      <div class="hint" style="font-size:12.5px;margin-top:6px">Отправь его другу — он введёт ID у себя и кинет тебе заявку.</div>
+    </div>
+    <div class="card">
+      <span class="mono">[ добавить друга ]</span>
+      <form class="fadd" data-submit="fr-add"><input id="frIn" class="field" data-input="fr-in" value="${esc(frIn)}" placeholder="ID друга, например B4N8TR" maxlength="8" autocomplete="off" autocapitalize="characters" spellcheck="false"><button class="btn sm" id="frSend" ${ok ? '' : 'disabled'}>Кинуть заявку</button></form>
+    </div>
+    ${!FR ? `<div class="card"><div class="spin" style="margin:10px auto"></div><div class="hint" style="text-align:center">Загружаю…</div></div>` : `
+    ${FR.incoming.length ? `<div class="sec"><span class="disp">Заявки</span><span class="chipline">[ ${FR.incoming.length} ]</span></div><div class="card">${FR.incoming.map((p) => row(p, `<div class="fbtns"><button class="btn sm" data-act="fr-yes" data-c="${p.code}">Принять</button><button class="btn sm ghost" data-act="fr-no" data-c="${p.code}" aria-label="Отклонить">✕</button></div>`)).join('')}</div>` : ''}
+    <div class="sec"><span class="disp">Мои друзья</span><span class="chipline">[ ${FR.friends.length} ]</span></div>
+    <div class="card">${FR.friends.length ? FR.friends.map((p) => row(p, `<button class="fx" data-act="fr-del" data-c="${p.code}" data-n="${esc(p.name || '')}" aria-label="Удалить из друзей">⋯</button>`)).join('') : '<div class="hint">Пока никого. Введи ID друга выше или отправь ему свой.</div>'}</div>
+    ${FR.outgoing.length ? `<div class="sec"><span class="disp">Ждут ответа</span><span class="chipline">[ ${FR.outgoing.length} ]</span></div><div class="card">${FR.outgoing.map((p) => row(p, `<button class="btn sm ghost" data-act="fr-cancel" data-c="${p.code}">Отменить</button>`)).join('')}</div>` : ''}
+    ${frDemo ? '<div class="hint" style="text-align:center;font-size:12px;margin-top:4px">Это пример. В Telegram будут настоящие ID и заявки.</div>' : ''}`}`;
+}
+const FR_ERR = { not_found: 'Нет пользователя с таким ID — проверь буквы и цифры', self: 'Это твой собственный ID 🙂', already: 'Вы уже друзья', pending: 'Заявка уже отправлена — ждём ответа' };
+async function frApply(action, p, okMsg) {
+  const r = await frCall(action, p);
+  if (r && r.me) { FR = r; haptic('success'); if (okMsg) toast(okMsg); }
+  else toast(FR_ERR[r && r.error] || `Не получилось (${(r && r.error) || 'нет ответа'}) — попробуй ещё раз`);
+  render();
+  return r;
+}
+Object.assign(ACT, {
+  async 'fr-copy'() {
+    const c = FR && FR.me.code;
+    if (!c) return;
+    try { await navigator.clipboard.writeText(c); toast('ID скопирован'); haptic('light'); }
+    catch (e) { toast('Твой ID: ' + c); }
+  },
+  async 'fr-yes'(el) { await frApply('friend_answer', { code: el.dataset.c, accept: true }, 'Теперь вы друзья 🤝'); },
+  async 'fr-no'(el) { await frApply('friend_answer', { code: el.dataset.c, accept: false }); },
+  async 'fr-cancel'(el) { await frApply('friend_remove', { code: el.dataset.c }, 'Заявка отменена'); },
+  'fr-del'(el) { modal = { kind: 'fr-del', code: el.dataset.c, name: el.dataset.n }; haptic('light'); render(); },
+  async 'fr-del-yes'() { const c = modal && modal.code; modal = null; await frApply('friend_remove', { code: c }, 'Удалил из друзей'); }
+});
+async function frAdd() {
+  const code = frClean(frIn);
+  if (code.length !== 6) return toast('ID — это 6 букв и цифр');
+  const b = document.getElementById('frSend'); if (b) { b.disabled = true; b.textContent = 'Отправляю…'; }
+  const before = FR ? FR.friends.length : 0;
+  const r = await frApply('friend_add', { code });
+  if (r && r.me) { frIn = ''; toast(r.friends.length > before ? 'Он уже звал тебя — теперь вы друзья 🤝' : 'Заявка отправлена'); render(); }
+}
+document.addEventListener('submit', (e) => { if (e.target.dataset.submit === 'fr-add') { e.preventDefault(); frAdd(); } });
+document.addEventListener('input', (e) => {
+  if (e.target.dataset.input !== 'fr-in') return;
+  const v = frClean(e.target.value);
+  if (e.target.value !== v) e.target.value = v;
+  frIn = v;
+  const b = document.getElementById('frSend'); if (b) b.disabled = !/^[A-Z0-9]{6}$/.test(v);
+});
+function frModal() {
+  if (modal.kind !== 'fr-del') return '';
+  return `<div class="modal"><div class="sheet"><div style="font-weight:800;font-size:18px">Удалить ${esc(modal.name || 'друга')} из друзей?</div>
+    <div class="hint" style="margin-top:6px">Он пропадёт из списка у вас обоих. Добавиться снова можно по ID.</div>
+    <button class="btn" data-act="fr-del-yes" style="margin-top:16px;--bc:#ff5a1c;--bc2:#ff2d87;--bt:#fff">Удалить</button>
+    <button class="btn ghost" data-act="modal-close" style="margin-top:6px;background:none;border:0;height:44px;color:var(--hint)">Отмена</button></div></div>`;
+}
+// Подтягиваем друзей в фоне при запуске, чтобы на «Я» сразу были ID и заявки
+setTimeout(() => { if (S.onboarded) frLoad(true); }, 1500);
 
 start();
 </script>
