@@ -1254,6 +1254,8 @@ button:active,label.card:active{transform:scale(.97)}
 .wit img{position:absolute;left:10px;top:10px;width:calc(100% - 20px);height:calc(100% - 20px);object-fit:contain}
 .wres.bad{background:#fff7f2}
 .wbad{display:block;font-family:var(--disp);text-transform:uppercase;font-size:24px;line-height:1;margin-top:2px;color:#e8521c}
+.wvibe{margin-top:8px;padding:8px 11px;border-radius:12px;background:#f3f0ff;color:#5b3fd1;font-size:13px;font-weight:600;line-height:1.35}
+.wvibe::before{content:"✨ ";}
 /* ---------- друзья ---------- */
 .fcard{width:100%;text-align:left}
 .fbadge{padding:4px 10px;border-radius:10px;background:#ff5a1c;color:#fff;font-size:12px;font-weight:800;animation:fpulse 1.6s ease-in-out infinite}
@@ -5398,8 +5400,8 @@ function wEditView() {
       : `<div class="hint wgest">${wlay.length ? 'Нажми на вещь: тяни, чтобы двигать, уголок — размер и поворот' : 'Нажимай на вещи внизу'}</div>`}
     ${wlay.length >= 2 ? `<button class="wrate" data-act="w-rate" ${wbusy ? 'disabled' : ''}>${wbusy ? 'Оцениваю…' : '✨ Оценить образ'}</button>` : ''}
     ${wres ? (wres.invalid
-      ? `<div class="wres bad"><span class="wsm">оценка стилиста</span><b class="wbad">Это пока не образ</b><div class="wtxt">${esc(wres.problem || '')}</div></div>`
-      : `<div class="wres"><div class="wrh"><div><span class="wsm">оценка стилиста</span><b>${esc(wres.style || 'Твой образ')}</b></div>${wScore(wres.score)}</div>${wResBody(wres)}${wres.demo ? '<div class="wsm" style="margin-top:8px">Это пример оценки. В Telegram стилист посмотрит на твой образ.</div>' : ''}</div>`) : ''}
+      ? `<div class="wres bad"><span class="wsm">оценка стилиста</span><b class="wbad">Добавь ещё одежды</b><div class="wtxt">${esc(wres.problem || '')}</div>${wres.vibe ? `<div class="wvibe">${esc(wres.vibe)}</div>` : ''}</div>`
+      : `<div class="wres"><div class="wrh"><div><span class="wsm">оценка стилиста</span><b>${esc(wres.style || 'Твой образ')}</b></div>${wScore(wres.score)}</div>${wres.vibe ? `<div class="wvibe">${esc(wres.vibe)}</div>` : ''}${wResBody(wres)}${wres.demo ? '<div class="wsm" style="margin-top:8px">Это пример оценки. В Telegram стилист посмотрит на твой образ.</div>' : ''}</div>`) : ''}
     <div class="wrow">
       <button class="wadd" data-act="photo" data-k="w-item"><span class="wplus">+</span>Добавить вещь</button>
       ${items.map((i) => `<button class="wit ${wlay.some((p) => p.id === i.id) ? 'on' : ''}" data-act="w-pick" data-id="${i.id}">${wImg(i.id)}</button>`).join('')}
@@ -5441,7 +5443,7 @@ Object.assign(ACT, {
     const l = wd().looks.find((x) => x.id === el.dataset.id);
     if (!l) return;
     wview = 'edit'; wedit = l.id; wlay = wLookLay(l).map((p) => ({ ...p })); wsel = null; bgWarm();
-    wres = l.score || l.style || l.text ? { score: l.score, style: l.style, plus: l.plus, add: l.add, swap: l.swap, text: l.text } : null;
+    wres = l.score || l.style || l.text ? { score: l.score, style: l.style, plus: l.plus, add: l.add, swap: l.swap, text: l.text, vibe: l.vibe } : null;
     haptic('light'); render(); window.scrollTo(0, 0);
   },
   'w-back'() { wview = 'list'; wsel = null; haptic('light'); render(); window.scrollTo(0, 0); },
@@ -5449,7 +5451,7 @@ Object.assign(ACT, {
     if (!wlay.length) return;
     const W = wd(), lay = wlay.map((p) => ({ id: p.id, x: +p.x.toFixed(1), y: +p.y.toFixed(1), w: +p.w.toFixed(1), h: +p.h.toFixed(1), r: Math.round(p.r || 0) }));
     const r = wres && !wres.demo && !wres.invalid ? wres : {};
-    const data = { items: lay.map((p) => p.id), lay, score: r.score || null, style: r.style || '', plus: r.plus || '', add: r.add || '', swap: r.swap || '', text: r.text || '' };
+    const data = { items: lay.map((p) => p.id), lay, score: r.score || null, style: r.style || '', plus: r.plus || '', add: r.add || '', swap: r.swap || '', text: r.text || '', vibe: r.vibe || '' };
     const old = wedit && W.looks.find((l) => l.id === wedit);
     if (old) Object.assign(old, data); else W.looks.unshift({ id: wId(), date: today(), ...data });
     wview = 'list'; wsel = null; haptic('success'); save(); render(); window.scrollTo(0, 0);
@@ -5500,8 +5502,8 @@ Object.assign(ACT, {
     const image = await wSnap().catch(() => '');
     const j = !image ? { error: 'snap' } : AI_ENDPOINT ? await aiCall('outfit', { image, items: its.map((i) => (i.name || '') + (i.color ? ' (' + i.color + ')' : '')), tone: tone() }, 60000) : { error: 'off' };
     wbusy = false;
-    if (j.valid === true) { wres = { score: j.score, style: j.style, plus: j.plus, add: j.add, swap: j.swap }; haptic('success'); if (ME && ME.paywall) meRefresh(); }
-    else if (j.valid === false) { wres = { invalid: true, problem: j.problem }; haptic('light'); }
+    if (j.valid === true) { wres = { score: j.score, style: j.style, plus: j.plus, add: j.add, swap: j.swap, vibe: j.vibe || '' }; haptic('success'); if (ME && ME.paywall) meRefresh(); }
+    else if (j.valid === false) { wres = { invalid: true, problem: j.problem, vibe: j.vibe || '' }; haptic('light'); }
     else if (j.error === 'pro') { render(); proOpen('chat'); return; }
     else if (j.error === 'limit') toast('Оценки на сегодня закончились — завтра посмотрим');
     else if (j.error === 'not_telegram' || j.error === 'off') wres = { ...wDemo(its.length), demo: true };
