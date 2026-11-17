@@ -1545,6 +1545,79 @@ button:active,label.card:active{transform:scale(.97)}
   background:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>") 0 0/180px 180px!important}
 :root[data-theme="dark"] body::after{background:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 1 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>") 0 0/180px 180px!important}
 @media (prefers-reduced-motion:reduce){:root body::before{animation:none!important}}
+
+/* ============================================================
+   СПОКОЙНАЯ ПАЛИТРА — поверх всех цветных слоёв выше.
+   Два фирменных цвета: лаймовый акцент (--accent) и синий (--c2).
+   Всё остальное — тёмные карточки и нейтральные поверхности.
+   ============================================================ */
+:root{--c2:#3d63ff;--c2b:#5b7bff;--lime2:color-mix(in srgb,var(--accent) 70%,#9be000)}
+/* карточки: свечение слабее и одного семейства */
+:root :is(.card,.lesson,.rstep,.excard,.msg.ai){
+  --cardbg:radial-gradient(90% 75% at 100% 0%,color-mix(in srgb,var(--g) 20%,transparent),transparent 62%),var(--cardbase);
+  --cardsh:inset 0 1px 0 rgba(255,255,255,.1),inset 0 0 0 1px rgba(255,255,255,.06),0 18px 28px -20px rgba(8,12,30,.55)}
+/* фон: пятна тише */
+:root .aurora i{opacity:.2!important}
+:root[data-theme="dark"] .aurora i{opacity:.1!important}
+/* заголовки секций: без переливов, маркер и курсор — синие */
+:root .sec{--sc:var(--c2)!important}
+:root .sec .disp{background:none!important;color:var(--p-text,var(--text))!important;animation:none!important}
+:root .sec .disp::before{background:var(--c2)!important;animation:none!important}
+:root .sec .disp::after{color:var(--c2)!important}
+:root .sec .chipline{background:var(--chip)!important;color:var(--accent);box-shadow:none!important}
+/* шапка: уровень — спокойная тёмная плашка */
+:root .top .lvl,:root .lvl{background:var(--chip)!important;color:#fff;box-shadow:none!important;animation:none!important}
+/* нижние вкладки: иконки нейтральные, активная — лайм */
+:root .tabs .tab{--t1:var(--accent)!important;--t2:var(--lime2)!important;--tt:var(--on-accent)!important}
+:root .tabs .tab:not(.on),:root .tabs .tab:not(.on) svg{color:var(--tabc)!important}
+:root .tabs .tab.on{background:var(--accent)!important;color:var(--on-accent)!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.5)!important}
+/* миссии: все в одном стиле — лаймовый кружок, полоса и награда */
+:root .mission{--mc:var(--accent)!important;--mc2:var(--lime2)!important;--mt:var(--on-accent)!important}
+:root .mission.charm,:root .mission.bonus{--mc:var(--c2)!important;--mc2:var(--c2b)!important;--mt:#fff!important}
+:root .mission:not(.done){background:var(--card)!important;box-shadow:inset 4px 0 0 var(--mc),var(--neu)!important}
+:root :is(.card,.sheet) .mission:not(.done){box-shadow:inset 4px 0 0 var(--mc)!important}
+:root .mission .xp,:root .mission:not(.charm):not(.bonus) .xp{background:var(--mc)!important;color:var(--mt)!important;box-shadow:none!important}
+:root .mission:not(.done) .box{border-color:var(--mc)!important}
+:root .mission.done .box,:root .opt.on .box{background:var(--accent)!important}
+/* кнопки: основные — лайм, «фото / разбор / вперёд» — синие; без бегущего градиента */
+:root .btn:not(.ghost){--bc:var(--accent)!important;--bc2:var(--accent)!important;--bc3:var(--accent)!important;--bt:var(--on-accent)!important;text-shadow:none!important;
+  animation:none!important;background:var(--b1)!important;color:var(--bt)!important}
+:root .btn:not(.ghost):is([data-act="analyze"],[data-act="photo"],[data-act="ai-open"],[data-act="lib"],[data-p="cam"],[data-p="native"],[data-p="gal"],[data-act="wo-go"],[data-act="focus-open"],[data-act="focus-toggle"],[data-act="ex-open"],[data-act="ask-summary"],[data-act="go"],[data-act="grat"],[data-act="pf-start"],[data-act="pf-next"],[data-act="pf-again"]){
+  --bc:var(--c2)!important;--bc2:var(--c2)!important;--bc3:var(--c2)!important;--bt:#fff!important}
+:root .btn:not(.ghost)::after{display:none!important}
+:root .btn.ghost,:root .btn.ghost[data-act],:root .btn.ghost[data-p="gal"]{--bc:var(--c2);--bc2:var(--c2);background:color-mix(in srgb,var(--c2) 10%,var(--card))!important;border-color:color-mix(in srgb,var(--c2) 40%,transparent)!important}
+:root .btn.ghost[data-act="reset"]{--bc:#ff4a4a;background:transparent!important;border-color:color-mix(in srgb,#ff4a4a 45%,transparent)!important}
+/* чипы, переключатели, варианты ответа — один цвет вместо шести */
+:root .chips .chip{--cc:var(--c2)!important;--cc2:var(--c2)!important;--ct:#fff!important;box-shadow:none!important;border-color:color-mix(in srgb,var(--c2) 35%,transparent)!important}
+:root .chips .chip:not(.on){background:var(--card)!important}
+:root .chip.on,:root .chips .chip.on,:root :is(.card,.sheet) .chip.on{background:var(--c2)!important;color:#fff!important;border-color:transparent!important;box-shadow:none!important;transform:none!important}
+:root .jt button{--jc:var(--c2)!important;--jc2:var(--c2)!important;border-color:color-mix(in srgb,var(--c2) 35%,transparent)!important}
+:root .jt button:not(.on){background:var(--card)!important}
+:root .seg{background:var(--card)!important}
+:root .seg button.on,:root .jt button.on,:root :is(.card,.sheet) .seg button.on{background:var(--c2)!important;color:#fff!important;box-shadow:none!important}
+:root .opt{--oc:var(--c2)!important;background:var(--card)!important;border-color:color-mix(in srgb,var(--c2) 30%,transparent)!important}
+:root .opt.on{background:color-mix(in srgb,var(--c2) 12%,var(--card))!important;box-shadow:0 0 0 2px var(--c2)!important}
+:root .opt.on .box{background:var(--c2)!important;color:#fff!important}
+:root .backlink{background:var(--chip)!important;color:#fff!important;box-shadow:none!important}
+/* быстрые ответы в чате: первый — лайм, остальные спокойные */
+:root .qr button:nth-child(n){background:var(--card)!important;color:var(--text)!important;box-shadow:inset 0 0 0 1.5px color-mix(in srgb,var(--c2) 35%,transparent)!important}
+:root .qr button:first-child{background:var(--accent)!important;color:var(--on-accent)!important;box-shadow:none!important}
+/* карточки-кнопки на главной: тёмные с одним мягким акцентом вместо четырёх цветов */
+:root .app > :nth-child(n){--kc:var(--c2)!important;--kc2:var(--c2)!important}
+:root .app > button.card.row,:root .app > button.card:not(.libtile):not(.wocard):not(.procard){
+  background:linear-gradient(115deg,color-mix(in srgb,var(--c2) 22%,transparent) 0%,transparent 55%),var(--dk)!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.1),0 0 0 1px rgba(255,255,255,.06),0 18px 28px -20px rgba(8,12,30,.55)!important}
+:root .lesson .num{color:var(--accent)!important;text-shadow:none!important}
+/* плитки библиотеки и тренировок: один тёмный тон, фото видно */
+:root .card.libtile,:root .libgrid .libtile:nth-child(n){--lc:#1f2a52!important;--lc2:#0b0d14!important;box-shadow:0 16px 24px -18px rgba(8,12,30,.6)!important}
+:root .wotile{background:linear-gradient(160deg,color-mix(in srgb,var(--c) 45%,#1b1d26),#0b0d14 90%)!important;box-shadow:0 16px 24px -18px rgba(8,12,30,.6)!important}
+:root .wogo{background:var(--accent)!important;box-shadow:none!important}
+:root .pillbtn{background:var(--accent)!important;box-shadow:none!important}
+/* факт дня: лаймовая карточка вместо оранжево-розового градиента */
+:root .card.fact{background:var(--accent)!important;box-shadow:0 14px 26px -18px color-mix(in srgb,var(--accent) 80%,#000)!important}
+/* праздник «день закрыт» — без бегущей радуги */
+:root .celebrate{background:var(--accent)!important;animation:none!important}
+:root .composer .send,:root .msg.me{background:var(--accent)!important}
 </style>
 </head>
 <body>
@@ -5524,7 +5597,8 @@ function start() {
 }
 // ---------- душа: аврора, цвета карточек, наклон за пальцем, появление при прокрутке ----------
 (() => {
-  const PAIRS = [['#8b5cff', '#ff4fd8'], ['#2f6bff', '#1fdcff'], ['#ff5a1c', '#ffd21a'], ['#22e08a', '#c8ff2a'], ['#ff4fa3', '#ffb23d'], ['#1fdcff', '#3dffc0']];
+  // Спокойная палитра: свечения карточек только синие и лаймовые, по очереди
+  const PAIRS = [['#3d63ff', '#5b7bff'], ['#3d63ff', '#5b7bff'], ['#9be000', '#d4ff1a']];
   const au = document.createElement('div'); au.className = 'aurora'; au.innerHTML = '<i></i><i></i><i></i><i></i>';
   document.body.prepend(au);
 
