@@ -1580,6 +1580,14 @@ button:active,label.card:active{transform:scale(.97)}
 .tsheet .tyear{font-size:22px}
 .tbadge{position:absolute;top:-8px;left:14px;background:var(--accent);color:var(--on-accent);font-family:var(--mono);font-size:9.5px;letter-spacing:.06em;text-transform:uppercase;padding:3px 7px;border-radius:7px}
 
+/* серия → история */
+.storyc{display:flex;gap:14px;align-items:center}
+.storyc img{width:74px;aspect-ratio:9/16;object-fit:cover;object-position:center;border-radius:12px;flex:none;box-shadow:0 8px 18px -8px rgba(0,0,0,.6)}
+.storyc b{display:block;font-size:17px;margin:4px 0 2px}
+.storyc .hint{font-size:12.5px;line-height:1.35}
+.storyc .btn{margin-top:10px;height:40px}
+.celstory{margin-top:8px;background:rgba(7,8,12,.88);color:#fff;font-weight:700;font-size:13px;padding:8px 12px;border-radius:12px}
+
 /* программа сна */
 .slrow{display:grid;grid-template-columns:64px auto 1fr auto;align-items:baseline;gap:10px;padding:8px 0;border-top:1px solid rgba(255,255,255,.08)}
 .slrow b{font-size:17px}
@@ -4309,8 +4317,9 @@ function renderHome() {
       </div>
     </div>
     ${trackersCard()}
+    ${storyCard()}
     ${factCard()}
-    ${celebrate ? `<div class="celebrate"><div><b>День закрыт</b><div style="font-weight:700;font-size:13px;opacity:.8">+50 XP · серия ${s}</div></div><div style="font-size:34px">🔥</div></div>` : ''}
+    ${celebrate ? `<div class="celebrate"><div style="flex:1"><b>День закрыт</b><div style="font-weight:700;font-size:13px;opacity:.8">+50 XP · серия ${s}</div><button class="celstory" data-act="story">📲 Выложить серию в историю</button></div><div style="font-size:34px">🔥</div></div>` : ''}
     ${chestOpen ? `<div class="card chest"><span class="ci">🎁</span><div style="flex:1"><b>Подарок дня</b><div class="hint">Заходи каждый день — внутри 10–30 XP</div></div><button class="btn sm" data-act="chest" style="background:var(--gold);color:#1c100b">Открыть</button></div>` : ''}
     <div class="sec" id="missions"><span class="disp">Миссии дня</span><span class="chipline">[ ${done.length}/3 ]</span></div>
     ${tasks.map((t) => `<button class="mission ${done.includes(t.id) ? 'done' : ''} ${justDone === t.id ? 'just' : ''}" data-act="task" data-id="${t.id}"><span class="box">${done.includes(t.id) ? IC.check : ''}</span><span style="flex:1"><div class="t">${t.text}</div><div class="row" style="gap:6px;margin-top:5px"><span class="tag" style="color:${PILLARS[t.p].c};border-color:${PILLARS[t.p].c}55">${PILLARS[t.p].code}</span><span class="hint" style="font-size:12px">${PILLARS[t.p].name}</span></div></span><span class="xp">+10 XP</span></button>`).join('')}
@@ -5277,7 +5286,7 @@ function renderMe() {
     </div></details>
 
     <button class="btn sm ghost" data-act="reset" style="color:var(--danger);width:100%">Сбросить прогресс</button>
-    <p class="mono" style="text-align:center;margin-top:20px">mogg · season 01 · <a href="privacy.html" style="color:inherit">политика</a></p>`;
+    <p class="mono" style="text-align:center;margin-top:20px">mogg · season 01 · <a href="${BOT_URL}" data-act="link" data-u="${BOT_URL}" style="color:inherit">${BOT_TAG}</a> · <a href="privacy.html" style="color:inherit">политика</a></p>`;
 }
 
 const TAB_PARENT = { journal: 'plan', path: 'me', friends: 'me' }; // подэкраны: какая вкладка внизу подсвечена и куда ведёт «Назад»
@@ -5403,7 +5412,7 @@ const ACT = {
     }, 1000);
   },
   'shelf-cap'(el) { shelfCap = +el.dataset.v; haptic('light'); render(); },
-  link(el) { const u = el.dataset.u; try { if (tg && tg.openLink) return tg.openLink(u); } catch (e) {} window.open(u, '_blank'); },
+  link(el) { const u = el.dataset.u; try { if (tg && /^https:\/\/t\.me\//.test(u) && tg.openTelegramLink) return tg.openTelegramLink(u); if (tg && tg.openLink) return tg.openLink(u); } catch (e) {} window.open(u, '_blank'); },
   lib(el) { jtab = el.dataset.v; tab = 'journal'; reader = null; haptic('light'); render(); window.scrollTo(0, 0); },
   analyze() {
     if (!ob.photo) return toast('Добавь фото — без него план не будет личным'); // без фото дальше не пускаем
@@ -6437,6 +6446,35 @@ ACT['sl-log-save'] = () => {
   const r = slPut(d, b, w); if (!r) return;
   modal = null; haptic('success'); render(); toast(`Записали: ${slDur(r)}`);
 };
+
+// ---------- серия → история в Telegram ----------
+// Картинки заранее нарисованы и лежат рядом с приложением: stories/streak-N.jpg (1–30 и вехи дальше).
+// Telegram берёт картинку только по публичной ссылке, поэтому сгенерировать её прямо в телефоне нельзя.
+const STORY_N = [...Array(30)].map((_, i) => i + 1).concat([40, 50, 60, 75, 100, 150, 200, 250, 300, 365]);
+const BOT_TAG = '@justmoggbot', BOT_URL = 'https://t.me/justmoggbot';
+const storyPick = (n) => STORY_N.filter((x) => x <= n).pop() || 1;
+const storyImg = (n) => `stories/streak-${storyPick(n)}.jpg`;
+const canStory = () => { try { return !!(tg && tg.shareToStory && tg.isVersionAtLeast && tg.isVersionAtLeast('7.8')); } catch (e) { return false; } };
+function shareStreak() {
+  const n = streak();
+  if (!n) return toast('Закрой 3 миссии сегодня — появится серия, которой можно похвастаться');
+  const text = `🔥 ${n} ${plural(n, 'день', 'дня', 'дней')} подряд качаю себя в mogg. Присоединяйся: ${BOT_TAG}`;
+  track('story_click', { streak: n });
+  if (!canStory()) return toast(tg && tg.initData ? 'Обнови Telegram — истории из приложений работают в свежей версии на телефоне' : 'Выложить историю можно только из Telegram на телефоне');
+  const opts = { text };
+  // Ссылка-виджет в истории доступна только с Telegram Premium
+  if (tgUser && tgUser.is_premium) opts.widget_link = { url: BOT_URL, name: BOT_TAG };
+  try { tg.shareToStory(new URL(storyImg(n), location.href).href, opts); haptic('success'); track('story_open', { streak: n }); }
+  catch (e) { toast('Не получилось открыть редактор историй — попробуй ещё раз'); }
+}
+function storyCard() {
+  const n = streak(); if (!n) return '';
+  return `<div class="card storyc"><img src="${storyImg(n)}" alt="" loading="lazy">
+    <div style="flex:1;min-width:0"><span class="mono">[ серия · ${n} ${plural(n, 'день', 'дня', 'дней')} ]</span>
+      <b>Похвастайся в истории</b><div class="hint">Скриншот серии сразу откроется в редакторе историй Telegram.</div>
+      <button class="btn sm" data-act="story">📲 Выложить в историю</button></div></div>`;
+}
+ACT.story = () => shareStreak();
 
 function auraModal() {
   const s = streak(), cur = auraOf(s);
