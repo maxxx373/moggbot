@@ -526,6 +526,7 @@ button:active,label.card:active{transform:scale(.97)}
 .exa .wl{stroke:var(--hint);opacity:.5}
 .exa .exsh{fill:currentColor;opacity:.1}
 .exa .skin{fill:color-mix(in srgb,var(--accent) 10%,transparent)}
+.exa image{image-rendering:auto}
 .exgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
 .excard{text-align:left;padding:10px 10px 12px;border-radius:18px;background:var(--card);border:1px solid var(--card-b)}
 .excard .pv{border-radius:12px;background:color-mix(in srgb,var(--accent) 8%,transparent);margin-bottom:8px}
@@ -2447,78 +2448,82 @@ const ARTICLE_EXTRA = {
 };
 
 // ---------- упражнения ----------
-// Анимации — SVG-человечки на SMIL: работают в WebView Telegram без библиотек.
-// Когда будут снятые видео, у упражнения появится поле video, и оно заменит схему.
-const SA = (attr, vals, dur) => `<animate attributeName="${attr}" values="${vals}" dur="${dur}s" repeatCount="indefinite" calcMode="spline" keyTimes="0;.5;1" keySplines=".45 0 .55 1;.45 0 .55 1"/>`;
-const L2 = (x1, y1, x2, y2, d, cls) => {
-  // линия, у которой любая координата может быть анимирована: число или [a, b]
-  const v = (n, k) => Array.isArray(n) ? `${k}="${n[0]}"` : `${k}="${n}"`;
-  const an = (n, k) => Array.isArray(n) ? SA(k, `${n[0]};${n[1]};${n[0]}`, d) : '';
-  return `<line ${v(x1, 'x1')} ${v(y1, 'y1')} ${v(x2, 'x2')} ${v(y2, 'y2')}${cls ? ` class="${cls}"` : ''}>${an(x1, 'x1')}${an(y1, 'y1')}${an(x2, 'x2')}${an(y2, 'y2')}</line>`;
-};
-const C2 = (cx, cy, r, d, extra) => {
-  const v = (n, k) => Array.isArray(n) ? `${k}="${n[0]}"` : `${k}="${n}"`;
-  const an = (n, k) => Array.isArray(n) ? SA(k, `${n[0]};${n[1]};${n[0]}`, d) : '';
-  return `<circle ${v(cx, 'cx')} ${v(cy, 'cy')} r="${r}" ${extra || ''}>${an(cx, 'cx')}${an(cy, 'cy')}</circle>`;
-};
-// Фигура рисуется дважды: тёмный контур под низом и объёмное «тело» сверху, рабочие мышцы светятся акцентом
+// Анимации упражнений: настоящий персонаж, нарезанный на части (папка ex/), на «скелете».
+// Поза = углы в суставах; между позами SMIL плавно поворачивает части. Работает в WebView Telegram без библиотек.
 const EXBG = `<defs><radialGradient id="exbg" cx="50%" cy="38%" r="70%"><stop offset="0" style="stop-color:var(--accent)" stop-opacity=".22"/><stop offset="1" style="stop-color:var(--accent)" stop-opacity="0"/></radialGradient></defs>
   <rect width="120" height="120" rx="14" fill="url(#exbg)"/><ellipse class="exsh" cx="60" cy="113" rx="42" ry="3.5"/>`;
-const FIG = (inner) => `<svg class="exa" viewBox="0 0 120 120" aria-hidden="true">${EXBG}
-  <g class="fig-o" fill="none" stroke-linecap="round" stroke-linejoin="round">${inner}</g>
-  <g class="fig" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">${inner}</g></svg>`;
+// Где лежит каждая часть в исходной картинке: [x, y, ширина, высота]
+const RIG_IMG = {"side": {"uarm": [727, 135, 78, 200], "farm": [752, 307, 71, 112], "torso": [732, 109, 101, 230], "pelvis": [740, 297, 95, 98], "thigh": [740, 352, 95, 188], "shin": [749, 495, 62, 209], "foot": [739, 661, 128, 75], "head": [744, 35, 92, 108]}, "front": {"body": [458, 117, 168, 617], "uarmL": [432, 154, 64, 152], "farmL": [427, 279, 47, 139], "uarmR": [585, 153, 65, 153], "farmR": [611, 279, 44, 139], "head": [502, 35, 77, 104]}, "face": {"face": [23, 118, 377, 532]}};
+// Шарниры (в пикселях исходной картинки)
+const RJ = { hip: [790, 370], knee: [786, 515], ank: [776, 688], toe: [856, 724], neck: [778, 138], sho: [766, 168], elb: [774, 322], hand: [812, 410],
+  fneck: [540, 142], fshoL: [468, 175], felbL: [452, 293], fshoR: [612, 175], felbR: [628, 293] };
+const rgImg = (view, k, f) => { const [x, y, w, h] = RIG_IMG[view][k]; return `<image href="ex/${f || (view[0] + '-' + k)}.webp" x="${x}" y="${y}" width="${w}" height="${h}"/>`; };
+const rgRot = (p, c, a) => { const r = a * Math.PI / 180, cs = Math.cos(r), sn = Math.sin(r), dx = p[0] - c[0], dy = p[1] - c[1]; return [c[0] + dx * cs - dy * sn, c[1] + dx * sn + dy * cs]; };
+const rgR = (n) => Math.round(n * 100) / 100;
+const rgEase = (t) => t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+// Сэмплируем цикл поз: p0 → p1 → … → p0, внутри каждого перехода — плавный разгон и торможение
+function rgSamples(poses, per) {
+  const out = [], n = poses.length;
+  for (let i = 0; i < n; i++) {
+    const a = poses[i], b = poses[(i + 1) % n];
+    for (let j = 0; j < per; j++) {
+      const t = rgEase(j / per), q = {};
+      new Set([...Object.keys(a), ...Object.keys(b)]).forEach((k) => { q[k] = (a[k] || 0) + ((b[k] || 0) - (a[k] || 0)) * t; });
+      out.push(q);
+    }
+  }
+  out.push(out[0]);
+  return out;
+}
+const rgAnim = (type, vals, d) => vals.every((v) => v === vals[0]) ? '' : `<animateTransform attributeName="transform" type="${type}" values="${vals.join(';')}" dur="${d}s" repeatCount="indefinite"/>`;
+const rgG = (type, vals, d, inner) => `<g transform="${type}(${vals[0]})">${rgAnim(type, vals, d)}${inner}</g>`;
+// Вид сбоку. o.anchor: какая точка стоит на месте ('ank' — стопа, 'toe' — носок, 'hip' — таз); o.at — куда её поставить
+function rigSide(poses, d, o) {
+  const S = rgSamples(poses, 8), J = RJ, anchor = o.anchor || 'ank', at = o.at || J[anchor];
+  const world = (q) => {
+    if (anchor === 'hip') return J.hip;
+    let p = J[anchor];
+    if (anchor === 'toe') p = rgRot(p, J.ank, q.ankle || 0);
+    p = rgRot(p, J.knee, q.knee || 0); p = rgRot(p, J.hip, q.hip || 0); return rgRot(p, J.hip, q.rot || 0);
+  };
+  const tr = S.map((q) => { const w = world(q); return `${rgR(at[0] - w[0] + (q.tx || 0))} ${rgR(at[1] - w[1] + (q.ty || 0))}`; });
+  const rot = (k, c) => S.map((q) => `${rgR(q[k] || 0)} ${c[0]} ${c[1]}`);
+  const head = rgG('translate', S.map((q) => `${rgR(q.hx || 0)} ${rgR(q.hy || 0)}`), d, rgG('rotate', rot('nk', J.neck), d, rgImg('side', 'head')));
+  const arm = rgG('rotate', rot('sh', J.sho), d, rgImg('side', 'uarm') + rgG('rotate', rot('el', J.elb), d, rgImg('side', 'farm')));
+  const legs = rgG('rotate', rot('hip', J.hip), d, rgImg('side', 'thigh') + rgG('rotate', rot('knee', J.knee), d, rgImg('side', 'shin') + rgG('rotate', rot('ankle', J.ank), d, rgImg('side', 'foot'))));
+  const body = rgG('rotate', rot('tor', J.hip), d, rgImg('side', 'torso') + rgImg('side', 'pelvis') + head + arm);
+  return rgG('translate', tr, d, rgG('rotate', rot('rot', J.hip), d, legs + body));
+}
+function rigFront(poses, d) {
+  const S = rgSamples(poses, 8), J = RJ, rot = (k, c) => S.map((q) => `${rgR(q[k] || 0)} ${c[0]} ${c[1]}`);
+  const arm = (s) => rgG('rotate', rot('sh' + s, J['fsho' + s]), d, rgImg('front', 'uarm' + s) + rgG('rotate', rot('el' + s, J['felb' + s]), d, rgImg('front', 'farm' + s)));
+  return rgImg('front', 'body') + rgG('rotate', rot('nk', J.fneck), d, rgImg('front', 'head')) + arm('L') + arm('R');
+}
+// Кадр: точка картинки (px) → точка поля 120×120, s — масштаб
+const rgFrame = (s, px, u, inner) => `<g transform="translate(${rgR(u[0] - px[0] * s)} ${rgR(u[1] - px[1] * s)}) scale(${s})">${inner}</g>`;
+const rgSvg = (inner, under, over) => `<svg class="exa" viewBox="0 0 120 120" aria-hidden="true">${EXBG}${under || ''}${inner}${over || ''}</svg>`;
+const WALL = (x) => `<line class="wl" stroke-width="3" x1="${x}" y1="6" x2="${x}" y2="112"/>`;
+const FLOOR = (y) => `<line class="wl" stroke-width="3" x1="4" y1="${y}" x2="116" y2="${y}"/>`;
+const SID = (poses, d, o = {}) => rgFrame(o.s || 0.145, o.px || [790, 724], o.u || [60, 108], rigSide(poses, d, o));
+const FACE_IMG = (inner) => rgFrame(0.226, [212, 650], [60, 120], inner);
 const EX_ANIM = {
-  chintuck: () => { const d = 3; return FIG(`
-    ${L2(55, 64, 55, 104, d)}${L2(55, 68, 62, 90, d)}
-    ${L2(55, 64, [64, 56], 52, d)}${C2([69, 60], 40, 11, d)}
-    <circle class="eye" r="2" stroke="none" cy="38" cx="74">${SA('cx', '74;65;74', d)}</circle>
-    <path class="ac" stroke-width="3" d="M100 40h-14m5-5-5 5 5 5"><animate attributeName="opacity" values="1;.2;1" dur="${d}s" repeatCount="indefinite"/></path>`); },
-  wall: () => { const d = 4; return FIG(`
-    <line class="wl" stroke-width="3" x1="30" y1="8" x2="30" y2="112"/>
-    ${L2(44, 108, 37, 72, d)}${L2(37, 72, [44, 36], 42, d)}${L2([44, 36], 46, 40, 74, d)}${C2([50, 41], 27, 10, d)}
-    <g class="acf" stroke="none"><animate attributeName="opacity" values="0;1;0" dur="${d}s" repeatCount="indefinite"/><circle cx="33" cy="27" r="3"/><circle cx="33" cy="44" r="3"/><circle cx="33" cy="72" r="3"/></g>`); },
-  wallangel: () => { const d = 4, m = (x) => 120 - x; return FIG(`
-    <rect class="wl" stroke-width="2" x="14" y="4" width="92" height="112" rx="6"/>
-    ${C2(60, 24, 10, d)}${L2(60, 35, 60, 80, d)}${L2(60, 80, 50, 110, d)}${L2(60, 80, 70, 110, d)}${L2(46, 40, 74, 40, d)}
-    ${L2(46, 40, [34, 36], [56, 24], d, 'ac')}${L2([34, 36], [56, 24], [28, 30], [38, 8], d, 'ac')}
-    ${L2(m(46), 40, [m(34), m(36)], [56, 24], d, 'ac')}${L2([m(34), m(36)], [56, 24], [m(28), m(30)], [38, 8], d, 'ac')}`); },
-  doorstretch: () => { const d = 4; return FIG(`
-    <line class="wl" stroke-width="3" x1="80" y1="6" x2="80" y2="112"/>
-    ${L2([52, 61], [42, 42], 80, 42, d, 'ac')}${L2(80, 42, 80, 18, d, 'ac')}
-    <g><animateTransform attributeName="transform" type="rotate" values="0 52 108;8 52 108;0 52 108" dur="${d}s" repeatCount="indefinite" calcMode="spline" keyTimes="0;.5;1" keySplines=".45 0 .55 1;.45 0 .55 1"/>
-      <line x1="52" y1="108" x2="52" y2="72"/><line x1="52" y1="72" x2="52" y2="40"/><circle cx="52" cy="26" r="10"/><line x1="52" y1="44" x2="44" y2="70"/>
-    </g>`); },
-  yraise: () => { const d = 2.6; return FIG(`
-    <line class="wl" stroke-width="3" x1="6" y1="102" x2="114" y2="102"/>
-    ${L2(16, 96, 54, 95, d)}${L2(54, 95, 80, 92, d)}${C2(89, [88, 86], 8, d)}
-    ${L2(78, 92, 108, [97, 76], d, 'ac')}`); },
-  facemassage: () => { const d = 3.2, pl = 'M52 64 Q41 62 31 56 L32 76 Q38 96 47 112', pr = 'M68 64 Q79 62 89 56 L88 76 Q82 96 73 112'; return `<svg class="exa" viewBox="0 0 120 120" aria-hidden="true">${EXBG}
-    <ellipse class="skin" cx="60" cy="56" rx="30" ry="38"/>
-    <g fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"><ellipse cx="60" cy="56" rx="30" ry="38"/><path d="M47 47h8M65 47h8M60 52v12h-4M52 76q8 5 16 0M48 94v20M72 94v20"/></g>
-    <g fill="none" class="ac" stroke-width="2" stroke-dasharray="3 5" opacity=".6"><path d="${pl}"/><path d="${pr}"/></g>
-    <g class="acf"><circle r="5"><animateMotion dur="${d}s" repeatCount="indefinite" path="${pl}"/></circle><circle r="5"><animateMotion dur="${d}s" repeatCount="indefinite" path="${pr}"/></circle></g></svg>`; },
-  pushup: () => { const d = 2.4; return FIG(`
-    <line class="wl" stroke-width="3" x1="6" y1="102" x2="114" y2="102"/>
-    ${L2(16, 98, 80, [70, 86], d)}${C2(92, [64, 80], 8, d)}
-    ${L2(80, [70, 86], [80, 66], [84, 94], d, 'ac')}${L2([80, 66], [84, 94], 80, 99, d, 'ac')}`); },
-  squat: () => { const d = 3; return FIG(`
-    <line class="wl" stroke-width="3" x1="20" y1="106" x2="100" y2="106"/>
-    ${L2(58, 103, 72, 103, d)}${L2(60, 102, [62, 76], [80, 84], d)}${L2([62, 76], [80, 84], [56, 44], [60, 84], d, 'ac')}
-    ${L2([56, 44], [60, 84], [58, 62], [30, 56], d)}${C2([60, 66], [18, 44], 10, d)}${L2([58, 62], [30, 56], [62, 92], [58, 56], d)}`); },
-  plank: () => { const d = 3; return FIG(`
-    <line class="wl" stroke-width="3" x1="6" y1="100" x2="114" y2="100"/>
-    ${L2(14, 96, 82, [76, 74], d)}${C2(94, [72, 70], 8, d)}${L2(82, [76, 74], 82, 96, d, 'ac')}${L2(82, 96, 102, 96, d, 'ac')}
-    <path class="ac" stroke-width="2.5" d="M40 70q8-6 16 0"><animate attributeName="opacity" values=".2;1;.2" dur="${d}s" repeatCount="indefinite"/></path>`); },
-  neckstretch: () => { const d = 8, kt = 'keyTimes="0;.25;.5;.75;1" keySplines=".45 0 .55 1;.45 0 .55 1;.45 0 .55 1;.45 0 .55 1" calcMode="spline"'; return FIG(`
-    ${L2(60, 54, 60, 88, d)}${L2(60, 88, 50, 112, d)}${L2(60, 88, 70, 112, d)}${L2(42, 56, 78, 56, d)}${L2(42, 56, 38, 86, d)}${L2(78, 56, 82, 86, d)}
-    <g><animateTransform attributeName="transform" type="rotate" values="0 60 54;-24 60 54;0 60 54;24 60 54;0 60 54" dur="${d}s" repeatCount="indefinite" ${kt}/>
-      <line x1="60" y1="54" x2="60" y2="44"/><circle cx="60" cy="32" r="10"/></g>
-    <path class="ac" stroke-width="3" d="M66 52q6-6 10 2"><animate attributeName="opacity" values="0;0;0;1;0" dur="${d}s" repeatCount="indefinite" keyTimes="0;.5;.6;.75;.9"/></path>
-    <path class="ac" stroke-width="3" d="M54 52q-6-6-10 2"><animate attributeName="opacity" values="0;1;0;0;0" dur="${d}s" repeatCount="indefinite" keyTimes="0;.25;.4;.5;1"/></path>`); },
-  gum: () => { const d = 0.9; return `<svg class="exa" viewBox="0 0 120 120" aria-hidden="true">${EXBG}
-    <g fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"><path d="M28 62 Q28 18 60 18 Q92 18 92 62"/><path d="M47 48h8M65 48h8M60 52v12h-4"/>
-    <g><animateTransform attributeName="transform" type="translate" values="0 0;0 5;0 0" dur="${d}s" repeatCount="indefinite"/><path d="M28 62 Q31 96 60 104 Q89 96 92 62"/><path d="M52 82q8 4 16 0"/></g></g>
-    <g class="acf"><animate attributeName="opacity" values=".2;.85;.2" dur="${d}s" repeatCount="indefinite"/><ellipse cx="36" cy="74" rx="6" ry="11"/><ellipse cx="84" cy="74" rx="6" ry="11"/></g></svg>`; }
+  chintuck: () => rgSvg(SID([{ hx: 9, hy: 3, nk: 5 }, {}], 3), '', `<path class="ac" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round" d="M104 18h-14m5-5-5 5 5 5"><animate attributeName="opacity" values="1;.2;1" dur="3s" repeatCount="indefinite"/></path>`),
+  wall: () => rgSvg(SID([{ tor: 8, nk: -6, hx: 4 }, {}], 4, { u: [66, 108] }), WALL(30),
+    `<g class="acf" stroke="none"><animate attributeName="opacity" values="0;1;0" dur="4s" repeatCount="indefinite"/><circle cx="33" cy="20" r="3"/><circle cx="33" cy="42" r="3"/><circle cx="33" cy="64" r="3"/></g>`),
+  squat: () => rgSvg(SID([{ sh: -80, el: -10 }, { hip: -88, knee: 112, ankle: -24, tor: 32, nk: -24, sh: -108, el: -8 }], 3, { u: [66, 108] }), FLOOR(109)),
+  pushup: () => rgSvg(SID([{ rot: 72.5, ankle: 14, sh: -72.5, el: -4, nk: -20 }, { rot: 80.5, ankle: 6, sh: -53.5, el: -75, nk: -12 }], 2.4, { anchor: 'toe', s: 0.13, u: [14, 104] }), FLOOR(105)),
+  plank: () => rgSvg(SID([{ rot: 81.25, ankle: 10, sh: -81.25, el: -90, nk: -18 }, { rot: 80.25, ankle: 10.5, sh: -80.25, el: -90, nk: -18 }], 3, { anchor: 'toe', s: 0.13, u: [12, 104] }), FLOOR(105)),
+  yraise: () => rgSvg(SID([{ rot: 90, sh: -178, nk: -6 }, { rot: 90, sh: -198, el: 4, nk: -22 }], 2.6, { anchor: 'hip', s: 0.12, u: [44, 95] }), FLOOR(96.8)),
+  doorstretch: () => rgSvg(SID([{ sh: -92, el: -88 }, { tor: 12, sh: -104, el: -88, nk: -8 }], 4, { u: [52, 108] }), WALL(67)),
+  wallangel: () => rgSvg(rgFrame(0.145, [540, 724], [60, 108], rigFront([{ shL: 92, elL: 88, shR: -92, elR: -88 }, { shL: 132, elL: 30, shR: -132, elR: -30 }], 4)),
+    `<rect class="wl" stroke-width="2" fill="none" x="14" y="2" width="92" height="114" rx="6"/>`),
+  neckstretch: () => rgSvg(rgFrame(0.145, [540, 724], [60, 108], rigFront([{}, { nk: -20 }, {}, { nk: 20 }], 8))),
+  facemassage: () => { const d = 3.2, pl = 'M50 52 Q43 53 37 49 L37 60 Q40 72 50 79', pr = 'M70 52 Q77 53 83 49 L83 60 Q80 72 70 79'; return rgSvg(FACE_IMG(rgImg('face', 'face', 'face')), '', `
+    <g fill="none" class="ac" stroke-width="2" stroke-dasharray="3 5" opacity=".7"><path d="${pl}"/><path d="${pr}"/></g>
+    <g class="acf"><circle r="4.5"><animateMotion dur="${d}s" repeatCount="indefinite" path="${pl}"/></circle><circle r="4.5"><animateMotion dur="${d}s" repeatCount="indefinite" path="${pr}"/></circle></g>`); },
+  gum: () => rgSvg(FACE_IMG(`${rgImg('face', 'face', 'face')}<clipPath id="gumjaw"><path d="M60 396 Q130 410 212 410 Q294 410 364 396 L364 520 L60 520Z"/></clipPath>
+    <g clip-path="url(#gumjaw)"><animateTransform attributeName="transform" type="translate" values="0 0;0 9;0 0" dur=".9s" repeatCount="indefinite"/>${rgImg('face', 'face', 'face')}</g>`), '',
+    `<g class="acf"><animate attributeName="opacity" values=".1;.55;.1" dur=".9s" repeatCount="indefinite"/><ellipse cx="37" cy="61" rx="4" ry="7"/><ellipse cx="83" cy="61" rx="4" ry="7"/></g>`)
 };
 const EXERCISES = {
   chintuck: { t: 'Втягивание подбородка', dose: '3 × 10 повторов, утром и вечером',
