@@ -1546,6 +1546,48 @@ button:active,label.card:active{transform:scale(.97)}
 :root[data-theme="dark"] body::after{background:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 1 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>") 0 0/180px 180px!important}
 @media (prefers-reduced-motion:reduce){:root body::before{animation:none!important}}
 
+/* трекеры: сетка дней за год */
+:root .card.tcard{padding:16px 16px 12px}
+.tmain,.tpick{display:block;width:100%;text-align:left;color:inherit;font:inherit;background:none;border:0;padding:0}
+.thead{display:flex;align-items:flex-end;justify-content:space-between;gap:10px;margin-bottom:10px}
+.tyear{font-family:'Manrope',sans-serif;font-weight:400;font-size:26px;line-height:1;letter-spacing:-.02em;color:#fff}
+.tyear small{font-family:var(--mono);font-size:11px;letter-spacing:.06em;color:rgba(255,255,255,.45);vertical-align:middle}
+.tblock{display:flex;gap:14px;align-items:flex-start}
+.tleft{flex:1;min-width:0}
+.tname{margin-top:6px;font-size:13px;color:rgba(255,255,255,.6)}
+.tname b{color:#fff;font-weight:700}
+.tfoot{display:flex;align-items:center;justify-content:space-between;margin-top:8px}
+.tnav{display:flex;gap:6px}
+.tnav button{width:30px;height:30px;border-radius:50%;background:rgba(255,255,255,.08);color:#fff;font-size:18px;line-height:1;display:grid;place-items:center}
+.tnav button[disabled]{opacity:.25}
+.tgrid{display:grid;grid-template-rows:repeat(7,10px);grid-auto-flow:column;grid-auto-columns:10px;gap:4px;flex:none;padding-top:2px}
+.tgrid i{width:10px;height:10px;border-radius:50%;background:var(--c);display:block}
+.tgrid i.nd{background:rgba(255,255,255,.1)}
+.tgrid i.fu{background:none;box-shadow:inset 0 0 0 1px rgba(255,255,255,.22)}
+.tgrid i.off{visibility:hidden}
+.tgrid i.now{box-shadow:0 0 0 1.5px #fff}
+.tleg{display:flex;flex-wrap:wrap;gap:4px 10px;margin-top:8px;font-size:11px;color:rgba(255,255,255,.65)}
+.tleg span{display:inline-flex;align-items:center;gap:5px}
+.tleg i{width:8px;height:8px;border-radius:50%;background:var(--c);display:inline-block}
+.tstat{margin-top:8px;font-size:12.5px;color:rgba(255,255,255,.8)}
+.tmore{display:block;font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--accent)}
+.tact{display:flex;gap:8px;margin-top:12px}
+.tact .btn{flex:1;height:40px}
+.tact{margin-top:10px}
+.tnote{margin-top:10px;font-size:13px}
+.tsheet .tpick{position:relative;border-radius:20px;padding:14px;margin-bottom:10px;background:var(--cardbase,#111);box-shadow:inset 0 0 0 1px rgba(255,255,255,.08)}
+.tsheet .tpick.on{box-shadow:inset 0 0 0 2px var(--accent)}
+.tsheet .tyear{font-size:22px}
+.tbadge{position:absolute;top:-8px;left:14px;background:var(--accent);color:var(--on-accent);font-family:var(--mono);font-size:9.5px;letter-spacing:.06em;text-transform:uppercase;padding:3px 7px;border-radius:7px}
+
+/* программа сна */
+.slrow{display:grid;grid-template-columns:64px auto 1fr auto;align-items:baseline;gap:10px;padding:8px 0;border-top:1px solid rgba(255,255,255,.08)}
+.slrow b{font-size:17px}
+.slrow .hint{font-size:13px}
+.slrow i{font-style:normal;font-family:var(--mono);font-size:11px;color:var(--accent)}
+.slcard .lbl{margin-bottom:4px}
+.sheet .seg button{padding:10px 2px;white-space:nowrap;font-size:12.5px}
+
 /* ============================================================
    СПОКОЙНАЯ ПАЛИТРА — поверх всех цветных слоёв выше.
    Два фирменных цвета: лаймовый акцент (--accent) и синий (--c2).
@@ -4011,11 +4053,14 @@ async function sendChat(text) {
 function scrollChat() { const go = () => window.scrollTo({ top: document.documentElement.scrollHeight, behavior: reduceMotion ? 'auto' : 'smooth' }); go(); setTimeout(go, 60); }
 
 // ---------- онбординг ----------
-const freshOb = () => ({ step: 0, consent: false, goals: [], issues: [], budget: 1500, photo: null, result: null });
+const freshOb = () => ({ step: 0, consent: false, goals: [], issues: [], budget: 1500, photo: null, result: null, sleep: { bed: null, wake: null, fall: null, morn: null, block: [] } });
 let ob = freshOb();
 let tab = 'home', jtab = 'basics', typing = false, celebrate = false, reader = null, aiBusy = false, modeOpen = false;
 
 function analyze() {
+  // Сон из анкеты: если режим плохой — добавляем «Ложусь поздно», чтобы включился протокол «Режим сна»
+  const slp = sleepProgram(ob.sleep);
+  if (slp && slp.bad && !ob.issues.includes('latesleep')) ob.issues.push('latesleep');
   const score = {};
   Object.keys(PILLARS).forEach((p, i) => score[p] = (ob.goals.includes(p) ? 10 : 0) - i * 0.01);
   ob.issues.forEach((id) => { const it = ISSUES.find((x) => x[0] === id); score[it[2]] += 3; });
@@ -4027,7 +4072,7 @@ function analyze() {
     body: [has('inactive') ? 'Начнём мягко: 8 000 шагов и отжимания, без перегруза.' : 'Минимум 20 минут движения каждый день. Зал не обязателен.', 'Через 4–6 недель изменения будет видно на фото.'],
     posture: ['Сутулость визуально съедает 3–5 см роста. Лечится стеной и растяжкой по 3 минуты в день.'],
     style: ['Сначала посадка, потом бренды. Однотонная база по размеру смотрится дороже.', 'Чистая обувь и отпаренная одежда — бесплатный апгрейд образа.'],
-    sleep: ['Недосып — это мешки под глазами, тусклая кожа и тяга к сладкому. Цель — 7–8 часов.']
+    sleep: slp ? [`${slp.verdict}: сейчас ${slDur(slp.dur)}, цель — ${slDur(slp.durT)}.`, 'Недосып — это мешки под глазами, тусклая кожа и тяга к сладкому.'] : ['Недосып — это мешки под глазами, тусклая кожа и тяга к сладкому. Цель — 7–8 часов.']
   };
   let sum = 0;
   // Под каждую задачу берём конкретное средство из каталога, которое влезает в бюджет
@@ -4041,11 +4086,12 @@ function analyze() {
     const up = bestFor(s.slot, ob.issues, ob.budget);
     if (up && up.p > s.p && sum - s.p + up.p <= ob.budget) { sum += up.p - s.p; s.p = up.p; s.pid = up.id; }
   });
-  return { focus, tips, shopping, sum };
+  return { focus, tips, shopping, sum, sleep: slp };
 }
 function acceptPlan() {
   const r = ob.result;
   S = { theme: S.theme, accent: S.accent, onboarded: true, startDate: today(), goals: ob.goals, issues: ob.issues, budget: ob.budget, plan: { focus: r.focus, shopping: r.shopping }, done: {}, events: [], photos: [], chat: [], lessons: [], articles: [], books: {}, pages: {}, char: {}, grat: {}, mood: {}, focus: {}, chest: {}, claims: {}, sgoals: [], bonus: 0 };
+  if (r.sleep) S.sleep = { ...ob.sleep, prog: r.sleep, date: today() };
   addEvent('start', 'Цели: ' + r.focus.map((p) => PILLARS[p].name).join(', '));
   addEvent('plan', r.shopping.length ? `Получили план на 90 дней и список средств на ${r.sum} ₽` : 'Получили план на 90 дней — без покупок');
   if (ob.photo) { S.photos.push({ date: today(), data: ob.photo }); addEvent('photo', 'Стартовое фото'); }
@@ -4055,7 +4101,87 @@ function acceptPlan() {
   track('onboarded', { photo: !!ob.photo });
 }
 
-function stepsBar(n) { return '<div class="steps">' + [1, 2, 3, 4, 5].map((i) => `<i class="${i <= n ? 'on' : ''}"></i>`).join('') + '</div>'; }
+// ---------- сон: вопросы и подбор программы ----------
+// Время храним в часах от полуночи; после полуночи — 24+ (00:30 = 24.5), чтобы считать длительность без перескоков
+const SL_BED = [[21.75, 'до 22'], [22.5, '22–23'], [23.5, '23–00'], [24.5, '00–01'], [25.75, 'после 01']];
+const SL_WAKE = [[5.75, 'до 6'], [6.5, '6–7'], [7.5, '7–8'], [8.5, '8–9'], [9.5, 'после 9']];
+const SL_FALL = [['fast', '😴 Быстро, до 15 минут'], ['long', '🌀 Долго ворочаюсь'], ['wake', '🌙 Просыпаюсь ночью']];
+const SL_MORN = [['ok', '⚡ Бодро'], ['tired', '🧟 Разбитый'], ['coffee', '☕ Без кофе никак']];
+const SL_BLOCK = [['phone', 'Телефон в кровати'], ['caffeine', 'Кофе или энергетики после обеда'], ['weekend', 'В выходные сплю до обеда'], ['food', 'Ем поздно вечером'], ['late', 'Учёба, работа или игры допоздна'], ['env', 'Шум или свет в комнате']];
+const freshSleep = () => ({ bed: null, wake: null, fall: null, morn: null, block: [] });
+const slHM = (h) => { const m = Math.round(((h % 24) + 24) % 24 * 60); return z(Math.floor(m / 60) % 24) + ':' + z(m % 60); };
+const slDur = (h) => { const m = Math.round(h * 60); return Math.floor(m / 60) + (m % 60 ? ' ч ' + m % 60 + ' мин' : ' ч'); };
+function sleepProgram(sl) {
+  if (!sl || sl.bed == null || sl.wake == null) return null;
+  const has = (x) => (sl.block || []).includes(x);
+  const wake = sl.wake + 24, dur = wake - sl.bed;
+  // Цель — 8 часов сна; отбой не позже 23:30 и не раньше, чем нужно для 8 часов
+  const bedT = Math.min(sl.bed, Math.max(wake - 8, 21.5), 23.5);
+  const shift = Math.max(0, Math.round((sl.bed - bedT) * 4) / 4); // в часах, шаг 15 минут
+  const steps = Math.round(shift * 4), days = steps * 2;
+  const bad = dur < 7.5 || sl.bed >= 24 || sl.fall === 'long' || sl.fall === 'wake' || !!(sl.morn && sl.morn !== 'ok');
+  const habits = [];
+  if (shift) habits.push(`Отбой на 15 минут раньше каждые 2 дня: ${slHM(sl.bed)} → ${slHM(bedT)}`);
+  habits.push(has('weekend') ? `Подъём в ${slHM(sl.wake)} каждый день` : `Подъём в ${slHM(sl.wake)} каждый день — в выходные максимум на час позже`);
+  if (sl.morn && sl.morn !== 'ok') habits.push('10 минут дневного света в первый час после подъёма — так проще проснуться и вечером легче уснуть');
+  if (sl.morn === 'coffee') habits.push('Первый кофе — через час после подъёма, не сразу');
+  if (has('caffeine')) habits.push('Кофе, чай и энергетики — не позже 14:00');
+  if (has('phone')) habits.push('За 30 минут до сна телефон заряжается не у кровати');
+  if (has('late')) habits.push(`Стоп учёбе, работе и играм в ${slHM(bedT - 0.75)} — за 45 минут до отбоя`);
+  if (has('food')) habits.push('Последняя еда — за 2–3 часа до сна');
+  if (has('weekend')) habits.push('В выходные вставай максимум на час позже: сон до обеда сбивает режим, как перелёт через часовые пояса');
+  if (has('env')) habits.push('Маска для сна и беруши, в комнате прохладно — 18–20°');
+  if (sl.fall === 'long') habits.push('Не уснул за 20 минут — встань, почитай бумажную книгу при тусклом свете и вернись');
+  if (sl.fall === 'wake') habits.push('За час до сна без больших порций воды, в комнате прохладно и темно');
+  if (habits.length < 3) habits.push('За 30 минут до сна — без экрана', 'В комнате темно и прохладно');
+  const verdict = !bad ? 'Режим в порядке — держим его' : dur < 6.5 ? 'Сильный недосып — восстановим постепенно' : shift ? 'Сдвигаем отбой без мучений' : 'Сон есть, но он не восстанавливает — чиним качество';
+  return { bed: sl.bed, wake: sl.wake, dur, bedT, durT: wake - bedT, shift, days, bad, habits: habits.slice(0, 6), verdict };
+}
+function sleepQuestions(sl) {
+  const seg = (q, list) => `<div class="seg">${list.map(([v, l]) => `<button class="${sl[q] === v ? 'on' : ''}" data-act="sl-set" data-q="${q}" data-v="${v}">${l}</button>`).join('')}</div>`;
+  const opts = (q, list) => list.map(([v, l]) => `<button class="opt ${sl[q] === v ? 'on' : ''}" data-act="sl-set" data-q="${q}" data-v="${v}"><span class="box">${sl[q] === v ? IC.check : ''}</span><span>${l}</span></button>`).join('');
+  return `<div class="mono lbl" style="margin-top:0">Во сколько обычно ложишься в будни?</div>${seg('bed', SL_BED)}
+    <div class="mono lbl">Во сколько встаёшь?</div>${seg('wake', SL_WAKE)}
+    <div class="mono lbl">Как засыпаешь?</div>${opts('fall', SL_FALL)}
+    <div class="mono lbl">Как ты утром?</div>${opts('morn', SL_MORN)}
+    <div class="mono lbl">Что мешает спать? <span style="opacity:.6">можно несколько</span></div>
+    <div class="chips">${SL_BLOCK.map(([k, n]) => `<button class="chip ${sl.block.includes(k) ? 'on' : ''}" data-act="sl-block" data-k="${k}">${n}</button>`).join('')}</div>`;
+}
+function sleepCard(p, full) {
+  if (!p) return '';
+  const row = (lbl, a, b, c) => `<div class="slrow"><span class="mono">${lbl}</span><b>${a}</b><span class="hint">${b}</span>${c ? `<i>${c}</i>` : ''}</div>`;
+  return `<div class="card slcard"><div class="row between" style="margin-bottom:10px"><div class="row"><span class="tag" style="color:${PILLARS.sleep.c};border-color:${PILLARS.sleep.c}55">SLP</span><b class="disp" style="font-size:22px">Программа сна</b></div>${full ? '' : '<button class="btn sm ghost" data-act="sl-open" style="height:32px;width:auto;padding:0 12px">Изменить</button>'}</div>
+    <div style="font-weight:700;margin-bottom:10px">${p.verdict}</div>
+    ${row('Сейчас', slDur(p.dur), `${slHM(p.bed)} → ${slHM(p.wake)}`)}
+    ${row('Цель', slDur(p.durT), `${slHM(p.bedT)} → ${slHM(p.wake)}`, p.shift ? `~${p.days} ${plural(p.days, 'день', 'дня', 'дней')}` : '')}
+    <div class="mono lbl" style="margin-top:12px">Что делаем</div>
+    ${p.habits.map((t) => `<div style="margin:6px 0;font-size:14px">— ${t}</div>`).join('')}</div>`;
+}
+// Программа сна для тех, кто прошёл онбординг до появления вопросов про сон (или хочет пересобрать)
+function sleepModal() {
+  const sl = modal.sl, ready = sl.bed != null && sl.wake != null;
+  return `<div class="modal"><div class="sheet exs">
+    <span class="mono">[ программа сна ]</span>
+    <div class="disp" style="font-size:28px;margin:4px 0 12px">Как ты спишь?</div>
+    ${sleepQuestions(sl)}
+    <button class="btn" data-act="sl-save" style="margin-top:18px" ${ready ? '' : 'disabled'}>${ready ? 'Подобрать программу' : 'Выбери время отбоя и подъёма'}</button>
+    <button class="btn sm ghost" data-act="modal-close" style="margin-top:10px;width:100%">Отмена</button>
+  </div></div>`;
+}
+const slState = () => (modal && modal.kind === 'sleep' ? modal.sl : ob.sleep);
+// Плохой сон — включаем протокол «Режим сна»
+function sleepToPlan(p) {
+  if (!p || !p.bad || !S.protos) return;
+  S.issues = S.issues || [];
+  if (!S.issues.includes('latesleep')) S.issues.push('latesleep');
+  const P = S.protos;
+  if (P.active.some((a) => a.id === 'latesleep') || P.done.some((d) => d.id === 'latesleep')) return;
+  P.queue = P.queue.filter((x) => x !== 'latesleep');
+  if (P.active.length < MAX_ACTIVE) { P.active.push({ id: 'latesleep', start: today() }); addEvent('proto', 'Начали протокол: ' + PROTOCOLS.latesleep.t); }
+  else P.queue.unshift('latesleep');
+}
+
+function stepsBar(n) { return '<div class="steps">' + [1, 2, 3, 4, 5, 6].map((i) => `<i class="${i <= n ? 'on' : ''}"></i>`).join('') + '</div>'; }
 function opt(act, on, text) { return `<button class="opt ${on ? 'on' : ''}" data-act="${act}"><span class="box">${on ? IC.check : ''}</span><span>${text}</span></button>`; }
 
 function renderOnboarding() {
@@ -4075,44 +4201,50 @@ function renderOnboarding() {
     </div>
     <button class="btn" data-act="next">Начать ${IC.send}</button>`;
   if (s === 1) return `<div class="ob-fill">${stepsBar(1)}
-    <div class="mono">[ 01 / 05 ]</div><div class="disp h1" style="margin:8px 0 10px">Правила</div>
+    <div class="mono">[ 01 / 06 ]</div><div class="disp h1" style="margin:8px 0 10px">Правила</div>
     <p class="hint" style="margin:0 0 18px">Прокачиваем только то, что можно изменить: кожу, волосы, тело, осанку, стиль, режим — и характер. Форму лица и рост не оцениваем. Никогда.</p>
     <div class="ob-bottom">${opt('ob-consent', ob.consent, 'Согласен с политикой конфиденциальности')}
     <div class="banner" style="margin-top:12px">Это не медицинский сервис. При проблемах с кожей — к дерматологу.</div>
     <button class="btn" data-act="next" ${ob.consent ? '' : 'disabled'}>Дальше</button>
     <a class="ob-link" href="privacy.html">Прочитать политику конфиденциальности</a></div></div>`;
   if (s === 2) return `${stepsBar(2)}
-    <div class="mono">[ 02 / 05 ]</div><div class="disp h1" style="margin:8px 0 10px">Что качаем?</div>
+    <div class="mono">[ 02 / 06 ]</div><div class="disp h1" style="margin:8px 0 10px">Что качаем?</div>
     <p class="hint" style="margin:0 0 18px">Выбери всё, что важно во внешности. Характер и общение качаются у всех.</p>
     <div class="tiles" style="margin-bottom:22px">${Object.entries(PILLARS).map(([k, p]) => `<button class="tint" style="--c:${p.c};text-align:left;transition:all .2s;${ob.goals.includes(k) ? `background:${p.c};color:#06101c` : ''}" data-act="ob-goal" data-k="${k}"><div class="mono" style="${ob.goals.includes(k) ? 'color:#06101c' : ''}">${p.code}</div><b style="font-size:24px">${p.name}</b></button>`).join('')}</div>
     <button class="btn" data-act="next" ${ob.goals.length ? '' : 'disabled'}>Дальше</button>`;
   if (s === 3) return `${stepsBar(3)}
-    <div class="mono">[ 03 / 05 ]</div><div class="disp h1" style="margin:8px 0 10px">Что мешает?</div>
+    <div class="mono">[ 03 / 06 ]</div><div class="disp h1" style="margin:8px 0 10px">Что мешает?</div>
     <p class="hint" style="margin:0 0 18px">Можно пропустить. Так план будет точнее.</p>
     <div class="chips">${ISSUES.map(([k, n]) => `<button class="chip ${ob.issues.includes(k) ? 'on' : ''}" data-act="ob-issue" data-k="${k}">${n}</button>`).join('')}</div>
     <div class="mono lbl">Бюджет на средства</div>
     <div class="seg" style="margin-bottom:24px">${[[0, '0 ₽'], [800, '800'], [1500, '1 500'], [3000, '3 000'], [5000, '5 000+']].map(([v, l]) => `<button class="${ob.budget === v ? 'on' : ''}" data-act="ob-budget" data-v="${v}">${l}</button>`).join('')}</div>
     <button class="btn" data-act="next">Дальше</button>`;
-  if (s === 4) return `${stepsBar(4)}
-    <div class="mono">[ 04 / 05 ]</div><div class="disp h1" style="margin:8px 0 10px">Точка «до»</div>
+  if (s === 4) { const ready = ob.sleep.bed != null && ob.sleep.wake != null; return `${stepsBar(4)}
+    <div class="mono">[ 04 / 06 ]</div><div class="disp h1" style="margin:8px 0 10px">Как ты спишь?</div>
+    <p class="hint" style="margin:0 0 18px">Сон — это кожа без отёков, ясная голова и сила в зале. По ответам подберём программу сна.</p>
+    ${sleepQuestions(ob.sleep)}
+    <button class="btn" data-act="next" style="margin-top:22px" ${ready ? '' : 'disabled'}>${ready ? 'Дальше' : 'Выбери время отбоя и подъёма'}</button>`; }
+  if (s === 5) return `${stepsBar(5)}
+    <div class="mono">[ 05 / 06 ]</div><div class="disp h1" style="margin:8px 0 10px">Точка «до»</div>
     <p class="hint" style="margin:0 0 16px">Дневной свет, лицо прямо, без фильтров. Лучше всего — если снимет друг с метра.</p>
     ${ob.photoErr ? `<div class="banner" style="margin-bottom:14px">⚠️ ${esc(ob.photoErr)}</div>` : ''}
     <button type="button" class="photo-drop" data-act="photo" data-k="ob-photo" style="margin-bottom:14px;width:100%;color:inherit;font:inherit">
       ${ob.photo ? `<img src="${ob.photo}" alt="">` : `<div class="oval"></div><div style="position:relative">${IC.cam}<div style="font-weight:800;margin-top:6px">Добавить фото</div><div class="hint">камера или галерея</div></div>`}
     </button>
     <button class="btn" data-act="analyze" ${ob.photo ? '' : 'disabled'}>${ob.photo ? 'Сделать разбор' : 'Сначала добавь фото'}</button>`;
-  if (s === 5) return `${stepsBar(5)}
+  if (s === 6) return `${stepsBar(6)}
     <div class="spin"></div>
     <div style="max-width:280px;margin:0 auto">${['Смотрю на фото', 'Учитываю цели', 'Собираю миссии', 'Считаю бюджет'].map((t, i) => `<div class="check-line" id="cl${i}">[✓] ${t}</div>`).join('')}</div>
     ${AI_ENDPOINT && ob.photo ? '<p class="hint" style="text-align:center;margin-top:18px">Анализируем фото — это может занять до минуты</p>' : ''}`;
-  if (s === 6) {
+  if (s === 7) {
     const r = ob.result;
-    return `${stepsBar(5)}
-      <div class="mono">[ 05 / 05 ]</div><div class="disp h1" style="margin:8px 0 10px">План готов</div>
+    return `${stepsBar(6)}
+      <div class="mono">[ 06 / 06 ]</div><div class="disp h1" style="margin:8px 0 10px">План готов</div>
       <p class="hint" style="margin:0 0 16px">Фокус на первые 90 дней.${AI_ENDPOINT ? '' : ' Демо: разбор строится по анкете, разбор по фото подключим на сервере.'}</p>
       ${ob.photo ? `<div class="card row"><img src="${ob.photo}" style="width:60px;height:78px;object-fit:cover;border-radius:12px"><div><b>Точка «до» сохранена</b><div class="hint">Через 30 дней сравним</div></div></div>` : ''}
       ${ob.ai ? aiCard(ob.ai) : ''}${ob.aiErr ? `<div class="banner">${esc(ob.aiErr)}</div>` : ''}
       ${r.focus.map((p, i) => `<div class="card"><div class="row between" style="margin-bottom:10px"><div class="row"><span class="tag" style="color:${PILLARS[p].c};border-color:${PILLARS[p].c}55">${PILLARS[p].code}</span><b class="disp" style="font-size:22px">${PILLARS[p].name}</b></div><span class="mono" style="color:${i < 2 ? 'var(--accent)' : 'var(--hint)'}">${i < 2 ? 'Главный фокус' : 'Поддержка'}</span></div>${r.tips[p].filter(Boolean).map((t) => `<div style="margin:5px 0;font-size:14px">— ${t}</div>`).join('')}</div>`).join('')}
+      ${sleepCard(r.sleep, true)}
       ${(() => { const pp = buildPlan(ob.issues, ob.budget); return pp.active.length ? `<div class="card"><div class="disp" style="font-size:22px;margin-bottom:6px">Твои протоколы</div><div class="hint" style="margin-bottom:6px">Пошаговый план под то, что ты отметил: что делать каждый день, чего избегать, упражнения с анимацией.</div>${pp.active.map((a) => `<div class="item"><div style="flex:1"><b>${PROTOCOLS[a.id].t}</b>${pp.notes[a.id] ? `<div class="hint" style="font-size:12.5px;margin-top:2px">${pp.notes[a.id]}</div>` : ''}</div><span class="mono">${PROTOCOLS[a.id].days} дн.</span></div>`).join('')}${pp.queue.length ? `<div class="hint" style="margin-top:8px">И ещё ${pp.queue.length} в очереди — начнутся, когда пройдёшь эти.</div>` : ''}</div>` : ''; })()}
       <div class="card"><div class="disp" style="font-size:22px;margin-bottom:6px">Что заказать</div>${r.shopping.length ? r.shopping.map((it) => it.pid ? prodCard(CAT_BY[it.pid]) : `<div class="item"><div style="flex:1">${it.n}</div><b>~${it.p} ₽</b></div>`).join('') + `<div class="row between" style="margin-top:12px"><span class="mono">Итого</span><b class="disp" style="font-size:22px">~${r.sum} ₽</b></div>` : '<div class="hint">Ничего покупать не нужно — весь план бесплатный.</div>'}</div>
       <div class="disp" style="font-size:56px;text-align:center;margin:26px 0 14px">Делаем?</div>
@@ -4176,7 +4308,7 @@ function renderHome() {
         </div>
       </div>
     </div>
-    ${auraCard()}
+    ${trackersCard()}
     ${factCard()}
     ${celebrate ? `<div class="celebrate"><div><b>День закрыт</b><div style="font-weight:700;font-size:13px;opacity:.8">+50 XP · серия ${s}</div></div><div style="font-size:34px">🔥</div></div>` : ''}
     ${chestOpen ? `<div class="card chest"><span class="ci">🎁</span><div style="flex:1"><b>Подарок дня</b><div class="hint">Заходи каждый день — внутри 10–30 XP</div></div><button class="btn sm" data-act="chest" style="background:var(--gold);color:#1c100b">Открыть</button></div>` : ''}
@@ -4347,6 +4479,7 @@ function renderPlan() {
       <div class="hint" style="margin:4px 0 10px">${aiBusy ? 'Анализируем фото — это может занять до минуты…' : S.ai ? `Последний — ${human(S.ai.date)}. Новый разбор добавит в план то, что видно на фото.` : 'Разберём фото и добавим в план то, что реально видно.'}</div>
       ${aiBusy ? '<div class="spin" style="margin:6px auto"></div>' : `<button type="button" class="btn sm" data-act="photo" data-k="ai-photo">${S.ai ? 'Новый разбор' : 'Сделать разбор'}</button>`}</div>` : ''}
     ${routineCard()}
+    ${S.sleep && S.sleep.prog ? sleepCard(S.sleep.prog) : `<button type="button" class="card row" data-act="sl-open" style="width:100%;text-align:left"><div class="iconbtn" style="font-size:20px">🌙</div><div style="flex:1"><b>Подобрать программу сна</b><div class="hint">5 вопросов — и план отбоя под тебя</div></div></button>`}
     <div class="sec"><span class="disp">Протоколы</span><span class="chipline">[ ${act.length} активн. ]</span></div>
     ${act.length ? act.map(protoCard).join('') : '<div class="card"><b>Активных протоколов нет</b><div class="hint" style="margin-top:4px">Выбери один из списка внизу.</div></div>'}
     ${woCards()}
@@ -4974,6 +5107,9 @@ function renderModal() {
   if (String(modal.kind).startsWith('w-')) return wModal();
   if (String(modal.kind).startsWith('fr-')) return frModal();
   if (modal.kind === 'aura') return auraModal();
+  if (modal.kind === 'sleep') return sleepModal();
+  if (modal.kind === 'trk') return trkModal();
+  if (modal.kind === 'sl-log') return slLogModal();
   if (modal.kind === 'pf-view') return pfViewModal();
   if (modal.kind === 'levelup') {
     const r = rank(), got = UNLOCKS.filter((u) => u.lvl > modal.from && u.lvl <= modal.lvl);
@@ -5224,6 +5360,16 @@ const ACT = {
   'ob-goal'(el) { toggleIn(ob.goals, el.dataset.k); haptic('light'); render(); },
   'ob-issue'(el) { toggleIn(ob.issues, el.dataset.k); haptic('light'); render(); },
   'ob-budget'(el) { ob.budget = +el.dataset.v; render(); },
+  'sl-set'(el) { const sl = slState(), q = el.dataset.q, v = el.dataset.v; sl[q] = q === 'bed' || q === 'wake' ? +v : v; haptic('light'); render(); },
+  'sl-block'(el) { toggleIn(slState().block, el.dataset.k); haptic('light'); render(); },
+  'sl-open'() { modal = { kind: 'sleep', sl: S.sleep ? { bed: S.sleep.bed, wake: S.sleep.wake, fall: S.sleep.fall, morn: S.sleep.morn, block: [...(S.sleep.block || [])] } : freshSleep() }; haptic('light'); render(); },
+  'sl-save'() {
+    const sl = modal.sl, p = sleepProgram(sl); if (!p) return;
+    const first = !S.sleep;
+    S.sleep = { ...sl, prog: p, date: today() };
+    sleepToPlan(p); if (first) addEvent('plan', 'Подобрали программу сна');
+    modal = null; haptic('success'); save(); render(); toast('Программа сна готова');
+  },
   photo(el) { photoSheet(el.dataset.k); },
   'pro-open'() { proOpen(); },
   'pro-pay'() { proPay(); },
@@ -5261,9 +5407,9 @@ const ACT = {
   lib(el) { jtab = el.dataset.v; tab = 'journal'; reader = null; haptic('light'); render(); window.scrollTo(0, 0); },
   analyze() {
     if (!ob.photo) return toast('Добавь фото — без него план не будет личным'); // без фото дальше не пускаем
-    ob.step = 5; ob.result = analyze(); ob.ai = null; ob.aiErr = null; render();
+    ob.step = 6; ob.result = analyze(); ob.ai = null; ob.aiErr = null; render();
     [0, 1, 2, 3].forEach((i) => setTimeout(() => { const e = document.getElementById('cl' + i); e && e.classList.add('on'); }, 450 * (i + 1)));
-    aiPhoto = ob.photo; const ai = AI_ENDPOINT && ob.photo ? aiCall('analyze', { photo: ob.photo, issues: ob.issues, tone: tone() }, 90000) : null;
+    aiPhoto = ob.photo; const ai = AI_ENDPOINT && ob.photo ? aiCall('analyze', { photo: ob.photo, issues: ob.issues, sleep: ob.sleep, tone: tone() }, 90000) : null;
     Promise.all([ai, new Promise((r) => setTimeout(r, 2300))]).then(([a]) => {
       if (a && !a.error && a.person && a.quality === 'ok') {
         ob.ai = a;
@@ -5271,13 +5417,13 @@ const ACT = {
         ob.result = analyze();
       } else if (a && !a.error) {
         // Фото не подходит (нет человека, темно) — возвращаем на шаг с фото, а не делаем вид, что разобрали
-        ob.photo = null; ob.step = 4;
+        ob.photo = null; ob.step = 5;
         ob.photoErr = !a.person ? 'На фото не видно человека. Нужно селфи или фото в полный рост — тогда разбор будет про тебя.' : `${a.quality_note || 'Фото тёмное или размытое.'} Попробуй переснять.`;
         haptic('heavy'); render(); window.scrollTo(0, 0); return;
       } else if (a) {
         ob.aiErr = aiErr(a.error) + ' План пока по анкете — разбор по фото можно сделать позже в «Моём плане».';
       }
-      ob.step = 6; haptic('success'); render(); window.scrollTo(0, 0);
+      ob.step = 7; haptic('success'); render(); window.scrollTo(0, 0);
     });
   },
   accept: acceptPlan,
@@ -6152,6 +6298,146 @@ function auraCard() {
       <div class="aweek">${week.map((w) => `<i class="${closed(w) ? 'on' : ''} ${w === d ? 'now' : ''}"></i>`).join('')}</div>
     </div></button>`;
 }
+
+// ---------- трекеры: сетка дней за год, цвет = сколько усилия реально вложено ----------
+// Уровни: 4 — ярко-зелёный, 3 — зелёный, 2 — тёмно-зелёный, 1 — жёлтый, 0 — красный (провал), null — нет данных
+const TRK_C = ['#ff4a3d', '#ffc531', '#1f7a4c', '#2fd36b', '#8dffa8'];
+const slogOf = (d) => (S.slog || {})[d];
+const TRACKERS = {
+  sleep: { n: 'Сон', ic: '🌙', unit: ['ночь', 'ночи', 'ночей'],
+    lv: (d) => { const l = slogOf(d); if (!l) return null; const h = l.h; return h >= 8 ? 4 : h >= 7 ? 3 : h >= 6 ? 2 : h >= 5 ? 1 : 0; },
+    legend: [[0, '< 5 ч'], [1, '5 ч'], [2, '6 ч'], [3, '7 ч'], [4, '8 ч+']],
+    stat: (days) => { const hs = days.map(slogOf).filter(Boolean).map((l) => l.h); return hs.length ? `в среднем ${slDur(hs.reduce((a, b) => a + b, 0) / hs.length)} за ${days.length} дн.` : 'Отмечай, когда лёг и когда встал'; } },
+  missions: { n: 'Миссии', ic: '🎯', unit: ['день', 'дня', 'дней'], strict: true,
+    lv: (d) => { const n = doneOn(d).length, c = (S.char || {})[d] ? 1 : 0; return n >= 3 && c ? 4 : n >= 3 ? 3 : n === 2 ? 2 : n === 1 ? 1 : 0; },
+    legend: [[0, '0'], [1, '1'], [2, '2'], [3, '3'], [4, '3 + характер']],
+    stat: (days) => { const k = days.filter((d) => doneOn(d).length >= 3).length; return `${k} из ${days.length} дн. закрыто полностью`; } },
+  care: { n: 'Уход', ic: '🧴', unit: ['день', 'дня', 'дней'], strict: true,
+    lv: (d) => { const f = S.rfull || {}, n = (f[d + ':am'] ? 1 : 0) + (f[d + ':pm'] ? 1 : 0), part = ((S.rdone || {})[d + ':am'] || []).length + ((S.rdone || {})[d + ':pm'] || []).length; return n === 2 ? 4 : n === 1 ? 2 : part ? 1 : 0; },
+    legend: [[0, 'пропуск'], [1, 'начал'], [2, 'утро или вечер'], [4, 'утро и вечер']],
+    stat: (days) => { const k = days.filter((d) => TRACKERS.care.lv(d) === 4).length; return `${k} из ${days.length} дн. — утро и вечер`; } },
+  workout: { n: 'Тренировки', ic: '💪', unit: ['тренировка', 'тренировки', 'тренировок'],
+    lv: (d) => { const n = woDone(d).length; return n >= 2 ? 4 : n === 1 ? 3 : null; },
+    legend: [[3, '1'], [4, '2+']],
+    stat: (days) => { const k = days.reduce((a, d) => a + woDone(d).length, 0); return `${k} ${plural(k, 'тренировка', 'тренировки', 'тренировок')} за ${days.length} дн.`; } },
+  reading: { n: 'Чтение', ic: '📖', unit: ['день', 'дня', 'дней'],
+    lv: (d) => { const p = (S.pages || {})[d] || 0; return p >= 30 ? 4 : p >= 20 ? 3 : p >= 10 ? 2 : p > 0 ? 1 : null; },
+    legend: [[1, '1–9 стр.'], [2, '10+'], [3, '20+'], [4, '30+']],
+    stat: (days) => { const k = days.reduce((a, d) => a + ((S.pages || {})[d] || 0), 0); return `${k} ${plural(k, 'страница', 'страницы', 'страниц')} за ${days.length} дн.`; } }
+};
+const TRK_ORDER = ['sleep', 'missions', 'care', 'workout', 'reading'];
+const trkMain = () => (TRACKERS[S.trk] ? S.trk : 'sleep');
+// Уровень дня: «строгие» трекеры (миссии, уход) красят пропущенные прошедшие дни в красный, но только после старта
+function trkLevel(k, d, t) {
+  if (d > t || d < S.startDate) return null;
+  const v = TRACKERS[k].lv(d);
+  if (v === 0 && (!TRACKERS[k].strict || d === t)) return null;
+  return v;
+}
+// Сетка — календарь одного месяца. trkOff: 0 — текущий месяц, -1 — прошлый и т.д. (не сохраняем)
+let trkOff = 0;
+const MONTHS_FULL = ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'];
+function trkMonth() {
+  const t = parse(today()), m = new Date(t.getFullYear(), t.getMonth() + trkOff, 1);
+  const first = fmt(m), last = fmt(new Date(m.getFullYear(), m.getMonth() + 1, 0));
+  return { first, last, name: MONTHS_FULL[m.getMonth()], year: m.getFullYear() };
+}
+function trkGrid(k) {
+  // как на фото: столбец = неделя, строка = день недели (пн сверху), маленькие кружки
+  const t = today(), M = trkMonth(), lead = (parse(M.first).getDay() + 6) % 7;
+  const cells = [...Array(lead)].map(() => '<i class="off"></i>');
+  for (let d = M.first; d <= M.last; d = addDays(d, 1)) {
+    const v = trkLevel(k, d, t);
+    cells.push(`<i class="${d > t ? 'fu' : v == null ? 'nd' : ''}${d === t ? ' now' : ''}"${v != null ? ` style="--c:${TRK_C[v]}"` : ''} title="${+d.slice(8)}"></i>`);
+  }
+  return `<div class="tgrid">${cells.join('')}</div>`;
+}
+function trkCount(k) {
+  const t = today(), M = trkMonth(); let n = 0;
+  for (let d = M.first; d <= M.last && d <= t; d = addDays(d, 1)) {
+    if (k === 'workout') { n += woDone(d).length; continue; }
+    const v = trkLevel(k, d, t); if (v != null && v > 0) n++;
+  }
+  return n;
+}
+function trkBlock(k, main) {
+  const T = TRACKERS[k], n = trkCount(k), M = trkMonth(), last = [...Array(14)].map((_, i) => addDays(today(), -i)).filter((d) => d >= S.startDate);
+  return `<div class="tblock"><div class="tleft">
+    <div class="tyear">${M.name} <small>${M.year}</small></div>
+    <div class="tname"><b>${T.ic} ${T.n}</b> · ${n} ${plural(n, ...T.unit)}</div>
+    <div class="tleg">${T.legend.map(([v, l]) => `<span><i style="--c:${TRK_C[v]}"></i>${l}</span>`).join('')}</div>
+    ${main ? `<div class="tstat">${T.stat(last.length ? last : [today()])}</div>` : ''}
+  </div>${trkGrid(k)}</div>`;
+}
+function sleepActions() {
+  const p = S.slBed, l = slogOf(today());
+  if (p) return `<div class="tact"><button class="btn sm" data-act="sl-wake">☀️ Проснулся</button><button class="btn sm ghost" data-act="sl-cancel">Отмена</button></div><div class="hint tnote">Спишь с ${slHM(new Date(p).getHours() + new Date(p).getMinutes() / 60)}. Утром нажми «Проснулся» — посчитаем, сколько ты спал.</div>`;
+  return `${l ? `<div class="tnote"><b style="color:${TRK_C[TRACKERS.sleep.lv(today())]}">Этой ночью: ${slDur(l.h)}</b> <span class="hint">${l.bed} → ${l.wake}</span></div>` : ''}
+    <div class="tact"><button class="btn sm" data-act="sl-bed">🌙 Ложусь спать</button><button class="btn sm ghost" data-act="sl-log">Вручную</button></div>`;
+}
+function trackersCard() {
+  const k = trkMain();
+  return `<div class="card tcard">
+    <div class="tmain" data-act="trk-all" role="button" tabindex="0">${trkBlock(k, true)}</div>
+    <div class="tfoot"><div class="tnav"><button type="button" data-act="trk-m" data-v="-1" aria-label="Прошлый месяц">‹</button><button type="button" data-act="trk-m" data-v="1" aria-label="Следующий месяц" ${trkOff >= 0 ? 'disabled' : ''}>›</button></div><button type="button" class="tmore" data-act="trk-all">Все трекеры · ${TRK_ORDER.length} →</button></div>
+    ${k === 'sleep' ? sleepActions() : ''}
+  </div>`;
+}
+function trkModal() {
+  return `<div class="modal"><div class="sheet exs tsheet">
+    <span class="mono">[ трекеры ]</span>
+    <div class="disp" style="font-size:28px;margin:4px 0 4px">Твоя статистика</div>
+    <div class="hint" style="margin-bottom:12px">Цвет — сколько ты реально сделал. Тапни трекер, чтобы он был на главной.</div>
+    ${TRK_ORDER.map((k) => `<button type="button" class="tpick ${k === trkMain() ? 'on' : ''}" data-act="trk-set" data-k="${k}">${trkBlock(k)}${k === trkMain() ? '<span class="tbadge">на главной</span>' : ''}</button>`).join('')}
+    <button class="btn" data-act="modal-close" style="margin-top:14px">Готово</button>
+  </div></div>`;
+}
+function slLogModal() {
+  const m = modal, pr = S.sleep && S.sleep.prog;
+  const def = (h) => slHM(h);
+  return `<div class="modal"><div class="sheet exs">
+    <span class="mono">[ сон ]</span>
+    <div class="disp" style="font-size:28px;margin:4px 0 12px">Как ты спал?</div>
+    <div class="mono lbl" style="margin-top:0">Утро какого дня</div>
+    <input class="field" type="date" id="sl-d" value="${m.d || today()}" max="${today()}">
+    <div class="row" style="gap:10px;margin-top:6px">
+      <div style="flex:1"><div class="mono lbl">Лёг</div><input class="field" type="time" id="sl-b" value="${m.b || def(pr ? pr.bed : 23.5)}"></div>
+      <div style="flex:1"><div class="mono lbl">Проснулся</div><input class="field" type="time" id="sl-w" value="${m.w || def(pr ? pr.wake : 7.5)}"></div>
+    </div>
+    <button class="btn" data-act="sl-log-save" style="margin-top:18px">Сохранить</button>
+    <button class="btn sm ghost" data-act="modal-close" style="margin-top:10px;width:100%">Отмена</button>
+  </div></div>`;
+}
+const hmNum = (s) => { const [h, m] = s.split(':').map(Number); return h + m / 60; };
+function slPut(d, bed, wake) {
+  let h = hmNum(wake) - hmNum(bed); if (h <= 0) h += 24;
+  if (h < 1 || h > 16) { toast('Проверь время — получилось ' + slDur(h)); return false; }
+  S.slog = S.slog || {}; const was = !!S.slog[d];
+  S.slog[d] = { bed, wake, h: Math.round(h * 100) / 100 };
+  if (!was) addEvent('sleep', `Сон: ${slDur(h)}`, d);
+  save(); return h;
+}
+ACT['trk-m'] = (el) => { trkOff = Math.min(0, trkOff + +el.dataset.v); haptic('light'); render(); };
+ACT['trk-all'] = () => { modal = { kind: 'trk' }; haptic('light'); render(); };
+ACT['trk-set'] = (el) => { S.trk = el.dataset.k; save(); modal = null; haptic('success'); render(); };
+ACT['sl-bed'] = () => { S.slBed = now().getTime(); save(); haptic('success'); render(); toast('Спокойной ночи 🌙 Утром нажми «Проснулся»'); };
+ACT['sl-cancel'] = () => { delete S.slBed; save(); render(); };
+ACT['sl-wake'] = () => {
+  const b = new Date(S.slBed), w = now(), h = (w - b) / 3600000;
+  const hm = (d) => z(d.getHours()) + ':' + z(d.getMinutes());
+  if (h < 1 || h > 16) { modal = { kind: 'sl-log', d: fmt(w), b: hm(b), w: hm(w) }; delete S.slBed; save(); render(); toast('Похоже, кнопку нажали не вовремя — поправь время'); return; }
+  delete S.slBed; const r = slPut(fmt(w), hm(b), hm(w));
+  if (r) { haptic('success'); render(); toast(`Ты спал ${slDur(r)}${r >= 8 ? ' — отлично 💚' : r < 6 ? ' — маловато' : ''}`); }
+};
+ACT['sl-log'] = () => { modal = { kind: 'sl-log' }; haptic('light'); render(); };
+ACT['sl-log-save'] = () => {
+  const d = document.getElementById('sl-d').value, b = document.getElementById('sl-b').value, w = document.getElementById('sl-w').value;
+  if (!d || !b || !w) return toast('Заполни дату и время');
+  if (d > today()) return toast('Этот день ещё не наступил');
+  const r = slPut(d, b, w); if (!r) return;
+  modal = null; haptic('success'); render(); toast(`Записали: ${slDur(r)}`);
+};
+
 function auraModal() {
   const s = streak(), cur = auraOf(s);
   return `<div class="modal"><div class="sheet exs"><span class="mono">[ аура ]</span>
