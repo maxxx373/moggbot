@@ -1589,6 +1589,15 @@ button:active,label.card:active{transform:scale(.97)}
 .storyc .btn{margin-top:10px;height:40px}
 .celstory{margin-top:8px;background:rgba(7,8,12,.88);color:#fff;font-weight:700;font-size:13px;padding:8px 12px;border-radius:12px}
 
+/* силовая программа */
+.trday{margin-top:10px;padding:10px 12px;border-radius:14px;background:rgba(255,255,255,.05)}
+.trday.now{box-shadow:inset 0 0 0 1.5px var(--accent)}
+.trday b{font-size:14.5px}
+.trex{display:flex;justify-content:space-between;gap:10px;font-size:13.5px;padding:5px 0;border-top:1px solid rgba(255,255,255,.06)}
+.trex:first-of-type{border-top:0}
+.trex .mono{white-space:nowrap;color:var(--accent);font-size:11.5px}
+.trall summary{margin-top:10px;cursor:pointer;color:rgba(255,255,255,.6);font-size:11px;letter-spacing:.06em;text-transform:uppercase}
+
 /* программа сна */
 .slrow{display:grid;grid-template-columns:64px auto 1fr auto;align-items:baseline;gap:10px;padding:8px 0;border-top:1px solid rgba(255,255,255,.08)}
 .slrow b{font-size:17px}
@@ -3453,16 +3462,186 @@ const IC = {
 
 // ---------- счётчики ----------
 function addEvent(type, text, date) { S.events = S.events || []; S.events.push({ date: date || today(), type, text }); }
-function tasksFor(n) {
+// ---------- персональные миссии ----------
+// Каждая миссия помечена тегами: под какую проблему, цель, зону с фото или помеху сну она работает.
+// Движок считает «нужды» человека (анкета + фото + сон + бюджет) и каждый день выбирает 3 самые нужные ему миссии.
+// t — текст, p — направление, tags — для кого, need: 'budget' — только если есть бюджет, 'free' — только при бюджете 0.
+const MISSIONS = [
+  // кожа
+  { id: 'sk_wash', p: 'skin', t: 'Умыться гелем утром и вечером', tags: ['g:skin', 'acne', 'oily'] },
+  { id: 'sk_moist', p: 'skin', t: 'Нанести увлажняющий крем утром и вечером', tags: ['g:skin', 'dry', 'skin_tone'] },
+  { id: 'sk_spf', p: 'skin', t: 'Нанести SPF перед выходом, даже если пасмурно', tags: ['g:skin', 'skin_tone', 'acne'] },
+  { id: 'sk_hands', p: 'skin', t: 'Весь день не трогать лицо руками и не давить прыщи', tags: ['acne'] },
+  { id: 'sk_pillow', p: 'skin', t: 'Сменить наволочку — на ней жир и бактерии', tags: ['acne', 'oily'] },
+  { id: 'sk_phone', p: 'skin', t: 'Протереть экран телефона — он касается щеки', tags: ['acne'] },
+  { id: 'sk_bha', p: 'skin', t: 'Вечером тонко нанести кислоту (BHA) на зоны с чёрными точками', tags: ['acne', 'oily'], need: 'budget' },
+  { id: 'sk_blot', p: 'skin', t: 'Днём промокнуть Т-зону салфеткой вместо умывания', tags: ['oily'] },
+  { id: 'sk_sugar', p: 'skin', t: 'День без сладкого и фастфуда — проверь, как кожа отреагирует', tags: ['acne', 'oily', 'skin_clear'] },
+  { id: 'sk_hot', p: 'skin', t: 'Умываться только тёплой водой, не горячей — она сушит', tags: ['dry'] },
+  { id: 'sk_balm', p: 'skin', t: 'Бальзам для губ на ночь', tags: ['dry', 'lips'] },
+  { id: 'sk_water', p: 'skin', t: 'Выпить 2 литра воды за день', tags: ['g:skin', 'dry', 'puffy', 'fresh'] },
+  { id: 'sk_cold', p: 'skin', t: 'Утром 30 секунд умываться холодной водой', tags: ['puffy', 'fresh'] },
+  { id: 'sk_salt', p: 'skin', t: 'После 19:00 — без солёного и чипсов', tags: ['puffy'] },
+  { id: 'sk_pillow2', p: 'skin', t: 'Спать на спине или на высокой подушке — меньше отёков утром', tags: ['puffy'] },
+  { id: 'sk_eyes', p: 'skin', t: 'Утром кофеин под глаза похлопывающими движениями', tags: ['darkcircles', 'undereye'], need: 'budget' },
+  { id: 'sk_spoon', p: 'skin', t: 'Утром холодная ложка под глаза на минуту', tags: ['darkcircles', 'undereye', 'puffy'], need: 'free' },
+  { id: 'sk_screen', p: 'skin', t: 'Каждый час 20 секунд смотреть вдаль — глаза меньше устают', tags: ['darkcircles', 'undereye'] },
+  // волосы, борода, брови
+  { id: 'hr_style', p: 'hair', t: 'Уложить волосы средством — горошина, от корней', tags: ['g:hair', 'haircut'] },
+  { id: 'hr_refs', p: 'hair', t: 'Сохранить 3 фото стрижек, которые нравятся, — для барбера', tags: ['haircut'] },
+  { id: 'hr_book', p: 'hair', t: 'Записаться к барберу на ближайшие выходные', tags: ['haircut'] },
+  { id: 'hr_shampoo', p: 'hair', t: 'Помыть голову шампунем под свой тип кожи головы', tags: ['g:hair', 'dandruff'] },
+  { id: 'hr_dand', p: 'hair', t: 'Шампунь от перхоти: на кожу головы, подержать 3–5 минут', tags: ['dandruff'], need: 'budget' },
+  { id: 'hr_hot', p: 'hair', t: 'Мыть голову тёплой водой, не горячей, — меньше перхоти', tags: ['dandruff'] },
+  { id: 'hr_neck', p: 'hair', t: 'Подровнять линию шеи триммером', tags: ['g:hair', 'haircut', 'facial_hair'] },
+  { id: 'hr_beard', p: 'hair', t: 'Выровнять щетину или бороду: чёткая линия щёк и шеи', tags: ['facial_hair'] },
+  { id: 'hr_brows', p: 'hair', t: 'Убрать пару волосков между бровями — без изменения формы', tags: ['brows'] },
+  // тело
+  { id: 'bd_steps', p: 'body', t: 'Пройти 8 000 шагов', tags: ['g:body', 'inactive', 'sl_fall', 'tr_lean'] },
+  { id: 'bd_push', p: 'body', t: '20 отжиманий + 30 приседаний', tags: ['g:body', 'inactive'] },
+  { id: 'bd_plank', p: 'body', t: 'Планка 3 × 40 секунд', tags: ['g:body', 'slouch', 'jawline'] },
+  { id: 'bd_pull', p: 'body', t: '3 подхода подтягиваний или австралийских', tags: ['g:body', 'slouch'] },
+  { id: 'bd_stairs', p: 'body', t: 'Весь день — только по лестнице, без лифта', tags: ['inactive'] },
+  { id: 'bd_walk', p: 'body', t: 'Прогулка 30 минут без телефона в руках', tags: ['inactive', 'sl_fall', 'sl_morn'] },
+  { id: 'bd_wo', p: 'body', t: 'Сделать тренировку с таймером из «Плана»', tags: ['g:body', 'inactive', 'jawline'] },
+  { id: 'bd_sugar', p: 'body', t: 'День без сладкой газировки — минус лишнее в лице', tags: ['jawline', 'puffy', 'g:body'] },
+  { id: 'bd_chew', p: 'body', t: '10 минут жевать твёрдую жвачку — тренировка жевательных мышц', tags: ['jawline'] },
+  { id: 'bd_protein', p: 'body', t: 'Белок в каждом приёме пищи', tags: ['g:body', 'g:sleep', 'tr_mass', 'tr_strength'] },
+  // осанка
+  { id: 'ps_wall', p: 'posture', t: '2 минуты у стены: пятки, лопатки и затылок прижаты', tags: ['g:posture', 'slouch', 'forwardhead', 'posture'] },
+  { id: 'ps_chin', p: 'posture', t: '3 × 10 втягиваний подбородка', tags: ['forwardhead', 'jawline', 'posture'] },
+  { id: 'ps_chest', p: 'posture', t: 'Растяжка грудных в дверном проёме 2 × 30 секунд', tags: ['g:posture', 'slouch', 'posture'] },
+  { id: 'ps_check', p: 'posture', t: '5 раз за день поймать себя и выпрямиться', tags: ['g:posture', 'slouch', 'posture'] },
+  { id: 'ps_screen', p: 'posture', t: 'Поднять экран ноутбука или телефона до уровня глаз', tags: ['forwardhead', 'posture'] },
+  { id: 'ps_angel', p: 'posture', t: '2 × 10 «ангелов» у стены', tags: ['slouch', 'posture'] },
+  // стиль
+  { id: 'st_closet', p: 'style', t: 'Убрать из шкафа 3 вещи, которые плохо сидят', tags: ['g:style', 'messy', 'outfit'] },
+  { id: 'st_steam', p: 'style', t: 'Отпарить или погладить одежду на завтра', tags: ['g:style', 'messy', 'outfit'] },
+  { id: 'st_look', p: 'style', t: 'Собрать один образ и сфоткать в «Гардеробе»', tags: ['g:style', 'messy', 'outfit'] },
+  { id: 'st_shoes', p: 'style', t: 'Почистить обувь', tags: ['g:style', 'messy'] },
+  { id: 'st_fit', p: 'style', t: 'Проверить посадку: плечевой шов на краю плеча, брюки без гармошки', tags: ['messy', 'outfit'] },
+  { id: 'st_deo', p: 'style', t: 'Антиперспирант на ночь, на сухую кожу — так он работает лучше', tags: ['sweat'] },
+  { id: 'st_cotton', p: 'style', t: 'Надеть хлопок или лён вместо синтетики', tags: ['sweat'] },
+  { id: 'st_shoes2', p: 'style', t: 'Просушить обувь и сменить стельки или носки', tags: ['sweat'] },
+  { id: 'st_perf', p: 'style', t: 'Один пшик парфюма: на шею или запястье', tags: ['g:style', 'presence'] },
+  { id: 'st_eyes', p: 'style', t: 'В разговоре держать взгляд и не сутулиться', tags: ['presence', 'g:style'] },
+  // сон и режим
+  { id: 'sl_bed', p: 'sleep', t: 'Лечь в своё время из программы сна', tags: ['g:sleep', 'latesleep', 'tr_mass'] },
+  { id: 'sl_phone', p: 'sleep', t: 'За 30 минут до сна телефон — на зарядку не у кровати', tags: ['g:sleep', 'latesleep', 'sl_phone', 'darkcircles'] },
+  { id: 'sl_coffee', p: 'sleep', t: 'Кофе, чай и энергетики — не позже 14:00', tags: ['sl_caffeine', 'latesleep'] },
+  { id: 'sl_light', p: 'sleep', t: '10 минут дневного света в первый час после подъёма', tags: ['sl_morn', 'latesleep', 'g:sleep'] },
+  { id: 'sl_wake', p: 'sleep', t: 'Встать в то же время, что и вчера', tags: ['sl_weekend', 'latesleep'] },
+  { id: 'sl_food', p: 'sleep', t: 'Последняя еда — за 3 часа до сна', tags: ['sl_food', 'puffy'] },
+  { id: 'sl_stop', p: 'sleep', t: 'Стоп учёбе, работе и играм за 45 минут до отбоя', tags: ['sl_late', 'latesleep'] },
+  { id: 'sl_dark', p: 'sleep', t: 'Сделать в комнате темно и прохладно перед сном', tags: ['sl_env', 'sl_fall'] },
+  { id: 'sl_book', p: 'sleep', t: 'Перед сном 10 страниц бумажной книги вместо ленты', tags: ['sl_fall', 'sl_phone'] },
+  { id: 'bd_food', p: 'body', t: 'Записать, что съел за день, — без подсчёта, просто честно', tags: ['tr_lean'] },
+  { id: 'bd_water2', p: 'body', t: 'Стакан воды перед каждым приёмом пищи', tags: ['tr_lean'] },
+  { id: 'bd_mob', p: 'body', t: '5 минут разминки суставов утром', tags: ['tr_fit', 'tr_strength', 'g:body'] },
+  { id: 'sl_mark', p: 'sleep', t: 'Отметить сон в трекере: когда лёг и когда встал', tags: ['g:sleep', 'latesleep'] }
+];
+const MISSION_BY = Object.fromEntries(MISSIONS.map((m) => [m.id, m]));
+// Что с фото какой нужде соответствует
+const METRIC_TAGS = { skin_clear: ['skin_clear', 'acne'], skin_tone: ['skin_tone'], fresh: ['fresh', 'puffy'], undereye: ['undereye', 'darkcircles'], brows: ['brows'], facial_hair: ['facial_hair'], haircut: ['haircut'], posture: ['posture', 'slouch'], outfit: ['outfit', 'messy'], lips: ['lips'], presentation: ['presence'] };
+// Нужды человека: тег → { w — насколько важно, why — почему (показываем под миссией) }
+function needsOf(src) {
+  const s = src || S, out = {}, add = (tag, w, why) => { if (!out[tag] || out[tag].w < w) out[tag] = { w, why }; };
+  const label = (id) => ((ISSUES.find((x) => x[0] === id) || [])[1] || '').toLowerCase();
+  (s.goals || []).forEach((p) => PILLARS[p] && add('g:' + p, 2, 'твоя цель: ' + PILLARS[p].name.toLowerCase()));
+  (s.issues || []).forEach((id) => add(id, 4, 'ты отметил: ' + label(id)));
+  const ai = s.ai;
+  if (ai) {
+    (ai.issues || []).forEach((id) => label(id) && add(id, 4.5, 'по фото: ' + label(id)));
+    (ai.metrics || []).forEach((m) => { const v = +m.value; if (!(v < 70)) return; (METRIC_TAGS[m.key] || []).forEach((t) => add(t, v < 50 ? 5 : 2.5, `по фото: ${(METRIC_N[m.key] || m.key).toLowerCase()} ${v}/100`)); });
+  }
+  const tp = s.train && s.train.prog;
+  if (tp) { add('g:body', 2.5, 'силовые: ' + tp.goalName); add('tr_' + tp.goal, 3, 'силовые: ' + tp.goalName); }
+  const sl = s.sleep;
+  if (sl && sl.prog) {
+    if (sl.prog.bad) add('latesleep', 4.2, 'по сну: ' + sl.prog.verdict.toLowerCase());
+    const BL = { phone: 'телефон в кровати', caffeine: 'кофе после обеда', weekend: 'сон до обеда в выходные', food: 'поздняя еда', late: 'дела допоздна', env: 'шум или свет' };
+    (sl.block || []).forEach((k) => add('sl_' + k, 3.5, 'мешает спать: ' + BL[k]));
+    if (sl.fall && sl.fall !== 'fast') add('sl_fall', 3, sl.fall === 'long' ? 'долго засыпаешь' : 'просыпаешься ночью');
+    if (sl.morn && sl.morn !== 'ok') add('sl_morn', 3, sl.morn === 'coffee' ? 'утром без кофе никак' : 'утром разбитый');
+  }
+  return out;
+}
+// Ценность миссии для человека: сумма весов совпавших нужд, плюс главная причина
+function missionScore(m, need, budget) {
+  if (m.need === 'budget' && !budget) return null;
+  if (m.need === 'free' && budget) return null;
+  let w = 0, top = null;
+  m.tags.forEach((t) => { const n = need[t]; if (!n) return; w += n.w; if (!top || n.w > top.w) top = n; });
+  return w ? { w, why: top.why } : null;
+}
+// Направления плана: только то, что реально нужно человеку, по силе нужд — без «добивки» случайными
+function focusFrom(need) {
+  const sc = {};
+  MISSIONS.forEach((m) => { const r = missionScore(m, need, 1); if (r) sc[m.p] = (sc[m.p] || 0) + r.w; });
+  Object.keys(need).forEach((t) => { if (t.startsWith('g:')) sc[t.slice(2)] = (sc[t.slice(2)] || 0) + 6; });
+  const f = Object.keys(PILLARS).filter((p) => sc[p]).sort((a, b) => sc[b] - sc[a]);
+  return f.length ? f.slice(0, 4) : ['skin', 'body', 'style'];
+}
+// Детерминированный «случай» — одинаковый для одного человека и дня, разный у разных людей
+const mRand = (seed) => { let x = seed >>> 0 || 1; return () => { x ^= x << 13; x ^= x >>> 17; x ^= x << 5; return ((x >>> 0) % 10000) / 10000; }; };
+const strSeed = (s) => [...String(s)].reduce((a, c) => (a * 31 + c.charCodeAt(0)) >>> 0, 7);
+function pickMissions(n, prev, src) {
+  const P = src || S, need = needsOf(P), b = P.budget || 0;
+  let pool = MISSIONS.map((m) => ({ m, r: missionScore(m, need, b) })).filter((x) => x.r);
+  if (pool.length < 3) pool = pool.concat(MISSIONS.filter((m) => ((P.plan && P.plan.focus) || []).includes(m.p) && !pool.some((x) => x.m === m) && missionScore(m, { ['g:' + m.p]: { w: 1, why: PILLARS[m.p].name } }, b)).map((m) => ({ m, r: { w: 1, why: PILLARS[m.p].name } })));
+  const rnd = mRand(strSeed((P.startDate || today()) + ':' + n)), out = [], perP = {};
+  const pillars = new Set(pool.map((x) => x.m.p)).size;
+  // первая миссия дня — всегда из выбранных целей (по очереди), чтобы цель не терялась среди проблем
+  const goals = (P.goals || []).filter((g) => pool.some((x) => x.m.p === g)), gp = goals.length ? goals[n % goals.length] : null;
+  for (let k = 0; k < 3 && pool.length; k++) {
+    const w = pool.map((x) => (k === 0 && gp && x.m.p !== gp ? 0 : 1) * Math.pow(x.r.w, 1.4) * (((prev || [])[0] || []).includes(x.m.id) ? 0.25 : ((prev || [])[1] || []).includes(x.m.id) ? 0.55 : 1) * (pillars > 1 && (perP[x.m.p] || 0) >= 2 ? 0.05 : 1) * (perP[x.m.p] ? 0.6 : 1));
+    let t = rnd() * w.reduce((a, c) => a + c, 0), i = 0;
+    while (i < w.length - 1 && (t -= w[i]) > 0) i++;
+    const x = pool.splice(i, 1)[0]; perP[x.m.p] = (perP[x.m.p] || 0) + 1;
+    out.push({ id: x.m.id, p: x.m.p, text: x.m.t, why: x.r.why });
+  }
+  // день силовой по программе — тренировка занимает одно место из трёх
+  const tp = P.train && P.train.prog, dateN = addDays(P.startDate || today(), n - 1), dw = parse(dateN).getDay(), td = tp && tp.days.find((x) => TR_DOW[x.dow] === dw);
+  if (td && out.length) out.splice(Math.min(1, out.length - 1), 1, { id: 'tr_' + td.dow, p: 'body', text: `Силовая «${td.title}»: ${td.items.length} упражнений по программе`, why: 'твоя программа: ' + tp.goalName });
+  return out;
+}
+// Старые дни (до персонализации) показываем как были — по старому списку
+function legacyTasks(n) {
   const f = S.plan.focus, out = [];
   for (let i = 0; i < 3; i++) {
     const p = f[(n + i) % f.length], lib = TASKS[p];
+    if (!lib) continue;
     let k = (n + i * 2) % lib.length, id = p + ':' + k;
     while (out.some((t) => t.id === id)) { k = (k + 1) % lib.length; id = p + ':' + k; }
     out.push({ id, p, text: lib[k] });
   }
   return out;
 }
+const tmCache = {};
+function tasksFor(n) {
+  const d = addDays(S.startDate, n - 1);
+  if (doneOn(d).some((id) => /^[a-z]+:\d+$/.test(id))) return legacyTasks(n);
+  const key = n + '|' + JSON.stringify([S.goals, S.issues, S.budget, S.ai && S.ai.date, S.sleep && S.sleep.date, S.sleep && S.sleep.block, S.train && S.train.date]);
+  if (!tmCache[key]) { const ids = (k) => (k > 0 ? pickMissions(k).map((x) => x.id) : []); tmCache[key] = pickMissions(n, [ids(n - 1), ids(n - 2)]); }
+  return tmCache[key];
+}
+// Краткий профиль для нейросети: на что опирается план и почему
+function aiProfile(src) {
+  const s = src || S, need = needsOf(s), top = Object.entries(need).sort((a, b) => b[1].w - a[1].w).map(([, v]) => v.why).filter((x, i, a) => a.indexOf(x) === i).slice(0, 8);
+  const sl = s.sleep && s.sleep.prog;
+  return {
+    goals: (s.goals || []).map((p) => (PILLARS[p] || {}).name).filter(Boolean),
+    issues: (s.issues || []).map((k) => (ISSUES.find((x) => x[0] === k) || [])[1]).filter(Boolean),
+    budget_rub: s.budget || 0,
+    sleep: sl ? { now: `${slHM(sl.bed)}–${slHM(sl.wake)} (${slDur(sl.dur)})`, target: `${slHM(sl.bedT)}–${slHM(sl.wake)}`, verdict: sl.verdict, blockers: (s.sleep.block || []) } : null,
+    training: s.train && s.train.prog ? { goal: s.train.prog.goalName, per_week: s.train.prog.freq, place: s.train.place, experience: s.train.exp, limits: s.train.lim || [], days: s.train.prog.days.map((d) => `${d.dow} ${d.title}: ` + d.items.map((x) => `${x.n} ${x.sets}×${x.reps}`).join(', ')) } : null,
+    priorities: top,
+    today_missions: s === S && S.onboarded ? tasksFor(dayNum(today())).map((x) => x.text) : []
+  };
+}
+const AI_RULES = 'Ты персональный коуч mogg. Отвечай ТОЛЬКО под этого человека: опирайся на profile (цели, отмеченные проблемы, разбор фото, сон, бюджет) и не давай общих советов «для всех». Каждый совет связывай с конкретной причиной из profile.priorities («у тебя …, поэтому …»). Не предлагай то, чего нет в его целях и проблемах, если он сам не спросил. Учитывай бюджет: при 0 ₽ — только бесплатные шаги. Не оценивай черты лица и рост — только то, что можно изменить.';
+const missionPillar = (id) => (MISSION_BY[id] ? MISSION_BY[id].p : id.startsWith('tr_') ? 'body' : id.split(':')[0]);
+const missionText = (id) => { if (MISSION_BY[id]) return MISSION_BY[id].t; if (id.startsWith('tr_')) return 'Силовая тренировка по программе'; const [p, k] = id.split(':'); return TASKS[p] && TASKS[p][k]; };
 const charFor = (n) => CHAR_MISSIONS[(n - 1) % CHAR_MISSIONS.length];
 const doneOn = (d) => (S.done && S.done[d]) || [];
 const closed = (d) => doneOn(d).length >= 3;
@@ -3752,13 +3931,13 @@ function journey() {
     const types = day.ev.map((e) => e.type);
     P.slice(0, 3).forEach(([t, p]) => types.includes(t) && phrases.push(p));
     if (day.tasks.length) {
-      const pl = [...new Set(day.tasks.map((id) => id.split(':')[0]))].filter((p) => PILLARS[p]).map((p) => PILLARS[p].verb);
+      const pl = [...new Set(day.tasks.map(missionPillar))].filter((p) => PILLARS[p]).map((p) => PILLARS[p].verb);
       phrases.push((types.includes('closed') ? 'закрыли день: ' : 'сделали ') + pl.join(' и '));
     }
     if (day.psteps) phrases.push(`сделали ${day.psteps.length} ${plural(day.psteps.length, 'шаг', 'шага', 'шагов')} по протоколам`);
     P.slice(3).forEach(([t, p]) => types.includes(t) && phrases.push(p));
     if (!phrases.length && types.includes('note')) phrases.push('записали ощущения');
-    day.tasks.forEach((id) => { const [p, k] = id.split(':'); if (PILLARS[p] && TASKS[p] && TASKS[p][k]) details.push(PILLARS[p].code + ' · ' + TASKS[p][k]); });
+    day.tasks.forEach((id) => { const p = missionPillar(id), t = missionText(id); if (PILLARS[p] && t) details.push(PILLARS[p].code + ' · ' + t); });
     (day.psteps || []).forEach((key) => { const [id, i] = key.split(':'), pr = PROTOCOLS[id]; if (pr && pr.steps[i]) details.push(pr.t + ' · ' + pr.steps[i].t); });
     day.ev.filter((e) => e.type !== 'closed').forEach((e) => details.push(e.text));
     return { date: day.date, n: dayNum(day.date), title: cap(phrases.join(', ') || 'Без отметок'), details, closed: closed(day.date) };
@@ -3766,7 +3945,7 @@ function journey() {
 }
 function pillarStats() {
   const c = {};
-  Object.values(S.done || {}).flat().forEach((id) => { const p = id.split(':')[0]; c[p] = (c[p] || 0) + 1; });
+  Object.values(S.done || {}).flat().forEach((id) => { const p = missionPillar(id); c[p] = (c[p] || 0) + 1; });
   return S.plan.focus.map((p) => ({ p, n: c[p] || 0 }));
 }
 
@@ -3928,6 +4107,7 @@ function aiCardOld(a) {
 // Разбор после онбординга: добавляет в план то, что нейронка увидела на фото
 function applyAI(a) {
   S.ai = { ...a, date: today() };
+  if (S.plan) S.plan.focus = focusFrom(needsOf()); // новый разбор фото — пересобираем фокус и миссии
   const fresh = a.issues.filter((x) => !(S.issues || []).includes(x) && PROTOCOLS[x]);
   S.issues = [...(S.issues || []), ...fresh];
   const P = S.protos;
@@ -3984,7 +4164,7 @@ const LOCAL_CMD = /подбери парфюм|подобрать парфюм|�
 async function askCoach(text) {
   if (AI_ENDPOINT && !LOCAL_CMD.test(text.toLowerCase())) {
     const r = rank(), P = S.protos || { active: [] };
-    const j = await aiCall('chat', { message: text, history: S.chat.slice(-11, -1), context: { day: dayNum(today()), streak: streak(), level: `${r.lvl} · ${r.name}`, focus: S.plan.focus.map((p) => PILLARS[p].name), tone: tone(), protocols: P.active.map((a) => PROTOCOLS[a.id].t), analysis: aiSummary(S.ai), journey: journey().slice(0, 10).map((x) => x.title), budget: S.budget || 0, issues: (S.issues || []).map((k) => (ISSUES.find((x) => x[0] === k) || [])[1]).filter(Boolean), catalog: CATALOG.filter((x) => x.p <= Math.max(priceCap(S.budget || 0), 700) * 1.5).map((x) => `${x.b} ${x.n} — ≈${x.p} ₽ (${x.w.split('.')[0]})`) } }, 45000);
+    const j = await aiCall('chat', { message: text, history: S.chat.slice(-11, -1), rules: AI_RULES, profile: aiProfile(), context: { rules: AI_RULES, profile: aiProfile(), day: dayNum(today()), streak: streak(), level: `${r.lvl} · ${r.name}`, focus: S.plan.focus.map((p) => PILLARS[p].name), tone: tone(), protocols: P.active.map((a) => PROTOCOLS[a.id].t), analysis: aiSummary(S.ai), journey: journey().slice(0, 10).map((x) => x.title), budget: S.budget || 0, issues: (S.issues || []).map((k) => (ISSUES.find((x) => x[0] === k) || [])[1]).filter(Boolean), catalog: CATALOG.filter((x) => x.p <= Math.max(priceCap(S.budget || 0), 700) * 1.5).map((x) => `${x.b} ${x.n} — ≈${x.p} ₽ (${x.w.split('.')[0]})`) } }, 45000);
     if (j.text) {
       if (/сделал|нан[её]с|отжал|отжим|пробеж|присед|подтян|умыл|помыл|постриг|прош[её]л|планк/.test(text.toLowerCase())) addEvent('activity', '«' + text.slice(0, 80) + '»');
       if (ME && ME.paywall) meRefresh();
@@ -4066,7 +4246,7 @@ async function sendChat(text) {
 function scrollChat() { const go = () => window.scrollTo({ top: document.documentElement.scrollHeight, behavior: reduceMotion ? 'auto' : 'smooth' }); go(); setTimeout(go, 60); }
 
 // ---------- онбординг ----------
-const freshOb = () => ({ step: 0, consent: false, goals: [], issues: [], budget: 1500, photo: null, result: null, sleep: { bed: null, wake: null, fall: null, morn: null, block: [] } });
+const freshOb = () => ({ step: 0, consent: false, goals: [], issues: [], budget: 1500, photo: null, result: null, sleep: { bed: null, wake: null, fall: null, morn: null, block: [] }, train: { exp: null, place: null, goal: null, freq: null, time: null, lim: [] } });
 let ob = freshOb();
 let tab = 'home', jtab = 'basics', typing = false, celebrate = false, reader = null, aiBusy = false, modeOpen = false;
 
@@ -4074,10 +4254,9 @@ function analyze() {
   // Сон из анкеты: если режим плохой — добавляем «Ложусь поздно», чтобы включился протокол «Режим сна»
   const slp = sleepProgram(ob.sleep);
   if (slp && slp.bad && !ob.issues.includes('latesleep')) ob.issues.push('latesleep');
-  const score = {};
-  Object.keys(PILLARS).forEach((p, i) => score[p] = (ob.goals.includes(p) ? 10 : 0) - i * 0.01);
-  ob.issues.forEach((id) => { const it = ISSUES.find((x) => x[0] === id); score[it[2]] += 3; });
-  const focus = Object.keys(PILLARS).sort((a, b) => score[b] - score[a]).slice(0, Math.max(3, Math.min(4, ob.goals.length)));
+  // Фокус — только то, что нужно этому человеку: цели, отмеченные проблемы, разбор фото и сон
+  const trp = trainProgram(ob.train), obNeed = needsOf({ goals: ob.goals, issues: ob.issues, budget: ob.budget, ai: ob.ai, sleep: slp ? { ...ob.sleep, prog: slp } : null, train: trp ? { ...ob.train, prog: trp } : null });
+  const focus = focusFrom(obNeed);
   const has = (x) => ob.issues.includes(x);
   const tips = {
     skin: ['Старт простой: умывание утром и вечером + крем. Этого хватит на первые 2 недели.', has('acne') ? 'Против чёрных точек — салициловая кислота 2–3 раза в неделю, не чаще.' : 'SPF каждый день — главный продукт против раннего старения кожи.', has('oily') ? 'Жирной коже тоже нужен лёгкий крем, иначе она жирнится сильнее.' : has('dry') ? 'Сухой коже — крем поплотнее, без спирта в составе.' : null],
@@ -4099,12 +4278,13 @@ function analyze() {
     const up = bestFor(s.slot, ob.issues, ob.budget);
     if (up && up.p > s.p && sum - s.p + up.p <= ob.budget) { sum += up.p - s.p; s.p = up.p; s.pid = up.id; }
   });
-  return { focus, tips, shopping, sum, sleep: slp };
+  return { focus, tips, shopping, sum, sleep: slp, train: trainProgram(ob.train), why: Object.values(obNeed).sort((a, b) => b.w - a.w).map((x) => x.why).filter((x, i, a) => a.indexOf(x) === i).slice(0, 6) };
 }
 function acceptPlan() {
   const r = ob.result;
   S = { theme: S.theme, accent: S.accent, onboarded: true, startDate: today(), goals: ob.goals, issues: ob.issues, budget: ob.budget, plan: { focus: r.focus, shopping: r.shopping }, done: {}, events: [], photos: [], chat: [], lessons: [], articles: [], books: {}, pages: {}, char: {}, grat: {}, mood: {}, focus: {}, chest: {}, claims: {}, sgoals: [], bonus: 0 };
   if (r.sleep) S.sleep = { ...ob.sleep, prog: r.sleep, date: today() };
+  if (r.train) S.train = { ...ob.train, prog: r.train, date: today() };
   addEvent('start', 'Цели: ' + r.focus.map((p) => PILLARS[p].name).join(', '));
   addEvent('plan', r.shopping.length ? `Получили план на 90 дней и список средств на ${r.sum} ₽` : 'Получили план на 90 дней — без покупок');
   if (ob.photo) { S.photos.push({ date: today(), data: ob.photo }); addEvent('photo', 'Стартовое фото'); }
@@ -4194,7 +4374,105 @@ function sleepToPlan(p) {
   else P.queue.unshift('latesleep');
 }
 
-function stepsBar(n) { return '<div class="steps">' + [1, 2, 3, 4, 5, 6].map((i) => `<i class="${i <= n ? 'on' : ''}"></i>`).join('') + '</div>'; }
+// ---------- силовые: опрос и подбор программы ----------
+const TR_EXP = [['none', '🌱 Ни разу не тренировался'], ['some', '🔁 Бывало, но без системы'], ['reg', '💪 Тренируюсь регулярно, до года'], ['pro', '🏋️ Больше года']];
+const TR_PLACE = [['home', '🏠 Дома, без железа'], ['homeq', '🏠 Дома: гантели или резинки'], ['street', '🌳 Турник и брусья на улице'], ['gym', '🏢 Зал']];
+const TR_GOAL = [['mass', '📈 Набрать мышцы'], ['lean', '🔥 Сбросить жир, рельеф'], ['strength', '🦍 Стать сильнее'], ['fit', '❤️ Форма и здоровье']];
+const TR_FREQ = [[2, '2 раза'], [3, '3 раза'], [4, '4 раза'], [5, '5 раз']];
+const TR_TIME = [[20, '20 мин'], [40, '40 мин'], [60, '60 мин']];
+const TR_LIM = [['knees', 'Колени'], ['back', 'Спина, поясница'], ['shoulders', 'Плечи']];
+const freshTrain = () => ({ exp: null, place: null, goal: null, freq: null, time: null, lim: [] });
+// Упражнения по движениям: [вариант для новичка, обычный]. Ограничения меняют вариант на щадящий.
+const TR_EX = {
+  squat: { home: ['Приседания к стулу', 'Приседания'], homeq: ['Гоблет-присед с гантелей', 'Гоблет-присед с гантелей'], street: ['Приседания', 'Болгарские выпады у скамьи'], gym: ['Жим ногами', 'Присед со штангой'] },
+  hinge: { home: ['Ягодичный мост', 'Румынская тяга на одной ноге'], homeq: ['Ягодичный мост с гантелей', 'Румынская тяга с гантелями'], street: ['Ягодичный мост', 'Ягодичный мост на одной ноге'], gym: ['Гиперэкстензия', 'Румынская тяга со штангой'] },
+  pushH: { home: ['Отжимания с колен', 'Отжимания'], homeq: ['Отжимания', 'Жим гантелей лёжа на полу'], street: ['Отжимания', 'Отжимания на брусьях'], gym: ['Жим гантелей лёжа', 'Жим штанги лёжа'] },
+  pushV: { home: ['Отжимания от стены', 'Пайк-отжимания'], homeq: ['Жим гантелей сидя', 'Жим гантелей стоя'], street: ['Пайк-отжимания', 'Пайк-отжимания с ног на скамье'], gym: ['Жим гантелей сидя', 'Армейский жим'] },
+  pullH: { home: ['Тяга полотенца, зацепленного за дверь', 'Австралийские подтягивания под столом'], homeq: ['Тяга гантели в наклоне', 'Тяга гантели в наклоне'], street: ['Австралийские на низкой перекладине', 'Австралийские на низкой перекладине'], gym: ['Горизонтальная тяга блока', 'Тяга штанги в наклоне'] },
+  pullV: { home: ['«Супермен» лёжа', 'Y-подъёмы лёжа'], homeq: ['Тяга резинки сверху', 'Пуловер с гантелей'], street: ['Негативные подтягивания', 'Подтягивания'], gym: ['Тяга верхнего блока', 'Подтягивания'] },
+  lunge: { home: ['Шаги на ступеньку', 'Выпады назад'], homeq: ['Шаги на ступеньку с гантелями', 'Выпады с гантелями'], street: ['Шаги на скамью', 'Выпады в ходьбе'], gym: ['Выпады в Смите', 'Выпады с гантелями'] },
+  core: { home: ['Планка', 'Планка с касанием плеча'], homeq: ['Планка', 'Русские скручивания с гантелей'], street: ['Подъём коленей в висе', 'Подъём ног в висе'], gym: ['Планка', 'Скручивания на блоке'] },
+  arms: { home: ['Обратные отжимания от стула', 'Узкие отжимания'], homeq: ['Сгибания с гантелями', 'Сгибания + французский жим'], street: ['Узкие отжимания', 'Подтягивания обратным хватом'], gym: ['Сгибания на бицепс', 'Бицепс + трицепс на блоке'] }
+};
+const TR_SAFE = { knees: { squat: 'Приседания к высокому стулу, без глубины', lunge: 'Ягодичный мост на одной ноге' }, back: { hinge: 'Ягодичный мост', squat: 'Гоблет-присед у стены, спина ровная' }, shoulders: { pushV: 'Разведения рук в стороны: лёгкие гантели или бутылки с водой', pushH: 'Отжимания от стены или с колен, узко' } };
+const TR_DAYS = { 2: [['Пн', 'Всё тело A', ['squat', 'pushH', 'pullH', 'hinge', 'core', 'arms']], ['Чт', 'Всё тело B', ['hinge', 'pushV', 'pullV', 'lunge', 'core', 'arms']]],
+  3: [['Пн', 'Всё тело A', ['squat', 'pushH', 'pullH', 'core', 'arms', 'hinge']], ['Ср', 'Всё тело B', ['hinge', 'pushV', 'pullV', 'lunge', 'core', 'arms']], ['Пт', 'Всё тело C', ['lunge', 'pushH', 'pullV', 'squat', 'core', 'arms']]],
+  4: [['Пн', 'Верх', ['pushH', 'pullH', 'pushV', 'pullV', 'arms', 'core']], ['Вт', 'Низ', ['squat', 'hinge', 'lunge', 'core', 'squat', 'hinge']], ['Чт', 'Верх', ['pullV', 'pushV', 'pullH', 'pushH', 'arms', 'core']], ['Пт', 'Низ', ['hinge', 'lunge', 'squat', 'core', 'hinge', 'lunge']]],
+  5: [['Пн', 'Жимы', ['pushH', 'pushV', 'arms', 'core', 'pushH', 'pushV']], ['Вт', 'Тяги', ['pullV', 'pullH', 'arms', 'core', 'pullV', 'pullH']], ['Ср', 'Ноги', ['squat', 'hinge', 'lunge', 'core', 'squat', 'hinge']], ['Пт', 'Верх', ['pushH', 'pullH', 'pushV', 'pullV', 'arms', 'core']], ['Сб', 'Низ', ['hinge', 'squat', 'lunge', 'core', 'hinge', 'lunge']]] };
+// Тяжёлые упражнения с весом тела: много повторов в них нереально — свой диапазон
+const TR_HARD = /^(Подтягивания|Отжимания на брусьях|Пайк-отжимания|Негативные подтягивания|Подъём ног в висе)/;
+const TR_DOSE = { mass: { s: [3, 4], r: '8–12', rest: '90 сек' }, strength: { s: [4, 5], r: '4–6', rest: '2–3 мин' }, lean: { s: [3, 3], r: '12–15', rest: '45–60 сек' }, fit: { s: [2, 3], r: '10–12', rest: '60 сек' } };
+const TR_DOW = { 'Пн': 1, 'Вт': 2, 'Ср': 3, 'Чт': 4, 'Пт': 5, 'Сб': 6, 'Вс': 0 };
+function trainProgram(tr) {
+  if (!tr || !tr.exp || !tr.place || !tr.goal || !tr.freq || !tr.time) return null;
+  const beg = tr.exp === 'none' || tr.exp === 'some', lvl = beg ? 0 : 1;
+  // новичку не больше 3 тренировок: восстановление важнее
+  const freq = beg ? Math.min(tr.freq, 3) : tr.freq;
+  const dose = TR_DOSE[tr.goal], sets = tr.time <= 20 ? Math.max(2, dose.s[0] - (beg ? 1 : 0)) : tr.time >= 60 && !beg ? dose.s[1] : dose.s[0];
+  const nEx = tr.time <= 20 ? 4 : tr.time <= 40 ? 5 : 6;
+  const reps = beg && tr.goal === 'strength' ? '6–8' : dose.r;
+  const ex = (pat) => { for (const l of tr.lim || []) if (TR_SAFE[l] && TR_SAFE[l][pat]) return TR_SAFE[l][pat]; return TR_EX[pat][tr.place][lvl]; };
+  const days = TR_DAYS[freq].map(([dow, title, pats]) => {
+    const seen = new Set(), items = [];
+    pats.forEach((pt) => {
+      // повтор движения в тот же день — берём второй вариант упражнения
+      let n = ex(pt); if (seen.has(n)) n = TR_EX[pt][tr.place][1 - lvl]; if (items.length >= nEx || seen.has(n)) return;
+      seen.add(n);
+      const hard = TR_HARD.test(n), r = hard ? (beg ? '3–5' : '6–10') : pt === 'core' ? (n.startsWith('Планка') ? '30–45 сек' : '12–15') : pt === 'arms' ? '10–12' : reps;
+      items.push({ n, sets: pt === 'core' || pt === 'arms' ? Math.max(2, Math.min(3, sets - 1)) : sets, reps: r });
+    });
+    return { dow, title, items };
+  });
+  const goalName = (TR_GOAL.find((x) => x[0] === tr.goal) || [])[1].replace(/^\S+\s/, '').toLowerCase();
+  const notes = [];
+  if (tr.freq > freq) notes.push(`Ты готов на ${tr.freq} раза, но новичку лучше ${freq}: мышцы растут во время отдыха`);
+  notes.push(beg ? 'Первые 2 недели — техника и лёгкий вес: должно оставаться 2–3 повтора в запасе' : 'Последний подход каждого упражнения — почти до отказа, 1 повтор в запасе');
+  notes.push(tr.place === 'home' || tr.place === 'street' ? 'Прогресс без веса: +1–2 повтора каждую неделю, потом — более сложный вариант упражнения' : `Сделал ${reps.split('–')[1] || reps} повторов во всех подходах — добавь вес`);
+  if (tr.goal === 'lean') notes.push('После силовой — 15 минут быстрой ходьбы или скакалки');
+  if (tr.goal === 'mass') notes.push('Белок 1,6 г на кг веса и сон 8 часов — без этого массы не будет');
+  if ((tr.lim || []).length) notes.push('Упражнения на больные зоны заменены на щадящие. Если болит — остановись и сходи к врачу');
+  return { freq, sets, reps, rest: dose.rest, goal: tr.goal, goalName, place: tr.place, days, notes, beg };
+}
+// Тренировка на сегодня (по дню недели) или null, если сегодня отдых
+const trainToday = (p) => p && p.days.find((d) => TR_DOW[d.dow] === now().getDay()) || null;
+function trainQuestions(tr) {
+  const seg = (q, list) => `<div class="seg">${list.map(([v, l]) => `<button class="${tr[q] === v ? 'on' : ''}" data-act="tr-set" data-q="${q}" data-v="${v}">${l}</button>`).join('')}</div>`;
+  const opts = (q, list) => list.map(([v, l]) => `<button class="opt ${tr[q] === v ? 'on' : ''}" data-act="tr-set" data-q="${q}" data-v="${v}"><span class="box">${tr[q] === v ? IC.check : ''}</span><span>${l}</span></button>`).join('');
+  return `<div class="mono lbl" style="margin-top:0">Опыт в силовых</div>${opts('exp', TR_EXP)}
+    <div class="mono lbl">Где будешь заниматься</div>${opts('place', TR_PLACE)}
+    <div class="mono lbl">Главная цель</div>${opts('goal', TR_GOAL)}
+    <div class="mono lbl">Сколько раз в неделю готов</div>${seg('freq', TR_FREQ)}
+    <div class="mono lbl">Сколько времени на тренировку</div>${seg('time', TR_TIME)}
+    <div class="mono lbl">Что-то болит? <span style="opacity:.6">можно пропустить</span></div>
+    <div class="chips">${TR_LIM.map(([k, n]) => `<button class="chip ${tr.lim.includes(k) ? 'on' : ''}" data-act="tr-lim" data-k="${k}">${n}</button>`).join('')}</div>`;
+}
+const trReady = (tr) => !!(tr.exp && tr.place && tr.goal && tr.freq && tr.time);
+function trainCard(p, full) {
+  if (!p) return '';
+  const td = trainToday(p), place = (TR_PLACE.find((x) => x[0] === p.place) || [])[1].replace(/^\S+\s/, '');
+  const day = (d) => `<div class="trday ${td === d ? 'now' : ''}"><div class="row between"><b>${d.dow} · ${d.title}</b>${td === d ? '<span class="mono" style="color:var(--accent)">сегодня</span>' : ''}</div>
+    ${d.items.map((x) => `<div class="trex"><span>${x.n}</span><span class="mono">${x.sets} × ${x.reps}</span></div>`).join('')}</div>`;
+  const done = woDone(today()).includes('str');
+  return `<div class="card trcard"><div class="row between" style="margin-bottom:8px"><div class="row"><span class="tag" style="color:${PILLARS.body.c};border-color:${PILLARS.body.c}55">STR</span><b class="disp" style="font-size:22px">Силовая программа</b></div>${full ? '' : '<button class="btn sm ghost" data-act="tr-open" style="height:32px;width:auto;padding:0 12px">Изменить</button>'}</div>
+    <div class="hint" style="font-size:13px">${p.freq} ${plural(p.freq, 'раз', 'раза', 'раз')} в неделю · цель: ${p.goalName} · ${place.toLowerCase()} · отдых ${p.rest}</div>
+    ${full ? p.days.map(day).join('') : (td ? day(td) : `<div class="hint" style="margin-top:10px">Сегодня отдых. Следующая: ${(p.days.find((d) => TR_DOW[d.dow] > now().getDay()) || p.days[0]).dow}.</div>`) +
+      `<details class="trall"><summary class="mono">Вся неделя</summary>${p.days.filter((d) => d !== td).map(day).join('')}</details>`}
+    <div class="mono lbl" style="margin-top:12px">Как прогрессировать</div>${p.notes.map((t) => `<div style="margin:5px 0;font-size:13.5px">— ${t}</div>`).join('')}
+    ${!full && td ? `<button class="btn sm" data-act="tr-done" style="margin-top:12px" ${done ? 'disabled' : ''}>${done ? '✓ Тренировка сделана' : 'Отметить тренировку сделанной · +20 XP'}</button>` : ''}</div>`;
+}
+function trainModal() {
+  const tr = modal.tr;
+  return `<div class="modal"><div class="sheet exs">
+    <span class="mono">[ силовые ]</span>
+    <div class="disp" style="font-size:28px;margin:4px 0 12px">Твои тренировки</div>
+    ${trainQuestions(tr)}
+    <button class="btn" data-act="tr-save" style="margin-top:18px" ${trReady(tr) ? '' : 'disabled'}>${trReady(tr) ? 'Подобрать программу' : 'Ответь на 5 вопросов'}</button>
+    <button class="btn sm ghost" data-act="modal-close" style="margin-top:10px;width:100%">Отмена</button>
+  </div></div>`;
+}
+const trState = () => (modal && modal.kind === 'train' ? modal.tr : ob.train);
+
+function stepsBar(n) { return '<div class="steps">' + [1, 2, 3, 4, 5, 6, 7].map((i) => `<i class="${i <= n ? 'on' : ''}"></i>`).join('') + '</div>'; }
 function opt(act, on, text) { return `<button class="opt ${on ? 'on' : ''}" data-act="${act}"><span class="box">${on ? IC.check : ''}</span><span>${text}</span></button>`; }
 
 function renderOnboarding() {
@@ -4214,50 +4492,60 @@ function renderOnboarding() {
     </div>
     <button class="btn" data-act="next">Начать ${IC.send}</button>`;
   if (s === 1) return `<div class="ob-fill">${stepsBar(1)}
-    <div class="mono">[ 01 / 06 ]</div><div class="disp h1" style="margin:8px 0 10px">Правила</div>
+    <div class="mono">[ 01 / 07 ]</div><div class="disp h1" style="margin:8px 0 10px">Правила</div>
     <p class="hint" style="margin:0 0 18px">Прокачиваем только то, что можно изменить: кожу, волосы, тело, осанку, стиль, режим — и характер. Форму лица и рост не оцениваем. Никогда.</p>
     <div class="ob-bottom">${opt('ob-consent', ob.consent, 'Согласен с политикой конфиденциальности')}
     <div class="banner" style="margin-top:12px">Это не медицинский сервис. При проблемах с кожей — к дерматологу.</div>
     <button class="btn" data-act="next" ${ob.consent ? '' : 'disabled'}>Дальше</button>
     <a class="ob-link" href="privacy.html">Прочитать политику конфиденциальности</a></div></div>`;
   if (s === 2) return `${stepsBar(2)}
-    <div class="mono">[ 02 / 06 ]</div><div class="disp h1" style="margin:8px 0 10px">Что качаем?</div>
+    <div class="mono">[ 02 / 07 ]</div><div class="disp h1" style="margin:8px 0 10px">Что качаем?</div>
     <p class="hint" style="margin:0 0 18px">Выбери всё, что важно во внешности. Характер и общение качаются у всех.</p>
     <div class="tiles" style="margin-bottom:22px">${Object.entries(PILLARS).map(([k, p]) => `<button class="tint" style="--c:${p.c};text-align:left;transition:all .2s;${ob.goals.includes(k) ? `background:${p.c};color:#06101c` : ''}" data-act="ob-goal" data-k="${k}"><div class="mono" style="${ob.goals.includes(k) ? 'color:#06101c' : ''}">${p.code}</div><b style="font-size:24px">${p.name}</b></button>`).join('')}</div>
     <button class="btn" data-act="next" ${ob.goals.length ? '' : 'disabled'}>Дальше</button>`;
   if (s === 3) return `${stepsBar(3)}
-    <div class="mono">[ 03 / 06 ]</div><div class="disp h1" style="margin:8px 0 10px">Что мешает?</div>
+    <div class="mono">[ 03 / 07 ]</div><div class="disp h1" style="margin:8px 0 10px">Что мешает?</div>
     <p class="hint" style="margin:0 0 18px">Можно пропустить. Так план будет точнее.</p>
     <div class="chips">${ISSUES.map(([k, n]) => `<button class="chip ${ob.issues.includes(k) ? 'on' : ''}" data-act="ob-issue" data-k="${k}">${n}</button>`).join('')}</div>
     <div class="mono lbl">Бюджет на средства</div>
     <div class="seg" style="margin-bottom:24px">${[[0, '0 ₽'], [800, '800'], [1500, '1 500'], [3000, '3 000'], [5000, '5 000+']].map(([v, l]) => `<button class="${ob.budget === v ? 'on' : ''}" data-act="ob-budget" data-v="${v}">${l}</button>`).join('')}</div>
     <button class="btn" data-act="next">Дальше</button>`;
   if (s === 4) { const ready = ob.sleep.bed != null && ob.sleep.wake != null; return `${stepsBar(4)}
-    <div class="mono">[ 04 / 06 ]</div><div class="disp h1" style="margin:8px 0 10px">Как ты спишь?</div>
+    <div class="mono">[ 04 / 07 ]</div><div class="disp h1" style="margin:8px 0 10px">Как ты спишь?</div>
     <p class="hint" style="margin:0 0 18px">Сон — это кожа без отёков, ясная голова и сила в зале. По ответам подберём программу сна.</p>
     ${sleepQuestions(ob.sleep)}
     <button class="btn" data-act="next" style="margin-top:22px" ${ready ? '' : 'disabled'}>${ready ? 'Дальше' : 'Выбери время отбоя и подъёма'}</button>`; }
-  if (s === 5) return `${stepsBar(5)}
-    <div class="mono">[ 05 / 06 ]</div><div class="disp h1" style="margin:8px 0 10px">Точка «до»</div>
+  if (s === 5) { const ready = trReady(ob.train); return `${stepsBar(5)}
+    <div class="mono">[ 05 / 07 ]</div><div class="disp h1" style="margin:8px 0 10px">Силовые</div>
+    <p class="hint" style="margin:0 0 18px">Подберём программу под твой опыт, место и цель — с днями, подходами и повторами.</p>
+    ${trainQuestions(ob.train)}
+    <button class="btn" data-act="next" style="margin-top:22px" ${ready ? '' : 'disabled'}>${ready ? 'Дальше' : 'Ответь на 5 вопросов'}</button>
+    <button class="btn sm ghost" data-act="tr-skip" style="margin-top:10px;width:100%">Силовые не интересны — пропустить</button>`; }
+  if (s === 6) return `${stepsBar(6)}
+    <div class="mono">[ 06 / 07 ]</div><div class="disp h1" style="margin:8px 0 10px">Точка «до»</div>
     <p class="hint" style="margin:0 0 16px">Дневной свет, лицо прямо, без фильтров. Лучше всего — если снимет друг с метра.</p>
     ${ob.photoErr ? `<div class="banner" style="margin-bottom:14px">⚠️ ${esc(ob.photoErr)}</div>` : ''}
     <button type="button" class="photo-drop" data-act="photo" data-k="ob-photo" style="margin-bottom:14px;width:100%;color:inherit;font:inherit">
       ${ob.photo ? `<img src="${ob.photo}" alt="">` : `<div class="oval"></div><div style="position:relative">${IC.cam}<div style="font-weight:800;margin-top:6px">Добавить фото</div><div class="hint">камера или галерея</div></div>`}
     </button>
     <button class="btn" data-act="analyze" ${ob.photo ? '' : 'disabled'}>${ob.photo ? 'Сделать разбор' : 'Сначала добавь фото'}</button>`;
-  if (s === 6) return `${stepsBar(6)}
+  if (s === 7) return `${stepsBar(7)}
     <div class="spin"></div>
     <div style="max-width:280px;margin:0 auto">${['Смотрю на фото', 'Учитываю цели', 'Собираю миссии', 'Считаю бюджет'].map((t, i) => `<div class="check-line" id="cl${i}">[✓] ${t}</div>`).join('')}</div>
     ${AI_ENDPOINT && ob.photo ? '<p class="hint" style="text-align:center;margin-top:18px">Анализируем фото — это может занять до минуты</p>' : ''}`;
-  if (s === 7) {
+  if (s === 8) {
     const r = ob.result;
-    return `${stepsBar(6)}
-      <div class="mono">[ 06 / 06 ]</div><div class="disp h1" style="margin:8px 0 10px">План готов</div>
+    return `${stepsBar(7)}
+      <div class="mono">[ 07 / 07 ]</div><div class="disp h1" style="margin:8px 0 10px">План готов</div>
       <p class="hint" style="margin:0 0 16px">Фокус на первые 90 дней.${AI_ENDPOINT ? '' : ' Демо: разбор строится по анкете, разбор по фото подключим на сервере.'}</p>
       ${ob.photo ? `<div class="card row"><img src="${ob.photo}" style="width:60px;height:78px;object-fit:cover;border-radius:12px"><div><b>Точка «до» сохранена</b><div class="hint">Через 30 дней сравним</div></div></div>` : ''}
       ${ob.ai ? aiCard(ob.ai) : ''}${ob.aiErr ? `<div class="banner">${esc(ob.aiErr)}</div>` : ''}
       ${r.focus.map((p, i) => `<div class="card"><div class="row between" style="margin-bottom:10px"><div class="row"><span class="tag" style="color:${PILLARS[p].c};border-color:${PILLARS[p].c}55">${PILLARS[p].code}</span><b class="disp" style="font-size:22px">${PILLARS[p].name}</b></div><span class="mono" style="color:${i < 2 ? 'var(--accent)' : 'var(--hint)'}">${i < 2 ? 'Главный фокус' : 'Поддержка'}</span></div>${r.tips[p].filter(Boolean).map((t) => `<div style="margin:5px 0;font-size:14px">— ${t}</div>`).join('')}</div>`).join('')}
       ${sleepCard(r.sleep, true)}
+      ${trainCard(r.train, true)}
+      ${(() => { const src = { goals: ob.goals, issues: ob.issues, budget: ob.budget, ai: ob.ai, sleep: r.sleep ? { ...ob.sleep, prog: r.sleep } : null, train: r.train ? { ...ob.train, prog: r.train } : null, startDate: today(), plan: { focus: r.focus } }, m = pickMissions(1, [], src);
+        return r.why && r.why.length ? `<div class="card"><div class="disp" style="font-size:22px;margin-bottom:8px">Почему такой план</div>${r.why.map((w) => `<div style="margin:5px 0;font-size:14px">— ${esc(cap(w))}</div>`).join('')}
+        <div class="mono lbl">Миссии на первый день</div>${m.map((x) => `<div class="item"><span class="tag" style="color:${PILLARS[x.p].c};border-color:${PILLARS[x.p].c}55">${PILLARS[x.p].code}</span><div style="flex:1"><b style="font-size:14px">${x.text}</b><div class="hint" style="font-size:12px">${esc(x.why)}</div></div></div>`).join('')}</div>` : ''; })()}
       ${(() => { const pp = buildPlan(ob.issues, ob.budget); return pp.active.length ? `<div class="card"><div class="disp" style="font-size:22px;margin-bottom:6px">Твои протоколы</div><div class="hint" style="margin-bottom:6px">Пошаговый план под то, что ты отметил: что делать каждый день, чего избегать, упражнения с анимацией.</div>${pp.active.map((a) => `<div class="item"><div style="flex:1"><b>${PROTOCOLS[a.id].t}</b>${pp.notes[a.id] ? `<div class="hint" style="font-size:12.5px;margin-top:2px">${pp.notes[a.id]}</div>` : ''}</div><span class="mono">${PROTOCOLS[a.id].days} дн.</span></div>`).join('')}${pp.queue.length ? `<div class="hint" style="margin-top:8px">И ещё ${pp.queue.length} в очереди — начнутся, когда пройдёшь эти.</div>` : ''}</div>` : ''; })()}
       <div class="card"><div class="disp" style="font-size:22px;margin-bottom:6px">Что заказать</div>${r.shopping.length ? r.shopping.map((it) => it.pid ? prodCard(CAT_BY[it.pid]) : `<div class="item"><div style="flex:1">${it.n}</div><b>~${it.p} ₽</b></div>`).join('') + `<div class="row between" style="margin-top:12px"><span class="mono">Итого</span><b class="disp" style="font-size:22px">~${r.sum} ₽</b></div>` : '<div class="hint">Ничего покупать не нужно — весь план бесплатный.</div>'}</div>
       <div class="disp" style="font-size:56px;text-align:center;margin:26px 0 14px">Делаем?</div>
@@ -4327,7 +4615,7 @@ function renderHome() {
     ${celebrate ? `<div class="celebrate"><div style="flex:1"><b>День закрыт</b><div style="font-weight:700;font-size:13px;opacity:.8">+50 XP · серия ${s}</div><button class="celstory" data-act="story">📲 Выложить серию в историю</button></div><div style="font-size:34px">🔥</div></div>` : ''}
     ${chestOpen ? `<div class="card chest"><span class="ci">🎁</span><div style="flex:1"><b>Подарок дня</b><div class="hint">Заходи каждый день — внутри 10–30 XP</div></div><button class="btn sm" data-act="chest" style="background:var(--gold);color:#1c100b">Открыть</button></div>` : ''}
     <div class="sec" id="missions"><span class="disp">Миссии дня</span><span class="chipline">[ ${done.length}/3 ]</span></div>
-    ${tasks.map((t) => `<button class="mission ${done.includes(t.id) ? 'done' : ''} ${justDone === t.id ? 'just' : ''}" data-act="task" data-id="${t.id}"><span class="box">${done.includes(t.id) ? IC.check : ''}</span><span style="flex:1"><div class="t">${t.text}</div><div class="row" style="gap:6px;margin-top:5px"><span class="tag" style="color:${PILLARS[t.p].c};border-color:${PILLARS[t.p].c}55">${PILLARS[t.p].code}</span><span class="hint" style="font-size:12px">${PILLARS[t.p].name}</span></div></span><span class="xp">+10 XP</span></button>`).join('')}
+    ${tasks.map((t) => `<button class="mission ${done.includes(t.id) ? 'done' : ''} ${justDone === t.id ? 'just' : ''}" data-act="task" data-id="${t.id}"><span class="box">${done.includes(t.id) ? IC.check : ''}</span><span style="flex:1"><div class="t">${t.text}</div><div class="row" style="gap:6px;margin-top:5px"><span class="tag" style="color:${PILLARS[t.p].c};border-color:${PILLARS[t.p].c}55">${PILLARS[t.p].code}</span><span class="hint" style="font-size:12px">${t.why ? esc(t.why) : PILLARS[t.p].name}</span></div></span><span class="xp">+10 XP</span></button>`).join('')}
     <button class="mission charm ${cmDone ? 'done' : ''} ${justDone === 'char' ? 'just' : ''}" data-act="char"><span class="box">${cmDone ? IC.check : ''}</span><span style="flex:1"><div class="t">${cm[1]}</div><div class="row" style="gap:6px;margin-top:5px"><span class="tag" style="color:#b79cff;border-color:#b79cff55">${cm[0] === 'soc' ? 'SOCIAL' : 'MIND'}</span><span class="hint" style="font-size:12px">Миссия ${cm[0] === 'soc' ? 'общения' : 'характера'}</span></div></span><span class="xp">+15 XP</span></button>
     ${book ? `<button class="mission bonus ${pagesToday >= 10 ? 'done' : ''} ${justDone === 'pages' ? 'just' : ''}" data-act="pages"><span class="box">${pagesToday >= 10 ? IC.check : ''}</span><span style="flex:1"><div class="t" style="${pagesToday >= 10 ? 'text-decoration:none;color:var(--text)' : ''}">10 страниц «${book.t}»</div><div class="row" style="gap:6px;margin-top:5px"><span class="tag" style="color:#7dd3fc;border-color:#7dd3fc55">READ</span><span class="hint" style="font-size:12px">сегодня ${pagesToday} стр. · тапни +10</span></div></span><span class="xp">+5 XP</span></button>` : ''}
     ${planCard()}
@@ -4494,6 +4782,7 @@ function renderPlan() {
       ${aiBusy ? '<div class="spin" style="margin:6px auto"></div>' : `<button type="button" class="btn sm" data-act="photo" data-k="ai-photo">${S.ai ? 'Новый разбор' : 'Сделать разбор'}</button>`}</div>` : ''}
     ${routineCard()}
     ${S.sleep && S.sleep.prog ? sleepCard(S.sleep.prog) : `<button type="button" class="card row" data-act="sl-open" style="width:100%;text-align:left"><div class="iconbtn" style="font-size:20px">🌙</div><div style="flex:1"><b>Подобрать программу сна</b><div class="hint">5 вопросов — и план отбоя под тебя</div></div></button>`}
+    ${S.train && S.train.prog ? trainCard(S.train.prog) : `<button type="button" class="card row" data-act="tr-open" style="width:100%;text-align:left"><div class="iconbtn" style="font-size:20px">🏋️</div><div style="flex:1"><b>Подобрать силовую программу</b><div class="hint">6 вопросов — дни, упражнения, подходы под тебя</div></div></button>`}
     <div class="sec"><span class="disp">Протоколы</span><span class="chipline">[ ${act.length} активн. ]</span></div>
     ${act.length ? act.map(protoCard).join('') : '<div class="card"><b>Активных протоколов нет</b><div class="hint" style="margin-top:4px">Выбери один из списка внизу.</div></div>'}
     ${woCards()}
@@ -5122,6 +5411,7 @@ function renderModal() {
   if (String(modal.kind).startsWith('fr-')) return frModal();
   if (modal.kind === 'aura') return auraModal();
   if (modal.kind === 'sleep') return sleepModal();
+  if (modal.kind === 'train') return trainModal();
   if (modal.kind === 'trk') return trkModal();
   if (modal.kind === 'sl-log') return slLogModal();
   if (modal.kind === 'pf-view') return pfViewModal();
@@ -5375,6 +5665,23 @@ const ACT = {
   'ob-issue'(el) { toggleIn(ob.issues, el.dataset.k); haptic('light'); render(); },
   'ob-budget'(el) { ob.budget = +el.dataset.v; render(); },
   'sl-set'(el) { const sl = slState(), q = el.dataset.q, v = el.dataset.v; sl[q] = q === 'bed' || q === 'wake' ? +v : v; haptic('light'); render(); },
+  'tr-set'(el) { const tr = trState(), q = el.dataset.q, v = el.dataset.v; tr[q] = q === 'freq' || q === 'time' ? +v : v; haptic('light'); render(); },
+  'tr-lim'(el) { toggleIn(trState().lim, el.dataset.k); haptic('light'); render(); },
+  'tr-skip'() { ob.train = freshTrain(); ob.step++; haptic('light'); render(); window.scrollTo(0, 0); },
+  'tr-open'() { modal = { kind: 'train', tr: S.train ? { exp: S.train.exp, place: S.train.place, goal: S.train.goal, freq: S.train.freq, time: S.train.time, lim: [...(S.train.lim || [])] } : freshTrain() }; haptic('light'); render(); },
+  'tr-save'() {
+    const tr = modal.tr, p = trainProgram(tr); if (!p) return;
+    const first = !S.train; S.train = { ...tr, prog: p, date: today() };
+    if (S.plan) S.plan.focus = focusFrom(needsOf());
+    if (first) addEvent('plan', 'Подобрали силовую программу');
+    modal = null; haptic('success'); save(); render(); toast('Силовая программа готова');
+  },
+  'tr-done'() {
+    const d = today(), td = trainToday(S.train && S.train.prog); if (!td || woDone(d).includes('str')) return;
+    withRankCheck(() => { S.wdone = S.wdone || {}; (S.wdone[d] = S.wdone[d] || []).push('str'); addEvent('workout', `Силовая «${td.title}»`); });
+    const mid = 'tr_' + td.dow; if (tasksFor(dayNum(d)).some((t) => t.id === mid) && !doneOn(d).includes(mid)) { toggleTask(mid); }
+    floatXP('+20 XP'); confetti(); haptic('success'); save(); render();
+  },
   'sl-block'(el) { toggleIn(slState().block, el.dataset.k); haptic('light'); render(); },
   'sl-open'() { modal = { kind: 'sleep', sl: S.sleep ? { bed: S.sleep.bed, wake: S.sleep.wake, fall: S.sleep.fall, morn: S.sleep.morn, block: [...(S.sleep.block || [])] } : freshSleep() }; haptic('light'); render(); },
   'sl-save'() {
@@ -5421,9 +5728,9 @@ const ACT = {
   lib(el) { jtab = el.dataset.v; tab = 'journal'; reader = null; haptic('light'); render(); window.scrollTo(0, 0); },
   analyze() {
     if (!ob.photo) return toast('Добавь фото — без него план не будет личным'); // без фото дальше не пускаем
-    ob.step = 6; ob.result = analyze(); ob.ai = null; ob.aiErr = null; render();
+    ob.step = 7; ob.result = analyze(); ob.ai = null; ob.aiErr = null; render();
     [0, 1, 2, 3].forEach((i) => setTimeout(() => { const e = document.getElementById('cl' + i); e && e.classList.add('on'); }, 450 * (i + 1)));
-    aiPhoto = ob.photo; const ai = AI_ENDPOINT && ob.photo ? aiCall('analyze', { photo: ob.photo, issues: ob.issues, sleep: ob.sleep, tone: tone() }, 90000) : null;
+    aiPhoto = ob.photo; const ai = AI_ENDPOINT && ob.photo ? aiCall('analyze', { photo: ob.photo, issues: ob.issues, sleep: ob.sleep, tone: tone(), rules: AI_RULES, profile: aiProfile({ goals: ob.goals, issues: ob.issues, budget: ob.budget, sleep: { ...ob.sleep, prog: sleepProgram(ob.sleep) } }) }, 90000) : null;
     Promise.all([ai, new Promise((r) => setTimeout(r, 2300))]).then(([a]) => {
       if (a && !a.error && a.person && a.quality === 'ok') {
         ob.ai = a;
@@ -5431,13 +5738,13 @@ const ACT = {
         ob.result = analyze();
       } else if (a && !a.error) {
         // Фото не подходит (нет человека, темно) — возвращаем на шаг с фото, а не делаем вид, что разобрали
-        ob.photo = null; ob.step = 5;
+        ob.photo = null; ob.step = 6;
         ob.photoErr = !a.person ? 'На фото не видно человека. Нужно селфи или фото в полный рост — тогда разбор будет про тебя.' : `${a.quality_note || 'Фото тёмное или размытое.'} Попробуй переснять.`;
         haptic('heavy'); render(); window.scrollTo(0, 0); return;
       } else if (a) {
         ob.aiErr = aiErr(a.error) + ' План пока по анкете — разбор по фото можно сделать позже в «Моём плане».';
       }
-      ob.step = 7; haptic('success'); render(); window.scrollTo(0, 0);
+      ob.step = 8; haptic('success'); render(); window.scrollTo(0, 0);
     });
   },
   accept: acceptPlan,
@@ -5721,7 +6028,7 @@ async function usePhoto(kind, data) {
     if (kind === 'ai-photo') {
       if (aiBusy) return;
       aiBusy = true; aiPhoto = data; render();
-      const a = await aiCall('analyze', { photo: data, issues: S.issues || [], tone: tone() }, 90000);
+      const a = await aiCall('analyze', { photo: data, issues: S.issues || [], tone: tone(), rules: AI_RULES, profile: aiProfile() }, 90000);
       aiBusy = false;
       if (a.error === 'pro') { proOpen('analyze'); return; }
       if (a.error) { toast(aiErr(a.error)); render(); return; }
@@ -6188,7 +6495,7 @@ Object.assign(ACT, {
     wbusy = true; wres = null; render();
     // Стилист смотрит на сам образ: снимаем холст картинкой и отправляем вместе с подписями вещей
     const image = await wSnap().catch(() => '');
-    const j = !image ? { error: 'snap' } : AI_ENDPOINT ? await aiCall('outfit', { image, items: its.map((i) => (i.name || '') + (i.color ? ' (' + i.color + ')' : '')), tone: tone() }, 60000) : { error: 'off' };
+    const j = !image ? { error: 'snap' } : AI_ENDPOINT ? await aiCall('outfit', { image, items: its.map((i) => (i.name || '') + (i.color ? ' (' + i.color + ')' : '')), tone: tone(), rules: AI_RULES, profile: aiProfile() }, 60000) : { error: 'off' };
     wbusy = false;
     if (j.valid === true) { wres = { score: j.score, style: j.style, plus: j.plus, add: j.add, swap: j.swap, vibe: j.vibe || '' }; haptic('success'); if (ME && ME.paywall) meRefresh(); }
     else if (j.valid === false) { wres = { invalid: true, problem: j.problem, vibe: j.vibe || '' }; haptic('light'); }
