@@ -23,10 +23,12 @@ const OFFER = APP_URL + 'offer.html';
 const SECRET = crypto.createHash('sha256').update('mogg-webhook:' + TOKEN).digest('hex').slice(0, 48);
 
 const api = async (method, body) => {
-  const r = await fetch(`https://api.telegram.org/bot${TOKEN}/${method}`, {
-    method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body || {})
-  });
-  return r.json();
+  try {
+    const r = await fetch(`https://api.telegram.org/bot${TOKEN}/${method}`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body || {}), signal: AbortSignal.timeout(8000)
+    });
+    return await r.json();
+  } catch (e) { console.error(method, e.message); return { ok: false, description: String(e.message || e) }; }
 };
 const esc = (s) => String(s).replace(/[&<>]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]));
 
@@ -84,47 +86,47 @@ const SCREENS = {
 
 const markup = (s) => ({ inline_keyboard: s.keyboard });
 
-async function sendMenu(chatId, name) {
+// Из российских дата-центров api.telegram.org недоступен, поэтому бот не ходит в Telegram сам:
+// ответ на каждое сообщение возвращается прямо в ответе на вебхук (так разрешает Bot API).
+// Одно действие на один апдейт — этого хватает для меню.
+const menuMsg = (chatId, name, prefix) => {
   const m = menu(name);
-  const r = await api('sendPhoto', { chat_id: chatId, photo: COVER, caption: m.caption, parse_mode: 'HTML', reply_markup: markup(m) });
-  // если картинка не загрузилась — отправляем меню текстом
-  if (!r.ok) await api('sendMessage', { chat_id: chatId, text: m.caption, parse_mode: 'HTML', reply_markup: markup(m), link_preview_options: { is_disabled: true } });
-}
-async function sendScreen(chatId, key) {
+  return { method: 'sendPhoto', chat_id: chatId, photo: COVER, caption: (prefix || '') + m.caption, parse_mode: 'HTML', reply_markup: markup(m) };
+};
+const screenMsg = (chatId, key) => {
   const s = SCREENS[key]();
-  await api('sendMessage', { chat_id: chatId, text: s.caption, parse_mode: 'HTML', reply_markup: markup(s), link_preview_options: { is_disabled: true } });
-}
+  return { method: 'sendMessage', chat_id: chatId, text: s.caption, parse_mode: 'HTML', reply_markup: markup(s), link_preview_options: { is_disabled: true } };
+};
 // Переключаем экраны в том же сообщении, чтобы не спамить чат
-async function showInPlace(msg, s) {
+const inPlace = (msg, s) => {
   const base = { chat_id: msg.chat.id, message_id: msg.message_id, parse_mode: 'HTML', reply_markup: markup(s) };
-  const r = msg.photo
-    ? await api('editMessageCaption', { ...base, caption: s.caption })
-    : await api('editMessageText', { ...base, text: s.caption, link_preview_options: { is_disabled: true } });
-  if (!r.ok && !/not modified/.test(r.description || '')) await api('sendMessage', { chat_id: msg.chat.id, text: s.caption, parse_mode: 'HTML', reply_markup: markup(s) });
-}
+  return msg.photo
+    ? { method: 'editMessageCaption', ...base, caption: s.caption }
+    : { method: 'editMessageText', ...base, text: s.caption, link_preview_options: { is_disabled: true } };
+};
 
-// ---------- обработка апдейтов ----------
-async function onUpdate(u) {
+// ---------- обработка апдейтов: возвращает действие для ответа ----------
+function onUpdate(u) {
   if (u.message) {
     const m = u.message, chat = m.chat.id, text = (m.text || '').trim(), name = m.from && m.from.first_name;
-    if (m.chat.type !== 'private') return;
+    if (m.chat.type !== 'private') return null;
     const cmd = text.startsWith('/') ? text.split(/[\s@]/)[0].slice(1).toLowerCase() : '';
-    if (cmd === 'support' || cmd === 'help') return sendScreen(chat, 'support');
-    if (cmd === 'pro') return sendScreen(chat, 'pro');
-    if (cmd === 'collab') return sendScreen(chat, 'collab');
-    if (cmd === 'privacy') return api('sendMessage', { chat_id: chat, text: `🔒 Политика конфиденциальности: ${PRIVACY}\n📄 Оферта: ${OFFER}` });
-    if (cmd === 'start' || cmd === 'menu') return sendMenu(chat, name);
-    // любое другое сообщение — бот не чат, показываем меню
-    await api('sendMessage', { chat_id: chat, text: 'Я не отвечаю на сообщения — всё самое интересное внутри приложения 👇\nЕсли нужна помощь, нажми «Поддержка».' });
-    return sendMenu(chat, name);
+    if (cmd === 'support' || cmd === 'help') return screenMsg(chat, 'support');
+    if (cmd === 'pro') return screenMsg(chat, 'pro');
+    if (cmd === 'collab') return screenMsg(chat, 'collab');
+    if (cmd === 'privacy') return { method: 'sendMessage', chat_id: chat, text: `🔒 Политика конфиденциальности: ${PRIVACY}\n📄 Оферта: ${OFFER}` };
+    if (cmd === 'start' || cmd === 'menu') return menuMsg(chat, name);
+    // любое другое сообщение — бот не чат, показываем меню с подсказкой
+    return menuMsg(chat, name, '<i>Я не отвечаю на сообщения — всё внутри приложения. Нужна помощь — жми «Поддержка».</i>\n\n');
   }
   if (u.callback_query) {
     const q = u.callback_query, msg = q.message, key = q.data;
-    await api('answerCallbackQuery', { callback_query_id: q.id });
-    if (!msg) return;
-    if (key === 'menu') return showInPlace(msg, menu(q.from && q.from.first_name));
-    if (SCREENS[key]) return showInPlace(msg, SCREENS[key]());
+    if (!msg) return { method: 'answerCallbackQuery', callback_query_id: q.id };
+    if (key === 'menu') return inPlace(msg, menu(q.from && q.from.first_name));
+    if (SCREENS[key]) return inPlace(msg, SCREENS[key]());
+    return { method: 'answerCallbackQuery', callback_query_id: q.id };
   }
+  return null;
 }
 
 // ---------- первичная настройка ----------
@@ -154,6 +156,7 @@ module.exports.handler = async (event, context) => {
   if (!TOKEN) return json(500, { error: 'Не задан BOT_TOKEN в переменных окружения функции' });
   const q = event.queryStringParameters || {};
   if ((event.httpMethod || 'GET') === 'GET') {
+    if (q.ping) { const t0 = Date.now(), r = await api('getMe'); return json(200, { ok: r.ok, ms: Date.now() - t0, error: r.ok ? undefined : r.description }); }
     if (q.setup) {
       const self = process.env.WEBHOOK_URL || `https://functions.yandexcloud.net/${context && context.functionName}`;
       return json(200, await setup(self, !!q.force));
@@ -162,12 +165,13 @@ module.exports.handler = async (event, context) => {
   }
   const h = event.headers || {};
   if ((h['X-Telegram-Bot-Api-Secret-Token'] || h['x-telegram-bot-api-secret-token']) !== SECRET) return { statusCode: 403, body: 'forbidden' };
+  let out = null;
   try {
     const body = event.isBase64Encoded ? Buffer.from(event.body || '', 'base64').toString('utf8') : event.body;
-    await onUpdate(JSON.parse(body || '{}'));
+    out = onUpdate(JSON.parse(body || '{}'));
   } catch (e) { console.error(e); }
-  // Telegram'у всегда отвечаем 200, иначе он будет повторять запрос
-  return { statusCode: 200, body: 'ok' };
+  // Telegram'у всегда отвечаем 200, иначе он будет повторять запрос; действие — в теле ответа
+  return out ? json(200, out) : { statusCode: 200, body: 'ok' };
 };
 // для локальных тестов
-module.exports._t = { menu, SCREENS, onUpdate, setup, SECRET };
+module.exports._t = { menu, SCREENS, onUpdate, setup, SECRET, api };
