@@ -552,6 +552,8 @@ button:active,label.card:active{transform:scale(.97)}
 .modes button{display:grid;grid-template-columns:auto 1fr;column-gap:8px;align-items:center;text-align:left;padding:10px 12px;border-radius:16px;background:var(--card);border:1.5px solid var(--card-b);transition:transform .15s,border-color .2s,background .2s}
 .modes button.on{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 14%,transparent)}
 .modes .mi{grid-row:span 2;font-size:24px}
+.modes{grid-template-columns:repeat(3,1fr)}
+.modes button{display:flex;flex-direction:column;align-items:flex-start;gap:3px}
 .modes b{font-size:14px}
 .modes small{color:var(--hint);font-size:11.5px;line-height:1.3}
 /* тренировки */
@@ -1816,6 +1818,8 @@ button:active,label.card:active{transform:scale(.97)}
 <script>
 // Адрес бэкенда с настоящей нейросетью (Yandex Cloud Functions). Пусто — тренер работает на локальных правилах.
 const AI_ENDPOINT = 'https://functions.yandexcloud.net/d4ed49e9mdk8mqm9i4if';
+// Чат идёт через mogg-chat: он берёт ответ основного бэкенда и переписывает его в характере друга (Чилл, Критик, Сударь)
+const CHAT_ENDPOINT = 'https://d5dbq08e56ddpjl1h37u.0ly8ed4d.apigw.yandexcloud.net/chat';
 
 const tg = window.Telegram && window.Telegram.WebApp;
 try { tg && tg.ready(); tg && tg.expand(); } catch (e) {}
@@ -3767,7 +3771,7 @@ function aiProfile(src) {
     today_missions: s === S && S.onboarded ? tasksFor(dayNum(today())).map((x) => x.text) : []
   };
 }
-const AI_RULES = 'Ты персональный коуч mogg. Отвечай ТОЛЬКО под этого человека: опирайся на profile (цели, отмеченные проблемы, разбор фото, сон, бюджет) и не давай общих советов «для всех». Каждый совет связывай с конкретной причиной из profile.priorities («у тебя …, поэтому …»). Не предлагай то, чего нет в его целях и проблемах, если он сам не спросил. Учитывай бюджет: при 0 ₽ — только бесплатные шаги. Не оценивай черты лица и рост — только то, что можно изменить.';
+const AI_RULES = 'Ты Макс, друг пользователя в mogg. Отвечай ТОЛЬКО под этого человека: опирайся на profile (цели, отмеченные проблемы, разбор фото, сон, бюджет) и не давай общих советов «для всех». Каждый совет связывай с конкретной причиной из profile.priorities («у тебя …, поэтому …»). Не предлагай то, чего нет в его целях и проблемах, если он сам не спросил. Учитывай бюджет: при 0 ₽ — только бесплатные шаги. Не оценивай черты лица и рост — только то, что можно изменить.';
 const missionPillar = (id) => (MISSION_BY[id] ? MISSION_BY[id].p : id.startsWith('tr_') ? 'body' : id.split(':')[0]);
 const missionText = (id) => { if (MISSION_BY[id]) return MISSION_BY[id].t; if (id.startsWith('tr_')) return 'Силовая тренировка по программе'; const [p, k] = id.split(':'); return TASKS[p] && TASKS[p][k]; };
 const charFor = (n) => CHAR_MISSIONS[(n - 1) % CHAR_MISSIONS.length];
@@ -4095,21 +4099,23 @@ function weekChallenges() {
 }
 
 // ---------- ИИ-тренер ----------
-const coachName = () => S.coachName || 'Макс';
+const coachName = () => 'Макс'; // имя друга фиксированное, переименовать нельзя
 // Режимы общения: как собеседник разговаривает в чате и подаёт разбор
 const MODES = {
-  friend: ['🤙', 'Друг', 'на равных, по-дружески, с юмором'],
-  soft: ['🧭', 'Тренер', 'спокойно ведёт по плану'],
-  motivator: ['⚡', 'Мотиватор', 'заряжает и толкает вперёд'],
-  hard: ['🔥', 'Жёсткий', 'без соплей, требует дисциплину'],
-  critic: ['🧐', 'Критик', 'ищет слабые места, честно и колко'],
-  mentor: ['🧘', 'Наставник', 'спокойно, мудро, про смысл']
+  friend: ['', 'Друг', 'на равных, по-дружески, с юмором'],
+  chill: ['', 'Чилл', 'спокойный, расслабленный, без давления'],
+  sudar: ['', 'Сударь', 'изъясняется как дворянин XIX века']
 };
+// старые режимы: спокойные → «Чилл», остальные → «Друг»
+const OLD_TONE = { soft: 'chill', mentor: 'chill', motivator: 'friend', hard: 'friend', critic: 'friend' };
+// как режим называется на сервере
+const API_TONE = { friend: 'friend', chill: 'soft', sudar: 'friend' };
+const apiTone = () => API_TONE[tone()] || 'friend';
 // По умолчанию — «Бро»: так общаются все, кто сам не выбрал другой режим
-const tone = () => S.coachTone || 'friend';
+const tone = () => (MODES[S.coachTone] ? S.coachTone : OLD_TONE[S.coachTone]) || 'friend';
 const mode = () => MODES[tone()] || MODES.friend;
-const hard = () => S.coachTone === 'hard' || S.coachTone === 'critic';
-const modePicker = () => `<div class="modes">${Object.entries(MODES).map(([k, [ic, n, d]]) => `<button class="${tone() === k ? 'on' : ''}" data-act="tone" data-v="${k}"><span class="mi">${ic}</span><b>${n}</b><small>${d}</small></button>`).join('')}</div>`;
+const hard = () => tone() === 'critic';
+const modePicker = () => `<div class="modes">${Object.entries(MODES).map(([k, [ic, n, d]]) => `<button class="${tone() === k ? 'on' : ''}" data-act="tone" data-v="${k}"><b>${n}</b><small>${d}</small></button>`).join('')}</div>`;
 function shopSet(from, to) { let n = 0; S.plan.shopping.forEach((it) => { if (it.st === from) { it.st = to; n++; } }); return n; }
 
 function localReply(text) {
@@ -4167,7 +4173,7 @@ function localReply(text) {
     const left = tasksFor(dayNum(today())).filter((x) => !doneOn(today()).includes(x.id)).length;
     return { text: `${pick(['Здарова', 'Йо', 'Привет'])}${nm ? ', ' + nm : ''}! У меня всё ровно, сижу слежу за твоим прогрессом 😄\n\n${left ? `У тебя сегодня ещё ${left} ${plural(left, 'миссия', 'миссии', 'миссий')} не закрыто. Напиши «что сегодня» — скину список.` : 'Ты сегодня всё закрыл — красавчик. Можно выдохнуть.'}${s ? `\nСерия: ${s} 🔥` : ''}\n\nСам как?` };
   }
-  if (/кто ты|ты кто|ты бот|ты человек|ты нейросет/.test(t)) return { text: `Я ${coachName()} — твой личный коуч в mogg. Не человек, врать не буду, но за твой прогресс болею по-настоящему.\n\nМогу подсказать по уходу, стилю, тренировкам, парфюму — или просто поболтать, если день тяжёлый.` };
+  if (/кто ты|ты кто|ты бот|ты человек|ты нейросет/.test(t)) return { text: `Я ${coachName()} — твой друг в mogg. Не человек, врать не буду, но за твой прогресс болею по-настоящему.\n\nМогу подсказать по уходу, стилю, тренировкам, парфюму — или просто поболтать, если день тяжёлый.` };
   addEvent('note', '«' + text.slice(0, 80) + '»');
   return { text: pick([`Понял тебя, ${bro}. Записал. Если что-то сделал по плану — напиши, отмечу в пути.`, 'Услышал 🤙 Хочешь, покажу, сколько ты уже прошёл? Напиши «мой путь».', `Записал. Нужен план на сегодня — спроси «что сегодня». Или просто рассказывай, как день, ${bro}.`]) };
 }
@@ -4177,11 +4183,11 @@ function summaryText() {
   return `${hard() ? 'Твой путь' : 'Смотри, что ты уже сделал'} за ${n} ${plural(n, 'день', 'дня', 'дней')}:\n• уровень: ${r.lvl} · ${r.name} (${r.x} XP)\n• закрыто дней: ${cd}, серия: ${streak()} 🔥\n• миссий характера: ${charCount()}\n• прочитано: ${totalPages()} стр., книг: ${booksDone()}\n• ветки: ${br}\n\n${cd >= n * 0.7 ? (hard() ? 'Ты в топе по дисциплине. Продолжай.' : 'Это серьёзный уровень дисциплины, без шуток. Так держать 💪') : hard() ? 'Можно лучше. Цель — минимум 5 закрытых дней из 7.' : 'Нормальный старт. Давай целиться в пять закрытых дней из семи — это реально, я в тебя верю.'}`;
 }
 // ---------- ИИ на сервере ----------
-async function aiCall(action, payload, ms) {
+async function aiCall(action, payload, ms, url) {
   const ctl = new AbortController(), t = setTimeout(() => ctl.abort(), ms);
   try {
     // text/plain — чтобы браузер не слал лишний предварительный запрос на сервер
-    const r = await fetch(AI_ENDPOINT, { method: 'POST', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify({ action, initData: (tg && tg.initData) || '', ...payload }), signal: ctl.signal });
+    const r = await fetch(url || AI_ENDPOINT, { method: 'POST', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify({ action, initData: (tg && tg.initData) || '', ...payload }), signal: ctl.signal });
     const j = await r.json().catch(() => ({}));
     return r.ok ? j : { error: j.error || 'http_' + r.status };
   } catch (e) { return { error: 'network' }; } finally { clearTimeout(t); }
@@ -4291,7 +4297,10 @@ const LOCAL_CMD = /подбери парфюм|подобрать парфюм|�
 async function askCoach(text) {
   if (AI_ENDPOINT && !LOCAL_CMD.test(text.toLowerCase())) {
     const r = rank(), P = S.protos || { active: [] };
-    const j = await aiCall('chat', { message: text, history: S.chat.slice(-11, -1), rules: AI_RULES, profile: aiProfile(), context: { rules: AI_RULES, profile: aiProfile(), day: dayNum(today()), streak: streak(), level: `${r.lvl} · ${r.name}`, focus: S.plan.focus.map((p) => PILLARS[p].name), tone: tone(), protocols: P.active.map((a) => PROTOCOLS[a.id].t), analysis: aiSummary(S.ai), journey: journey().slice(0, 10).map((x) => x.title), budget: S.budget || 0, issues: (S.issues || []).map((k) => (ISSUES.find((x) => x[0] === k) || [])[1]).filter(Boolean), catalog: CATALOG.filter((x) => x.p <= Math.max(priceCap(S.budget || 0), 700) * 1.5).map((x) => `${x.b} ${x.n} — ≈${x.p} ₽ (${x.w.split('.')[0]})`) } }, 45000);
+    const chatBody = { message: text, history: S.chat.slice(-11, -1), rules: AI_RULES, profile: aiProfile(), context: { rules: AI_RULES, profile: aiProfile(), day: dayNum(today()), streak: streak(), level: `${r.lvl} · ${r.name}`, focus: S.plan.focus.map((p) => PILLARS[p].name), tone: tone(), protocols: P.active.map((a) => PROTOCOLS[a.id].t), analysis: aiSummary(S.ai), journey: journey().slice(0, 10).map((x) => x.title), budget: S.budget || 0, issues: (S.issues || []).map((k) => (ISSUES.find((x) => x[0] === k) || [])[1]).filter(Boolean), catalog: CATALOG.filter((x) => x.p <= Math.max(priceCap(S.budget || 0), 700) * 1.5).map((x) => `${x.b} ${x.n} — ≈${x.p} ₽ (${x.w.split('.')[0]})`) }, tone: tone() };
+    let j = await aiCall('chat', chatBody, 45000, CHAT_ENDPOINT);
+    // прослойка недоступна — идём напрямую в основной бэкенд, без характера
+    if (j.error === 'network' || /^http_5/.test(j.error || '') || j.error === 'upstream') j = await aiCall('chat', { ...chatBody, tone: apiTone() }, 45000);
     if (j.text) {
       if (/сделал|нан[её]с|отжал|отжим|пробеж|присед|подтян|умыл|помыл|постриг|прош[её]л|планк/.test(text.toLowerCase())) addEvent('activity', '«' + text.slice(0, 80) + '»');
       if (ME && ME.paywall) meRefresh();
@@ -4304,7 +4313,7 @@ async function askCoach(text) {
     console.warn('[mogg] chat AI error:', j);
     return { text: `Слушай, ${why} Попробуй ещё раз чуть позже.\n\n[ код: ${j.error || 'пустой ответ'} ]` };
   }
-  return localReply(text);
+  return { ...localReply(text), local: true };
 }
 
 // ---------- mogg Pro: тариф и оплата ----------
@@ -4365,7 +4374,15 @@ async function sendChat(text) {
   if (!text) return;
   S.chat.push({ from: 'me', text });
   newMsgs = 1; typing = true; save(); render(); scrollChat();
-  const [rep] = await Promise.all([askCoach(text), new Promise((r) => setTimeout(r, 700 + Math.random() * 500))]);
+  // Отвечает не мгновенно: «печатает» тем дольше, чем длиннее ответ, — как живой человек
+  const t0 = Date.now(), rep = await askCoach(text);
+  // локальные ответы («что сегодня», «мой путь»…) тоже переписываем в характере
+  if (rep.local && tone() !== 'friend' && AI_ENDPOINT && tg && tg.initData) {
+    const j = await aiCall('restyle', { text: rep.text, tone: tone() }, 25000, CHAT_ENDPOINT);
+    if (j.text) rep.text = j.text;
+  }
+  const wait = Math.min(7000, 1300 + rep.text.length * 22 + Math.random() * 900) - (Date.now() - t0);
+  if (wait > 0) await new Promise((r) => setTimeout(r, wait));
   typing = false;
   S.chat.push({ from: 'ai', text: rep.text, card: rep.card });
   newMsgs = 1; haptic('light'); save(); render(); scrollChat();
@@ -4416,7 +4433,7 @@ function acceptPlan() {
   addEvent('plan', r.shopping.length ? `Получили план на 90 дней и список средств на ${r.sum} ₽` : 'Получили план на 90 дней — без покупок');
   if (ob.photo) { S.photos.push({ date: today(), data: ob.photo }); addEvent('photo', 'Стартовое фото'); }
   if (ob.ai) S.ai = { ...ob.ai, date: today() };
-  S.chat.push({ from: 'ai', text: `Привет${tgUser && tgUser.first_name ? ', ' + tgUser.first_name : ''}! Я ${coachName()} — твой личный коуч в mogg 👋\n\nЧто качаем: ${r.focus.map((p) => PILLARS[p].name.toLowerCase()).join(', ')}. Каждый день — три небольших дела на внешность и одно на характер. Ничего сложного, обещаю.\n\nЗа всё капает опыт, с уровнями открываются новые фишки. Пиши мне как другу: спроси «что сегодня», «мой путь», «подбери парфюм» — или просто расскажи, как день.` });
+  S.chat.push({ from: 'ai', text: `Привет${tgUser && tgUser.first_name ? ', ' + tgUser.first_name : ''}! Я ${coachName()} — твой друг в mogg 👋\n\nЧто качаем: ${r.focus.map((p) => PILLARS[p].name.toLowerCase()).join(', ')}. Каждый день — три небольших дела на внешность и одно на характер. Ничего сложного, обещаю.\n\nЗа всё капает опыт, с уровнями открываются новые фишки. Пиши мне как другу: спроси «что сегодня», «мой путь», «подбери парфюм» — или просто расскажи, как день.` });
   tab = 'home'; haptic('success'); confetti(); save(); render(); window.scrollTo(0, 0);
   track('onboarded', { photo: !!ob.photo });
 }
@@ -4965,7 +4982,7 @@ function renderCoach() {
   const total = S.chat.length;
   return `
     ${topbar('Чат')}
-    <div class="coach-head"><div class="ava">${esc(coachName().slice(0, 1))}</div><div style="flex:1"><b style="font-size:17px">${esc(coachName())}</b><div class="mono" style="margin-top:2px"><span style="color:var(--ok)">●</span> онлайн · ${mode()[0]} ${mode()[1].toLowerCase()}</div></div><button class="btn sm ghost" data-act="mode-toggle" style="height:32px">Режим</button></div>
+    <div class="coach-head"><div class="ava">${esc(coachName().slice(0, 1))}</div><div style="flex:1"><b style="font-size:17px">${esc(coachName())}</b><div class="mono" style="margin-top:2px"><span style="color:var(--ok)">●</span> онлайн · ${mode()[1].toLowerCase()}</div></div><button class="btn sm ghost" data-act="mode-toggle" style="height:32px">Режим</button></div>
     ${modeOpen ? modePicker() : ''}
     <div class="chat">
       ${S.chat.map((m, i) => `<div class="msg ${m.from} ${newMsgs && i === total - 1 ? 'new' : ''}">${esc(m.text)}${m.card === 'journey' ? card() : ''}${m.from !== 'me' ? prodsInText(m.text).map((x) => prodCard(x, true)).join('') : ''}</div>`).join('')}
@@ -5903,9 +5920,7 @@ function renderMe() {
     </div>
     <details class="card allp"><summary><span class="disp" style="font-size:20px">Настройки</span><span class="mono">чат · награды</span></summary>
     <div>
-      <div class="mono lbl" style="margin-top:0">Как зовут твоего бро</div>
-      <input class="field" style="margin-top:10px" value="${esc(coachName())}" maxlength="20" data-input="coach-name" placeholder="Имя">
-      <div class="mono lbl">Режим общения</div>
+      <div class="mono lbl" style="margin-top:0">Режим общения</div>
       ${modePicker()}
       <div class="mono lbl">Награды за уровни</div>
       ${UNLOCKS.map((u) => `<div class="item"><span style="font-size:22px;${r.lvl >= u.lvl ? '' : 'filter:grayscale(1);opacity:.4'}">${u.ic}</span><div style="flex:1"><div style="font-weight:700">${u.name}</div><div class="hint" style="font-size:12px">${u.d}</div></div>${r.lvl >= u.lvl ? `<span class="check">${IC.check}</span>` : `<span class="mono">ур. ${u.lvl}</span>`}</div>`).join('')}
@@ -6061,7 +6076,7 @@ const ACT = {
     if (!ob.photo) return toast('Добавь фото — без него план не будет личным'); // без фото дальше не пускаем
     ob.step = 7; ob.result = analyze(); ob.ai = null; ob.aiErr = null; render();
     [0, 1, 2, 3].forEach((i) => setTimeout(() => { const e = document.getElementById('cl' + i); e && e.classList.add('on'); }, 450 * (i + 1)));
-    aiPhoto = ob.photo; const ai = AI_ENDPOINT && ob.photo ? aiCall('analyze', { photo: ob.photo, issues: ob.issues, sleep: ob.sleep, tone: tone(), rules: AI_RULES, profile: aiProfile({ goals: ob.goals, issues: ob.issues, budget: ob.budget, sleep: { ...ob.sleep, prog: sleepProgram(ob.sleep) } }) }, 90000) : null;
+    aiPhoto = ob.photo; const ai = AI_ENDPOINT && ob.photo ? aiCall('analyze', { photo: ob.photo, issues: ob.issues, sleep: ob.sleep, tone: apiTone(), rules: AI_RULES, profile: aiProfile({ goals: ob.goals, issues: ob.issues, budget: ob.budget, sleep: { ...ob.sleep, prog: sleepProgram(ob.sleep) } }) }, 90000) : null;
     Promise.all([ai, new Promise((r) => setTimeout(r, 2300))]).then(([a]) => {
       if (a && !a.error && a.person && a.quality === 'ok') {
         ob.ai = a;
@@ -6239,7 +6254,10 @@ const ACT = {
   'st-next'() { stGo(1); },
   'st-prev'() { stGo(-1); },
   accent(el) { S.accent = el.dataset.v; haptic('light'); save(); render(); },
-  tone(el) { S.coachTone = el.dataset.v; modeOpen = false; haptic('light'); save(); render(); toast(`Режим: ${mode()[0]} ${mode()[1]}`); },
+  tone(el) {
+    const v = el.dataset.v;
+    S.coachTone = v; modeOpen = false; haptic('light'); save(); render(); toast(`Режим: ${mode()[1]}`);
+  },
   'mode-toggle'() { modeOpen = !modeOpen; haptic('light'); render(); },
   'add-xp'() { withRankCheck(() => { S.bonus = (S.bonus || 0) + 300; }); floatXP('+300 XP'); save(); render(); },
   'skip-day'() { S.dayOffset = (S.dayOffset || 0) + 1; save(); render(); toast('Теперь день ' + dayNum(today())); },
@@ -6255,7 +6273,6 @@ document.addEventListener('click', (e) => { const el = e.target.closest('[data-a
 document.addEventListener('submit', (e) => { if (e.target.dataset.submit === 'chat') { e.preventDefault(); const i = document.getElementById('chatIn'); const v = i.value; i.value = ''; sendChat(v); } });
 document.addEventListener('input', (e) => {
   const k = e.target.dataset.input;
-  if (k === 'coach-name') { S.coachName = e.target.value.trim() || 'Макс'; save(); }
   if (k === 'goal') { const i = +e.target.dataset.i; S.sgoals = S.sgoals || []; S.sgoals[i] = { ...(S.sgoals[i] || {}), text: e.target.value }; save(); }
 });
 document.addEventListener('change', async (e) => {
@@ -6359,7 +6376,7 @@ async function usePhoto(kind, data) {
     if (kind === 'ai-photo') {
       if (aiBusy) return;
       aiBusy = true; aiPhoto = data; render();
-      const a = await aiCall('analyze', { photo: data, issues: S.issues || [], tone: tone(), rules: AI_RULES, profile: aiProfile() }, 90000);
+      const a = await aiCall('analyze', { photo: data, issues: S.issues || [], tone: apiTone(), rules: AI_RULES, profile: aiProfile() }, 90000);
       aiBusy = false;
       if (a.error === 'pro') { proOpen('analyze'); return; }
       if (a.error) { toast(aiErr(a.error)); render(); return; }
@@ -6830,7 +6847,7 @@ Object.assign(ACT, {
     wbusy = true; wres = null; render();
     // Стилист смотрит на сам образ: снимаем холст картинкой и отправляем вместе с подписями вещей
     const image = await wSnap().catch(() => '');
-    const j = !image ? { error: 'snap' } : AI_ENDPOINT ? await aiCall('outfit', { image, items: its.map((i) => (i.name || '') + (i.color ? ' (' + i.color + ')' : '')), tone: tone(), rules: AI_RULES, profile: aiProfile() }, 60000) : { error: 'off' };
+    const j = !image ? { error: 'snap' } : AI_ENDPOINT ? await aiCall('outfit', { image, items: its.map((i) => (i.name || '') + (i.color ? ' (' + i.color + ')' : '')), tone: apiTone(), rules: AI_RULES, profile: aiProfile() }, 60000) : { error: 'off' };
     wbusy = false;
     if (j.valid === true) { wres = { score: j.score, style: j.style, plus: j.plus, add: j.add, swap: j.swap, vibe: j.vibe || '' }; haptic('success'); if (ME && ME.paywall) meRefresh(); }
     else if (j.valid === false) { wres = { invalid: true, problem: j.problem, vibe: j.vibe || '' }; haptic('light'); }
