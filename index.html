@@ -6378,7 +6378,9 @@ async function usePhoto(kind, data) {
 // Запуск: сначала то, что есть в телефоне, потом сверяемся с облаком Telegram
 function start() {
   let shown = false;
-  const show = () => { if (shown) return; shown = true; render(); hydratePhotos(); };
+  // Кнопка «Оформить Pro» в боте открывает приложение сразу на окне подписки
+  let wantPro = /[?&]pro=1/.test(location.search) || (() => { try { return tg.initDataUnsafe.start_param === 'pro'; } catch (e) { return false; } })();
+  const show = () => { if (shown) return; shown = true; render(); hydratePhotos(); if (wantPro && S.onboarded) { wantPro = false; track('pro_from_bot'); proOpen(); } };
   // Телефон пустой (новое устройство или память почистили) — даём облаку пару секунд, чтобы не показать онбординг зря
   if (S.onboarded || !cloud.ok) show();
   else setTimeout(show, 2500);

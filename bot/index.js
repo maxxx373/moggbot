@@ -1,0 +1,173 @@
+// Бот @justmoggbot: главное меню с кнопкой мини-аппа, поддержка, сотрудничество, подписка, политика.
+// Работает как Yandex Cloud Function (Node.js 18+), без зависимостей.
+//
+// Переменные окружения функции:
+//   BOT_TOKEN      — токен бота от @BotFather (обязательно)
+//   SUPPORT_TG     — ник поддержки без @ (по умолчанию paradox112)
+//   SUPPORT_EMAIL  — почта поддержки (по умолчанию mogg_help@mail.ru)
+//   APP_URL        — адрес мини-аппа (по умолчанию https://maxxx373.github.io/moggbot/)
+//
+// Первый запуск: открой в браузере ссылку функции с ?setup=1 — бот сам подключит вебхук,
+// команды, описание и кнопку «Открыть» слева от поля ввода.
+
+const crypto = require('crypto');
+
+const TOKEN = process.env.BOT_TOKEN || '';
+const SUPPORT_TG = (process.env.SUPPORT_TG || 'paradox112').replace(/^@/, '');
+const SUPPORT_EMAIL = process.env.SUPPORT_EMAIL || 'mogg_help@mail.ru';
+const APP_URL = (process.env.APP_URL || 'https://maxxx373.github.io/moggbot/').replace(/\/?$/, '/');
+const COVER = APP_URL + 'bot/cover.jpg';
+const PRIVACY = APP_URL + 'privacy.html';
+const OFFER = APP_URL + 'offer.html';
+// Секрет, который Telegram присылает в заголовке каждого запроса: чужие запросы к функции игнорируем
+const SECRET = crypto.createHash('sha256').update('mogg-webhook:' + TOKEN).digest('hex').slice(0, 48);
+
+const api = async (method, body) => {
+  const r = await fetch(`https://api.telegram.org/bot${TOKEN}/${method}`, {
+    method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body || {})
+  });
+  return r.json();
+};
+const esc = (s) => String(s).replace(/[&<>]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]));
+
+// ---------- тексты и кнопки ----------
+const BACK = [{ text: '‹ Назад в меню', callback_data: 'menu' }];
+
+function menu(name) {
+  return {
+    caption: `Привет${name ? ', ' + esc(name) : ''}! 👋\n\n`
+      + '<b>mogg</b> — твой личный коуч, чтобы стать лучшей версией себя: кожа, стиль, тело и голова.\n\n'
+      + '• 3 миссии в день под твои цели\n'
+      + '• разбор внешности по фото\n'
+      + '• тренировки, сон и уход\n'
+      + '• школа стиля и подбор парфюма\n\n'
+      + 'Качай уровень и не теряй серию 🔥\nЖми «Открыть mogg» 👇',
+    keyboard: [
+      [{ text: '🚀 Открыть mogg', web_app: { url: APP_URL } }],
+      [{ text: '💬 Поддержка', callback_data: 'support' }, { text: '🤝 Сотрудничество', callback_data: 'collab' }],
+      [{ text: '💎 Подписка mogg Pro', callback_data: 'pro' }],
+      [{ text: '🔒 Политика конфиденциальности', url: PRIVACY }]
+    ]
+  };
+}
+
+const SCREENS = {
+  support: () => ({
+    caption: '<b>💬 Поддержка</b>\n\n'
+      + 'Что-то не работает, не прошла оплата или есть вопрос — напиши нам, разберёмся.\n\n'
+      + `Telegram: @${esc(SUPPORT_TG)}\nПочта: ${esc(SUPPORT_EMAIL)}\n\n`
+      + 'Если вопрос про оплату — укажи дату платежа и почту, на которую пришёл чек.',
+    keyboard: [[{ text: '✍️ Написать в поддержку', url: `https://t.me/${SUPPORT_TG}` }], BACK]
+  }),
+  collab: () => ({
+    caption: '<b>🤝 Сотрудничество</b>\n\n'
+      + 'Блогерам, брендам одежды и косметики, барбершопам, спортзалам — всем, кто хочет сделать что-то вместе с mogg: '
+      + 'интеграции, коллаборации, партнёрские подборки, промокоды для аудитории.\n\n'
+      + 'Напиши, кто ты, где тебя посмотреть и что предлагаешь:\n'
+      + `Telegram: @${esc(SUPPORT_TG)}\nПочта: ${esc(SUPPORT_EMAIL)}`,
+    keyboard: [[{ text: '✍️ Написать', url: `https://t.me/${SUPPORT_TG}` }], BACK]
+  }),
+  pro: () => ({
+    caption: '<b>💎 mogg Pro</b> — 149 ₽ за 30 дней\n\n'
+      + '📸 Разборы по фото — до 3 в день\n'
+      + '🏋️ Персональная тренировка под твой разбор\n'
+      + '💬 Тренер — до 100 сообщений в день вместо 10\n'
+      + '🔥 Всё бесплатное остаётся: миссии, протоколы, тренировки, статьи\n\n'
+      + 'Разовая оплата через ЮKassa, <b>без автосписаний</b>. Оформляется внутри приложения.',
+    keyboard: [
+      [{ text: '💎 Оформить Pro', web_app: { url: APP_URL + '?pro=1' } }],
+      [{ text: '📄 Оферта', url: OFFER }, { text: '🔒 Политика', url: PRIVACY }],
+      BACK
+    ]
+  })
+};
+
+const markup = (s) => ({ inline_keyboard: s.keyboard });
+
+async function sendMenu(chatId, name) {
+  const m = menu(name);
+  const r = await api('sendPhoto', { chat_id: chatId, photo: COVER, caption: m.caption, parse_mode: 'HTML', reply_markup: markup(m) });
+  // если картинка не загрузилась — отправляем меню текстом
+  if (!r.ok) await api('sendMessage', { chat_id: chatId, text: m.caption, parse_mode: 'HTML', reply_markup: markup(m), link_preview_options: { is_disabled: true } });
+}
+async function sendScreen(chatId, key) {
+  const s = SCREENS[key]();
+  await api('sendMessage', { chat_id: chatId, text: s.caption, parse_mode: 'HTML', reply_markup: markup(s), link_preview_options: { is_disabled: true } });
+}
+// Переключаем экраны в том же сообщении, чтобы не спамить чат
+async function showInPlace(msg, s) {
+  const base = { chat_id: msg.chat.id, message_id: msg.message_id, parse_mode: 'HTML', reply_markup: markup(s) };
+  const r = msg.photo
+    ? await api('editMessageCaption', { ...base, caption: s.caption })
+    : await api('editMessageText', { ...base, text: s.caption, link_preview_options: { is_disabled: true } });
+  if (!r.ok && !/not modified/.test(r.description || '')) await api('sendMessage', { chat_id: msg.chat.id, text: s.caption, parse_mode: 'HTML', reply_markup: markup(s) });
+}
+
+// ---------- обработка апдейтов ----------
+async function onUpdate(u) {
+  if (u.message) {
+    const m = u.message, chat = m.chat.id, text = (m.text || '').trim(), name = m.from && m.from.first_name;
+    if (m.chat.type !== 'private') return;
+    const cmd = text.startsWith('/') ? text.split(/[\s@]/)[0].slice(1).toLowerCase() : '';
+    if (cmd === 'support' || cmd === 'help') return sendScreen(chat, 'support');
+    if (cmd === 'pro') return sendScreen(chat, 'pro');
+    if (cmd === 'collab') return sendScreen(chat, 'collab');
+    if (cmd === 'privacy') return api('sendMessage', { chat_id: chat, text: `🔒 Политика конфиденциальности: ${PRIVACY}\n📄 Оферта: ${OFFER}` });
+    if (cmd === 'start' || cmd === 'menu') return sendMenu(chat, name);
+    // любое другое сообщение — бот не чат, показываем меню
+    await api('sendMessage', { chat_id: chat, text: 'Я не отвечаю на сообщения — всё самое интересное внутри приложения 👇\nЕсли нужна помощь, нажми «Поддержка».' });
+    return sendMenu(chat, name);
+  }
+  if (u.callback_query) {
+    const q = u.callback_query, msg = q.message, key = q.data;
+    await api('answerCallbackQuery', { callback_query_id: q.id });
+    if (!msg) return;
+    if (key === 'menu') return showInPlace(msg, menu(q.from && q.from.first_name));
+    if (SCREENS[key]) return showInPlace(msg, SCREENS[key]());
+  }
+}
+
+// ---------- первичная настройка ----------
+async function setup(selfUrl, force) {
+  const info = await api('getWebhookInfo');
+  const cur = info.result && info.result.url;
+  if (cur && cur !== selfUrl && !force) {
+    return { ok: false, warning: 'У бота уже стоит другой вебхук. Если его ставил старый бэкенд, он перестанет получать сообщения. Чтобы всё равно переключить, добавь к ссылке &force=1', current_webhook: cur };
+  }
+  const res = {};
+  res.webhook = await api('setWebhook', { url: selfUrl, secret_token: SECRET, allowed_updates: ['message', 'callback_query'], drop_pending_updates: true });
+  res.commands = await api('setMyCommands', { commands: [
+    { command: 'start', description: 'Главное меню' },
+    { command: 'support', description: 'Поддержка' },
+    { command: 'pro', description: 'Подписка mogg Pro' },
+    { command: 'collab', description: 'Сотрудничество' },
+    { command: 'privacy', description: 'Политика конфиденциальности' }
+  ] });
+  res.menu_button = await api('setChatMenuButton', { menu_button: { type: 'web_app', text: 'Открыть', web_app: { url: APP_URL } } });
+  res.description = await api('setMyDescription', { description: 'mogg — личный коуч, чтобы стать лучшей версией себя.\n\nКожа, стиль, тело и голова: 3 миссии в день под твои цели, разбор по фото, тренировки, школа стиля и подбор парфюма.\n\nЖми «Старт» 👇' });
+  res.short_description = await api('setMyShortDescription', { short_description: 'Личный коуч: кожа, стиль, тело, голова. Миссии, разбор по фото, тренировки, школа стиля.' });
+  return { ok: true, webhook_url: selfUrl, result: res };
+}
+
+module.exports.handler = async (event, context) => {
+  const json = (code, obj) => ({ statusCode: code, headers: { 'Content-Type': 'application/json; charset=utf-8' }, body: JSON.stringify(obj, null, 2) });
+  if (!TOKEN) return json(500, { error: 'Не задан BOT_TOKEN в переменных окружения функции' });
+  const q = event.queryStringParameters || {};
+  if ((event.httpMethod || 'GET') === 'GET') {
+    if (q.setup) {
+      const self = process.env.WEBHOOK_URL || `https://functions.yandexcloud.net/${context && context.functionName}`;
+      return json(200, await setup(self, !!q.force));
+    }
+    return json(200, { ok: true, bot: 'mogg', hint: 'Добавь ?setup=1 к ссылке, чтобы подключить бота' });
+  }
+  const h = event.headers || {};
+  if ((h['X-Telegram-Bot-Api-Secret-Token'] || h['x-telegram-bot-api-secret-token']) !== SECRET) return { statusCode: 403, body: 'forbidden' };
+  try {
+    const body = event.isBase64Encoded ? Buffer.from(event.body || '', 'base64').toString('utf8') : event.body;
+    await onUpdate(JSON.parse(body || '{}'));
+  } catch (e) { console.error(e); }
+  // Telegram'у всегда отвечаем 200, иначе он будет повторять запрос
+  return { statusCode: 200, body: 'ok' };
+};
+// для локальных тестов
+module.exports._t = { menu, SCREENS, onUpdate, setup, SECRET };
