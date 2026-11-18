@@ -376,11 +376,11 @@ button:hover .arrow{transform:rotate(45deg)}
 @keyframes breathe{50%{transform:scale(1.03);opacity:.6}}
 /* фото */
 .art{overflow:hidden}
-.art img.ph{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.92;animation:phIn .9s ease both,kenburns 18s ease-in-out infinite alternate}
+.art img.ph{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.92;animation:phIn .9s ease both}
 @keyframes phIn{from{opacity:0}}
 @keyframes kenburns{from{transform:scale(1.02)}to{transform:scale(1.12) translate(-1.5%,-1%)}}
 .phcard{position:relative;border-radius:26px;overflow:hidden;min-height:180px;color:#fff;display:flex;flex-direction:column;justify-content:flex-end;padding:16px;margin-bottom:12px;background:#111}
-.phcard img.ph{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.92;animation:phIn .9s ease both,kenburns 20s ease-in-out infinite alternate}
+.phcard img.ph{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.92;animation:phIn .9s ease both}
 .phcard:before{content:'';position:absolute;inset:0;z-index:1;background:linear-gradient(180deg,rgba(0,0,0,.05) 20%,rgba(0,0,0,.75))}
 .phcard > *:not(img){position:relative;z-index:2}
 .phcard .mono{color:rgba(255,255,255,.8)}
@@ -1633,7 +1633,7 @@ button:active,label.card:active{transform:scale(.97)}
 :root .tabs .tab.on{background:var(--accent)!important;color:var(--on-accent)!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.5)!important}
 /* миссии: все в одном стиле — лаймовый кружок, полоса и награда */
 :root .mission{--mc:var(--accent)!important;--mc2:var(--lime2)!important;--mt:var(--on-accent)!important}
-:root .mission.charm,:root .mission.bonus{--mc:var(--c2)!important;--mc2:var(--c2b)!important;--mt:#fff!important}
+:root .mission.charm,:root .mission.bonus{--mc:var(--c2)!important;--mc2:var(--c2b)!important;--mt:var(--c2t)!important}
 :root .mission:not(.done){background:var(--card)!important;box-shadow:inset 4px 0 0 var(--mc),var(--neu)!important}
 :root :is(.card,.sheet) .mission:not(.done){box-shadow:inset 4px 0 0 var(--mc)!important}
 :root .mission .xp,:root .mission:not(.charm):not(.bonus) .xp{background:var(--mc)!important;color:var(--mt)!important;box-shadow:none!important}
@@ -1643,21 +1643,21 @@ button:active,label.card:active{transform:scale(.97)}
 :root .btn:not(.ghost){--bc:var(--accent)!important;--bc2:var(--accent)!important;--bc3:var(--accent)!important;--bt:var(--on-accent)!important;text-shadow:none!important;
   animation:none!important;background:var(--b1)!important;color:var(--bt)!important}
 :root .btn:not(.ghost):is([data-act="analyze"],[data-act="photo"],[data-act="ai-open"],[data-act="lib"],[data-p="cam"],[data-p="native"],[data-p="gal"],[data-act="wo-go"],[data-act="focus-open"],[data-act="focus-toggle"],[data-act="ex-open"],[data-act="ask-summary"],[data-act="go"],[data-act="grat"],[data-act="pf-start"],[data-act="pf-next"],[data-act="pf-again"]){
-  --bc:var(--c2)!important;--bc2:var(--c2)!important;--bc3:var(--c2)!important;--bt:#fff!important}
+  --bc:var(--c2)!important;--bc2:var(--c2)!important;--bc3:var(--c2)!important;--bt:var(--c2t)!important}
 :root .btn:not(.ghost)::after{display:none!important}
 :root .btn.ghost,:root .btn.ghost[data-act],:root .btn.ghost[data-p="gal"]{--bc:var(--c2);--bc2:var(--c2);background:color-mix(in srgb,var(--c2) 10%,var(--card))!important;border-color:color-mix(in srgb,var(--c2) 40%,transparent)!important}
 :root .btn.ghost[data-act="reset"]{--bc:#ff4a4a;background:transparent!important;border-color:color-mix(in srgb,#ff4a4a 45%,transparent)!important}
 /* чипы, переключатели, варианты ответа — один цвет вместо шести */
-:root .chips .chip{--cc:var(--c2)!important;--cc2:var(--c2)!important;--ct:#fff!important;box-shadow:none!important;border-color:color-mix(in srgb,var(--c2) 35%,transparent)!important}
+:root .chips .chip{--cc:var(--c2)!important;--cc2:var(--c2)!important;--ct:var(--c2t)!important;box-shadow:none!important;border-color:color-mix(in srgb,var(--c2) 35%,transparent)!important}
 :root .chips .chip:not(.on){background:var(--card)!important}
-:root .chip.on,:root .chips .chip.on,:root :is(.card,.sheet) .chip.on{background:var(--c2)!important;color:#fff!important;border-color:transparent!important;box-shadow:none!important;transform:none!important}
+:root .chip.on,:root .chips .chip.on,:root :is(.card,.sheet) .chip.on{background:var(--c2)!important;color:var(--c2t)!important;border-color:transparent!important;box-shadow:none!important;transform:none!important}
 :root .jt button{--jc:var(--c2)!important;--jc2:var(--c2)!important;border-color:color-mix(in srgb,var(--c2) 35%,transparent)!important}
 :root .jt button:not(.on){background:var(--card)!important}
 :root .seg{background:var(--card)!important}
-:root .seg button.on,:root .jt button.on,:root :is(.card,.sheet) .seg button.on{background:var(--c2)!important;color:#fff!important;box-shadow:none!important}
+:root .seg button.on,:root .jt button.on,:root :is(.card,.sheet) .seg button.on{background:var(--c2)!important;color:var(--c2t)!important;box-shadow:none!important}
 :root .opt{--oc:var(--c2)!important;background:var(--card)!important;border-color:color-mix(in srgb,var(--c2) 30%,transparent)!important}
 :root .opt.on{background:color-mix(in srgb,var(--c2) 12%,var(--card))!important;box-shadow:0 0 0 2px var(--c2)!important}
-:root .opt.on .box{background:var(--c2)!important;color:#fff!important}
+:root .opt.on .box{background:var(--c2)!important;color:var(--c2t)!important}
 :root .backlink{background:var(--chip)!important;color:#fff!important;box-shadow:none!important}
 /* быстрые ответы в чате: первый — лайм, остальные спокойные */
 :root .qr button:nth-child(n){background:var(--card)!important;color:var(--text)!important;box-shadow:inset 0 0 0 1.5px color-mix(in srgb,var(--c2) 35%,transparent)!important}
@@ -1678,6 +1678,34 @@ button:active,label.card:active{transform:scale(.97)}
 /* праздник «день закрыт» — без бегущей радуги */
 :root .celebrate{background:var(--accent)!important;animation:none!important}
 :root .composer .send,:root .msg.me{background:var(--accent)!important}
+
+/* ---------- ещё тише: один акцент (лайм) + нейтральные ---------- */
+/* второй цвет теперь не синий, а нейтральный: тёмный на светлом фоне, светлый на тёмном */
+:root{--c2:#15171f;--c2b:#2a2d38;--c2t:#fff}
+:root[data-theme="dark"],:root :is(.card,.sheet,.tcard,.trcard,.slcard){--c2:#eef0f5;--c2b:#d9dce4;--c2t:#07080c}
+/* фон: без цветных пятен, зерно тише */
+:root{--glowA:rgba(120,124,140,.10)!important;--glowB:rgba(212,255,26,.10)!important;--grain:.025!important}
+:root[data-theme="dark"]{--glowA:rgba(255,255,255,.035)!important;--glowB:rgba(212,255,26,.04)!important;--grain:.018!important}
+:root .aurora{display:none!important}
+/* заголовки секций: маркер и курсор нейтральные */
+:root .sec .disp::before{background:var(--hint)!important}
+:root .sec .disp::after{color:var(--hint)!important}
+/* шаги анкеты и загрузка */
+:root .steps i.on{background:var(--text)!important}
+:root .spin{border-top-color:var(--text)!important}
+/* круглые кнопки-стрелки: светлые на тёмных карточках, без свечения */
+:root :is(.arrow,.wox,.woctl button:not(.main),.pillbtn i){background:#f2f3f5!important;color:#07080c!important;border-color:transparent!important;box-shadow:none!important}
+:root .pillbtn i{background:#07080c!important;color:#fff!important}
+/* плашки и мелочи */
+:root .ig-pill.new{background:var(--accent)!important;border-color:var(--accent)!important;color:var(--on-accent)!important}
+:root .tag{color:var(--hint)!important;border-color:var(--card-b)!important}
+:root .btn[data-act="chest"]{--b1:var(--accent)!important;background:var(--accent)!important;color:var(--on-accent)!important}
+:root .card.chest{background:var(--dk)!important}
+:root .fact .buy{background:rgba(7,8,12,.12)!important;color:#07080c!important}
+:root .mission .box{border-color:currentColor}
+/* разбор фото: строки загрузки крупнее, жирнее и контрастнее */
+.check-line{font-size:15px!important;font-weight:700!important;letter-spacing:.04em!important;color:var(--text)!important;opacity:.4!important;margin:14px 0!important}
+.check-line.on{opacity:1!important;color:var(--text)!important}
 </style>
 </head>
 <body>
@@ -6099,7 +6127,8 @@ function start() {
   paint();
 
   // Наклон за пальцем + блик + цветная «капля» из точки касания
-  const TILT = '.card:not(.hero *):not(.sheet *),.mission,.acard,.lesson,.rstep,.cc,.hero,.feature,.phcard,.libtile,.wotile,.excard,.opt,.book .cover';
+  // Карточки с картинками (обложки, плитки, ленты) не наклоняем — при листании картинка перекашивалась
+  const TILT = '.card:not(.hero *):not(.sheet *):not(.feature):not(.libtile):not(.wocard),.mission,.acard,.lesson,.rstep,.cc,.opt';
   let cur = null, sx = 0, sy = 0;
   const setT = (el, x, y, press) => {
     const r = el.getBoundingClientRect(), px = (x - r.left) / r.width, py = (y - r.top) / r.height;
@@ -6129,7 +6158,7 @@ function start() {
   }, { passive: true });
   document.addEventListener('pointermove', (e) => {
     if (!cur) return;
-    if (Math.abs(e.clientY - sy) > 14 && Math.abs(e.clientY - sy) > Math.abs(e.clientX - sx)) return release(); // это прокрутка
+    if (Math.abs(e.clientY - sy) > 8 || Math.abs(e.clientX - sx) > 8) return release(); // это прокрутка или листание — карточку не трогаем
     setT(cur, e.clientX, e.clientY, true);
   }, { passive: true });
   ['pointerup', 'pointercancel', 'scroll'].forEach((t) => addEventListener(t, release, { passive: true, capture: true }));
