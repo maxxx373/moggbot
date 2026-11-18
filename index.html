@@ -4749,11 +4749,7 @@ function renderHome() {
     ${woHomeCard()}
     ${readCard()}
     ${needPhoto ? `<button type="button" class="card row" data-act="photo" data-k="week-photo" style="width:100%;text-align:left;transition:transform .12s"><div class="iconbtn">${IC.cam}</div><div style="flex:1"><b>Фото недели</b><div class="hint">+15 XP · для сравнения «до / после»</div></div><span class="arrow">${IC.arrow}</span></button>` : ''}
-    ${remindPrompt()}
-    <div class="outro" style="min-height:0;padding-bottom:22px">
-      ${mountains('f')}
-      <div class="row between" style="margin-top:14px;position:relative;z-index:2;align-items:flex-end"><span class="mono">Для тех, кто качает себя,<br>а не ленту</span>${barcode()}</div>
-    </div>`;
+    ${remindPrompt()}`;
   celebrate = false;
   return html;
 }
