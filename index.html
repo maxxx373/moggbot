@@ -3806,7 +3806,7 @@ function routineCard() {
 function renderRoutine() {
   const part = modal.part, key = today() + ':' + part, dn = (S.rdone || {})[key] || [], st = routine(part);
   return `<div class="modal"><div class="sheet exs">
-    <div class="row between"><span class="mono">[ рутина ухода ]</span><button class="wox" data-act="modal-close" aria-label="Закрыть">✕</button></div>
+    <div class="row between" style="justify-content:flex-end"><button class="wox" data-act="modal-close" aria-label="Закрыть">✕</button></div>
     <div class="seg" style="margin:12px 0 14px">${[['am', '☀️ Утро'], ['pm', '🌙 Вечер']].map(([k, l]) => `<button class="${part === k ? 'on' : ''}" data-act="r-part" data-v="${k}">${l}</button>`).join('')}</div>
     ${st.map((s, i) => `<button class="rstep ${dn.includes(i) ? 'done' : ''}" data-act="r-step" data-i="${i}"><span class="rn">${dn.includes(i) ? '✓' : i + 1}</span><span style="flex:1"><div class="rt">${s.t}${s.opt ? ' <span class="hint" style="font-weight:400;font-size:12px">· по желанию</span>' : ''}</div><div class="rh">${s.h}</div>${s.pr ? `<div class="rh" style="color:var(--text);opacity:.85">→ ${s.pr.b} · ${s.pr.n}</div>` : ''}${s.sec && !dn.includes(i) ? `<div class="rtimer" data-act="r-timer" data-s="${s.sec}" data-i="${i}">⏱ запустить таймер · ${s.sec} с</div>` : ''}</span></button>`).join('')}
     <div class="hint" style="margin-top:8px;font-size:12.5px">Отметь все шаги — +10 XP. Средства подобраны под твой бюджет, все варианты — в Плане → Средства.</div>
@@ -4118,7 +4118,6 @@ function aiCard(a) {
   const tiers = [['t1', 'Тир 1 — главное', '#ff5a5f', 'делай в первую очередь'], ['t2', 'Тир 2 — усиление', '#ffc94d', 'после первых двух недель'], ['t3', 'Тир 3 — на дистанцию', '#3ddc97', 'держит результат']];
   return `<div class="rep">
     <div class="card rep-top">
-      <span class="mono">[ разбор по фото · ${human(a.date || today())} ]</span>
       <div class="rep-grid">
         ${ph ? `<img class="rep-ph" src="${ph}" alt="">` : ''}
         <div class="rep-sc"><div class="rep-tile"><span class="mono">сейчас</span><b style="color:${mColor(a.score * 10)}">${(+a.score || 0).toFixed(1)}</b><small>/10</small></div>
@@ -4247,14 +4246,14 @@ function proOpen(reason) { modal = { kind: 'pro', reason }; haptic('light'); ren
 const PRO_WHY = { chat: 'Бесплатные сообщения тренеру на сегодня закончились.', analyze: 'Бесплатный разбор по фото уже использован.', workout: 'Персональная тренировка по разбору — в mogg Pro.' };
 function proCard() {
   if (!ME) return '';
-  if (!ME.paywall) return `<div class="card procard"><div class="row between"><span class="mono">[ mogg pro ]</span><span class="mono" style="color:var(--accent)">тест</span></div><div style="font-weight:800;font-size:16px;margin-top:6px">Сейчас всё открыто бесплатно</div><div class="hint" style="font-size:12.5px;margin-top:2px">Идёт тест. Потом Pro будет стоить ${ME.price} ₽ за ${ME.days} дней — без автосписаний.</div></div>`;
-  if (ME.pro) return `<div class="card procard on"><div class="row between"><span class="mono">[ mogg pro ]</span><span class="mono" style="color:var(--accent)">активен</span></div><div style="font-weight:800;font-size:16px;margin-top:6px">Pro до ${new Date(ME.pro_until).toLocaleDateString('ru', { day: 'numeric', month: 'long' })}</div><div class="hint" style="font-size:12.5px;margin-top:2px">Сегодня: ${ME.chat_left} сообщений и ${ME.analyze_left} разбора</div><button class="btn sm ghost" data-act="pro-open" style="width:100%;margin-top:10px">Продлить на ${ME.days} дней</button></div>`;
-  return `<button class="card procard cta" data-act="pro-open" style="width:100%;text-align:left"><div class="row between"><span class="mono">[ mogg pro ]</span><span class="mono">${ME.price} ₽ / ${ME.days} дней</span></div><div class="disp" style="font-size:26px;margin-top:6px">Открой всё</div><div class="hint" style="font-size:12.5px;margin-top:2px">Разборы по фото, персональная тренировка, тренер до 100 сообщений в день</div></button>`;
+  if (!ME.paywall) return `<div class="card procard"><div class="row between" style="justify-content:flex-end"><span class="mono" style="color:var(--accent)">тест</span></div><div style="font-weight:800;font-size:16px;margin-top:6px">Сейчас всё открыто бесплатно</div><div class="hint" style="font-size:12.5px;margin-top:2px">Идёт тест. Потом Pro будет стоить ${ME.price} ₽ за ${ME.days} дней — без автосписаний.</div></div>`;
+  if (ME.pro) return `<div class="card procard on"><div class="row between" style="justify-content:flex-end"><span class="mono" style="color:var(--accent)">активен</span></div><div style="font-weight:800;font-size:16px;margin-top:6px">Pro до ${new Date(ME.pro_until).toLocaleDateString('ru', { day: 'numeric', month: 'long' })}</div><div class="hint" style="font-size:12.5px;margin-top:2px">Сегодня: ${ME.chat_left} сообщений и ${ME.analyze_left} разбора</div><button class="btn sm ghost" data-act="pro-open" style="width:100%;margin-top:10px">Продлить на ${ME.days} дней</button></div>`;
+  return `<button class="card procard cta" data-act="pro-open" style="width:100%;text-align:left"><div class="row between" style="justify-content:flex-end"><span class="mono">${ME.price} ₽ / ${ME.days} дней</span></div><div class="disp" style="font-size:26px;margin-top:6px">Открой всё</div><div class="hint" style="font-size:12.5px;margin-top:2px">Разборы по фото, персональная тренировка, тренер до 100 сообщений в день</div></button>`;
 }
 function renderPro() {
   const m = ME || { price: 149, days: 30 }, why = PRO_WHY[modal.reason];
   return `<div class="modal"><div class="sheet exs" style="text-align:left">
-    <div class="row between"><span class="mono">[ mogg pro ]</span><button class="wox" data-act="modal-close" aria-label="Закрыть">✕</button></div>
+    <div class="row between" style="justify-content:flex-end"><button class="wox" data-act="modal-close" aria-label="Закрыть">✕</button></div>
     ${why ? `<div class="banner" style="margin:12px 0 0">${why}</div>` : ''}
     <div class="disp" style="font-size:40px;margin:14px 0 4px">${m.price} ₽</div>
     <div class="hint">за ${m.days} дней · разовая оплата, <b>без автосписаний</b></div>
@@ -4390,7 +4389,7 @@ function sleepQuestions(sl) {
 function sleepCard(p, full) {
   if (!p) return '';
   const row = (lbl, a, b, c) => `<div class="slrow"><span class="mono">${lbl}</span><b>${a}</b><span class="hint">${b}</span>${c ? `<i>${c}</i>` : ''}</div>`;
-  return `<div class="card slcard"><div class="row between" style="margin-bottom:10px"><div class="row"><span class="tag" style="color:${PILLARS.sleep.c};border-color:${PILLARS.sleep.c}55">SLP</span><b class="disp" style="font-size:22px">Программа сна</b></div>${full ? '' : '<button class="btn sm ghost" data-act="sl-open" style="height:32px;width:auto;padding:0 12px">Изменить</button>'}</div>
+  return `<div class="card slcard"><div class="row between" style="margin-bottom:10px"><div class="row"><b class="disp" style="font-size:22px">Программа сна</b></div>${full ? '' : '<button class="btn sm ghost" data-act="sl-open" style="height:32px;width:auto;padding:0 12px">Изменить</button>'}</div>
     <div style="font-weight:700;margin-bottom:10px">${p.verdict}</div>
     ${row('Сейчас', slDur(p.dur), `${slHM(p.bed)} → ${slHM(p.wake)}`)}
     ${row('Цель', slDur(p.durT), `${slHM(p.bedT)} → ${slHM(p.wake)}`, p.shift ? `~${p.days} ${plural(p.days, 'день', 'дня', 'дней')}` : '')}
@@ -4401,7 +4400,6 @@ function sleepCard(p, full) {
 function sleepModal() {
   const sl = modal.sl, ready = sl.bed != null && sl.wake != null;
   return `<div class="modal"><div class="sheet exs">
-    <span class="mono">[ программа сна ]</span>
     <div class="disp" style="font-size:28px;margin:4px 0 12px">Как ты спишь?</div>
     ${sleepQuestions(sl)}
     <button class="btn" data-act="sl-save" style="margin-top:18px" ${ready ? '' : 'disabled'}>${ready ? 'Подобрать программу' : 'Выбери время отбоя и подъёма'}</button>
@@ -4500,7 +4498,7 @@ function trainCard(p, full) {
   const day = (d) => `<div class="trday ${td === d ? 'now' : ''}"><div class="row between"><b>${d.dow} · ${d.title}</b>${td === d ? '<span class="mono" style="color:var(--accent)">сегодня</span>' : ''}</div>
     ${d.items.map((x) => `<div class="trex"><span>${x.n}</span><span class="mono">${x.sets} × ${x.reps}</span></div>`).join('')}</div>`;
   const done = woDone(today()).includes('str');
-  return `<div class="card trcard"><div class="row between" style="margin-bottom:8px"><div class="row"><span class="tag" style="color:${PILLARS.body.c};border-color:${PILLARS.body.c}55">STR</span><b class="disp" style="font-size:22px">Силовая программа</b></div>${full ? '' : '<button class="btn sm ghost" data-act="tr-open" style="height:32px;width:auto;padding:0 12px">Изменить</button>'}</div>
+  return `<div class="card trcard"><div class="row between" style="margin-bottom:8px"><div class="row"><b class="disp" style="font-size:22px">Силовая программа</b></div>${full ? '' : '<button class="btn sm ghost" data-act="tr-open" style="height:32px;width:auto;padding:0 12px">Изменить</button>'}</div>
     <div class="hint" style="font-size:13px">${p.freq} ${plural(p.freq, 'раз', 'раза', 'раз')} в неделю · цель: ${p.goalName} · ${place.toLowerCase()} · отдых ${p.rest}</div>
     ${full ? p.days.map(day).join('') : (td ? day(td) : `<div class="hint" style="margin-top:10px">Сегодня отдых. Следующая: ${(p.days.find((d) => TR_DOW[d.dow] > now().getDay()) || p.days[0]).dow}.</div>`) +
       `<details class="trall"><summary class="mono">Вся неделя</summary>${p.days.filter((d) => d !== td).map(day).join('')}</details>`}
@@ -4510,7 +4508,6 @@ function trainCard(p, full) {
 function trainModal() {
   const tr = modal.tr;
   return `<div class="modal"><div class="sheet exs">
-    <span class="mono">[ силовые ]</span>
     <div class="disp" style="font-size:28px;margin:4px 0 12px">Твои тренировки</div>
     ${trainQuestions(tr)}
     <button class="btn" data-act="tr-save" style="margin-top:18px" ${trReady(tr) ? '' : 'disabled'}>${trReady(tr) ? 'Подобрать программу' : 'Ответь на 5 вопросов'}</button>
@@ -4529,7 +4526,7 @@ function renderOnboarding() {
       ${mountains('o')}${sparks(8)}
       <div class="spray" style="font-size:96px;left:-10px;top:250px;transform:rotate(-9deg)">MOGG</div>
       <div class="in" style="min-height:520px">
-        <div class="row between"><div class="logo" style="color:inherit">${IC.logo}<b>mogg<span class="tm">™</span></b></div><span class="mono">[ SEASON 01 ]</span></div>
+        <div class="row between"><div class="logo" style="color:inherit">${IC.logo}<b>mogg<span class="tm">™</span></b></div></div>
         <div class="disp huge" style="font-size:64px;margin-top:40px;position:relative;z-index:2">Стань<br>лучшей<br>версией<br>себя<span class="tm">™</span></div>
         <div class="bot row between" style="align-items:flex-end;position:relative;z-index:2"><div><div class="mono">Внешность · характер · общение · разум</div><div class="mono" style="margin-top:6px">20 уровней · награды · личный коуч в чате</div></div>${barcode()}</div>
       </div>
@@ -4539,37 +4536,37 @@ function renderOnboarding() {
     </div>
     <button class="btn" data-act="next">Начать ${IC.send}</button>`;
   if (s === 1) return `<div class="ob-fill">${stepsBar(1)}
-    <div class="mono">[ 01 / 07 ]</div><div class="disp h1" style="margin:8px 0 10px">Правила</div>
+    <div class="disp h1" style="margin:8px 0 10px">Правила</div>
     <p class="hint" style="margin:0 0 18px">Прокачиваем только то, что можно изменить: кожу, волосы, тело, осанку, стиль, режим — и характер. Форму лица и рост не оцениваем. Никогда.</p>
     <div class="ob-bottom">${opt('ob-consent', ob.consent, 'Согласен с политикой конфиденциальности')}
     <div class="banner" style="margin-top:12px">Это не медицинский сервис. При проблемах с кожей — к дерматологу.</div>
     <button class="btn" data-act="next" ${ob.consent ? '' : 'disabled'}>Дальше</button>
     <a class="ob-link" href="privacy.html">Прочитать политику конфиденциальности</a></div></div>`;
   if (s === 2) return `${stepsBar(2)}
-    <div class="mono">[ 02 / 07 ]</div><div class="disp h1" style="margin:8px 0 10px">Что качаем?</div>
+    <div class="disp h1" style="margin:8px 0 10px">Что качаем?</div>
     <p class="hint" style="margin:0 0 18px">Выбери всё, что важно во внешности. Характер и общение качаются у всех.</p>
     <div class="tiles" style="margin-bottom:22px">${Object.entries(PILLARS).map(([k, p]) => `<button class="tint" style="--c:${p.c};text-align:left;transition:all .2s;${ob.goals.includes(k) ? `background:${p.c};color:#06101c` : ''}" data-act="ob-goal" data-k="${k}"><div class="mono" style="${ob.goals.includes(k) ? 'color:#06101c' : ''}">${p.code}</div><b style="font-size:24px">${p.name}</b></button>`).join('')}</div>
     <button class="btn" data-act="next" ${ob.goals.length ? '' : 'disabled'}>Дальше</button>`;
   if (s === 3) return `${stepsBar(3)}
-    <div class="mono">[ 03 / 07 ]</div><div class="disp h1" style="margin:8px 0 10px">Что мешает?</div>
+    <div class="disp h1" style="margin:8px 0 10px">Что мешает?</div>
     <p class="hint" style="margin:0 0 18px">Можно пропустить. Так план будет точнее.</p>
     <div class="chips">${ISSUES.map(([k, n]) => `<button class="chip ${ob.issues.includes(k) ? 'on' : ''}" data-act="ob-issue" data-k="${k}">${n}</button>`).join('')}</div>
     <div class="mono lbl">Бюджет на средства</div>
     <div class="seg" style="margin-bottom:24px">${[[0, '0 ₽'], [800, '800'], [1500, '1 500'], [3000, '3 000'], [5000, '5 000+']].map(([v, l]) => `<button class="${ob.budget === v ? 'on' : ''}" data-act="ob-budget" data-v="${v}">${l}</button>`).join('')}</div>
     <button class="btn" data-act="next">Дальше</button>`;
   if (s === 4) { const ready = ob.sleep.bed != null && ob.sleep.wake != null; return `${stepsBar(4)}
-    <div class="mono">[ 04 / 07 ]</div><div class="disp h1" style="margin:8px 0 10px">Как ты спишь?</div>
+    <div class="disp h1" style="margin:8px 0 10px">Как ты спишь?</div>
     <p class="hint" style="margin:0 0 18px">Сон — это кожа без отёков, ясная голова и сила в зале. По ответам подберём программу сна.</p>
     ${sleepQuestions(ob.sleep)}
     <button class="btn" data-act="next" style="margin-top:22px" ${ready ? '' : 'disabled'}>${ready ? 'Дальше' : 'Выбери время отбоя и подъёма'}</button>`; }
   if (s === 5) { const ready = trReady(ob.train); return `${stepsBar(5)}
-    <div class="mono">[ 05 / 07 ]</div><div class="disp h1" style="margin:8px 0 10px">Силовые</div>
+    <div class="disp h1" style="margin:8px 0 10px">Силовые</div>
     <p class="hint" style="margin:0 0 18px">Подберём программу под твой опыт, место и цель — с днями, подходами и повторами.</p>
     ${trainQuestions(ob.train)}
     <button class="btn" data-act="next" style="margin-top:22px" ${ready ? '' : 'disabled'}>${ready ? 'Дальше' : 'Ответь на 5 вопросов'}</button>
     <button class="btn sm ghost" data-act="tr-skip" style="margin-top:10px;width:100%">Силовые не интересны — пропустить</button>`; }
   if (s === 6) return `${stepsBar(6)}
-    <div class="mono">[ 06 / 07 ]</div><div class="disp h1" style="margin:8px 0 10px">Точка «до»</div>
+    <div class="disp h1" style="margin:8px 0 10px">Точка «до»</div>
     <p class="hint" style="margin:0 0 16px">Дневной свет, лицо прямо, без фильтров. Лучше всего — если снимет друг с метра.</p>
     ${ob.photoErr ? `<div class="banner" style="margin-bottom:14px">⚠️ ${esc(ob.photoErr)}</div>` : ''}
     <button type="button" class="photo-drop" data-act="photo" data-k="ob-photo" style="margin-bottom:14px;width:100%;color:inherit;font:inherit">
@@ -4583,16 +4580,16 @@ function renderOnboarding() {
   if (s === 8) {
     const r = ob.result;
     return `${stepsBar(7)}
-      <div class="mono">[ 07 / 07 ]</div><div class="disp h1" style="margin:8px 0 10px">План готов</div>
+      <div class="disp h1" style="margin:8px 0 10px">План готов</div>
       <p class="hint" style="margin:0 0 16px">Фокус на первые 90 дней.${AI_ENDPOINT ? '' : ' Демо: разбор строится по анкете, разбор по фото подключим на сервере.'}</p>
       ${ob.photo ? `<div class="card row"><img src="${ob.photo}" style="width:60px;height:78px;object-fit:cover;border-radius:12px"><div><b>Точка «до» сохранена</b><div class="hint">Через 30 дней сравним</div></div></div>` : ''}
       ${ob.ai ? aiCard(ob.ai) : ''}${ob.aiErr ? `<div class="banner">${esc(ob.aiErr)}</div>` : ''}
-      ${r.focus.map((p, i) => `<div class="card"><div class="row between" style="margin-bottom:10px"><div class="row"><span class="tag" style="color:${PILLARS[p].c};border-color:${PILLARS[p].c}55">${PILLARS[p].code}</span><b class="disp" style="font-size:22px">${PILLARS[p].name}</b></div><span class="mono" style="color:${i < 2 ? 'var(--accent)' : 'var(--hint)'}">${i < 2 ? 'Главный фокус' : 'Поддержка'}</span></div>${r.tips[p].filter(Boolean).map((t) => `<div style="margin:5px 0;font-size:14px">— ${t}</div>`).join('')}</div>`).join('')}
+      ${r.focus.map((p, i) => `<div class="card"><div class="row between" style="margin-bottom:10px"><div class="row"><b class="disp" style="font-size:22px">${PILLARS[p].name}</b></div><span class="mono" style="color:${i < 2 ? 'var(--accent)' : 'var(--hint)'}">${i < 2 ? 'Главный фокус' : 'Поддержка'}</span></div>${r.tips[p].filter(Boolean).map((t) => `<div style="margin:5px 0;font-size:14px">— ${t}</div>`).join('')}</div>`).join('')}
       ${sleepCard(r.sleep, true)}
       ${trainCard(r.train, true)}
       ${(() => { const src = { goals: ob.goals, issues: ob.issues, budget: ob.budget, ai: ob.ai, sleep: r.sleep ? { ...ob.sleep, prog: r.sleep } : null, train: r.train ? { ...ob.train, prog: r.train } : null, startDate: today(), plan: { focus: r.focus } }, m = pickMissions(1, [], src);
         return r.why && r.why.length ? `<div class="card"><div class="disp" style="font-size:22px;margin-bottom:8px">Почему такой план</div>${r.why.map((w) => `<div style="margin:5px 0;font-size:14px">— ${esc(cap(w))}</div>`).join('')}
-        <div class="mono lbl">Миссии на первый день</div>${m.map((x) => `<div class="item"><span class="tag" style="color:${PILLARS[x.p].c};border-color:${PILLARS[x.p].c}55">${PILLARS[x.p].code}</span><div style="flex:1"><b style="font-size:14px">${x.text}</b><div class="hint" style="font-size:12px">${esc(x.why)}</div></div></div>`).join('')}</div>` : ''; })()}
+        <div class="mono lbl">Миссии на первый день</div>${m.map((x) => `<div class="item"><div style="flex:1"><b style="font-size:14px">${x.text}</b><div class="hint" style="font-size:12px">${esc(x.why)}</div></div></div>`).join('')}</div>` : ''; })()}
       ${(() => { const pp = buildPlan(ob.issues, ob.budget); return pp.active.length ? `<div class="card"><div class="disp" style="font-size:22px;margin-bottom:6px">Твои протоколы</div><div class="hint" style="margin-bottom:6px">Пошаговый план под то, что ты отметил: что делать каждый день, чего избегать, упражнения с анимацией.</div>${pp.active.map((a) => `<div class="item"><div style="flex:1"><b>${PROTOCOLS[a.id].t}</b>${pp.notes[a.id] ? `<div class="hint" style="font-size:12.5px;margin-top:2px">${pp.notes[a.id]}</div>` : ''}</div><span class="mono">${PROTOCOLS[a.id].days} дн.</span></div>`).join('')}${pp.queue.length ? `<div class="hint" style="margin-top:8px">И ещё ${pp.queue.length} в очереди — начнутся, когда пройдёшь эти.</div>` : ''}</div>` : ''; })()}
       <div class="card"><div class="disp" style="font-size:22px;margin-bottom:6px">Что заказать</div>${r.shopping.length ? r.shopping.map((it) => it.pid ? prodCard(CAT_BY[it.pid]) : `<div class="item"><div style="flex:1">${it.n}</div><b>~${it.p} ₽</b></div>`).join('') + `<div class="row between" style="margin-top:12px"><span class="mono">Итого</span><b class="disp" style="font-size:22px">~${r.sum} ₽</b></div>` : '<div class="hint">Ничего покупать не нужно — весь план бесплатный.</div>'}</div>
       <div class="disp" style="font-size:56px;text-align:center;margin:26px 0 14px">Делаем?</div>
@@ -4644,7 +4641,6 @@ function renderHome() {
       ${mountains('h')}${sparks(9)}
       <div class="spray" style="font-size:80px;right:-16px;top:96px;transform:rotate(-10deg)">MOGG</div>
       <div class="in" style="min-height:390px">
-        <div class="row between"><span class="mono">[ ${human(d)} ]</span><span class="mono">${s ? `аура · ${s} ${plural(s, 'день', 'дня', 'дней')}` : 'зажги ауру'}</span></div>
         <div class="disp huge" style="position:relative;z-index:2">День<br>${z(n)}<span class="tm">™</span></div>
         <div class="bot" style="position:relative;z-index:2">
           <div class="row between" style="align-items:flex-end;margin-bottom:12px">
@@ -4662,9 +4658,9 @@ function renderHome() {
     ${celebrate ? `<div class="celebrate"><div style="flex:1"><b>День закрыт</b><div style="font-weight:700;font-size:13px;opacity:.8">+50 XP · серия ${s}</div><button class="celstory" data-act="story">📲 Выложить серию в историю</button></div><div style="font-size:34px">🔥</div></div>` : ''}
     ${chestOpen ? `<div class="card chest"><span class="ci">🎁</span><div style="flex:1"><b>Подарок дня</b><div class="hint">Заходи каждый день — внутри 10–30 XP</div></div><button class="btn sm" data-act="chest" style="background:var(--gold);color:#1c100b">Открыть</button></div>` : ''}
     <div class="sec" id="missions"><span class="disp">Миссии дня</span><span class="chipline">[ ${done.length}/3 ]</span></div>
-    ${tasks.map((t) => `<button class="mission ${done.includes(t.id) ? 'done' : ''} ${justDone === t.id ? 'just' : ''}" data-act="task" data-id="${t.id}"><span class="box">${done.includes(t.id) ? IC.check : ''}</span><span style="flex:1"><div class="t">${t.text}</div><div class="row" style="gap:6px;margin-top:5px"><span class="tag" style="color:${PILLARS[t.p].c};border-color:${PILLARS[t.p].c}55">${PILLARS[t.p].code}</span><span class="hint" style="font-size:12px">${t.why ? esc(t.why) : PILLARS[t.p].name}</span></div></span><span class="xp">+10 XP</span></button>`).join('')}
-    <button class="mission charm ${cmDone ? 'done' : ''} ${justDone === 'char' ? 'just' : ''}" data-act="char"><span class="box">${cmDone ? IC.check : ''}</span><span style="flex:1"><div class="t">${cm[1]}</div><div class="row" style="gap:6px;margin-top:5px"><span class="tag" style="color:#b79cff;border-color:#b79cff55">${cm[0] === 'soc' ? 'SOCIAL' : 'MIND'}</span><span class="hint" style="font-size:12px">Миссия ${cm[0] === 'soc' ? 'общения' : 'характера'}</span></div></span><span class="xp">+15 XP</span></button>
-    ${book ? `<button class="mission bonus ${pagesToday >= 10 ? 'done' : ''} ${justDone === 'pages' ? 'just' : ''}" data-act="pages"><span class="box">${pagesToday >= 10 ? IC.check : ''}</span><span style="flex:1"><div class="t" style="${pagesToday >= 10 ? 'text-decoration:none;color:var(--text)' : ''}">10 страниц «${book.t}»</div><div class="row" style="gap:6px;margin-top:5px"><span class="tag" style="color:#7dd3fc;border-color:#7dd3fc55">READ</span><span class="hint" style="font-size:12px">сегодня ${pagesToday} стр. · тапни +10</span></div></span><span class="xp">+5 XP</span></button>` : ''}
+    ${tasks.map((t) => `<button class="mission ${done.includes(t.id) ? 'done' : ''} ${justDone === t.id ? 'just' : ''}" data-act="task" data-id="${t.id}"><span class="box">${done.includes(t.id) ? IC.check : ''}</span><span style="flex:1"><div class="t">${t.text}</div><div class="row" style="gap:6px;margin-top:5px"><span class="hint" style="font-size:12px">${t.why ? esc(t.why) : PILLARS[t.p].name}</span></div></span><span class="xp">+10 XP</span></button>`).join('')}
+    <button class="mission charm ${cmDone ? 'done' : ''} ${justDone === 'char' ? 'just' : ''}" data-act="char"><span class="box">${cmDone ? IC.check : ''}</span><span style="flex:1"><div class="t">${cm[1]}</div><div class="row" style="gap:6px;margin-top:5px"><span class="hint" style="font-size:12px">Миссия ${cm[0] === 'soc' ? 'общения' : 'характера'}</span></div></span><span class="xp">+15 XP</span></button>
+    ${book ? `<button class="mission bonus ${pagesToday >= 10 ? 'done' : ''} ${justDone === 'pages' ? 'just' : ''}" data-act="pages"><span class="box">${pagesToday >= 10 ? IC.check : ''}</span><span style="flex:1"><div class="t" style="${pagesToday >= 10 ? 'text-decoration:none;color:var(--text)' : ''}">10 страниц «${book.t}»</div><div class="row" style="gap:6px;margin-top:5px"><span class="hint" style="font-size:12px">сегодня ${pagesToday} стр. · тапни +10</span></div></span><span class="xp">+5 XP</span></button>` : ''}
     ${planCard()}
     <button type="button" class="card row" data-act="lib" data-v="perfume" style="width:100%;text-align:left"><div class="iconbtn" style="font-size:20px">🧪</div><div style="flex:1"><b>${S.perfume ? 'Твой парфюм' : 'Подбери свой парфюм'}</b><div class="hint">${S.perfume ? 'Пять ароматов под тебя · открыть' : `8 вопросов · ${PERFUMES.length} ароматов · +15 XP`}</div></div><span class="arrow">${IC.arrow}</span></button>
     ${routineCard()}
@@ -4697,14 +4693,14 @@ function readCard() {
     <button class="feature ig" data-act="open" data-kind="${isL ? 'lesson' : 'article'}" data-id="${it.id}">${cover(it, ck)}
       <div class="ig-top"><span class="ig-pill">${c ? c.name + ' · урок ' + k : it.tag}</span><span class="ig-pill">${it.min} мин</span><span class="ig-pill xp">+${isL ? 25 : 5} XP</span>${!isL && isNewArt(it) ? '<span class="ig-pill new">новое</span>' : ''}</div>
       <div class="ig-glass"><div class="disp">${it.t}</div><div class="ig-foot"><span class="pillbtn" style="background:#fff;color:#000">Читать <i>${IC.arrow}</i></span><span class="ig-dots"><i class="on"></i><i></i><i></i><i></i></span></div></div></button>
-    ${more.length ? `<div class="strip">${more.map((a) => `<button class="phcard" data-act="open" data-kind="article" data-id="${a.id}" style="text-align:left">${cover(a)}<span class="mono">[ ${a.tag} · ${a.min} мин ]</span><div style="font-weight:800;font-size:17px;line-height:1.2;margin-top:4px">${a.t}</div></button>`).join('')}</div>` : ''}`;
+    ${more.length ? `<div class="strip">${more.map((a) => `<button class="phcard" data-act="open" data-kind="article" data-id="${a.id}" style="text-align:left">${cover(a)}<div style="font-weight:800;font-size:17px;line-height:1.2;margin-top:4px">${a.t}</div></button>`).join('')}</div>` : ''}`;
 }
 // ---------- мой план ----------
 // ---------- тренировки: карточки и проигрыватель ----------
 function woHomeCard() {
   const my = myWorkout(), id = my ? 'my' : 'posture', w = my || WORKOUTS.posture, done = woDone(today()).includes(id);
   return `<button class="card wocard" data-act="wo-start" data-id="${id}" style="--c:${w.c}">
-    <div class="row between"><span class="mono">[ тренировка дня ]</span><span class="mono">${done ? 'сделано ✓' : '+20 XP'}</span></div>
+    <div class="row between" style="justify-content:flex-end"><span class="mono">${done ? 'сделано ✓' : '+20 XP'}</span></div>
     <div class="row" style="margin-top:8px;align-items:flex-end"><div style="flex:1"><div class="disp" style="font-size:30px">${w.t}</div>
       <div class="hint" style="margin-top:4px">${w.items.length} ${plural(w.items.length, 'упражнение', 'упражнения', 'упражнений')} · ~${woMin(w)} мин · с таймером</div></div>
       <div class="woprev">${[...new Set(w.items.map((it) => it[0]))].slice(0, 3).map((x) => `<span>${EX_ANIM[x]()}</span>`).join('')}</div></div>
@@ -4803,7 +4799,7 @@ function planCard() {
 function protoCard(a) {
   const pr = PROTOCOLS[a.id], t = protoToday(a), dn = pDone(today()), note = S.protos.notes && S.protos.notes[a.id], pl = PILLARS[pr.p];
   return `<div class="card proto">
-    <div class="row between"><span class="tag" style="color:${pl.c};border-color:${pl.c}55">${pl.code}</span><span class="mono">${t.over ? 'пройден' : `день ${t.k} из ${pr.days}`}</span></div>
+    <div class="row between" style="justify-content:flex-end"><span class="mono">${t.over ? 'пройден' : `день ${t.k} из ${pr.days}`}</span></div>
     <div class="disp" style="font-size:28px;margin:8px 0 4px">${pr.t}</div>
     <div class="pbar"><i style="width:${Math.min(1, t.k / pr.days) * 100}%;background:${pl.c}"></i></div>
     ${note ? `<div class="why"><b>Почему у тебя так:</b> ${note}</div>` : ''}
@@ -4823,7 +4819,7 @@ function renderPlan() {
   const shop = (S.plan && S.plan.shopping) || [];
   const st = { none: ['st-none', 'Заказать'], ordered: ['st-ordered', 'В пути'], arrived: ['st-arrived', 'Пришло'] };
   return `${topbar('План')}
-    <div class="banner"><span class="mono" style="color:var(--accent)">[ персональный план ]</span><div style="margin-top:4px">${iss.length ? `Собран по твоей анкете: ${iss.join(', ').toLowerCase()}.` : 'Ты не отметил проблем в анкете — выбери протокол ниже.'} Одновременно — не больше ${MAX_ACTIVE} протоколов, чтобы не распыляться.</div></div>
+    <div class="banner"><div style="margin-top:4px">${iss.length ? `Собран по твоей анкете: ${iss.join(', ').toLowerCase()}.` : 'Ты не отметил проблем в анкете — выбери протокол ниже.'} Одновременно — не больше ${MAX_ACTIVE} протоколов, чтобы не распыляться.</div></div>
     ${AI_ENDPOINT ? `<div class="card"><div class="row between"><b>Разбор по фото</b>${S.ai && !aiBusy ? '<button class="btn sm ghost" data-act="ai-open" style="height:32px">Открыть</button>' : ''}</div>
       <div class="hint" style="margin:4px 0 10px">${aiBusy ? 'Анализируем фото — это может занять до минуты…' : S.ai ? `Последний — ${human(S.ai.date)}. Новый разбор добавит в план то, что видно на фото.` : 'Разберём фото и добавим в план то, что реально видно.'}</div>
       ${aiBusy ? '<div class="spin" style="margin:6px auto"></div>' : `<button type="button" class="btn sm" data-act="photo" data-k="ai-photo">${S.ai ? 'Новый разбор' : 'Сделать разбор'}</button>`}</div>` : ''}
@@ -4841,7 +4837,7 @@ function renderPlan() {
     <div class="sec"><span class="disp">Библиотека</span><span class="chipline">[ читать ]</span></div>
     <div class="libgrid">${[['perfume', '🧪', 'Парфюм', S.perfume ? 'твой подбор и статьи' : `подбор из ${PERFUMES.length} ароматов под тебя`, ''], ['feed', '📰', 'Статьи', `${artsOpen().length} статей · новые каждую неделю`, 'street'], ['shelf', '🛒', 'Средства', 'подборка под бюджет', 'products'], ['basics', '🧴', 'Внешность', 'курс из уроков', 'mirror'], ['mind', '🧠', 'Характер', 'дисциплина и сила', 'read'], ['social', '🗣', 'Общение', 'уверенность с людьми', 'portrait'], ['books', '📚', 'Книги', 'полка и трекер', 'book']].map(([k, ic, n, h, img]) => `<button class="card libtile" data-act="lib" data-v="${k}">${pic(img, 400, 'ph lt')}<span class="ic">${ic}</span><b>${n}</b><small>${h}</small></button>`).join('')}</div>
     <details class="card allp"><summary><span class="disp" style="font-size:20px">Все протоколы</span><span class="mono">${PROTO_ORDER.length}</span></summary>
-    <div>${PROTO_ORDER.map((id) => { const pr = PROTOCOLS[id], st = status(id); return `<div class="item"><span class="tag" style="color:${PILLARS[pr.p].c};border-color:${PILLARS[pr.p].c}55">${PILLARS[pr.p].code}</span><div style="flex:1"><b style="font-size:14.5px">${pr.t}</b><div class="hint" style="font-size:12px">${pr.days} дней</div></div>${st && st !== 'пройден ✓' ? `<span class="mono">${st}</span>` : `<button class="btn sm ghost" data-act="proto-add" data-id="${id}" style="height:32px">${st ? 'Ещё раз' : 'Начать'}</button>`}</div>`; }).join('')}</div></details>`;
+    <div>${PROTO_ORDER.map((id) => { const pr = PROTOCOLS[id], st = status(id); return `<div class="item"><div style="flex:1"><b style="font-size:14.5px">${pr.t}</b><div class="hint" style="font-size:12px">${pr.days} дней</div></div>${st && st !== 'пройден ✓' ? `<span class="mono">${st}</span>` : `<button class="btn sm ghost" data-act="proto-add" data-id="${id}" style="height:32px">${st ? 'Ещё раз' : 'Начать'}</button>`}</div>`; }).join('')}</div></details>`;
 }
 function toggleStep(key) {
   const d = today(), id = key.split(':')[0], a = S.protos.active.find((x) => x.id === id);
@@ -4875,7 +4871,7 @@ function renderCollection() {
     return `<div class="cc ${i === 0 ? 'wide' : ''}" style="--c:${p.c}">
       <div class="gh">${p.code}</div>
       ${i === 0 ? `<div class="spray" style="font-size:54px;right:18px;top:30px;transform:rotate(-8deg);opacity:.55">${p.code.toLowerCase()}</div>` : ''}
-      <div class="row between"><span class="mono">[ ${p.code} ]</span><span class="mono">${tn}</span></div>
+      <div class="row between" style="justify-content:flex-end"><span class="mono">${tn}</span></div>
       <div class="disp">${p.name}<span class="tm">™</span></div>
       <div class="dots">${[1, 2, 3].map((k) => `<i class="${k <= td ? 'on' : ''}"></i>`).join('')}</div>
       <span class="mono">${x.n} ${plural(x.n, 'миссия', 'миссии', 'миссий')} · ${i < 2 ? 'главный фокус' : 'поддержка'}</span>
@@ -4887,7 +4883,7 @@ function renderCollection() {
 function renderCoach() {
   const card = () => {
     const j = journey().slice(0, 4);
-    return `<div class="mini"><span class="mono">[ твой путь ]</span><div class="tl" style="margin-top:12px">${j.map((x) => `<div class="d ${x.closed ? 'closed' : ''}" style="margin-bottom:12px"><span class="mono">День ${z(x.n)}</span><div class="dt" style="font-size:13.5px">${esc(x.title)}</div></div>`).join('')}</div><button class="btn sm" data-act="go" data-tab="path" style="width:100%;margin-top:4px">Открыть весь путь</button></div>`;
+    return `<div class="mini"><div class="tl" style="margin-top:12px">${j.map((x) => `<div class="d ${x.closed ? 'closed' : ''}" style="margin-bottom:12px"><span class="mono">День ${z(x.n)}</span><div class="dt" style="font-size:13.5px">${esc(x.title)}</div></div>`).join('')}</div><button class="btn sm" data-act="go" data-tab="path" style="width:100%;margin-top:4px">Открыть весь путь</button></div>`;
   };
   const total = S.chat.length;
   return `
@@ -4913,7 +4909,6 @@ function courseView(key) {
     <div class="hero" style="min-height:230px;background:none">
       ${art(c.art, c.word, COURSE_IMG[key])}
       <div class="in" style="min-height:230px;color:#fff">
-        <span class="mono">[ ${c.name} · ${c.lessons.length} уроков · ${c.lessons.reduce((a, l) => a + l.min, 0)} мин ]</span>
         <div class="bot"><div class="disp" style="font-size:44px">${c.title}</div>
         <div class="row between" style="margin-top:10px"><span class="mono">пройдено ${done}/${c.lessons.length}</span><span class="mono">+25 XP · 1 урок в день</span></div>
         <div class="track"><i style="width:${done / c.lessons.length * 100}%"></i></div></div>
@@ -4930,7 +4925,6 @@ function booksView() {
   return `
     <div class="card ink" style="position:relative;overflow:hidden">
       <div class="spray" style="font-size:64px;right:-6px;top:6px;transform:rotate(-8deg);opacity:.35">read</div>
-      <span class="mono">[ привычка чтения ]</span>
       ${cur ? `<div class="row" style="margin-top:12px;align-items:flex-start;position:relative"><div style="width:74px;flex:none">${bookCover(cur, true)}</div><div style="flex:1"><div class="mono">Читаю сейчас</div><div style="font-weight:800;font-size:17px;line-height:1.25;margin:4px 0">${cur.t}</div><div class="hint">${cur.a}</div></div></div>
         <div class="row between" style="margin-top:14px"><span class="mono">сегодня ${pt}/10 стр.</span><span class="mono">всего ${totalPages()} стр.</span></div>
         <div class="pbar" style="background:rgba(255,255,255,.12)"><i style="width:${Math.min(100, pt * 10)}%"></i></div>
@@ -4951,13 +4945,13 @@ function shelfView() {
   const slots = ['cleanser', 'moist', 'spf', ...(iss.some((i) => ['acne', 'oily'].includes(i)) ? ['serum', 'bha'] : []), ...(iss.includes('acne') ? ['acne'] : []), ...(iss.some((i) => ['puffy', 'darkcircles'].includes(i)) ? ['eyes'] : []), 'styling', ...(iss.includes('dandruff') ? ['dandruff'] : []), ...(iss.includes('sweat') ? ['deo'] : [])];
   const mine = [...new Set(slots.map((s) => myPick(s)).filter(Boolean))];
   return `
-    <div class="phcard" style="min-height:200px">${pic('products', 900)}<span class="mono">[ проверенные средства ]</span><div class="disp" style="font-size:36px;margin-top:6px">Что купить<br>и не прогадать</div></div>
+    <div class="phcard" style="min-height:200px">${pic('products', 900)}<div class="disp" style="font-size:36px;margin-top:6px">Что купить<br>и не прогадать</div></div>
     <div class="banner" style="margin-bottom:12px">Не реклама и не выдумки: только средства, которые реально работают и продаются в России. Цены примерные — точные на маркетплейсе. Новое средство для кожи вводи по одному.</div>
     <div class="mono lbl">Цена за одно средство</div>
     <div class="seg" style="margin-bottom:16px">${[[700, 'до 700 ₽'], [1600, 'до 1 600'], [99999, 'любая']].map(([v, l]) => `<button class="${cap === v || (v === 700 && cap < 700) ? 'on' : ''}" data-act="shelf-cap" data-v="${v}">${l}</button>`).join('')}</div>
     ${mine.length ? `<div class="sec"><span class="disp">Под тебя</span><span class="chipline">[ по анкете и бюджету ]</span></div><div class="card">${mine.map((x) => prodCard(x)).join('')}</div>` : ''}
     ${SHELF_GROUPS.map(([pl, title, img]) => { const list = CATALOG.filter((x) => x.pl === pl && x.p <= Math.max(cap, 700)); return list.length ? `
-      <div class="phcard" style="min-height:130px;margin-top:18px">${pic(img, 800)}<span class="mono">[ ${PILLARS[pl].code} ]</span><div class="disp" style="font-size:30px">${title}</div></div>
+      <div class="phcard" style="min-height:130px;margin-top:18px">${pic(img, 800)}<div class="disp" style="font-size:30px">${title}</div></div>
       <div class="card">${list.map((x) => prodCard(x)).join('')}</div>` : ''; }).join('')}`;
 }
 function feedView() {
@@ -4966,11 +4960,11 @@ function feedView() {
   const list = [...open].sort((a, b) => (isNewArt(b) - isNewArt(a)) || (ra.includes(a.id) - ra.includes(b.id)) || ((b.wk || 0) - (a.wk || 0)) || (b.min - a.min));
   const [f, ...rest] = list, next = ARTICLES.filter((a) => (a.wk || 0) === weekNo() + 1).length, left = 7 - ((dayNum(today()) - 1) % 7);
   return `
-    <div class="banner"><span class="mono" style="color:var(--accent)">[ лента ]</span><div style="margin-top:4px">Каждую неделю — новые статьи.${next ? ` Через ${left} ${plural(left, 'день', 'дня', 'дней')} откроется ещё ${next}.` : ''}</div></div>
+    <div class="banner"><div style="margin-top:4px">Каждую неделю — новые статьи.${next ? ` Через ${left} ${plural(left, 'день', 'дня', 'дней')} откроется ещё ${next}.` : ''}</div></div>
     <button class="feature ig" data-act="open" data-kind="article" data-id="${f.id}">${cover(f)}
       <div class="ig-top"><span class="ig-pill">${f.tag}</span><span class="ig-pill">${f.min} мин</span><span class="ig-pill xp">+5 XP</span>${isNewArt(f) ? '<span class="ig-pill new">новое</span>' : ''}</div>
       <div class="ig-glass"><div class="disp">${f.t}</div><div class="ig-foot"><span class="pillbtn" style="background:#fff;color:#000">Читать <i>${IC.arrow}</i></span><span class="ig-dots"><i class="on"></i><i></i><i></i><i></i></span></div></div></button>
-    ${rest.map((a) => `<button class="acard" data-act="open" data-kind="article" data-id="${a.id}"><div class="thumb">${cover(a)}</div><div style="flex:1;padding:4px 4px 4px 0;display:flex;flex-direction:column"><span class="mono" style="color:${TAG_C[a.tag] || 'var(--hint)'}">[ ${a.tag} ]${ra.includes(a.id) ? ' · прочитано' : ''}${isNewArt(a) ? '<span class="newb">НОВОЕ</span>' : ''}</span><div class="t">${a.t}</div><div class="row between" style="margin-top:auto"><span class="hint" style="font-size:12px">${a.min} мин</span><span class="arrow" style="width:32px;height:32px">${IC.arrow}</span></div></div></button>`).join('')}`;
+    ${rest.map((a) => `<button class="acard" data-act="open" data-kind="article" data-id="${a.id}"><div class="thumb">${cover(a)}</div><div style="flex:1;padding:4px 4px 4px 0;display:flex;flex-direction:column"><span class="mono" style="color:${TAG_C[a.tag] || 'var(--hint)'}">${ra.includes(a.id) ? 'прочитано' : ''}${isNewArt(a) ? '<span class="newb">НОВОЕ</span>' : ''}</span><div class="t">${a.t}</div><div class="row between" style="margin-top:auto"><span class="hint" style="font-size:12px">${a.min} мин</span><span class="arrow" style="width:32px;height:32px">${IC.arrow}</span></div></div></button>`).join('')}`;
 }
 // ---------- парфюм: база и подбор ----------
 // Запись: [название, бренд, ценовой уровень 1–4, сезон (w тепло / c холод / a круглый год), громкость 1–3,
@@ -5494,7 +5488,7 @@ const pfLinks = (p) => { const q = encodeURIComponent(p[1] + ' ' + p[0]); return
 function pfCard(r, i, label) {
   const p = r.p, hero = i === 0;
   return `<div class="card pfc ${hero ? 'pf-hero' : ''}" style="--pc:${['#d4ff1a', '#1fdcff', '#ff4fa3', '#8b5cff', '#ffb23d'][i % 5]}">
-    <div class="row between"><span class="mono">${label || (hero ? '[ твой аромат ]' : '[ вариант ' + (i + 1) + ' ]')}</span><span class="pf-pct">${r.pct}%</span></div>
+    <div class="row between" style="justify-content:flex-end"><span class="pf-pct">${r.pct}%</span></div>
     <div class="mono" style="margin-top:12px;color:var(--pc)">${p[1]}</div>
     <div class="disp" style="font-size:${hero ? 34 : 26}px;margin-top:2px">${p[0]}</div>
     <p style="margin:10px 0 0;font-size:14.5px;line-height:1.5">${p[11]}</p>
@@ -5506,20 +5500,20 @@ function pfCard(r, i, label) {
 function perfumeView() {
   const arts = ARTICLES.filter((x) => x.tag === 'Парфюм'), ra = S.articles || [];
   const artList = `<div class="sec"><span class="disp">Про парфюм</span><span class="chipline">[ ${arts.length} статей ]</span></div>
-    <div class="strip">${arts.map((x) => `<button class="phcard" data-act="open" data-kind="article" data-id="${x.id}" style="text-align:left">${cover(x)}<span class="mono">[ ${x.min} мин${ra.includes(x.id) ? ' · прочитано' : ''} ]</span><div style="font-weight:800;font-size:17px;line-height:1.2;margin-top:4px">${x.t}</div></button>`).join('')}</div>`;
+    <div class="strip">${arts.map((x) => `<button class="phcard" data-act="open" data-kind="article" data-id="${x.id}" style="text-align:left">${cover(x)}<div style="font-weight:800;font-size:17px;line-height:1.2;margin-top:4px">${x.t}</div></button>`).join('')}</div>`;
   // результат
   if (S.perfume && pf.step === 0 && !pf.again) {
     const { top, cheap } = pfPick(S.perfume);
-    return `<div class="banner"><span class="mono" style="color:var(--accent)">[ подбор готов ]</span><div style="margin-top:4px">Смотрели ${PERFUMES.length} ароматов. Проценты показывают, насколько аромат совпал с твоими ответами.</div></div>
+    return `<div class="banner"><div style="margin-top:4px">Смотрели ${PERFUMES.length} ароматов. Проценты показывают, насколько аромат совпал с твоими ответами.</div></div>
       ${top.map((r, i) => pfCard(r, i)).join('')}
-      ${cheap ? `<div class="sec"><span class="disp">Подешевле</span><span class="chipline">[ до 3 000 ₽ ]</span></div>${pfCard(cheap, 4, '[ бюджетно ]')}` : ''}
-      <div class="card"><span class="mono">[ перед покупкой ]</span>
+      ${cheap ? `<div class="sec"><span class="disp">Подешевле</span><span class="chipline">[ до 3 000 ₽ ]</span></div>${pfCard(cheap, 4)}` : ''}
+      <div class="card">
         <ul class="pf-why" style="margin-top:10px"><li>Сначала попробуй аромат на коже, а не на бумажке: на тебе он звучит иначе.</li><li>Подожди хотя бы полчаса. Первые минуты — это только верхние ноты.</li><li>Возьми отливант на 5–10 мл и поноси неделю, прежде чем брать флакон.</li><li>Покупай у проверенных продавцов: популярные ароматы подделывают чаще всего.</li></ul></div>
       <button class="btn ghost" data-act="pf-again">Пройти подбор заново</button>
       ${artList}`;
   }
   // старт
-  if (pf.step === 0) return `<div class="card pf-start"><span class="mono">[ подбор аромата ]</span>
+  if (pf.step === 0) return `<div class="card pf-start">
       <div class="disp" style="font-size:38px;margin:10px 0 8px">Найди свой запах</div>
       <p class="hint" style="margin:0 0 16px;font-size:14.5px">Восемь коротких вопросов: возраст, куда носишь, какие ноты нравятся, бюджет. В базе ${PERFUMES.length} популярных ароматов — выберем пять, которые подходят именно тебе. По пути расскажем факты о парфюмерии.</p>
       <button class="btn" data-act="pf-start">Подобрать аромат ${IC.send}</button></div>
@@ -5529,11 +5523,11 @@ function perfumeView() {
   const ready = st.skip || (st.multi ? cur.length > 0 : !!cur), last = pf.step === PF_STEPS.length;
   const opts = st.k === 'hate' ? st.o.filter(([v]) => !pf.like.includes(v)) : st.o;
   return `<div class="steps" style="margin-top:4px">${PF_STEPS.map((_, i) => `<i class="${i < pf.step ? 'on' : ''}"></i>`).join('')}</div>
-    <div class="mono">[ ${z(pf.step)} / ${z(PF_STEPS.length)} ]</div>
+    
     <div class="disp" style="font-size:34px;margin:8px 0 6px;text-wrap:balance">${st.q}</div>
     <p class="hint" style="margin:0 0 16px">${st.h}</p>
     <div class="chips pf-chips">${opts.map(([v, l]) => `<button class="chip ${sel(v) ? 'on' : ''}" data-act="pf-set" data-v="${v}">${l}</button>`).join('')}</div>
-    <div class="card pf-fact"><span class="mono">[ а ты знал? ]</span><p>${PF_FACTS[pf.step - 1][pf.fact % 3]}</p><button class="buy" data-act="pf-fact">Ещё факт →</button></div>
+    <div class="card pf-fact"><p>${PF_FACTS[pf.step - 1][pf.fact % 3]}</p><button class="buy" data-act="pf-fact">Ещё факт →</button></div>
     <div class="row" style="gap:10px;margin-top:6px"><button class="btn ghost" data-act="pf-back" style="width:auto;padding:0 20px">←</button><button class="btn" data-act="pf-next" ${ready ? '' : 'disabled'}>${last ? 'Показать ароматы' : st.skip && !cur.length ? 'Пропустить' : 'Дальше'}</button></div>`;
 }
 function renderJournal() {
@@ -5550,7 +5544,7 @@ function renderReader() {
     const b = BOOKS.find((x) => x.id === reader.id), s = (S.books || {})[b.id];
     return `<div class="reader">
       <div class="rcover" style="background:linear-gradient(160deg,${b.c[1]},${b.c[0]} 75%)"><div class="spray" style="font-size:90px;right:-10px;top:60px;transform:rotate(-8deg);opacity:.5">read</div><button class="close" data-act="close-reader" aria-label="Закрыть">${IC.close}</button>
-        <div class="in"><span class="mono" style="color:rgba(255,255,255,.8)">[ ${b.cat} · ${b.a} ]</span><div class="disp" style="font-size:44px;margin-top:8px">${b.t}</div></div></div>
+        <div class="in"><div class="disp" style="font-size:44px;margin-top:8px">${b.t}</div></div></div>
       <div class="body">
         <h3>Почему стоит прочитать</h3>
         ${b.why.map((p) => `<p>${p}</p>`).join('')}
@@ -5587,12 +5581,12 @@ function renderReader() {
   const count = cards.length + 2;
   return `<div class="reader st">
     <div class="st-top"><div class="st-bar" id="stBar">${'<i></i>'.repeat(count)}</div>
-      <div class="st-head"><span class="mono">[ ${label} · ${it.min} мин ]</span><button class="close" data-act="close-reader" aria-label="Закрыть">${IC.close}</button></div></div>
+      <div class="st-head"><button class="close" data-act="close-reader" aria-label="Закрыть">${IC.close}</button></div></div>
     <div class="st-track" id="stTrack">
       <section class="st-slide st-cover"><div class="st-card">${cover(it, course ? Object.keys(COURSES).find((key) => COURSES[key] === course) : '')}
-        <span class="mono">[ ${label} · ${cards.length} ${plural(cards.length, 'карточка', 'карточки', 'карточек')} ]</span><div class="disp" style="margin-top:8px">${it.t}</div><div class="st-swipe">Листай ${IC.arrow}</div></div></section>
+<div class="disp" style="margin-top:8px">${it.t}</div><div class="st-swipe">Листай ${IC.arrow}</div></div></section>
       ${cards.join('')}
-      <section class="st-slide st-end"><div class="st-card st-dark"><span class="mono">[ главное ]</span><h3>${heads.length ? 'Что забрать' : 'Готово'}</h3>
+      <section class="st-slide st-end"><div class="st-card st-dark"><h3>${heads.length ? 'Что забрать' : 'Готово'}</h3>
         ${heads.length ? `<ul>${heads.map((h) => `<li>${h}</li>`).join('')}</ul>` : '<p style="margin-bottom:22px">Ты долистал до конца.</p>'}
         ${isRead ? `<button class="btn ghost" data-act="close-reader">Прочитано ✓ · закрыть</button>` : `<button class="btn" data-act="mark-read" id="markBtn" disabled>Ещё немного…</button>`}
       </div></section>
@@ -5681,7 +5675,6 @@ function renderModal() {
   if (modal.kind === 'levelup') {
     const r = rank(), got = UNLOCKS.filter((u) => u.lvl > modal.from && u.lvl <= modal.lvl);
     return `<div class="modal"><div class="sheet"><div class="rays"></div>
-      <span class="mono" style="position:relative">[ новый уровень ]</span>
       <div class="lvnum">${z(modal.lvl)}</div>
       <div class="disp" style="font-size:30px;position:relative">${r.name}</div>
       ${got.length ? `<div class="mono" style="margin-top:18px;position:relative">Открыто</div>${got.map((u, i) => `<div class="unl" style="animation-delay:${0.5 + i * 0.12}s;position:relative"><span class="ui">${u.ic}</span><div><b>${u.name}</b><div class="hint" style="font-size:12.5px">${u.d}</div></div></div>`).join('')}` : `<div class="hint" style="margin-top:14px;position:relative">Продолжай — следующая награда уже близко.</div>`}
@@ -5692,7 +5685,6 @@ function renderModal() {
     const e = EXERCISES[modal.id];
     return `<div class="modal"><div class="sheet exs">
       <div class="pv">${EX_ANIM[modal.id]()}</div>
-      <span class="mono">[ упражнение ]</span>
       <div class="disp" style="font-size:28px;margin:4px 0 6px">${e.t}</div>
       <div class="when" style="font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--accent)">${e.dose}</div>
       <h4>Что даёт</h4><div style="font-size:14px;line-height:1.5">${e.gives}</div>
@@ -5716,7 +5708,6 @@ function renderModal() {
   }
   if (modal.kind === 'ai-bad') {
     return `<div class="modal"><div class="sheet">
-      <span class="mono">[ разбор не получился ]</span>
       <div style="font-size:15px;margin:10px 0 6px">${esc(modal.note)}</div>
       <div class="hint">Лучше всего: дневной свет из окна, лицо прямо, без фильтров, камера на уровне глаз. Лимит разборов при этом не сгорает впустую — просто попробуй ещё раз.</div>
       <button class="btn" data-act="modal-close" style="margin-top:16px">Ок</button>
@@ -5725,7 +5716,6 @@ function renderModal() {
   if (modal.kind === 'focus') {
     const L = 2 * Math.PI * 96, k = focusT.left / 1500;
     return `<div class="modal"><div class="sheet">
-      <span class="mono">[ фокус-сессия · 25 минут ]</span>
       <div class="ring"><svg viewBox="0 0 220 220"><circle cx="110" cy="110" r="96" fill="none" stroke="var(--line)" stroke-width="10"/><circle id="fring" cx="110" cy="110" r="96" fill="none" stroke="var(--accent)" stroke-width="10" stroke-linecap="round" stroke-dasharray="${L}" stroke-dashoffset="${L * (1 - k)}" style="transition:stroke-dashoffset 1s linear"/></svg><div class="tt" id="ftime">${z(Math.floor(focusT.left / 60))}:${z(focusT.left % 60)}</div></div>
       <div class="hint">Телефон экраном вниз. Одна задача. Без уведомлений.</div>
       <div class="row" style="margin-top:16px"><button class="btn" data-act="focus-toggle" id="fbtn" style="flex:1">${focusT.running ? 'Пауза' : 'Старт'}</button><button class="btn ghost" data-act="focus-close" style="flex:1">Закрыть</button></div>
@@ -5737,7 +5727,7 @@ function renderModal() {
       <div class="share hero" style="margin:0;border-radius:24px">${mountains('s')}${sparks(6)}
         <div class="spray" style="font-size:84px;left:-6px;top:150px;transform:rotate(-9deg)">MOGG</div>
         <div style="position:relative;z-index:2;display:flex;flex-direction:column;min-height:400px">
-          <div class="row between"><span class="mono">[ mogg™ ]</span><span class="mono">день ${z(dayNum(today()))}</span></div>
+          <div class="row between" style="justify-content:flex-end"><span class="mono">день ${z(dayNum(today()))}</span></div>
           <div class="disp" style="font-size:20px;margin-top:22px">Уровень</div>
           <div class="disp" style="font-size:110px;line-height:.85">${z(r.lvl)}</div>
           <div class="disp" style="font-size:26px">${r.name}</div>
@@ -5783,7 +5773,7 @@ function renderPath() {
     ${friendsCard()}
     ${proCard()}
     <div class="card ink" style="overflow:hidden">
-      <div class="row between"><span class="mono">[ уровень · дорожка наград ]</span><span class="mono">${r.x} XP</span></div>
+      <div class="row between" style="justify-content:flex-end"><span class="mono">${r.x} XP</span></div>
       <div class="row between" style="margin-top:6px"><div class="disp" style="font-size:40px">${r.name}</div><div class="disp" style="font-size:40px;color:var(--accent)">${z(r.lvl)}</div></div>
       <div class="pbar" style="background:rgba(255,255,255,.12)"><i style="width:${r.next ? (r.x - r.cur) / (r.next - r.cur) * 100 : 100}%"></i></div>
       <div class="hint" style="margin-top:8px">${r.next ? `До уровня ${r.lvl + 1} — ${r.next - r.x} XP` : 'Максимальный уровень'}</div>
@@ -5805,7 +5795,7 @@ function renderPath() {
       ${GOAL_AREAS.map(([a, ph], i) => { const g = (S.sgoals || [])[i] || {}; return `<div class="goal"><span class="mono gk">${a}</span><input value="${esc(g.text || '')}" placeholder="${ph}" data-input="goal" data-i="${i}" ${g.done ? 'disabled' : ''}><button class="box ${g.done ? 'on' : ''}" data-act="goal-done" data-i="${i}">${g.done ? IC.check : ''}</button></div>`; }).join('')}</div>` : ''}
     ${isOpen('mood') ? `<div class="card"><div class="row between"><span class="disp" style="font-size:22px">Настроение</span><span class="mono">14 дней</span></div><div class="mchart">${moodDays.map((d, i) => { const m = (S.mood || {})[d]; return `<i style="height:${m ? m * 20 : 6}%;background:${m ? ['#ff6b6b', '#ffb07c', '#ffd166', '#a3e635', '#6ee7c8'][m - 1] : 'var(--line)'};animation-delay:${i * 30}ms" title="${human(d)}"></i>`; }).join('')}</div></div>` : ''}
     <div class="card"><div class="row between"><span class="disp" style="font-size:22px">Активность</span><span class="mono">5 недель</span></div><div class="heat">${cells.join('')}</div></div>
-    <div class="card bars"><span class="disp" style="font-size:22px">Что качаем</span>${ps.map((x) => `<div class="b"><div class="row between"><span class="row" style="gap:8px"><span class="tag" style="color:${PILLARS[x.p].c};border-color:${PILLARS[x.p].c}55">${PILLARS[x.p].code}</span><span style="font-weight:600">${PILLARS[x.p].name}</span></span><b>${x.n}</b></div><div class="pbar"><i style="width:${x.n / max * 100}%;background:${PILLARS[x.p].c}"></i></div></div>`).join('')}</div>
+    <div class="card bars"><span class="disp" style="font-size:22px">Что качаем</span>${ps.map((x) => `<div class="b"><div class="row between"><span class="row" style="gap:8px"><span style="font-weight:600">${PILLARS[x.p].name}</span></span><b>${x.n}</b></div><div class="pbar"><i style="width:${x.n / max * 100}%;background:${PILLARS[x.p].c}"></i></div></div>`).join('')}</div>
     <div class="card"><div class="row between"><span class="disp" style="font-size:22px">До / после</span><button type="button" class="btn sm" data-act="photo" data-k="week-photo">+ Фото</button></div>
       ${ph.length >= 2 ? `<div class="cmp" style="margin-top:12px"><figure style="margin:0"><img src="${first.data}"><div class="mono" style="text-align:center;margin-top:6px">День ${z(dayNum(first.date))}</div></figure><figure style="margin:0"><img src="${last.data}"><div class="mono" style="text-align:center;margin-top:6px">День ${z(dayNum(last.date))}</div></figure></div>` : `<div class="hint" style="margin-top:10px">Нужно минимум 2 фото, чтобы появилось сравнение.</div>`}
       ${ph.length > 2 ? `<div class="grid3">${ph.map((p) => `<img src="${p.data}" alt="">`).join('')}</div>` : ''}
@@ -6218,7 +6208,7 @@ function photoSheet(kind) {
   pui = { kind, facing: kind === 'w-item' ? 'environment' : 'user' };
   const w = document.createElement('div');
   w.id = 'photoUI'; w.className = 'modal';
-  w.innerHTML = `<div class="sheet"><span class="mono">[ фото ]</span>
+  w.innerHTML = `<div class="sheet">
     <div class="disp" style="font-size:28px;margin:6px 0 4px">Откуда берём?</div>
     <div class="hint" style="margin-bottom:18px">${kind === 'w-item' ? 'Вещь целиком, на однотонном фоне — фон уберём сами' : 'Дневной свет, лицо прямо, без фильтров'}</div>
     <button class="btn" data-p="cam">📸 Сделать фото</button>
@@ -6877,7 +6867,6 @@ function auraCard() {
   return `<button class="card acard2" data-act="aura-info" style="${auraStyle(a)}">
     ${auraOrb(s)}
     <div class="ainfo">
-      <span class="mono">[ аура ]</span>
       <div class="aname">${a.name}${s ? ` · ${s} ${plural(s, 'день', 'дня', 'дней')}` : ''}</div>
       <div class="hint" style="font-size:12.5px">${!s ? 'Закрой 3 миссии сегодня — зажжёшь искру' : todayDone >= 3 ? (a.next ? `До «${a.next.name}» — ${a.left} ${plural(a.left, 'день', 'дня', 'дней')}` : 'Максимальная аура. Не теряй её') : `Сегодня ${todayDone}/3 — закрой день, чтобы аура не погасла`}</div>
       <div class="aweek">${week.map((w) => `<i class="${closed(w) ? 'on' : ''} ${w === d ? 'now' : ''}"></i>`).join('')}</div>
@@ -6970,7 +6959,6 @@ function trackersCard() {
 }
 function trkModal() {
   return `<div class="modal"><div class="sheet exs tsheet">
-    <span class="mono">[ трекеры ]</span>
     <div class="disp" style="font-size:28px;margin:4px 0 4px">Твоя статистика</div>
     <div class="hint" style="margin-bottom:12px">Цвет — сколько ты реально сделал. Тапни трекер, чтобы он был на главной.</div>
     ${TRK_ORDER.map((k) => `<button type="button" class="tpick ${k === trkMain() ? 'on' : ''}" data-act="trk-set" data-k="${k}">${trkBlock(k)}${k === trkMain() ? '<span class="tbadge">на главной</span>' : ''}</button>`).join('')}
@@ -6981,7 +6969,6 @@ function slLogModal() {
   const m = modal, pr = S.sleep && S.sleep.prog;
   const def = (h) => slHM(h);
   return `<div class="modal"><div class="sheet exs">
-    <span class="mono">[ сон ]</span>
     <div class="disp" style="font-size:28px;margin:4px 0 12px">Как ты спал?</div>
     <div class="mono lbl" style="margin-top:0">Утро какого дня</div>
     <input class="field" type="date" id="sl-d" value="${m.d || today()}" max="${today()}">
@@ -7046,7 +7033,7 @@ function shareStreak() {
 function storyCard() {
   const n = streak(); if (!n) return '';
   return `<div class="card storyc"><img src="${storyImg(n)}" alt="" loading="lazy">
-    <div style="flex:1;min-width:0"><span class="mono">[ серия · ${n} ${plural(n, 'день', 'дня', 'дней')} ]</span>
+    <div style="flex:1;min-width:0">
       <b>Похвастайся в истории</b><div class="hint">Скриншот серии сразу откроется в редакторе историй Telegram.</div>
       <button class="btn sm" data-act="story">📲 Выложить в историю</button></div></div>`;
 }
@@ -7054,7 +7041,7 @@ ACT.story = () => shareStreak();
 
 function auraModal() {
   const s = streak(), cur = auraOf(s);
-  return `<div class="modal"><div class="sheet exs"><span class="mono">[ аура ]</span>
+  return `<div class="modal"><div class="sheet exs">
     <div class="disp" style="font-size:28px;margin:6px 0 4px">Аура растёт от серии</div>
     <div class="hint" style="margin-bottom:12px">Каждый день, когда ты закрываешь 3 миссии, аура становится сильнее. Пропустил день — она гаснет, и всё сначала.</div>
     ${AURA.slice(1).map((a) => `<div class="arow ${a.tier === cur.tier ? 'on' : ''}" style="${auraStyle({ ...a, tier: AURA.indexOf(a) })}">${auraOrb(a.from, 'sm')}<div style="flex:1"><b>${a.name}</b><div class="hint" style="font-size:12px">с ${a.from} ${plural(a.from, 'дня', 'дней', 'дней')} подряд</div></div>${s >= a.from ? '<span class="check">' + IC.check + '</span>' : ''}</div>`).join('')}
@@ -7339,7 +7326,7 @@ setInterval(() => {
 
 // ---------- карточка монстрика на странице друга ----------
 function petCard(f, pt) {
-  if (!pt) return `<div class="card fpet"><span class="mono">[ ваш монстрик ]</span><div class="spin" style="margin:30px auto"></div></div>`;
+  if (!pt) return `<div class="card fpet"><div class="spin" style="margin:30px auto"></div></div>`;
   const st = pt.st, stg = petStage(st), left = pt.per - pt.today.me, xp = petXp(pt), lv = petLevel(xp);
   const own = petUnlocked(pt), wear = petWear(f.code, pt), best = Math.max(pt.best || 0, pt.streak || 0);
   const nextIt = PET_ITEMS.find((it) => it.d > best), h = new Date().getHours();
@@ -7352,7 +7339,7 @@ function petCard(f, pt) {
     : pt.today.me && !pt.today.friend ? `Ждём ${esc(f.name)} — когда вы оба дадите задание, начнётся серия`
       : !pt.today.me && pt.today.friend ? `${esc(f.name)} уже позаботился — твоя очередь, и серия пойдёт` : 'Дайте ему задания сегодня оба — начнётся серия';
   return `<div class="card fpet">
-    <div class="row between"><span class="mono">[ ваш монстрик ]</span><span class="plv">ур. ${lv.lvl}</span></div>
+    <div class="row between" style="justify-content:flex-end"><span class="plv">ур. ${lv.lvl}</span></div>
     <div class="pstage">${PET_STAGES[stg]}<span class="mono">вид ${stg + 1} из 6 · заботьтесь — станет лучше</span></div>
     <div class="pstreak2 ${s ? 'on' : ''}" style="${auraStyle(auraOf(s))}"><span class="pfire">${s ? '🔥' : '🕯️'}</span><div><div>${sline}</div>${nextIt ? `<div class="mono">${s ? `ещё ${nextIt.d - best} ${plural(nextIt.d - best, 'день', 'дня', 'дней')} → ${nextIt.ic} ${nextIt.n.toLowerCase()}` : `рекорд ${pt.best || 0} · за 3 дня — ${nextIt.ic} ${nextIt.n.toLowerCase()}`}</div>` : '<div class="mono">все вещи открыты 💎</div>'}</div></div>
     <button class="pbox" data-act="pet-tap" data-c="${f.code}" aria-label="Погладить монстрика"><span class="pbub"></span>${svg}</button>
@@ -7365,7 +7352,7 @@ function petCard(f, pt) {
     <div class="pitems">${PET_ITEMS.map((it) => { const ok = best >= it.d; return `<button class="${ok ? 'own' : ''} ${wear.includes(it.id) ? 'on' : ''}" ${ok ? `data-act="pet-wear" data-c="${f.code}" data-i="${it.id}"` : 'disabled'}><span>${ok ? it.ic : '🔒'}</span><b>${ok ? it.n : it.d + ' дн.'}</b></button>`; }).join('')}</div>
     <div class="hint" style="font-size:11.5px;margin-top:6px">Вещи открываются за рекорд серии и остаются навсегда. Тапни, чтобы снять или надеть.</div>
     ${pt.log.length ? `<div class="plog">${pt.log.slice(0, 4).map((l) => { const a = PET_ACTS.find((x) => x[0] === l.a) || ['', '•', l.a]; return `<div>${a[1]} ${l.me ? 'Ты' : esc(f.name)}: ${a[2].toLowerCase()}</div>`; }).join('')}</div>` : ''}
-    ${frDemo || DEV ? `<div class="pdev"><span class="mono">[ пример: все состояния ]</span><div>${Object.keys(PET_SCENES).map((k) => `<button data-act="pet-demo" data-k="${k}">${k}</button>`).join('')}</div><button class="btn sm ghost" data-act="pet-gal" style="margin-top:8px;width:100%">Все виды и уровни</button></div>` : ''}
+    ${frDemo || DEV ? `<div class="pdev"><div>${Object.keys(PET_SCENES).map((k) => `<button data-act="pet-demo" data-k="${k}">${k}</button>`).join('')}</div><button class="btn sm ghost" data-act="pet-gal" style="margin-top:8px;width:100%">Все виды и уровни</button></div>` : ''}
   </div>`;
 }
 ACT['pet-wear'] = (el) => {
@@ -7389,7 +7376,7 @@ function petGalModal() {
     ['Ночью спит', v(60), { lvl: 10, mood: 'sleep' }], ['Забыли о нём', v(8), { lvl: 4, mood: 'sad' }], ['Голова не варит', { skin: 40, body: 40, style: 40, mind: 10 }, { lvl: 5 }],
     ['Кожа плохая', { skin: 0, body: 60, style: 60, mind: 60 }, { lvl: 8 }], ['Пузико', { skin: 60, body: 0, style: 60, mind: 60 }, { lvl: 8 }]
   ];
-  return `<div class="modal"><div class="sheet exs"><span class="mono">[ монстрик ]</span>
+  return `<div class="modal"><div class="sheet exs">
     <div class="disp" style="font-size:26px;margin:6px 0 4px">Каким он бывает</div>
     <div class="hint" style="margin-bottom:10px">Вид — от заботы прямо сейчас, рост и рожки — от уровня, вещи — от серии.</div>
     <div class="pgal">${cards.map(([t, st, o]) => `<div><div class="pmini">${petSVG(st, { ...o, mini: true })}</div><span>${t}</span></div>`).join('')}</div>
@@ -7494,14 +7481,13 @@ function renderFriends() {
   const board = FR ? [{ me: true, code: me.code, name: 'Ты', stats: frStats() }, ...FR.friends].sort((a, b) => ((b.stats || {}).streak || 0) - ((a.stats || {}).streak || 0) || ((b.stats || {}).xp || 0) - ((a.stats || {}).xp || 0)) : [];
   return `<div class="wbar"><button class="wback" data-act="go" data-tab="me" aria-label="Назад">←</button><b>Друзья</b></div>
     ${!FR ? `<div class="card"><div class="spin" style="margin:10px auto"></div><div class="hint" style="text-align:center">Загружаю…</div></div>` : `
-    ${FR.incoming.length ? `<div class="card fin"><span class="mono">[ заявки · ${FR.incoming.length} ]</span>${FR.incoming.map((p) => row(p, `<div class="fbtns"><button class="btn sm" data-act="fr-yes" data-c="${p.code}">Принять</button><button class="btn sm ghost" data-act="fr-no" data-c="${p.code}" aria-label="Отклонить">✕</button></div>`)).join('')}</div>` : ''}
+    ${FR.incoming.length ? `<div class="card fin">${FR.incoming.map((p) => row(p, `<div class="fbtns"><button class="btn sm" data-act="fr-yes" data-c="${p.code}">Принять</button><button class="btn sm ghost" data-act="fr-no" data-c="${p.code}" aria-label="Отклонить">✕</button></div>`)).join('')}</div>` : ''}
     <div class="sec"><span class="disp">Рейтинг</span><span class="chipline">[ по ауре ]</span></div>
     <div class="card fboard">${board.length > 1 ? board.map((p, i) => { const st = p.stats || {}, a = auraOf(st.streak || 0); return `<button class="frank ${p.me ? 'me' : ''}" ${p.me ? '' : `data-act="fr-open" data-c="${p.code}"`}>
         <span class="fpos ${i < 3 ? 'p' + i : ''}">${i + 1}</span>${frAva(p)}
         <div class="fnm"><b>${esc(p.name)}</b><span class="mono">ур. ${st.lvl || 1} · ${esc(st.lname || '')}</span></div>
         <div class="fside">${auraOrb(st.streak || 0, 'xs')}${frDots(p.me ? doneOn(today()).length : frToday(st))}</div></button>`; }).join('') : '<div class="hint">Добавь друга — тут появится рейтинг: у кого аура дольше, кто сколько закрыл сегодня. А ещё у каждой пары будет свой монстрик.</div>'}</div>
     <div class="card fme">
-      <span class="mono">[ твой ID ]</span>
       <div class="row between" style="margin-top:6px"><div class="fbig">${me.code}</div><button class="btn sm" data-act="fr-copy">Скопировать</button></div>
       <form class="fadd" data-submit="fr-add"><input id="frIn" class="field" data-input="fr-in" value="${esc(frIn)}" placeholder="ID друга" maxlength="8" autocomplete="off" autocapitalize="characters" spellcheck="false"><button class="btn sm" id="frSend" ${ok ? '' : 'disabled'}>Кинуть заявку</button></form>
       <div class="hint" style="font-size:12px;margin-top:8px">Скинь свой ID другу или впиши его ID — заявка придёт ему в «Друзья».</div>
@@ -7717,7 +7703,7 @@ function factOrder() {
 }
 function factCard() {
   const k = (dayNum(today()) - 1 + factShift) % FACTS.length, [tag, text] = FACTS[factOrder()(k < 0 ? k + FACTS.length : k)];
-  return `<div class="card drop hot fact"><div class="row between"><span class="mono">[ факт дня · ${tag.toLowerCase()} ]</span><span class="mono">${z(((k % FACTS.length) + FACTS.length) % FACTS.length + 1)}/${FACTS.length}</span></div>
+  return `<div class="card drop hot fact"><div class="row between" style="justify-content:flex-end"><span class="mono">${z(((k % FACTS.length) + FACTS.length) % FACTS.length + 1)}/${FACTS.length}</span></div>
     <p>${text}</p><button class="buy" data-act="fact-next">Ещё факт →</button></div>`;
 }
 ACT['fact-next'] = () => { factShift++; haptic('light'); const el = document.querySelector('.fact'); if (el) el.outerHTML = factCard(); else render(); };
@@ -7769,7 +7755,7 @@ const pfTry = (p) => { const q = encodeURIComponent(p[1] + ' ' + p[0]); return [
 const pfLinksHtml = (p) => [...pfTry(p), ...pfLinks(p)].map(([l, u]) => `<a class="buy" data-ext href="${esc(u)}" target="_blank" rel="noopener">${l} ↗</a>`).join('');
 function pfDayCard() {
   const p = pfDay(), i = PERFUMES.indexOf(p), st = pfStory(p);
-  return `<div class="card pfday"><div class="row between"><span class="mono">[ парфюм дня ]</span><span class="mono">${human(today())}</span></div>
+  return `<div class="card pfday"><div class="row between" style="justify-content:flex-end"><span class="mono">${human(today())}</span></div>
     <div class="pfday-in">${pfPic(p, 'big')}
       <div style="min-width:0"><div class="mono" style="color:var(--accent)">${esc(p[1])}${pfNiche(p) ? ' · ниша' : ''}</div>
         <div class="disp" style="font-size:26px;line-height:1.05;margin-top:4px">${esc(p[0])}</div>
@@ -7788,7 +7774,7 @@ function pfGuru() {
 }
 function pfQuizCard() {
   const q = PF_QUIZ[pfDaySeed() % PF_QUIZ.length], ans = (S.pfqa || {})[today()], g = pfGuru();
-  return `<div class="card pfquiz"><div class="row between"><span class="mono">[ вопрос дня ]</span><span class="mono" style="color:var(--accent)">${g.name}${g.next ? ` · ${g.pts}/${g.next[0]}` : ''}</span></div>
+  return `<div class="card pfquiz"><div class="row between" style="justify-content:flex-end"><span class="mono" style="color:var(--accent)">${g.name}${g.next ? ` · ${g.pts}/${g.next[0]}` : ''}</span></div>
     <div class="track" style="margin-top:8px"><i style="width:${g.pct}%"></i></div>
     <b style="display:block;font-size:17px;margin:14px 0 10px;line-height:1.3">${esc(q[0])}</b>
     ${q[1].map((a, k) => { const st = ans == null ? '' : k === q[2] ? 'ok' : k === ans ? 'bad' : 'dim'; return `<button class="pfans ${st}" data-act="pf-ans" data-k="${k}" ${ans == null ? '' : 'disabled'}>${esc(a)}</button>`; }).join('')}
@@ -7833,7 +7819,6 @@ function renderPerfume() {
   return `${topbar('Парфюм')}
     <div class="card pfhero">
       <div class="pfhero-bottles">${['Aventus', 'Baccarat Rouge 540', 'Santal 33'].map((n) => { const p = PERFUMES.find((x) => x[0] === n); return p ? pfPic(p, 'sm') : ''; }).join('')}</div>
-      <span class="mono">[ подбор аромата ]</span>
       <div class="disp" style="font-size:34px;margin:8px 0 6px">${res ? 'Твой запах найден' : 'Найди свой запах'}</div>
       <p class="hint" style="margin:0 0 14px;font-size:14px">${res ? 'Можно пройти заново — например, на лето или для свиданий.' : `Восемь коротких вопросов: куда носишь, какие ноты нравятся, бюджет. В базе ${PERFUMES.length} ароматов.`}</p>
       <button class="btn" data-act="${res ? 'pf-again' : 'pf-start'}">${res ? 'Подобрать заново' : 'Подобрать аромат'} ${IC.send}</button>
@@ -7852,7 +7837,7 @@ function renderPerfume() {
     <div class="pfgrid">${list.slice(0, pfMore).map((p) => pfTile(p)).join('')}</div>
     ${list.length > pfMore ? `<button class="btn ghost" data-act="pf-more" style="margin-top:4px">Показать ещё · ${list.length - pfMore}</button>` : ''}
     <div class="sec"><span class="disp">Про парфюм</span><span class="chipline">[ ${arts.length} статей ]</span></div>
-    <div class="strip">${arts.map((x) => `<button class="phcard" data-act="open" data-kind="article" data-id="${x.id}" style="text-align:left">${cover(x)}<span class="mono">[ ${x.min} мин${ra.includes(x.id) ? ' · прочитано' : ''} ]</span><div style="font-weight:800;font-size:17px;line-height:1.2;margin-top:4px">${x.t}</div></button>`).join('')}</div>`;
+    <div class="strip">${arts.map((x) => `<button class="phcard" data-act="open" data-kind="article" data-id="${x.id}" style="text-align:left">${cover(x)}<div style="font-weight:800;font-size:17px;line-height:1.2;margin-top:4px">${x.t}</div></button>`).join('')}</div>`;
 }
 Object.assign(ACT, {
   'pf-ans'(el) {
