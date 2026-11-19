@@ -231,7 +231,7 @@ button:hover .arrow{transform:rotate(45deg)}
 .acard .thumb{width:96px;flex:none;border-radius:14px;overflow:hidden;position:relative;min-height:104px}
 .acard .t{font-weight:800;font-size:15.5px;line-height:1.25;margin:6px 0 4px}
 .lesson{display:flex;align-items:center;gap:14px;width:100%;text-align:left;padding:16px;border-radius:20px;background:var(--card);border:1px solid var(--card-b);margin-bottom:8px}
-.lesson .num{font-family:var(--disp);font-size:40px;line-height:.9;color:var(--accent);width:52px;flex:none}
+.lesson .num{font-family:var(--disp);font-size:40px;line-height:.9;color:var(--accent);min-width:52px;flex:none;white-space:nowrap}
 .lesson.read .num{color:var(--hint)}
 .lesson .t{font-weight:800;font-size:15.5px;line-height:1.25}
 .check{width:24px;height:24px;border-radius:50%;background:var(--ok);color:#04130b;display:grid;place-items:center;flex:none}
@@ -1536,6 +1536,7 @@ button:active,label.card:active{transform:scale(.97)}
 .pfcats button.on{background:linear-gradient(135deg,#ff4fa3,#8b5cff);color:#fff;border-color:transparent}
 .pfsheet{max-height:86vh;overflow-y:auto}
 @media (max-width:360px){:root .tabs .tab{font-size:8.5px;letter-spacing:0}}
+:root .tabs .tab[data-tab="plan"]{flex:1.45;letter-spacing:0}
 /* ---------- минималистичный фон с душой: ровная подложка + два мягких свечения + лёгкое зерно ---------- */
 .aurora{display:none!important}
 :root body{background:var(--bgmin-top) linear-gradient(180deg,var(--bgmin-top) 0,var(--bgmin) 420px) no-repeat!important;background-color:var(--bgmin)!important;background-attachment:scroll!important}
@@ -1927,6 +1928,14 @@ button:active,label.card:active{transform:scale(.97)}
 /* категории-переключатели: бумажные ярлыки, выбранный — чёрная наклейка */
 :root:root :is(.pfcats,.sacats) button{background:var(--z-paper2)!important;color:var(--z-ink)!important;border:0!important;box-shadow:inset 0 0 0 1.5px var(--z-ink)!important}
 :root:root :is(.pfcats,.sacats) button.on{background:var(--z-ink)!important;color:var(--z-yellow)!important}
+:root:root .jt button.on{background:#17150F!important;color:#FFD43B!important}
+/* исправления читаемости и вылезаний */
+:root:root .backlink{color:var(--z-ink)!important}
+:root:root .top .lvl{min-width:66px;flex:0 1 auto}
+:root:root[data-theme="dark"] .lvl em{color:#B07F00!important}
+.books{grid-template-columns:repeat(2,minmax(0,1fr))}
+:root:root .book .cover .disp{font-size:16px;line-height:1.05;hyphens:auto;-webkit-hyphens:auto;overflow-wrap:break-word}
+:root:root .top.long .lvn{display:none}
 /* сегменты */
 :root:root .seg{background:var(--z-paper2)!important;box-shadow:inset 0 0 0 1.5px var(--z-ink)!important;border:0!important}
 :root:root .seg button.on{background:var(--z-ink)!important;color:var(--z-yellow)!important}
@@ -4188,7 +4197,7 @@ function renderRoutine() {
     <div class="row between" style="justify-content:flex-end"><button class="wox" data-act="modal-close" aria-label="Закрыть">✕</button></div>
     <div class="seg" style="margin:12px 0 14px">${[['am', '☀️ Утро'], ['pm', '🌙 Вечер']].map(([k, l]) => `<button class="${part === k ? 'on' : ''}" data-act="r-part" data-v="${k}">${l}</button>`).join('')}</div>
     ${st.map((s, i) => `<button class="rstep ${dn.includes(i) ? 'done' : ''}" data-act="r-step" data-i="${i}"><span class="rn">${dn.includes(i) ? '✓' : i + 1}</span><span style="flex:1"><div class="rt">${s.t}${s.opt ? ' <span class="hint" style="font-weight:400;font-size:12px">· по желанию</span>' : ''}</div><div class="rh">${s.h}</div>${s.pr ? `<div class="rh" style="color:var(--text);opacity:.85">→ ${s.pr.b} · ${s.pr.n}</div>` : ''}${s.sec && !dn.includes(i) ? `<div class="rtimer" data-act="r-timer" data-s="${s.sec}" data-i="${i}">⏱ запустить таймер · ${s.sec} с</div>` : ''}</span></button>`).join('')}
-    <div class="hint" style="margin-top:8px;font-size:12.5px">Отметь все шаги — +10 XP. Средства подобраны под твой бюджет, все варианты — в Плане → Средства.</div>
+    <div class="hint" style="margin-top:8px;font-size:12.5px">Отметь все шаги — +10 XP. Средства подобраны под твой бюджет, все варианты — во вкладке «Я» → Средства.</div>
     <button class="btn" data-act="modal-close" style="margin-top:12px">Готово</button>
   </div></div>`;
 }
@@ -4993,7 +5002,7 @@ function renderOnboarding() {
 // ---------- шапка ----------
 function topbar(title) {
   const r = rank();
-  return `<div class="top"><div class="logo">${IC.logo}<b>${title || 'mogg'}<span class="tm">™</span></b></div><span class="lvl ${isOpen('gold') ? 'gold' : ''}">LVL <em>${r.lvl}</em> · ${r.name}</span>${themeSwitch()}</div>`;
+  return `<div class="top${(title || '').length > 8 ? ' long' : ''}"><div class="logo">${IC.logo}<b${(title || '').length > 8 ? ' style="font-size:17px"' : ''}>${title || 'mogg'}<span class="tm">™</span></b></div><span class="lvl ${isOpen('gold') ? 'gold' : ''}">LVL <em>${r.lvl}</em><span class="lvn"> · ${r.name}</span></span>${themeSwitch()}</div>`;
 }
 
 // ---------- главная ----------
@@ -5202,31 +5211,34 @@ function protoCard(a) {
   </div>`;
 }
 function renderPlan() {
-  const P = S.protos, act = P.active, iss = (S.issues || []).map((k) => (ISSUES.find((x) => x[0] === k) || [])[1]).filter(Boolean);
+  // «Упражнения»: только то, что нужно делать по программе, тренировки и кусочек библиотеки
+  const P = S.protos, act = P.active;
   const exIds = [...new Set(act.flatMap((a) => PROTOCOLS[a.id].steps.filter((s) => s.x).map((s) => s.x)))];
   const status = (id) => act.some((a) => a.id === id) ? 'активен' : P.queue.includes(id) ? 'в очереди' : P.done.some((d) => d.id === id) ? 'пройден ✓' : '';
+  return `${topbar('Упражнения')}
+    <div class="sec"><span class="disp">По программе</span><span class="chipline">[ сегодня ]</span></div>
+    ${act.length ? act.map(protoCard).join('') : '<div class="card"><b>Активных протоколов нет</b><div class="hint" style="margin-top:4px">Выбери программу в списке «Все протоколы» внизу.</div></div>'}
+    ${routineCard()}
+    ${S.sleep && S.sleep.prog ? sleepCard(S.sleep.prog) : `<button type="button" class="card row" data-act="sl-open" style="width:100%;text-align:left"><div class="iconbtn" style="font-size:20px">🌙</div><div style="flex:1"><b>Подобрать программу сна</b><div class="hint">5 вопросов — и план отбоя под тебя</div></div></button>`}
+    ${woCards()}
+    ${S.train && S.train.prog ? trainCard(S.train.prog) : `<button type="button" class="card row" data-act="tr-open" style="width:100%;text-align:left"><div class="iconbtn" style="font-size:20px">🏋️</div><div style="flex:1"><b>Подобрать силовую программу</b><div class="hint">6 вопросов — дни, упражнения, подходы под тебя</div></div></button>`}
+    ${exIds.length ? `<div class="sec"><span class="disp">Мои упражнения</span><span class="chipline">[ ${exIds.length} ]</span></div>
+      <div class="exgrid">${exIds.map((id) => `<button class="excard" data-act="ex-open" data-x="${id}"><div class="pv">${EX_ANIM[id]()}</div><b>${EXERCISES[id].t}</b><small>${EXERCISES[id].dose}</small></button>`).join('')}</div>` : ''}
+    ${readCard()}
+    <button type="button" class="card row" data-act="lib" data-v="feed" style="width:100%;text-align:left"><div class="iconbtn" style="font-size:20px">📚</div><div style="flex:1"><b>Вся библиотека</b><div class="hint">${artsOpen().length} статей, курсы, книги и полка средств</div></div><span class="arrow">${IC.arrow}</span></button>
+    <details class="card allp"><summary><span class="disp" style="font-size:20px">Все протоколы</span><span class="mono">${PROTO_ORDER.length}</span></summary>
+    <div>${PROTO_ORDER.map((id) => { const pr = PROTOCOLS[id], st = status(id); return `<div class="item"><div style="flex:1"><b style="font-size:14.5px">${pr.t}</b><div class="hint" style="font-size:12px">${pr.days} дней</div></div>${st && st !== 'пройден ✓' ? `<span class="mono">${st}</span>` : `<button class="btn sm ghost" data-act="proto-add" data-id="${id}" style="height:32px">${st ? 'Ещё раз' : 'Начать'}</button>`}</div>`; }).join('')}</div></details>`;
+}
+// «Мой план» во вкладке «Я»: разбор по фото и список средств (переехали из бывшего «Плана»)
+function myPlanExtras() {
   const shop = (S.plan && S.plan.shopping) || [];
   const st = { none: ['st-none', 'Заказать'], ordered: ['st-ordered', 'В пути'], arrived: ['st-arrived', 'Пришло'] };
-  return `${topbar('План')}
-    <div class="banner"><div style="margin-top:4px">${iss.length ? `Собран по твоей анкете: ${iss.join(', ').toLowerCase()}.` : 'Ты не отметил проблем в анкете — выбери протокол ниже.'} Одновременно — не больше ${MAX_ACTIVE} протоколов, чтобы не распыляться.</div></div>
+  return `
     ${AI_ENDPOINT ? `<div class="card"><div class="row between"><b>Разбор по фото</b>${S.ai && !aiBusy ? '<button class="btn sm ghost" data-act="ai-open" style="height:32px">Открыть</button>' : ''}</div>
       <div class="hint" style="margin:4px 0 10px">${aiBusy ? 'Анализируем фото — это может занять до минуты…' : S.ai ? `Последний — ${human(S.ai.date)}. Новый разбор добавит в план то, что видно на фото.` : 'Разберём фото и добавим в план то, что реально видно.'}</div>
       ${aiBusy ? '<div class="spin" style="margin:6px auto"></div>' : `<button type="button" class="btn sm" data-act="photo" data-k="ai-photo">${S.ai ? 'Новый разбор' : 'Сделать разбор'}</button>`}</div>` : ''}
-    ${routineCard()}
-    ${S.sleep && S.sleep.prog ? sleepCard(S.sleep.prog) : `<button type="button" class="card row" data-act="sl-open" style="width:100%;text-align:left"><div class="iconbtn" style="font-size:20px">🌙</div><div style="flex:1"><b>Подобрать программу сна</b><div class="hint">5 вопросов — и план отбоя под тебя</div></div></button>`}
-    ${S.train && S.train.prog ? trainCard(S.train.prog) : `<button type="button" class="card row" data-act="tr-open" style="width:100%;text-align:left"><div class="iconbtn" style="font-size:20px">🏋️</div><div style="flex:1"><b>Подобрать силовую программу</b><div class="hint">6 вопросов — дни, упражнения, подходы под тебя</div></div></button>`}
-    <div class="sec"><span class="disp">Протоколы</span><span class="chipline">[ ${act.length} активн. ]</span></div>
-    ${act.length ? act.map(protoCard).join('') : '<div class="card"><b>Активных протоколов нет</b><div class="hint" style="margin-top:4px">Выбери один из списка внизу.</div></div>'}
-    ${woCards()}
-    ${exIds.length ? `<div class="sec"><span class="disp">Мои упражнения</span><span class="chipline">[ ${exIds.length} ]</span></div>
-      <div class="exgrid">${exIds.map((id) => `<button class="excard" data-act="ex-open" data-x="${id}"><div class="pv">${EX_ANIM[id]()}</div><b>${EXERCISES[id].t}</b><small>${EXERCISES[id].dose}</small></button>`).join('')}</div>` : ''}
-    ${P.queue.length ? `<div class="sec"><span class="disp">Дальше по плану</span><span class="chipline">[ очередь ]</span></div>
-      <div class="card">${P.queue.map((id) => `<div class="item"><div style="flex:1"><b>${PROTOCOLS[id].t}</b><div class="hint" style="font-size:12px">${PROTOCOLS[id].days} дней · начнётся, когда освободится место</div></div></div>`).join('')}</div>` : ''}
     ${shop.length ? `<div class="sec"><span class="disp">Средства</span><span class="chipline">[ тапни статус ]</span></div><div class="card">${shop.map((it, i) => { const sl = it.slot || (SHOP.find((s) => s.n === it.n) || {}).slot, x = it.pid ? CAT_BY[it.pid] : sl ? bestFor(sl, S.issues || [], S.budget || 0) : null; return `<div class="item" style="align-items:flex-start"><div style="flex:1"><div style="font-weight:600">${it.n}</div>${x ? `<div class="hint" style="font-size:12.5px">${x.b} · ${x.n} · ≈ ${x.p} ₽</div><div>${shopLinks(x).slice(0, 2).map(([l, u]) => `<a class="buy" data-ext href="${esc(u)}" target="_blank" rel="noopener">${l} ↗</a>`).join('')}</div>` : `<div class="hint">~${it.p} ₽</div>`}</div><button class="status ${st[it.st][0]}" data-act="shop" data-i="${i}">${st[it.st][1]}</button></div>`; }).join('')}<button class="btn sm ghost" data-act="lib" data-v="shelf" style="width:100%;margin-top:10px">Все средства под бюджет →</button></div>` : ''}
-    <div class="sec"><span class="disp">Библиотека</span><span class="chipline">[ читать ]</span></div>
-    <div class="libgrid">${[['perfume', '🧪', 'Парфюм', S.perfume ? 'твой подбор и статьи' : `подбор из ${PERFUMES.length} ароматов под тебя`, ''], ['feed', '📰', 'Статьи', `${artsOpen().length} статей · новые каждую неделю`, 'street'], ['shelf', '🛒', 'Средства', 'подборка под бюджет', 'products'], ['basics', '🧴', 'Внешность', 'курс из уроков', 'mirror'], ['mind', '🧠', 'Характер', 'дисциплина и сила', 'read'], ['social', '🗣', 'Общение', 'уверенность с людьми', 'portrait'], ['books', '📚', 'Книги', 'полка и трекер', 'book']].map(([k, ic, n, h, img]) => `<button class="card libtile" data-act="lib" data-v="${k}">${pic(img, 400, 'ph lt')}<span class="ic">${ic}</span><b>${n}</b><small>${h}</small></button>`).join('')}</div>
-    <details class="card allp"><summary><span class="disp" style="font-size:20px">Все протоколы</span><span class="mono">${PROTO_ORDER.length}</span></summary>
-    <div>${PROTO_ORDER.map((id) => { const pr = PROTOCOLS[id], st = status(id); return `<div class="item"><div style="flex:1"><b style="font-size:14.5px">${pr.t}</b><div class="hint" style="font-size:12px">${pr.days} дней</div></div>${st && st !== 'пройден ✓' ? `<span class="mono">${st}</span>` : `<button class="btn sm ghost" data-act="proto-add" data-id="${id}" style="height:32px">${st ? 'Ещё раз' : 'Начать'}</button>`}</div>`; }).join('')}</div></details>`;
+`;
 }
 function toggleStep(key) {
   const d = today(), id = key.split(':')[0], a = S.protos.active.find((x) => x.id === id);
@@ -5295,11 +5307,10 @@ function courseView(key) {
   const c = COURSES[key], read = S.lessons || [];
   const done = c.lessons.filter((l) => read.includes(l.id)).length;
   return `
-    <div class="hero" style="min-height:230px;background:none">
-      ${art(c.art, c.word, COURSE_IMG[key])}
+    <div class="hero" style="min-height:230px">
       <div class="in" style="min-height:230px;color:#fff">
-        <div class="bot"><div class="disp" style="font-size:44px">${c.title}</div>
-        <div class="row between" style="margin-top:10px"><span class="mono">пройдено ${done}/${c.lessons.length}</span><span class="mono">+25 XP · 1 урок в день</span></div>
+        <div class="bot"><div class="disp" style="font-size:34px;overflow-wrap:anywhere">${c.title}</div>
+        <div class="row between" style="margin-top:10px"><span class="mono">пройдено ${done}/${c.lessons.length}</span><span class="mono" style="padding-right:44px">+25 XP · 1 урок в день</span></div>
         <div class="track"><i style="width:${done / c.lessons.length * 100}%"></i></div></div>
       </div>
     </div>
@@ -5980,7 +5991,7 @@ function renderJournal() {
   const tabs = [['mind', 'Характер'], ['social', 'Общение'], ['books', 'Книги'], ['basics', 'Внешность'], ['shelf', 'Полка'], ['feed', 'Лента']];
   const body = COURSES[jtab] ? courseView(jtab) : jtab === 'books' ? booksView() : jtab === 'shelf' ? shelfView() : jtab === 'perfume' ? perfumeView() : feedView();
   return `${topbar('Библиотека')}
-    <button class="backlink" data-act="go" data-tab="plan">← План</button>
+    <button class="backlink" data-act="go" data-tab="plan">← Упражнения</button>
     <div class="jt">${tabs.map(([k, l]) => `<button class="${jtab === k ? 'on' : ''}" data-act="jtab" data-v="${k}">${l}</button>`).join('')}</div>
     ${body}`;
 }
@@ -6220,7 +6231,7 @@ function renderPath() {
     ${proCard()}
     <div class="card ink" style="overflow:hidden">
       <div class="row between" style="justify-content:flex-end"><span class="mono">${r.x} XP</span></div>
-      <div class="row between" style="margin-top:6px"><div class="disp" style="font-size:40px">${r.name}</div><div class="disp" style="font-size:40px;color:var(--accent)">${z(r.lvl)}</div></div>
+      <div class="row between" style="margin-top:6px;align-items:flex-end"><div class="disp" style="font-size:34px;min-width:0;flex:1;overflow-wrap:anywhere">${r.name}</div><div class="disp" style="font-size:34px;flex:none;color:var(--accent)">${z(r.lvl)}</div></div>
       <div class="pbar" style="background:rgba(255,255,255,.12)"><i style="width:${r.next ? (r.x - r.cur) / (r.next - r.cur) * 100 : 100}%"></i></div>
       <div class="hint" style="margin-top:8px">${r.next ? `До уровня ${r.lvl + 1} — ${r.next - r.x} XP` : 'Максимальный уровень'}</div>
       <div class="track-lv" id="lvtrack">${[...Array(MAX_LVL)].map((_, i) => { const L = i + 1, u = UNLOCKS.find((x) => x.lvl === L); return `<div class="node ${L < r.lvl ? 'past' : L === r.lvl ? 'now' : ''}"><div class="nb">${z(L)}</div><div class="nl">${u ? u.ic + ' ' + u.name : '+ опыт'}</div></div>`; }).join('')}</div>
@@ -6261,6 +6272,7 @@ function renderMe() {
     <div class="sec"><span class="disp">Коллекция<span class="tm">™</span></span><span class="chipline">[ ${S.plan.focus.length} линии ]</span></div>
     ${renderCollection()}
     <div style="height:12px"></div>
+    ${myPlanExtras()}
     ${AI_ENDPOINT ? remindCard() : ''}
     <div class="card"><div class="row between"><span class="disp" style="font-size:22px">Оформление</span><span class="mono">тема · снег · акцент</span></div>
       <div style="margin-top:14px">${themeSwitch(true)}</div>
@@ -6284,7 +6296,7 @@ function renderMe() {
 const TAB_PARENT = { journal: 'plan', path: 'me', friends: 'me' }; // подэкраны: какая вкладка внизу подсвечена и куда ведёт «Назад»
 function renderTabs() {
   const on = TAB_PARENT[tab] || tab;
-  return `<nav class="tabs"><div class="in">${[['home', 'Сегодня', IC.home], ['plan', 'План', IC.journal], ['wardrobe', 'Гардероб', IC.hanger], ['perfume', 'Парфюм', IC.perfume], ['coach', 'Чат', IC.coach], ['me', 'Я', IC.me]].map(([k, l, ic]) => `<button class="tab ${on === k ? 'on' : ''}" data-act="go" data-tab="${k}">${ic}${l}</button>`).join('')}</div></nav>`;
+  return `<nav class="tabs"><div class="in">${[['home', 'Сегодня', IC.home], ['plan', 'Упражнения', IC.bolt], ['wardrobe', 'Гардероб', IC.hanger], ['perfume', 'Парфюм', IC.perfume], ['coach', 'Чат', IC.coach], ['me', 'Я', IC.me]].map(([k, l, ic]) => `<button class="tab ${on === k ? 'on' : ''}" data-act="go" data-tab="${k}">${ic}${l}</button>`).join('')}</div></nav>`;
 }
 
 function render() {
