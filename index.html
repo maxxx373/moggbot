@@ -2067,6 +2067,39 @@ button:active,label.card:active{transform:scale(.97)}
 :root:root .sec .disp{background:linear-gradient(transparent 55%,#E6CF7E 55%,#E6CF7E 92%,transparent 92%)!important}
 :root:root[data-theme="dark"] .sec .disp{background:linear-gradient(transparent 58%,rgba(201,102,141,.55) 58%,rgba(201,102,141,.55) 90%,transparent 90%)!important}
 :root:root .hero .in::before{background:color-mix(in srgb,#E6CF7E 85%,transparent)!important}
+
+/* ============================================================
+   ЦВЕТ РАВНОМЕРНО ПО ВСЕМ ВКЛАДКАМ.
+   Четыре приглушённые краски ризографа: синяя, розовая, зелёная, терракота.
+   На каждой вкладке карточки идут чередой «синяя → чёрная → розовая → чёрная → зелёная → терракота»,
+   поэтому «План», «Гардероб», «Парфюм» и «Я» такие же живые, как «Сегодня».
+   ============================================================ */
+:root:root{
+  --z-blue:#4352A6; --z-pink:#B97291;
+  --z-bluebg:linear-gradient(160deg,rgba(255,255,255,.07),transparent 50%),linear-gradient(rgba(62,74,150,.4),rgba(62,74,150,.4)),var(--m-riso) 0 0/300px 300px;
+  --ink-pink:var(--z-dots),linear-gradient(160deg,rgba(186,114,145,.93),rgba(146,86,114,.95)),var(--m-board) 0 0/300px 300px;
+  --ink-green:var(--z-dots),linear-gradient(160deg,rgba(70,128,108,.93),rgba(47,96,80,.95)),var(--m-board) 0 0/300px 300px;
+  --ink-terra:var(--z-dots),linear-gradient(160deg,rgba(184,108,80,.93),rgba(143,80,58,.95)),var(--m-board) 0 0/300px 300px;
+}
+:root:root .hero{background:var(--z-dots),linear-gradient(rgba(62,74,150,.4),rgba(62,74,150,.4)),var(--m-riso) 0 0/300px 300px,var(--z-blue)!important}
+:root:root .chest{background:var(--ink-pink)!important}
+:root:root .card.fact{background:linear-gradient(180deg,rgba(255,255,255,.12),transparent 40%),#DDCB86!important}
+:root:root .sec .disp{background:linear-gradient(transparent 55%,#E0CF8A 55%,#E0CF8A 92%,transparent 92%)!important}
+:root:root .hero .in::before{background:color-mix(in srgb,#E0CF8A 85%,transparent)!important}
+
+/* череда красок на всех вкладках, кроме «Сегодня» (там свой порядок) */
+:root:root .app:not(.t-home) > :nth-child(6n+1 of .card):not(.pfhero,.sahero,.fact,.chest,.fme){--cardbg:var(--z-bluebg)!important;background:var(--z-bluebg)!important}
+:root:root .app:not(.t-home) > :nth-child(6n+3 of .card):not(.pfhero,.sahero,.fact,.chest,.fme){--cardbg:var(--ink-pink)!important;background:var(--ink-pink)!important}
+:root:root .app:not(.t-home) > :nth-child(6n+5 of .card):not(.pfhero,.sahero,.fact,.chest,.fme){--cardbg:var(--ink-green)!important;background:var(--ink-green)!important}
+:root:root .app:not(.t-home) > :nth-child(6n+6 of .card):not(.pfhero,.sahero,.fact,.chest,.fme){--cardbg:var(--ink-terra)!important;background:var(--ink-terra)!important}
+/* плитки внутри разделов — тоже в краске, по кругу */
+:root:root :nth-child(4n+1 of .pfkbi){background:var(--z-bluebg)!important}
+:root:root :nth-child(4n+2 of .pfkbi){background:var(--ink-terra)!important}
+:root:root :nth-child(4n+3 of .pfkbi){background:var(--ink-green)!important}
+:root:root :nth-child(4n of .pfkbi){background:var(--ink-pink)!important}
+/* текст на краске */
+:root:root .app:not(.t-home) > .card:is(:nth-child(6n+1 of .card),:nth-child(6n+3 of .card),:nth-child(6n+5 of .card),:nth-child(6n+6 of .card)) :is(.hint,small){color:rgba(255,255,255,.8)!important}
+:root:root .pfkbi small{color:rgba(255,255,255,.78)!important}
 </style>
 </head>
 <body>
@@ -2080,6 +2113,10 @@ button:active,label.card:active{transform:scale(.97)}
 const AI_ENDPOINT = 'https://functions.yandexcloud.net/d4ed49e9mdk8mqm9i4if';
 // Чат идёт через mogg-chat: он берёт ответ основного бэкенда и переписывает его в характере друга (Чилл, Критик, Сударь)
 const CHAT_ENDPOINT = 'https://d5dbq08e56ddpjl1h37u.0ly8ed4d.apigw.yandexcloud.net/chat';
+// Оплата Pro через Platega (карты, СБП, SberPay, крипта): ссылка на оплату, проверка и продление Pro
+const PAY_ENDPOINT = 'https://d5dbq08e56ddpjl1h37u.0ly8ed4d.apigw.yandexcloud.net/pay';
+let payReady = false;
+const payCheck = () => aiCall('check', {}, 20000, PAY_ENDPOINT).then(() => meRefresh(true));
 
 const tg = window.Telegram && window.Telegram.WebApp;
 try { tg && tg.ready(); tg && tg.expand(); } catch (e) {}
@@ -4611,8 +4648,8 @@ function renderPro() {
       ${[['📸', 'Разборы по фото', 'до 3 в день — следи, как меняются шкалы'], ['🏋️', 'Персональная тренировка', 'собрана под твой разбор'], ['💬', 'Тренер до 100 сообщений в день', 'вместо 10 бесплатных'], ['🔥', 'Всё бесплатное остаётся', 'миссии, протоколы, тренировки, статьи']].map(([i, t, h]) => `<div class="row" style="align-items:flex-start;margin-top:12px"><span style="font-size:22px">${i}</span><div><b>${t}</b><div class="hint" style="font-size:12.5px">${h}</div></div></div>`).join('')}
     </div>
     ${m.receipt ? `<div class="mono lbl">E-mail для чека</div><input class="field" id="payEmail" type="email" inputmode="email" autocomplete="email" placeholder="you@mail.ru" value="${esc(S.email || '')}">` : ''}
-    <button class="btn" data-act="pro-pay" style="margin-top:16px" ${m.pay_on === false ? 'disabled' : ''}>${m.pay_on === false ? 'Оплата скоро появится' : `Оплатить ${m.price} ₽`}</button>
-    <div class="hint" style="font-size:11.5px;margin-top:10px;text-align:center">Оплата через ЮKassa. Нажимая «Оплатить», ты принимаешь <a href="offer.html" style="color:var(--accent)">оферту</a> и <a href="privacy.html" style="color:var(--accent)">политику</a>.</div>
+    <button class="btn" data-act="pro-pay" style="margin-top:16px" ${payReady ? '' : 'disabled'}>${payReady ? `Оплатить ${m.price} ₽` : 'Оплата скоро появится'}</button>
+    <div class="hint" style="font-size:11.5px;margin-top:10px;text-align:center">Картой, по СБП, через SberPay или криптовалютой — через сервис Platega. Нажимая «Оплатить», ты принимаешь <a href="offer.html" style="color:var(--accent)">оферту</a> и <a href="privacy.html" style="color:var(--accent)">политику</a>.</div>
   </div></div>`;
 }
 async function proPay() {
@@ -4621,14 +4658,14 @@ async function proPay() {
   if (ME && ME.receipt && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) { toast('Впиши e-mail — туда придёт чек'); em && em.focus(); return; }
   if (email) { S.email = email; save(); }
   if (btn) { btn.disabled = true; btn.textContent = 'Открываю оплату…'; }
-  const r = await aiCall('pay', { email }, 20000);
+  const r = await aiCall('create', {}, 20000, PAY_ENDPOINT);
   if (!r || r.error || !r.url) { toast(r && r.error === 'pay_off' ? 'Оплата ещё не подключена' : 'Не получилось открыть оплату — попробуй ещё раз'); if (btn) { btn.disabled = false; btn.textContent = `Оплатить ${(ME && ME.price) || 149} ₽`; } return; }
   payWait = true; track('pay_open');
   try { if (tg && tg.openLink) tg.openLink(r.url); else location.href = r.url; } catch (e) { location.href = r.url; }
   if (btn) { btn.disabled = false; btn.textContent = 'Я оплатил — проверить'; btn.dataset.act = 'pro-check'; }
 }
 // Вернулся из оплаты — сразу проверяем, прошла ли она
-document.addEventListener('visibilitychange', () => { if (!document.hidden && payWait) { payWait = false; setTimeout(() => meRefresh(true), 800); } });
+document.addEventListener('visibilitychange', () => { if (!document.hidden && payWait) { payWait = false; setTimeout(payCheck, 800); } });
 async function sendChat(text) {
   text = text.trim();
   if (!text) return;
@@ -6182,7 +6219,6 @@ function renderPath() {
   const ph = (S.photos || []).filter((p) => p.data), first = ph[0], last = ph[ph.length - 1];
   const moodDays = [...Array(14)].map((_, i) => addDays(end, i - 13));
   return `${topbar('Я')}
-    ${friendsCard()}
     ${proCard()}
     <div class="card ink" style="overflow:hidden">
       <div class="row between" style="justify-content:flex-end"><span class="mono">${r.x} XP</span></div>
@@ -6265,8 +6301,8 @@ function render() {
     return;
   }
   if (ensureProtos()) save();
-  if (tab === 'path') tab = 'me'; // «Путь» теперь внутри «Я»
-  app.className = 'app' + (app.classList.contains('enter') ? ' enter' : '');
+  if (tab === 'path' || tab === 'friends') tab = 'me'; // «Путь» внутри «Я», друзей больше нет
+  app.className = 'app t-' + tab + (app.classList.contains('enter') ? ' enter' : '');
   const screens = { home: renderHome, coach: renderCoach, journal: renderJournal, path: renderPath, me: renderMe, plan: renderPlan, wardrobe: renderWardrobe, friends: renderFriends, perfume: renderPerfume };
   app.innerHTML = screens[tab]() + renderTabs();
   document.getElementById('overlay').innerHTML = renderReader();
@@ -6357,7 +6393,7 @@ const ACT = {
   photo(el) { photoSheet(el.dataset.k); },
   'pro-open'() { proOpen(); },
   'pro-pay'() { proPay(); },
-  'pro-check'(el) { el.disabled = true; el.textContent = 'Проверяю…'; meRefresh(true).then((r) => { if (!(r && r.pro && r.paywall)) { el.disabled = false; el.textContent = 'Я оплатил — проверить'; toast('Оплата пока не видна. Если списали деньги — подожди минуту и проверь снова'); } }); },
+  'pro-check'(el) { el.disabled = true; el.textContent = 'Проверяю…'; aiCall('check', {}, 20000, PAY_ENDPOINT).then(() => meRefresh(true)).then((r) => { if (!(r && r.pro && r.paywall)) { el.disabled = false; el.textContent = 'Я оплатил — проверить'; toast('Оплата пока не видна. Если списали деньги — подожди минуту и проверь снова'); } }); },
   snow() { S.snow = !S.snow; haptic('light'); save(); render(); toast(S.snow ? 'Пошёл снег ❄️ Он копится на кнопках' : 'Снег выключен'); },
   'r-open'(el) { modal = { kind: 'routine', part: el.dataset.v || rPart() }; haptic('light'); render(); },
   'r-part'(el) { clearInterval(rTimer); modal.part = el.dataset.v; haptic('light'); render(); },
@@ -6709,6 +6745,9 @@ async function usePhoto(kind, data) {
 function start() {
   let shown = false;
   // Кнопка «Оформить Pro» в боте открывает приложение сразу на окне подписки
+  // узнаём, подключена ли оплата
+  fetch(PAY_ENDPOINT).then((r) => r.json()).then((j) => { payReady = !!j.ready; if (modal && modal.kind === 'pro') render(); }).catch(() => {});
+  try { const sp = tg.initDataUnsafe.start_param; if (sp === 'paid') setTimeout(() => payCheck().then(() => toast('Проверили оплату — если Pro не включился, нажми «Я оплатил» через минуту')), 1500); else if (sp === 'payfail') setTimeout(() => toast('Оплата не прошла. Можно попробовать ещё раз'), 1500); } catch (e) {}
   let wantPro = /[?&]pro=1/.test(location.search) || (() => { try { return tg.initDataUnsafe.start_param === 'pro'; } catch (e) { return false; } })();
   const show = () => { if (shown) return; shown = true; render(); hydratePhotos(); if (wantPro && S.onboarded) { wantPro = false; track('pro_from_bot'); proOpen(); } };
   // Телефон пустой (новое устройство или память почистили) — даём облаку пару секунд, чтобы не показать онбординг зря
@@ -7990,8 +8029,8 @@ function frModal() {
     <button class="btn ghost" data-act="modal-close" style="margin-top:6px;background:none;border:0;height:44px;color:var(--hint)">Отмена</button></div></div>`;
 }
 // Подтягиваем друзей в фоне при запуске и отправляем свою статистику, чтобы друзья видели актуальную ауру
-setTimeout(() => { if (S.onboarded) frLoad(true); }, 1500);
-document.addEventListener('visibilitychange', () => { if (document.hidden && S.onboarded && FR && !frDemo) aiCall('friends', { stats: frStats() }, 8000).catch(() => {}); });
+// Друзья и монстрики убраны из приложения: ничего не загружаем и не отправляем
+
 
 // Обложки статей и уроков — фото с Unsplash (бесплатно, можно в коммерции). Не загрузилось — остаётся градиент со стикером.
 const COVER_IMG = {
