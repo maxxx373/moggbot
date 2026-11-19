@@ -1,6 +1,6 @@
 set -e
-cd /home/user/moggbot
+cd "$(dirname "$0")/.."
 cp index.html demo.html
-for x in p2 p3; do python3 demo-tools/$x.py demo.html; done
+for x in "$@"; do python3 demo-tools/$x.py demo.html; done
 python3 demo-tools/demomode.py demo.html
 echo built
