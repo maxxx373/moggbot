@@ -1980,18 +1980,11 @@ button:active,label.card:active{transform:scale(.97)}
 /* краска: неровный край букв, как при настоящей печати */
 :root:root :is(.hero .huge,.top .logo b,.sec .disp,.pfhero .disp,.sahero .disp,.h1){filter:url(#zink)}
 
-/* перелистывание: при смене вкладки страница переворачивается вокруг корешка слева */
+/* смена вкладки: экран просто мягко проявляется, без перелистывания */
 @keyframes screenIn{from{opacity:.999}to{opacity:1}}
-:root:root .app.enter{animation:screenIn .8s linear}
-:root:root .app.enter > :not(.tabs){animation:zTurn .8s cubic-bezier(.33,.75,.25,1) both;transform-origin:-4px 50%;backface-visibility:hidden}
-@keyframes zTurn{
-  0%{transform:perspective(1500px) rotateY(-74deg);filter:brightness(.55);opacity:.4}
-  55%{filter:brightness(.88);opacity:1}
-  100%{transform:none;filter:none;opacity:1}}
-/* тень от сгиба листа во время перелистывания */
-:root:root .app.enter::before{content:'';position:fixed;inset:0;z-index:40;pointer-events:none;
-  background:linear-gradient(90deg,rgba(23,21,15,.38) 0,rgba(23,21,15,.12) 18%,transparent 55%);animation:zShade .8s ease-out both}
-@keyframes zShade{from{opacity:1}to{opacity:0}}
+@keyframes scrFade{from{opacity:0}to{opacity:1}}
+:root:root .app.enter{animation:screenIn .18s linear}
+:root:root .app.enter > :not(.tabs){animation:scrFade .18s ease-out both}
 @media (prefers-reduced-motion:reduce){:root:root .hero .in{animation:none}}
 
 /* ============================================================
