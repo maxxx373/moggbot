@@ -231,7 +231,7 @@ button:hover .arrow{transform:rotate(45deg)}
 .acard .thumb{width:96px;flex:none;border-radius:14px;overflow:hidden;position:relative;min-height:104px}
 .acard .t{font-weight:800;font-size:15.5px;line-height:1.25;margin:6px 0 4px}
 .lesson{display:flex;align-items:center;gap:14px;width:100%;text-align:left;padding:16px;border-radius:20px;background:var(--card);border:1px solid var(--card-b);margin-bottom:8px}
-.lesson .num{font-family:var(--disp);font-size:40px;line-height:.9;color:var(--accent);width:52px;flex:none}
+.lesson .num{font-family:var(--disp);font-size:40px;line-height:.9;color:var(--accent);min-width:52px;flex:none;white-space:nowrap}
 .lesson.read .num{color:var(--hint)}
 .lesson .t{font-weight:800;font-size:15.5px;line-height:1.25}
 .check{width:24px;height:24px;border-radius:50%;background:var(--ok);color:#04130b;display:grid;place-items:center;flex:none}
@@ -1928,6 +1928,14 @@ button:active,label.card:active{transform:scale(.97)}
 /* категории-переключатели: бумажные ярлыки, выбранный — чёрная наклейка */
 :root:root :is(.pfcats,.sacats) button{background:var(--z-paper2)!important;color:var(--z-ink)!important;border:0!important;box-shadow:inset 0 0 0 1.5px var(--z-ink)!important}
 :root:root :is(.pfcats,.sacats) button.on{background:var(--z-ink)!important;color:var(--z-yellow)!important}
+:root:root .jt button.on{background:#17150F!important;color:#FFD43B!important}
+/* исправления читаемости и вылезаний */
+:root:root .backlink{color:var(--z-ink)!important}
+:root:root .top .lvl{min-width:66px;flex:0 1 auto}
+:root:root[data-theme="dark"] .lvl em{color:#B07F00!important}
+.books{grid-template-columns:repeat(2,minmax(0,1fr))}
+:root:root .book .cover .disp{font-size:16px;line-height:1.05;hyphens:auto;-webkit-hyphens:auto;overflow-wrap:break-word}
+:root:root .top.long .lvn{display:none}
 /* сегменты */
 :root:root .seg{background:var(--z-paper2)!important;box-shadow:inset 0 0 0 1.5px var(--z-ink)!important;border:0!important}
 :root:root .seg button.on{background:var(--z-ink)!important;color:var(--z-yellow)!important}
@@ -4994,7 +5002,7 @@ function renderOnboarding() {
 // ---------- шапка ----------
 function topbar(title) {
   const r = rank();
-  return `<div class="top"><div class="logo">${IC.logo}<b>${title || 'mogg'}<span class="tm">™</span></b></div><span class="lvl ${isOpen('gold') ? 'gold' : ''}">LVL <em>${r.lvl}</em> · ${r.name}</span>${themeSwitch()}</div>`;
+  return `<div class="top${(title || '').length > 8 ? ' long' : ''}"><div class="logo">${IC.logo}<b${(title || '').length > 8 ? ' style="font-size:17px"' : ''}>${title || 'mogg'}<span class="tm">™</span></b></div><span class="lvl ${isOpen('gold') ? 'gold' : ''}">LVL <em>${r.lvl}</em><span class="lvn"> · ${r.name}</span></span>${themeSwitch()}</div>`;
 }
 
 // ---------- главная ----------
@@ -5299,11 +5307,10 @@ function courseView(key) {
   const c = COURSES[key], read = S.lessons || [];
   const done = c.lessons.filter((l) => read.includes(l.id)).length;
   return `
-    <div class="hero" style="min-height:230px;background:none">
-      ${art(c.art, c.word, COURSE_IMG[key])}
+    <div class="hero" style="min-height:230px">
       <div class="in" style="min-height:230px;color:#fff">
-        <div class="bot"><div class="disp" style="font-size:44px">${c.title}</div>
-        <div class="row between" style="margin-top:10px"><span class="mono">пройдено ${done}/${c.lessons.length}</span><span class="mono">+25 XP · 1 урок в день</span></div>
+        <div class="bot"><div class="disp" style="font-size:34px;overflow-wrap:anywhere">${c.title}</div>
+        <div class="row between" style="margin-top:10px"><span class="mono">пройдено ${done}/${c.lessons.length}</span><span class="mono" style="padding-right:44px">+25 XP · 1 урок в день</span></div>
         <div class="track"><i style="width:${done / c.lessons.length * 100}%"></i></div></div>
       </div>
     </div>
@@ -6224,7 +6231,7 @@ function renderPath() {
     ${proCard()}
     <div class="card ink" style="overflow:hidden">
       <div class="row between" style="justify-content:flex-end"><span class="mono">${r.x} XP</span></div>
-      <div class="row between" style="margin-top:6px"><div class="disp" style="font-size:40px">${r.name}</div><div class="disp" style="font-size:40px;color:var(--accent)">${z(r.lvl)}</div></div>
+      <div class="row between" style="margin-top:6px;align-items:flex-end"><div class="disp" style="font-size:34px;min-width:0;flex:1;overflow-wrap:anywhere">${r.name}</div><div class="disp" style="font-size:34px;flex:none;color:var(--accent)">${z(r.lvl)}</div></div>
       <div class="pbar" style="background:rgba(255,255,255,.12)"><i style="width:${r.next ? (r.x - r.cur) / (r.next - r.cur) * 100 : 100}%"></i></div>
       <div class="hint" style="margin-top:8px">${r.next ? `До уровня ${r.lvl + 1} — ${r.next - r.x} XP` : 'Максимальный уровень'}</div>
       <div class="track-lv" id="lvtrack">${[...Array(MAX_LVL)].map((_, i) => { const L = i + 1, u = UNLOCKS.find((x) => x.lvl === L); return `<div class="node ${L < r.lvl ? 'past' : L === r.lvl ? 'now' : ''}"><div class="nb">${z(L)}</div><div class="nl">${u ? u.ic + ' ' + u.name : '+ опыт'}</div></div>`; }).join('')}</div>
