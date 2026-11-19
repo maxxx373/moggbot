@@ -3,6 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,maximum-scale=1">
+<!-- Политика безопасности: приложение может грузить код и отправлять данные только на свои и перечисленные адреса -->
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' https://telegram.org https://mc.yandex.ru https://yastatic.net https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: blob: https://fimgs.net https://assets.vogue.com https://images.unsplash.com https://mc.yandex.ru https://mc.yandex.com https://yastatic.net; media-src 'self' data: blob:; connect-src 'self' data: blob: https://d5dbq08e56ddpjl1h37u.0ly8ed4d.apigw.yandexcloud.net https://mc.yandex.ru https://mc.yandex.com https://cdn.jsdelivr.net; worker-src 'self' blob:; frame-src https://mc.yandex.ru https://mc.yandex.com; object-src 'none'; base-uri 'self'; form-action 'none'">
+<meta name="referrer" content="strict-origin-when-cross-origin">
 <title>mogg</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -2110,7 +2113,8 @@ button:active,label.card:active{transform:scale(.97)}
 <div class="toast" id="toast"></div>
 <script>
 // Адрес бэкенда с настоящей нейросетью (Yandex Cloud Functions). Пусто — тренер работает на локальных правилах.
-const AI_ENDPOINT = 'https://functions.yandexcloud.net/d4ed49e9mdk8mqm9i4if';
+// Бэкенд за шлюзом с защитой Smart Web Security (лимиты запросов, защита от ботов и DDoS)
+const AI_ENDPOINT = 'https://d5dbq08e56ddpjl1h37u.0ly8ed4d.apigw.yandexcloud.net/ai';
 // Чат идёт через mogg-chat: он берёт ответ основного бэкенда и переписывает его в характере друга (Чилл, Критик, Сударь)
 const CHAT_ENDPOINT = 'https://d5dbq08e56ddpjl1h37u.0ly8ed4d.apigw.yandexcloud.net/chat';
 // Оплата Pro через Platega (карты, СБП, SberPay, крипта): ссылка на оплату, проверка и продление Pro

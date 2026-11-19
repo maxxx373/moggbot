@@ -28,7 +28,12 @@ const BOT_LINK = process.env.BOT_LINK || 'https://t.me/justmoggbot';
 const API = 'https://app.platega.io';
 const DAY = 86400000;
 
-const CORS = { 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Headers': 'Content-Type', 'Access-Control-Allow-Methods': 'POST, OPTIONS' };
+const ORIGIN = process.env.APP_ORIGIN || 'https://maxxx373.github.io';
+const CORS = { 'Access-Control-Allow-Origin': ORIGIN, 'Vary': 'Origin', 'Access-Control-Allow-Headers': 'Content-Type', 'Access-Control-Allow-Methods': 'POST, OPTIONS' };
+const MAX_BODY = 32 * 1024;
+// сравнение секретов за постоянное время — по скорости ответа ключ не подобрать
+const safeEq = (a, b) => { const x = Buffer.from(String(a || '')), y = Buffer.from(String(b || '')); return x.length > 0 && x.length === y.length && crypto.timingSafeEqual(x, y); };
+const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const out = (obj, code) => ({ statusCode: code || 200, headers: { ...CORS, 'Content-Type': 'application/json; charset=utf-8' }, body: JSON.stringify(obj) });
 
 // ---------- проверка, что запрос пришёл из мини-аппа в Telegram ----------
@@ -38,7 +43,7 @@ function tgUser(init) {
   p.delete('hash');
   const dc = [...p.entries()].sort(([a], [b]) => (a < b ? -1 : 1)).map(([k, v]) => `${k}=${v}`).join('\n');
   const secret = crypto.createHmac('sha256', 'WebAppData').update(TOKEN).digest();
-  if (crypto.createHmac('sha256', secret).update(dc).digest('hex') !== hash) return null;
+  if (!safeEq(crypto.createHmac('sha256', secret).update(dc).digest('hex'), hash)) return null;
   if (Date.now() / 1000 - (+p.get('auth_date') || 0) > 7 * 86400) return null;
   try { return JSON.parse(p.get('user')); } catch (e) { return null; }
 }
@@ -75,12 +80,14 @@ module.exports.handler = async (event, context) => {
   if (event.httpMethod === 'GET') return out({ ok: true, service: 'mogg-pay', ready: !!(MERCHANT && SECRET && BUCKET), price: PRICE, days: DAYS });
   const iam = context && context.token && context.token.access_token;
   const h = event.headers || {}, hv = (k) => h[k] || h[k.toLowerCase()];
+  if ((event.body || '').length > MAX_BODY) return out({ error: 'too_big' }, 413);
   let b = {};
   try { b = JSON.parse(event.isBase64Encoded ? Buffer.from(event.body || '', 'base64').toString('utf8') : event.body || '{}'); } catch (e) { return out({ error: 'bad_json' }, 400); }
 
   // Колбэк от Platega: подпись — наш секрет в заголовке X-Secret
   if ((hv('User-Agent') || '').includes('Platega') || hv('X-Secret')) {
-    if (!SECRET || hv('X-Secret') !== SECRET) return { statusCode: 403, body: 'forbidden' };
+    if (!SECRET || !safeEq(hv('X-Secret'), SECRET) || (hv('X-MerchantId') && !safeEq(hv('X-MerchantId'), MERCHANT))) return { statusCode: 403, body: 'forbidden' };
+    if (!UUID.test(b.id || '')) return { statusCode: 400, body: 'bad id' };
     try {
       if (b.status === 'CONFIRMED' && /^\d+$/.test(b.payload || '')) await applyPaid(iam, b.id, b.payload, b.amount);
       else console.log('callback', b.status, b.id);

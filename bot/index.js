@@ -164,7 +164,9 @@ module.exports.handler = async (event, context) => {
     return json(200, { ok: true, bot: 'mogg', hint: 'Добавь ?setup=1 к ссылке, чтобы подключить бота' });
   }
   const h = event.headers || {};
-  if ((h['X-Telegram-Bot-Api-Secret-Token'] || h['x-telegram-bot-api-secret-token']) !== SECRET) return { statusCode: 403, body: 'forbidden' };
+  const got = String(h['X-Telegram-Bot-Api-Secret-Token'] || h['x-telegram-bot-api-secret-token'] || '');
+  if (got.length !== SECRET.length || !crypto.timingSafeEqual(Buffer.from(got), Buffer.from(SECRET))) return { statusCode: 403, body: 'forbidden' };
+  if ((event.body || '').length > 256 * 1024) return { statusCode: 200, body: 'ok' };
   let out = null;
   try {
     const body = event.isBase64Encoded ? Buffer.from(event.body || '', 'base64').toString('utf8') : event.body;

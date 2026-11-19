@@ -22,7 +22,11 @@ const PERSONAS = {
 // как характер называется в основном бэкенде (там свои старые режимы)
 const UP_TONE = { friend: 'friend', chill: 'soft', critic: 'critic', sudar: 'friend' };
 
-const CORS = { 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Headers': 'Content-Type', 'Access-Control-Allow-Methods': 'POST, OPTIONS' };
+// Запросы из браузера — только с домена приложения
+const ORIGIN = process.env.APP_ORIGIN || 'https://maxxx373.github.io';
+const CORS = { 'Access-Control-Allow-Origin': ORIGIN, 'Vary': 'Origin', 'Access-Control-Allow-Headers': 'Content-Type', 'Access-Control-Allow-Methods': 'POST, OPTIONS' };
+const MAX_BODY = 200 * 1024;
+const safeEq = (a, b) => { const x = Buffer.from(String(a)), y = Buffer.from(String(b)); return x.length === y.length && crypto.timingSafeEqual(x, y); };
 const out = (obj, code) => ({ statusCode: code || 200, headers: { ...CORS, 'Content-Type': 'application/json; charset=utf-8' }, body: JSON.stringify(obj) });
 
 // Подпись Telegram WebApp initData — чтобы функцию не дёргали посторонние
@@ -34,7 +38,7 @@ function validInit(init) {
   const secret = crypto.createHmac('sha256', 'WebAppData').update(TOKEN).digest();
   const calc = crypto.createHmac('sha256', secret).update(dc).digest('hex');
   const auth = +p.get('auth_date') || 0;
-  return calc === hash && Date.now() / 1000 - auth < 7 * 86400;
+  return safeEq(calc, hash) && Date.now() / 1000 - auth < 7 * 86400;
 }
 
 async function restyle(text, persona, iam) {
@@ -56,6 +60,7 @@ async function restyle(text, persona, iam) {
 module.exports.handler = async (event, context) => {
   if (event.httpMethod === 'OPTIONS') return { statusCode: 204, headers: CORS, body: '' };
   if (event.httpMethod === 'GET') return out({ ok: true, service: 'mogg-chat', personas: Object.keys(PERSONAS) });
+  if ((event.body || '').length > MAX_BODY) return out({ error: 'too_big' }, 413);
   let b = {};
   try { b = JSON.parse(event.isBase64Encoded ? Buffer.from(event.body || '', 'base64').toString('utf8') : event.body || '{}'); } catch (e) { return out({ error: 'bad_json' }, 400); }
   const persona = b.tone in UP_TONE ? b.tone : 'friend', iam = context && context.token && context.token.access_token;
@@ -65,13 +70,16 @@ module.exports.handler = async (event, context) => {
     return out({ text: await restyle(String(b.text || '').slice(0, 3000), persona, iam) });
   }
   if (b.action !== 'chat') return out({ error: 'bad_action' }, 400);
+  if (!validInit(b.initData)) return out({ error: 'not_telegram' }, 403);
+  if (typeof b.message !== 'string' || b.message.length > 4000) return out({ error: 'bad_message' }, 400);
 
   // основной ответ — от mogg-ai, со всеми его лимитами и проверками
   const up = { ...b, tone: UP_TONE[persona] };
   if (up.context) up.context = { ...up.context, tone: UP_TONE[persona] };
   let j;
   try {
-    const r = await fetch(UPSTREAM, { method: 'POST', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify(up), signal: AbortSignal.timeout(45000) });
+    // в основной бэкенд — с токеном сервисного аккаунта (работает и когда функция закрыта для публики)
+    const r = await fetch(UPSTREAM, { method: 'POST', headers: { 'Content-Type': 'text/plain', ...(iam ? { Authorization: 'Bearer ' + iam } : {}) }, body: JSON.stringify(up), signal: AbortSignal.timeout(45000) });
     j = await r.json();
   } catch (e) { return out({ error: 'upstream' }, 502); }
   if (j && j.text && persona !== 'friend') j.text = await restyle(j.text, persona, iam);
