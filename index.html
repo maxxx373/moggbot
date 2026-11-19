@@ -7,7 +7,7 @@
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Onest:wght@400;500;600;700;800&family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&family=Permanent+Marker&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Dela+Gothic+One&family=Oswald:wght@500;600;700&family=Onest:wght@400;500;600;700;800&family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&family=Permanent+Marker&display=swap" rel="stylesheet">
 <style>
 /* Две темы: светлая (по умолчанию) и тёмная. Все цвета — токены; тёмная тема только переопределяет их. */
 :root{
@@ -1808,10 +1808,251 @@ button:active,label.card:active{transform:scale(.97)}
 .sadict b{margin-right:6px}
 .sadict span{opacity:.75}
 .sasheet .opt{margin-bottom:8px}
+/* ============================================================
+   РЕДИЗАЙН «ЗИН»: mogg как журнал, отпечатанный на ризографе.
+   Бумага с зерном, три краски (ультрамарин, флуо-розовый, жёлтый маркер),
+   сдвиг печати у заголовков, полутон на статуе, билеты, штампы и наклейки.
+   Слой лежит поверх старой темы и меняет только облик, не раскладку.
+   ============================================================ */
+:root:root{
+  --z-paper:#ECE6D6; --z-paper2:#F8F4EA; --z-ink:#17150F; --z-ink2:#6A6354;
+  --z-blue:#2443F0; --z-navy:#1B2475; --z-pink:#FF3F86; --z-yellow:#FFD43B;
+  --z-grain:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .55 0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");
+  --z-dots:radial-gradient(rgba(255,255,255,.11) 1px,transparent 1.35px) 0 0/7px 7px;
+  --bg:var(--z-paper); --p-text:var(--z-ink); --p-hint:var(--z-ink2); --p-card:var(--z-paper2); --p-b:rgba(23,21,15,.16);
+  --dot:transparent; --orb:transparent;
+  --disp:'Dela Gothic One','Oswald',Impact,sans-serif;
+  --solid:var(--z-ink); --dk:#1B2475; --chip:var(--z-ink);
+  --cardbg:var(--z-dots),linear-gradient(160deg,#25308F 0%,#1B2475 60%,#151C5E 100%);
+  --cardsh:0 5px 0 rgba(23,21,15,.22);
+  --donebg:var(--cardbg); --donesh:var(--cardsh);
+  --neu:0 0 0 1.5px var(--z-ink),0 4px 0 var(--z-ink);
+  --tabbg:var(--z-ink); --tabc:#B9B2A2; --tabsh:0 6px 0 rgba(23,21,15,.25);
+  --c2:var(--z-ink); --c2b:#2a2722; --c2t:var(--z-paper2);
+  --inp:var(--z-paper2);
+}
+:root:root[data-theme="dark"]{
+  --z-paper:#100F0D; --z-paper2:#1C1A16; --z-ink:#EFE9DA; --z-ink2:#A29B8B;
+  --bg:var(--z-paper); --p-text:#EFE9DA; --p-hint:#A29B8B; --p-card:#1C1A16; --p-b:rgba(239,233,218,.14);
+  --cardbg:var(--z-dots),linear-gradient(160deg,#2A36A3 0%,#1F2985 60%,#19216D 100%);
+  --cardsh:0 5px 0 rgba(0,0,0,.6);
+  --neu:0 0 0 1.5px rgba(239,233,218,.85),0 4px 0 rgba(0,0,0,.7);
+  --tabbg:#EFE9DA; --tabc:#5F594C; --tabsh:0 6px 0 rgba(0,0,0,.6);
+  --c2:#EFE9DA; --c2b:#d9d2c2; --c2t:#17150F; --inp:#1C1A16;
+}
+/* бумага: зерно + едва видная клетка, вместо шаров и неона */
+:root:root body{background:var(--bg) linear-gradient(rgba(23,21,15,.035) 1px,transparent 1px) 0 0/100% 26px!important}
+:root:root[data-theme="dark"] body{background:var(--bg) linear-gradient(rgba(239,233,218,.03) 1px,transparent 1px) 0 0/100% 26px!important}
+:root:root body::after{background:var(--z-grain)!important;opacity:.32;mix-blend-mode:multiply;animation:none!important;z-index:30!important;pointer-events:none}
+:root:root[data-theme="dark"] body::after{opacity:.5;mix-blend-mode:screen;filter:invert(1)}
+:root:root body::before{display:none!important}
+
+/* шрифты */
+:root:root .disp,:root:root .h1{font-family:var(--disp)!important;font-weight:400!important;letter-spacing:-.01em!important;text-transform:uppercase}
+:root:root .mono{letter-spacing:.06em}
+
+/* карточки: синие оттиски на бумаге */
+:root:root :is(.card,.lesson,.rstep,.excard,.photo-drop,.modes button,.msg.ai,.rep-pt){border-radius:22px!important}
+:root:root .card .card,:root:root .card :is(.lesson,.rstep,.excard,.rep-pt,.modes button),:root:root .sheet :is(.card,.lesson,.rstep,.excard,.modes button){background:rgba(255,255,255,.07)!important;box-shadow:inset 0 0 0 1px rgba(255,255,255,.12)!important}
+:root:root .sheet{background:var(--z-dots),linear-gradient(170deg,#1F2A85,#161D62)!important;border:0!important;border-radius:28px 28px 0 0}
+:root:root .banner{background:var(--cardbg)!important;box-shadow:inset 4px 0 0 var(--z-yellow),var(--cardsh)!important}
+:root:root .chest{background:var(--z-dots),linear-gradient(120deg,var(--z-pink),#C21D63)!important}
+
+/* главный экран: статуя полутоном в синей краске, розовый сдвиг печати */
+:root:root .hero{background:var(--z-dots),radial-gradient(90% 70% at 100% 0%,#3A57FF,transparent 65%),var(--z-blue)!important;border-radius:28px!important;
+  box-shadow:6px 7px 0 var(--z-pink)!important;overflow:hidden}
+:root:root .hero::before{background:radial-gradient(rgba(23,21,15,.55) 1.1px,transparent 1.6px) 0 0/6px 6px!important;mix-blend-mode:multiply;
+  -webkit-mask:radial-gradient(70% 60% at 75% 55%,#000,transparent 75%)!important;mask:radial-gradient(70% 60% at 75% 55%,#000,transparent 75%)!important;z-index:2!important}
+:root:root .hero::after{background:url(mogg-statue.webp) 40px 100%/auto 82% no-repeat!important;filter:grayscale(1) contrast(1.35) brightness(1.05);mix-blend-mode:luminosity;opacity:.9!important}
+:root:root .hero .huge{font-size:66px!important;line-height:.98!important;margin-top:10px!important;text-shadow:4px 4px 0 var(--z-pink)!important}
+:root:root .hero .tm{color:var(--z-yellow)!important}
+:root:root .hero .track i,:root:root .track i{background:var(--z-yellow)!important}
+
+/* заголовки разделов: маркер, без звёздочки и курсора */
+:root:root .sec .disp{font-size:22px!important;position:relative;z-index:0;padding:0 4px;background:linear-gradient(transparent 55%,var(--z-yellow) 55%,var(--z-yellow) 92%,transparent 92%)!important;color:var(--z-ink)!important}
+:root:root[data-theme="dark"] .sec .disp{color:#EFE9DA!important;background:linear-gradient(transparent 58%,color-mix(in srgb,var(--z-pink) 70%,transparent) 58%,color-mix(in srgb,var(--z-pink) 70%,transparent) 90%,transparent 90%)!important}
+:root:root .sec .disp::before,:root:root .sec .disp::after{display:none!important}
+/* плашки рядом с заголовками — штампы */
+:root:root .sec .chipline{background:transparent!important;color:var(--z-pink)!important;box-shadow:inset 0 0 0 2px var(--z-pink)!important;border-radius:8px!important;transform:rotate(-3deg);font-weight:700}
+
+/* кнопки: жёлтый маркер, чернильный контур, «нажимаются» */
+:root:root .btn:not(.ghost){background:var(--z-yellow)!important;color:#17150F!important;border:2px solid #17150F!important;box-shadow:0 4px 0 #17150F!important;border-radius:16px!important;font-weight:800;transition:transform .08s,box-shadow .08s}
+:root:root .btn:not(.ghost):active{transform:translateY(3px);box-shadow:0 1px 0 #17150F!important}
+:root:root .btn.ghost{background:transparent!important;border:2px solid currentColor!important;box-shadow:none!important;border-radius:16px!important}
+:root:root .btn[disabled]{opacity:.45}
+
+/* нижнее меню: чёрная лента, активная вкладка — жёлтая наклейка */
+:root:root .tabs .in{background:var(--tabbg)!important;border-radius:24px!important;box-shadow:var(--tabsh)!important;padding:6px!important}
+:root:root .tabs .tab:not(.on),:root:root .tabs .tab:not(.on) svg{color:var(--tabc)!important}
+:root:root .tabs .tab.on{background:var(--z-yellow)!important;color:#17150F!important;box-shadow:none!important;border-radius:16px!important;transform:rotate(-3deg)}
+:root:root .tabs .tab.on svg{color:#17150F!important}
+
+/* миссии — билеты с перфорацией */
+:root:root .mission{background:var(--z-paper2)!important;border:0!important;border-radius:16px!important;box-shadow:var(--neu)!important;
+  -webkit-mask:radial-gradient(circle 8px at 0 50%,transparent 98%,#000) left/51% 100% no-repeat,radial-gradient(circle 8px at 100% 50%,transparent 98%,#000) right/51% 100% no-repeat;
+  mask:radial-gradient(circle 8px at 0 50%,transparent 98%,#000) left/51% 100% no-repeat,radial-gradient(circle 8px at 100% 50%,transparent 98%,#000) right/51% 100% no-repeat}
+:root:root .mission.done{background:var(--cardbg)!important}
+
+/* мелкие элементы на бумаге */
+:root:root :is(.acard,.opt,.chip,.seg,.jt button,.backlink,.iconbtn,.field,.gin,.buy){border-radius:14px!important}
+:root:root .lvl{background:var(--z-ink)!important;color:var(--z-paper2)!important;border-radius:12px!important;box-shadow:none!important}
+:root:root .lvl em{color:var(--z-yellow)!important}
+
+/* ---- правило печати: чёрная краска по умолчанию, синяя — главные блоки, розовая — подарки ---- */
+:root:root{--z-black:var(--z-dots),linear-gradient(165deg,#24211B 0%,#17150F 55%,#110F0B 100%);
+  --z-bluebg:var(--z-dots),radial-gradient(90% 70% at 100% 0%,#3A57FF,transparent 65%),#2443F0}
+:root:root :is(.card,.lesson,.rstep,.excard,.msg.ai){--cardbg:var(--z-black);--cardsh:0 5px 0 rgba(23,21,15,.2)}
+:root:root[data-theme="dark"] :is(.card,.lesson,.rstep,.excard,.msg.ai){--cardbg:var(--z-dots),linear-gradient(165deg,#2A2721 0%,#1D1B16 60%);--cardsh:0 5px 0 rgba(0,0,0,.55),inset 0 0 0 1px rgba(239,233,218,.08)}
+:root:root .card .card{--cardbg:rgba(255,255,255,.06)}
+:root:root{--dk:#17150F;--cardbase:#17150F}
+:root:root[data-theme="dark"]{--dk:#1D1B16;--cardbase:#1D1B16}
+/* синие оттиски — главные карточки разделов */
+:root:root :is(.pfhero,.sahero,.fme,.banner,.procard.cta){--cardbg:var(--z-bluebg)!important;background:var(--z-bluebg)!important;box-shadow:5px 6px 0 var(--z-pink)!important}
+:root:root :is(.pfhero,.sahero)::before{display:none!important}
+/* розовые — подарки и редкое */
+:root:root .chest .hint,:root:root .chest small{color:rgba(255,255,255,.88)!important}
+/* миссии и шаги внутри тёмных карточек — без бумаги */
+:root:root :is(.card,.sheet) .mission{background:rgba(255,255,255,.07)!important;-webkit-mask:none!important;mask:none!important;box-shadow:inset 0 0 0 1px rgba(255,255,255,.12)!important}
+/* бумажные мелочи: чипы и поля на бумаге с чернильным контуром */
+:root:root :is(.acard,.opt,.chip,.jt button,.backlink,.iconbtn,.field,.gin,.buy):not(:is(.card,.sheet) *){box-shadow:inset 0 0 0 1.5px var(--z-ink)!important;background:var(--z-paper2)!important;color:var(--z-ink)}
+/* чат: свои сообщения — жёлтые наклейки, сообщения друга — чёрные */
+:root:root .msg.me{background:var(--z-yellow)!important;color:#17150F!important;box-shadow:0 3px 0 #17150F!important;border:1.5px solid #17150F}
+:root:root .msg.ai{border:0!important}
+/* скотч на главной карточке */
+:root:root .hero .in::before{content:'';position:absolute;top:-8px;left:50%;width:96px;height:24px;background:color-mix(in srgb,var(--z-yellow) 88%,transparent);transform:translateX(-50%) rotate(-4deg);box-shadow:0 1px 0 rgba(0,0,0,.08);z-index:5}
+:root:root :is(.pfhero,.sahero,.fme,.banner,.procard.cta,.hero) :is(.hint,small){color:rgba(255,255,255,.82)!important}
+/* категории-переключатели: бумажные ярлыки, выбранный — чёрная наклейка */
+:root:root :is(.pfcats,.sacats) button{background:var(--z-paper2)!important;color:var(--z-ink)!important;border:0!important;box-shadow:inset 0 0 0 1.5px var(--z-ink)!important}
+:root:root :is(.pfcats,.sacats) button.on{background:var(--z-ink)!important;color:var(--z-yellow)!important}
+/* сегменты */
+:root:root .seg{background:var(--z-paper2)!important;box-shadow:inset 0 0 0 1.5px var(--z-ink)!important;border:0!important}
+:root:root .seg button.on{background:var(--z-ink)!important;color:var(--z-yellow)!important}
+:root:root :is(.card,.sheet) .seg{background:rgba(255,255,255,.06)!important;box-shadow:none!important}
+:root:root :is(.card,.sheet) .seg button.on{background:var(--z-yellow)!important;color:#17150F!important}
+/* первый экран: четыре строки заголовка должны влезать */
+:root:root .app.no-tabs .hero .huge{font-size:46px!important;line-height:1.02!important}
+/* тёмная тема: выбранное — жёлтая наклейка с чёрным текстом */
+:root:root[data-theme="dark"] :is(.seg,.pfcats,.sacats) button.on{background:var(--z-yellow)!important;color:#17150F!important}
+:root:root[data-theme="dark"] :is(.pfcats,.sacats) button:not(.on){background:#1C1A16!important;color:#EFE9DA!important;box-shadow:inset 0 0 0 1.5px rgba(239,233,218,.5)!important}
+:root:root[data-theme="dark"] .seg{background:#1C1A16!important;box-shadow:inset 0 0 0 1.5px rgba(239,233,218,.5)!important}
+:root:root[data-theme="dark"] .seg button:not(.on){color:#EFE9DA!important}
+/* плитки целей в анкете — чёрные оттиски, выбранная — своей краской */
+:root:root .tiles .tint{border-radius:20px!important}
+
+/* ============================================================
+   ЗИН: ФИЗИКА. Журнал в руках — бумага, вырезки, скотч, глянец, перелистывание.
+   ============================================================ */
+:root:root{
+  --z-grainL:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.75' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .16 0'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)'/%3E%3C/svg%3E");
+  --z-fibers:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='f'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.012 .35' numOctaves='2' seed='7'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .09 0'/%3E%3C/filter%3E%3Crect width='240' height='240' filter='url(%23f)'/%3E%3C/svg%3E");
+  --z-black:var(--z-grainL),var(--z-fibers),var(--z-dots),linear-gradient(165deg,#24211B 0%,#17150F 55%,#110F0B 100%);
+  --z-bluebg:var(--z-grainL),var(--z-fibers),var(--z-dots),radial-gradient(90% 70% at 100% 0%,#3A57FF,transparent 65%),#2443F0;
+}
+:root:root[data-theme="dark"] :is(.card,.lesson,.rstep,.excard,.msg.ai){--cardbg:var(--z-grainL),var(--z-fibers),var(--z-dots),linear-gradient(165deg,#2A2721 0%,#1D1B16 60%)}
+:root:root .hero{background:var(--z-grainL),var(--z-fibers),var(--z-dots),radial-gradient(90% 70% at 100% 0%,#3A57FF,transparent 65%),var(--z-blue)!important}
+:root:root .mission:not(:is(.card,.sheet) *){background:var(--z-paper2) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3'/%3E%3CfeColorMatrix values='0 0 0 0 .3 0 0 0 0 .25 0 0 0 0 .15 0 0 0 .07 0'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)'/%3E%3C/svg%3E")!important}
+
+/* вырезки, наклеенные от руки: лёгкий наклон, у каждой свой */
+:root:root #app > :is(.card,.mission,.hero,.banner,.feature):nth-of-type(4n+1){rotate:-.45deg}
+:root:root #app > :is(.card,.mission,.hero,.banner,.feature):nth-of-type(4n+2){rotate:.35deg}
+:root:root #app > :is(.card,.mission,.hero,.banner,.feature):nth-of-type(4n+3){rotate:-.2deg}
+:root:root #app > :is(.card,.mission,.hero,.banner,.feature):nth-of-type(4n){rotate:.5deg}
+
+/* скотч на главных блоках разделов */
+:root:root :is(.pfhero,.sahero,.banner){position:relative;overflow:visible!important}
+:root:root :is(.pfhero,.sahero,.banner)::after{content:'';position:absolute;top:-9px;right:28px;width:74px;height:22px;z-index:4;pointer-events:none;
+  background:linear-gradient(90deg,transparent 0 3px,rgba(255,255,255,.18) 3px 4px,transparent 4px) 0 0/7px 100%,color-mix(in srgb,#F4EFE2 72%,transparent);
+  transform:rotate(6deg);box-shadow:0 1px 2px rgba(0,0,0,.18);-webkit-mask:linear-gradient(90deg,transparent,#000 3px calc(100% - 3px),transparent);mask:linear-gradient(90deg,transparent,#000 3px calc(100% - 3px),transparent)}
+:root:root .banner::after{right:auto;left:22px;transform:rotate(-5deg)}
+
+/* обложка: глянцевый блик и загнутый уголок */
+:root:root .hero .in{background:linear-gradient(115deg,transparent 30%,rgba(255,255,255,.22) 46%,rgba(255,255,255,.05) 52%,transparent 64%) -150% 0/260% 100% no-repeat;animation:zGloss 7s ease-in-out 1.2s infinite}
+@keyframes zGloss{0%,62%{background-position:-150% 0}100%{background-position:250% 0}}
+:root:root .hero .in::after{content:'';position:absolute;right:0;bottom:0;width:46px;height:46px;z-index:6;pointer-events:none;
+  background:linear-gradient(315deg,var(--bg) 0 50%,transparent 50%),linear-gradient(135deg,#C9C2B0 0%,#F4EFE2 48%,transparent 50%);
+  border-top-left-radius:6px;filter:drop-shadow(-3px -3px 3px rgba(0,0,0,.28))}
+:root:root[data-theme="dark"] .hero .in::after{background:linear-gradient(315deg,var(--bg) 0 50%,transparent 50%),linear-gradient(135deg,#8E8775 0%,#D9D2C1 48%,transparent 50%)}
+:root:root .hero{border-bottom-right-radius:0!important}
+
+/* краска: неровный край букв, как при настоящей печати */
+:root:root :is(.hero .huge,.top .logo b,.sec .disp,.pfhero .disp,.sahero .disp,.h1){filter:url(#zink)}
+
+/* перелистывание: при смене вкладки страница переворачивается вокруг корешка слева */
+@keyframes screenIn{from{opacity:.999}to{opacity:1}}
+:root:root .app.enter{animation:screenIn .8s linear}
+:root:root .app.enter > :not(.tabs){animation:zTurn .8s cubic-bezier(.33,.75,.25,1) both;transform-origin:-4px 50%;backface-visibility:hidden}
+@keyframes zTurn{
+  0%{transform:perspective(1500px) rotateY(-74deg);filter:brightness(.55);opacity:.4}
+  55%{filter:brightness(.88);opacity:1}
+  100%{transform:none;filter:none;opacity:1}}
+/* тень от сгиба листа во время перелистывания */
+:root:root .app.enter::before{content:'';position:fixed;inset:0;z-index:40;pointer-events:none;
+  background:linear-gradient(90deg,rgba(23,21,15,.38) 0,rgba(23,21,15,.12) 18%,transparent 55%);animation:zShade .8s ease-out both}
+@keyframes zShade{from{opacity:1}to{opacity:0}}
+@media (prefers-reduced-motion:reduce){:root:root .hero .in{animation:none}}
+
+/* ============================================================
+   ЗИН: МАТЕРИАЛЫ. Коллаж из настоящих предметов на улице.
+   Рельеф рисуется освещением поверхности (SVG-фильтры), а не картинками:
+   бетон и мокрый асфальт, тиснёный картон, ризо-краска, термобумага чека,
+   глянец обложки, виниловые наклейки, тканевые бирки, рифлёная резина.
+   ============================================================ */
+:root:root{--m-concrete:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='320' height='320'%3E%3Cfilter id='a' x='0' y='0' width='100%25' height='100%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' seed='4' stitchTiles='stitch' result='n'/%3E%3CfeDiffuseLighting in='n' surfaceScale='1.4' lighting-color='%23F0EADC' result='l'%3E%3CfeDistantLight azimuth='225' elevation='64'/%3E%3C/feDiffuseLighting%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.55' numOctaves='1' seed='9' stitchTiles='stitch' result='s'/%3E%3CfeColorMatrix in='s' type='matrix' values='0 0 0 0 .42  0 0 0 0 .39  0 0 0 0 .34  0 0 0 -26 9.3' result='sp'/%3E%3CfeComposite in='sp' in2='l' operator='over'/%3E%3C/filter%3E%3Crect width='320' height='320' filter='url(%23a)'/%3E%3C/svg%3E");--m-asphalt:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='320' height='320'%3E%3Cfilter id='a' x='0' y='0' width='100%25' height='100%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' seed='6' stitchTiles='stitch' result='n'/%3E%3CfeDiffuseLighting in='n' surfaceScale='2.4' lighting-color='%2334322D' result='l'%3E%3CfeDistantLight azimuth='225' elevation='50'/%3E%3C/feDiffuseLighting%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.45' numOctaves='1' seed='2' stitchTiles='stitch' result='s'/%3E%3CfeColorMatrix in='s' type='matrix' values='0 0 0 0 .52  0 0 0 0 .5  0 0 0 0 .46  0 0 0 -32 10.1' result='sp'/%3E%3CfeComposite in='sp' in2='l' operator='over'/%3E%3C/filter%3E%3Crect width='320' height='320' filter='url(%23a)'/%3E%3C/svg%3E");--m-board:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='a' x='0' y='0' width='100%25' height='100%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.035 .55' numOctaves='3' seed='11' stitchTiles='stitch' result='n'/%3E%3CfeDiffuseLighting in='n' surfaceScale='2.6' lighting-color='%232E2B25' result='l'%3E%3CfeDistantLight azimuth='235' elevation='62'/%3E%3C/feDiffuseLighting%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' seed='3' stitchTiles='stitch' result='g'/%3E%3CfeColorMatrix in='g' type='matrix' values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .06 0' result='gg'/%3E%3CfeComposite in='gg' in2='l' operator='over'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23a)'/%3E%3C/svg%3E");--m-riso:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='a' x='0' y='0' width='100%25' height='100%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.012' numOctaves='3' seed='5' stitchTiles='stitch' result='m'/%3E%3CfeColorMatrix in='m' type='matrix' values='0 0 0 0 .11  0 0 0 0 .2  0 0 0 0 .93  0 0 0 0 1' result='base'/%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' seed='8' stitchTiles='stitch' result='n'/%3E%3CfeDiffuseLighting in='n' surfaceScale='1' lighting-color='%23fff' result='l'%3E%3CfeDistantLight azimuth='225' elevation='70'/%3E%3C/feDiffuseLighting%3E%3CfeBlend in='base' in2='l' mode='multiply' result='b1'/%3E%3CfeColorMatrix in='m' type='matrix' values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 .9 0 0 0 -.52' result='pale'/%3E%3CfeComposite in='pale' in2='b1' operator='over'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23a)'/%3E%3C/svg%3E");--m-receipt:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='260' height='260'%3E%3Cfilter id='a' x='0' y='0' width='100%25' height='100%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.6' numOctaves='3' seed='13' stitchTiles='stitch' result='n'/%3E%3CfeDiffuseLighting in='n' surfaceScale='.6' lighting-color='%23FBF9F3' result='l'%3E%3CfeDistantLight azimuth='225' elevation='72'/%3E%3C/feDiffuseLighting%3E%3C/filter%3E%3Crect width='260' height='260' filter='url(%23a)'/%3E%3C/svg%3E")}
+/* улица: бетон днём, мокрый асфальт ночью */
+:root:root body{background:var(--m-concrete) 0 0/320px 320px,var(--bg)!important}
+:root:root[data-theme="dark"] body{background:var(--m-asphalt) 0 0/320px 320px,var(--bg)!important}
+:root:root body::after{opacity:.12!important}
+/* чёрный тиснёный картон */
+:root:root :is(.card,.lesson,.rstep,.excard,.msg.ai){--cardbg:linear-gradient(165deg,rgba(255,255,255,.05),transparent 45%,rgba(0,0,0,.18)),var(--m-board) 0 0/300px 300px}
+:root:root[data-theme="dark"] :is(.card,.lesson,.rstep,.excard,.msg.ai){--cardbg:linear-gradient(165deg,rgba(255,255,255,.07),transparent 45%,rgba(0,0,0,.12)),var(--m-board) 0 0/300px 300px;--cardsh:0 5px 0 rgba(0,0,0,.55),inset 0 0 0 1px rgba(239,233,218,.1)}
+:root:root .card .card{--cardbg:rgba(255,255,255,.06)}
+:root:root :is(.card,.lesson,.rstep,.excard,.msg.ai):not(.card *){box-shadow:inset 0 1px 0 rgba(255,255,255,.1),inset 0 -2px 0 rgba(0,0,0,.35),0 5px 0 rgba(23,21,15,.22),0 14px 22px -14px rgba(0,0,0,.5)!important}
+/* синяя ризо-краска на необработанной бумаге */
+:root:root{--z-bluebg:linear-gradient(160deg,rgba(255,255,255,.06),transparent 50%),var(--m-riso) 0 0/300px 300px}
+:root:root :is(.pfhero,.sahero,.fme,.banner,.procard.cta){--cardbg:var(--z-bluebg)!important;background:var(--z-bluebg)!important}
+/* обложка: глянцевая бумага — блик от окна, полоса света, яркий край */
+:root:root .hero{background:var(--z-dots),var(--m-riso) 0 0/300px 300px,var(--z-blue)!important}
+:root:root .hero .in{animation:none!important;background:
+  radial-gradient(38% 22% at 84% 7%,rgba(255,255,255,.42),transparent 72%),
+  linear-gradient(112deg,transparent 36%,rgba(255,255,255,.2) 43%,rgba(255,255,255,.05) 49%,transparent 56%),
+  linear-gradient(180deg,rgba(255,255,255,.16),transparent 22%)!important}
+:root:root .hero{box-shadow:inset 0 1px 0 rgba(255,255,255,.55),6px 7px 0 var(--z-pink),0 22px 30px -18px rgba(0,0,0,.55)!important}
+/* миссии — чеки на термобумаге с рваным краем */
+:root:root .mission:not(:is(.card,.sheet) *){background:linear-gradient(180deg,rgba(0,0,0,.04),transparent 18%,transparent 82%,rgba(0,0,0,.05)),var(--m-receipt) 0 0/260px 260px!important;border-radius:4px!important;box-shadow:none!important;
+  padding-top:18px!important;padding-bottom:18px!important;
+  -webkit-mask:conic-gradient(from 135deg at top,#0000,#000 1deg 89deg,#0000 90deg) top/14px 51% repeat-x,conic-gradient(from -45deg at bottom,#0000,#000 1deg 89deg,#0000 90deg) bottom/14px 51% repeat-x!important;
+  mask:conic-gradient(from 135deg at top,#0000,#000 1deg 89deg,#0000 90deg) top/14px 51% repeat-x,conic-gradient(from -45deg at bottom,#0000,#000 1deg 89deg,#0000 90deg) bottom/14px 51% repeat-x!important;
+  filter:drop-shadow(0 4px 3px rgba(23,21,15,.18));color:#17150F}
+:root:root[data-theme="dark"] .mission:not(:is(.card,.sheet) *){filter:brightness(.92) drop-shadow(0 4px 3px rgba(0,0,0,.5))}
+:root:root .mission:not(:is(.card,.sheet) *) :is(.hint,small){color:#6A6354!important}
+:root:root .mission.done:not(:is(.card,.sheet) *){background:linear-gradient(180deg,rgba(0,0,0,.04),transparent 18%),var(--m-receipt) 0 0/260px 260px!important;opacity:.72}
+/* кнопки — виниловые наклейки с бликом */
+:root:root .btn:not(.ghost){background:linear-gradient(180deg,rgba(255,255,255,.55) 0,rgba(255,255,255,.14) 44%,transparent 50%,rgba(0,0,0,.06) 100%),var(--z-yellow)!important}
+/* ноты и теги — тканевые бирки: плетение и строчка */
+:root:root :is(.pf-notes span,.ig-pill){background:repeating-linear-gradient(0deg,rgba(255,255,255,.07) 0 1px,transparent 1px 3px),repeating-linear-gradient(90deg,rgba(0,0,0,.18) 0 1px,transparent 1px 3px),#34302A!important;
+  color:#EFE9DA!important;border:0!important;border-radius:5px!important;outline:1px dashed rgba(239,233,218,.45);outline-offset:-4px;padding:7px 11px!important;box-shadow:0 2px 0 rgba(0,0,0,.35)!important}
+/* нижнее меню — рифлёная резина */
+:root:root .tabs .in{background:radial-gradient(rgba(255,255,255,.09) 1.1px,transparent 1.6px) 0 0/6px 6px,linear-gradient(180deg,#2A2722,#151410)!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.12),inset 0 -3px 0 rgba(0,0,0,.45),0 6px 0 rgba(23,21,15,.3),0 16px 26px -12px rgba(0,0,0,.6)!important}
+:root:root .tabs .tab:not(.on),:root:root .tabs .tab:not(.on) svg{color:#B9B2A2!important}
+:root:root .tabs .tab.on{background:linear-gradient(180deg,rgba(255,255,255,.5),rgba(255,255,255,.1) 45%,transparent 52%),var(--z-yellow)!important}
+
+/* синяя краска гуще: второй прогон тем же цветом поверх оттиска */
+:root:root{--z-bluebg:linear-gradient(160deg,rgba(255,255,255,.08),transparent 50%),linear-gradient(rgba(30,58,235,.42),rgba(30,58,235,.42)),var(--m-riso) 0 0/300px 300px}
+:root:root .hero{background:var(--z-dots),linear-gradient(rgba(30,58,235,.42),rgba(30,58,235,.42)),var(--m-riso) 0 0/300px 300px,var(--z-blue)!important}
+/* плитки академии, показов и прочие «чёрные» вещи — тоже картон */
+:root:root :is(.pfkbi,.sashow:not(.ph),.wotile,.libtile){background:linear-gradient(165deg,rgba(255,255,255,.05),transparent 45%,rgba(0,0,0,.18)),var(--m-board) 0 0/300px 300px!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.1),inset 0 -2px 0 rgba(0,0,0,.35),0 4px 0 rgba(23,21,15,.2)!important}
+
+/* тёмная тема: настоящее звёздное небо — Млечный Путь (фото ESO/S. Brunier, CC BY 4.0) */
+:root:root[data-theme="dark"] body{background:#05060A!important}
+:root:root[data-theme="dark"] body::before{display:block!important;content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;border:0!important;border-radius:0!important;transform:none!important;width:auto!important;height:auto!important;left:0!important;top:0!important;
+  background:linear-gradient(180deg,rgba(5,6,10,.25),rgba(5,6,10,.05) 40%,rgba(5,6,10,.35)),url(sky.webp) center/cover no-repeat!important}
+:root:root[data-theme="dark"] body::after{opacity:.18!important}
 </style>
 </head>
 <body>
 <div class="app" id="app"></div>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><filter id="zink" x="-2%" y="-5%" width="104%" height="110%"><feTurbulence type="fractalNoise" baseFrequency=".85" numOctaves="2" seed="3" result="t"/><feDisplacementMap in="SourceGraphic" in2="t" scale="1.8" xChannelSelector="R" yChannelSelector="G"/></filter></svg>
 <div id="overlay"></div>
 <div id="modal"></div>
 <div class="toast" id="toast"></div>
@@ -2933,7 +3174,7 @@ const BADGES = [
   ['👑', 'Легенда', 'Уровень 16', () => rank().lvl >= 16]
 ];
 const ACCENTS = ['auto', '#cde59b', '#ffb07c', '#ff7a6b', '#ffd166', '#6ee7c8', '#b79cff', '#ff7ccf', '#9cc8ff', '#4d7cff', '#ffffff'];
-const THEME_ACCENT = { light: '#d4ff1a', dark: '#d4ff1a' };
+const THEME_ACCENT = { light: '#FFD43B', dark: '#FFD43B' };
 const PALETTE = ['#ffb07c', '#6ee7c8', '#b79cff', '#ffd166', '#ff7a9c', '#7dd3fc'];
 const DROP_BG = ['linear-gradient(135deg,#ff7a6b,#ffb07c 55%,#ffd166)', 'linear-gradient(135deg,#6ee7c8,#b5f5d9 60%,#fff1c9)', 'linear-gradient(135deg,#b79cff,#ffb3d1 60%,#ffd9b8)', 'linear-gradient(135deg,#7dd3fc,#c7f0ff 55%,#ffe8c2)'];
 const TAG_C = { 'Мода': '#b79cff', 'Тренд': '#6ee7c8', 'Стиль': '#ff7a9c', 'Уход': '#ffd166', 'Осанка': '#ffd166', 'Волосы': '#b79cff', 'Сон': '#7dd3fc', 'Тело': '#6ee7c8', 'Общение': '#ff8a3d', 'Парфюм': '#ff4fd8' };
@@ -4643,7 +4884,7 @@ function renderOnboarding() {
   if (s === 2) return `${stepsBar(2)}
     <div class="disp h1" style="margin:8px 0 10px">Что качаем?</div>
     <p class="hint" style="margin:0 0 18px">Выбери всё, что важно во внешности. Характер и общение качаются у всех.</p>
-    <div class="tiles" style="margin-bottom:22px">${Object.entries(PILLARS).map(([k, p]) => `<button class="tint" style="--c:${p.c};text-align:left;transition:all .2s;${ob.goals.includes(k) ? `background:${p.c};color:#06101c` : ''}" data-act="ob-goal" data-k="${k}"><div class="mono" style="${ob.goals.includes(k) ? 'color:#06101c' : ''}">${p.code}</div><b style="font-size:24px">${p.name}</b></button>`).join('')}</div>
+    <div class="tiles" style="margin-bottom:22px">${Object.entries(PILLARS).map(([k, p]) => `<button class="tint" style="--c:${p.c};text-align:left;transition:all .2s;${ob.goals.includes(k) ? `background:${p.c};color:#06101c` : ''}" data-act="ob-goal" data-k="${k}"><b style="font-size:24px">${p.name}</b></button>`).join('')}</div>
     <button class="btn" data-act="next" ${ob.goals.length ? '' : 'disabled'}>Дальше</button>`;
   if (s === 3) return `${stepsBar(3)}
     <div class="disp h1" style="margin:8px 0 10px">Что мешает?</div>
@@ -5358,7 +5599,64 @@ PERFUMES.push(
   ['Shaghaf Oud', 'Swiss Arabian', 1, 'c', 3, 20, 60, 'ovm', 'tdx', 'm', 'шафран, роза, пралине, уд, ваниль', 'Сладкий шафраново-удовый аромат. Swiss Arabian — один из старейших парфюмерных домов Дубая (1974).'],
   ['La Yuqawam', 'Rasasi', 2, 'c', 3, 22, 60, 'lsm', 'tx', 'km', 'кожа, малина, тимьян, лабданум, янтарь', '«Неотразимый»: замшевая кожа с ягодой. Rasasi — дом из ОАЭ с очень достойными композициями.'],
   ['Choco Musk', 'Al-Rehab', 1, 'c', 2, 16, 45, 'vi', 'sed', 'z', 'шоколад, ваниль, мускус, роза', 'Масляные духи за пару сотен рублей с культовым статусом в интернете: шоколадный мускус.'],
-  ['Lomani Pour Homme', 'Lomani', 1, 'a', 2, 16, 45, 'agw', 'se', 'c', 'лаванда, бергамот, полынь, кедр, мускус', 'Очень дешёвый классический фужер. Чтобы понять, что такое «барбершоп», не обязательно тратить много.']
+  ['Lomani Pour Homme', 'Lomani', 1, 'a', 2, 16, 45, 'agw', 'se', 'c', 'лаванда, бергамот, полынь, кедр, мускус', 'Очень дешёвый классический фужер. Чтобы понять, что такое «барбершоп», не обязательно тратить много.'],
+  // ---- ещё ниша ----
+  ['Kalan', 'Parfums de Marly', 4, 'c', 3, 22, 50, 'scam', 'dtx', 'km', 'кровавый апельсин, чёрный перец, лаванда, флёрдоранж, сандал, бобы тонка', 'Пряный и дерзкий: перец и лаванда на тёплой древесной базе. Для тех, кто хочет запоминаться, а не нравиться всем.'],
+  ['Fan Your Flames', 'Nishane', 4, 'c', 3, 22, 55, 'vlw', 'dtx', 'zm', 'кокос, ром, табак, бобы тонка, кедр, дубовый мох', 'Ром с кокосом и табаком — как вечер у камина в дорогом баре. Только для холода и вечера.'],
+  ['Musk Therapy', 'Initio', 4, 'a', 2, 18, 50, 'ic', 'oed', 'c', 'белый мускус, чёрная смородина, бергамот, магнолия, сандал', 'Чистый «дорогой» мускус: запах свежей кожи и белья. Тихий, но его замечают вблизи.'],
+  ['Guidance', 'Amouage', 4, 'c', 3, 22, 55, 'vims', 'dtx', 'km', 'груша, фундук, ладан, османтус, роза, сандал, ваниль', 'Сливочный, ореховый и очень плотный. Один из самых обсуждаемых нишевых ароматов последних лет.'],
+  ['Nouveau Monde', 'Louis Vuitton', 4, 'c', 3, 25, 60, 'olsv', 'tx', 'km', 'уд, шафран, кожа, какао, чёрная смородина, ваниль', 'Уд с кожей и какао от Жака Кавалье. Тёмный и роскошный, для особых вечеров.'],
+  ['Oud Minérale', 'Tom Ford', 4, 'w', 2, 22, 55, 'qow', 'oet', 'cm', 'морская соль, розовый перец, уд, водоросли, стиракс', 'Уд, который пахнет морем: солёный, минеральный и неожиданный.'],
+  ['Renaissance', 'Xerjoff', 4, 'w', 2, 20, 55, 'cgi', 'oegs', 'c', 'амальфийский лимон, мандарин, мята, ландыш, кедр, амбра', 'Сочный реалистичный лимон с мятой. Один из лучших летних ароматов в нише.'],
+  ['Himalaya', 'Creed', 4, 'a', 2, 22, 60, 'cwm', 'oe', 'c', 'бергамот, грейпфрут, лимон, сандал, мускус, кедр', 'Чистый цитрусово-древесный аромат «свежего воздуха». Спокойный и уместный везде.'],
+  ['Rose of No Man’s Land', 'Byredo', 4, 'a', 2, 18, 50, 'iws', 'oed', 'cm', 'турецкая роза, розовый перец, малина, папирус, амбра', 'Чистая перечная роза без бабушкиной пудры. Отлично носится и парнями.'],
+  ['Tonka 25', 'Le Labo', 4, 'c', 1, 20, 55, 'vwm', 'oed', 'z', 'атласский кедр, бобы тонка, мускус, ваниль, стиракс', 'Тёплое дерево и тонка, держится близко к коже. Уютный «свитерный» аромат.'],
+  ['Black Aoud', 'Montale', 3, 'c', 3, 25, 60, 'oim', 'tx', 'km', 'роза, уд, пачули, мускус, лабданум, мандарин', 'Классика ниши: роза с удом, громко и мощно. Хватает одного пшика.'],
+  ['Rouge Smoking', 'BDK Parfums', 4, 'c', 2, 18, 40, 'vfi', 'dp', 'b', 'вишня, розовый перец, ваниль, гелиотроп, бобы тонка', 'Вишнёвая кола с ванилью — сладкий и игривый, для свиданий и вечеринок.'],
+  ['Intoxicated', 'Kilian', 4, 'c', 2, 22, 50, 'vsl', 'dt', 'zm', 'кардамон, кофе, корица, мускатный орех, табак, карамель', 'Турецкий кофе с кардамоном и пряностями. Для холодных вечеров.'],
+  ['Terroni', 'Orto Parisi', 4, 'c', 3, 25, 60, 'owm', 'tx', 'm', 'малина, берёза, амбра, бензоин, гваяковое дерево, ветивер', 'Дым и смола, вдохновлённые Везувием. Нишевая экзотика для смелых.'],
+  ['Pardon', 'Nasomatto', 4, 'c', 3, 22, 55, 'vos', 'dtx', 'm', 'тёмный шоколад, корица, бобы тонка, уд, сандал', 'Шоколад с удом — плотный, сладкий и тёмный. Маленького флакона хватает надолго.'],
+  ['Molecule 02', 'Escentric Molecules', 3, 'a', 1, 18, 50, 'm', 'oes', 'c', 'амброксан', 'Одна молекула амброксана: пахнет как чистая кожа, только лучше. Многие слышат его только на других.'],
+  ['Orange Sanguine', 'Atelier Cologne', 3, 'w', 2, 18, 55, 'cs', 'oesg', 'cb', 'красный апельсин, горький апельсин, герань, жасмин, сандал', 'Самый реалистичный апельсин в парфюмерии: будто только что разрезал фрукт.'],
+  ['Gentle Fluidity Gold', 'Maison Francis Kurkdjian', 4, 'c', 2, 20, 50, 'vms', 'dt', 'z', 'можжевельник, мускатный орех, ваниль, мускус, амбровое дерево', 'Тёплая ваниль с можжевельником. Мягкий родственник Baccarat Rouge 540.'],
+  ['Tobacco Oud', 'Tom Ford', 4, 'c', 3, 25, 60, 'lov', 'tx', 'km', 'виски, корица, табак, уд, ладан, сандал', 'Виски, табак и дым — запах закрытого клуба. Очень взрослый и громкий.'],
+  // ---- популярные дизайнерские ----
+  ['Sauvage Parfum', 'Dior', 3, 'a', 2, 20, 55, 'cwv', 'oedt', 'kc', 'бергамот, мандарин, элеми, сандал, ладан, бобы тонка, ваниль', 'Самая мягкая и благородная версия Sauvage: меньше перца, больше сандала и ванили.'],
+  ['Allure Homme', 'Chanel', 3, 'a', 2, 22, 60, 'cwvi', 'oet', 'kc', 'бергамот, персик, ветивер, чёрный перец, бобы тонка, лабданум', 'Классика 1999 года: тёплый и элегантный, одинаково хорош на работе и вечером.'],
+  ['Y Le Parfum', 'Yves Saint Laurent', 3, 'a', 3, 18, 40, 'awc', 'oedp', 'k', 'имбирь, бергамот, сосновая хвоя, пихта, герань, амбра, пачули', 'Версия 2025 года: хвоя и имбирь вместо сладости. Свежий, но плотный.'],
+  ['Stronger With You Absolutely', 'Emporio Armani', 2, 'c', 3, 18, 40, 'vsa', 'dp', 'zb', 'ром, элеми, бергамот, лаванда, ваниль, каштан', 'Ром, каштан и ваниль — тёплый, «пьяный» и очень стойкий. Комплименты зимой гарантированы.'],
+  ['L’Homme Intense', 'Prada', 3, 'c', 2, 22, 55, 'ilm', 'otd', 'kz', 'ирис, амбра, пачули, кожа, бобы тонка, сандал', 'Пудровый ирис с кожей и амброй. Элегантно, как хорошо сидящий костюм.'],
+  ['Gentleman Society', 'Givenchy', 3, 'a', 2, 20, 45, 'aswv', 'oed', 'k', 'кардамон, шалфей, нарцисс, ветивер, ваниль, кедр', 'Шалфей, ветивер и ваниль — современный «джентльмен» без лишней сладости.'],
+  ['Boss Bottled Parfum', 'Hugo Boss', 2, 'a', 2, 22, 50, 'lwi', 'oet', 'k', 'ладан, мандарин, инжир, ирис, кедр, кожа', 'Кожа, инжир и ирис — взрослая и сдержанная версия Boss Bottled.'],
+  ['Bad Boy Cobalt', 'Carolina Herrera', 2, 'a', 3, 18, 35, 'awf', 'oedp', 'kb', 'лаванда, розовый перец, слива, герань, кедр, ветивер', 'Свежая лаванда со сливой. Универсальный, громкий и нравится почти всем.'],
+  ['Born in Roma Coral Fantasy', 'Valentino', 2, 'a', 2, 18, 40, 'fal', 'edp', 'b', 'красное яблоко, кардамон, бергамот, лаванда, табачный лист, ветивер', 'Яблоко с табаком — свежо и взросло одновременно. Многие считают его лучшим в линейке.'],
+  ['Eros Parfum', 'Versace', 2, 'c', 3, 18, 40, 'afv', 'pd', 'b', 'мята, лимон, чёрный перец, зелёное яблоко, ваниль, амбра', 'Глубже и смолистее обычного Eros: та же мята с яблоком, но взрослее.'],
+  ['Hero EDP', 'Burberry', 2, 'a', 2, 20, 45, 'wm', 'oe', 'k', 'сосновая хвоя, ладан, бензоин, атласский кедр, гималайский кедр', 'Три вида кедра с ладаном — тёплое дерево на каждый день.'],
+  ['Terre d’Hermès Parfum', 'Hermès', 3, 'a', 2, 25, 70, 'cwm', 'otx', 'k', 'апельсин, грейпфрут, кремень, дубовый мох, бензоин, дерево', 'Более тёмная и смолистая версия Terre d’Hermès. Аромат мужчины, у которого всё под контролем.'],
+  ['Light Blue Eau Intense Pour Homme', 'Dolce & Gabbana', 2, 'w', 2, 16, 40, 'qc', 'esg', 'c', 'грейпфрут, мандарин, морская вода, можжевельник, мускус', 'Солёное море и цитрус. Отличный выбор на жару, пляж и отпуск.'],
+  ['Spicebomb', 'Viktor & Rolf', 2, 'c', 2, 20, 45, 'slw', 'dt', 'zm', 'розовый перец, элеми, корица, шафран, табак, кожа', 'Корица, перец и табак во флаконе-гранате. Тёплый пряный аромат для холода.'],
+  ['Toy Boy', 'Moschino', 2, 'a', 2, 18, 40, 'isw', 'dp', 'b', 'розовый перец, груша, бергамот, роза, гвоздика, ветивер', 'Роза с перцем во флаконе-мишке. Смело и точно не как у всех.'],
+  // ---- недорогие и бюджетные хиты ----
+  ['Hayaati', 'Lattafa', 1, 'a', 3, 16, 35, 'fav', 'esp', 'b', 'яблоко, бергамот, корица, мускус, ваниль', 'Арабский бюджетник в стиле Invictus: свежее яблоко и сливочная ваниль.'],
+  ['Oud Mood', 'Lattafa', 1, 'c', 3, 20, 50, 'oiv', 'dtx', 'm', 'роза, шафран, уд, карамель, пачули, ладан', 'Сладкий дымный уд с розой и карамелью за копейки. Вечерний и плотный.'],
+  ['Bade’e Al Oud Oud for Glory', 'Lattafa', 1, 'c', 3, 20, 50, 'osa', 'dtx', 'km', 'шафран, мускатный орех, лаванда, уд, пачули, мускус', 'Бюджетная альтернатива Initio Oud for Greatness. Отличный вход в мир уда.'],
+  ['Odyssey Homme', 'Armaf', 1, 'a', 2, 18, 40, 'vsi', 'dp', 'z', 'кардамон, мандарин, флёрдоранж, роза, ваниль, сандал', 'Сладкий и пряный, его часто сравнивают с Tom Ford Noir Extreme.'],
+  ['Club de Nuit Milestone', 'Armaf', 1, 'w', 2, 18, 45, 'qfw', 'oesg', 'c', 'морские ноты, красные ягоды, бергамот, фиалка, амброксан', 'Солёный, свежий и ягодный — альтернатива Creed Millésime Impérial.'],
+  ['Turathi Blue', 'Afnan', 1, 'w', 3, 18, 40, 'cmw', 'oesg', 'c', 'бергамот, мандарин, имбирь, амбра, пачули, мускус', 'Холодный цитрус с имбирём и амброй. Громкий летний бюджетник.'],
+  ['Fattan', 'Rasasi', 1, 'a', 2, 22, 55, 'cwm', 'oe', 'k', 'грейпфрут, бергамот, розовый перец, ветивер, кедр, дубовый мох', 'Вдохновлён Terre d’Hermès: цитрус, ветивер и минеральность за небольшие деньги.'],
+  ['Salvo', 'Maison Alhambra', 1, 'a', 3, 16, 40, 'csam', 'esp', 'kb', 'бергамот, лаванда, сычуаньский перец, бадьян, амброксан, ваниль', 'Альтернатива Dior Sauvage за копейки. Свежий, перечный и громкий.'],
+  ['Liquid Brun', 'French Avenue', 1, 'c', 3, 18, 40, 'vsm', 'dp', 'zb', 'корица, кардамон, флёрдоранж, бурбонская ваниль, пралине, амброксан', 'Очень близок к PDM Althaïr: ваниль, пралине и корица. Хит последних лет.'],
+  ['King of Seduction', 'Antonio Banderas', 1, 'w', 2, 16, 35, 'cfq', 'esg', 'c', 'ананас, бергамот, дыня, морские ноты, кардамон, ветивер', 'Свежий фруктово-морской аромат в духе Invictus. Отличный первый флакон.'],
+  ['Ice Dive', 'Adidas', 1, 'w', 1, 14, 30, 'cqa', 'sge', 'c', 'мята, грейпфрут, лаванда, юдзу, сандал, бобы тонка', 'Классика школьных раздевалок: свежая мята с цитрусом. Дёшево и уместно на спорте.'],
+  ['Hugo', 'Hugo Boss', 1, 'a', 2, 16, 40, 'gfa', 'ose', 'c', 'зелёное яблоко, лаванда, мята, шалфей, пихта, кедр', 'Зелёный яблочный классик 1995 года во флаконе-фляжке. До сих пор работает.'],
+  ['Classic Black', 'Jaguar', 1, 'a', 2, 16, 40, 'cfq', 'ose', 'c', 'яблоко, горький апельсин, мандарин, чай, морская вода, мускус', 'Чистый, мыльный, повседневный. Один из лучших дешёвых ароматов на каждый день.'],
+  ['Scuderia Ferrari Black', 'Ferrari', 1, 'c', 2, 16, 40, 'fsv', 'esd', 'z', 'яблоко, слива, корица, кардамон, ваниль, амбра', 'Пряное яблоко с ванилью — бюджетный родственник Boss Bottled.'],
+  ['Tommy', 'Tommy Hilfiger', 1, 'w', 2, 14, 35, 'cfa', 'sge', 'c', 'мята, бергамот, грейпфрут, лаванда, яблоко, клюква', 'Американская классика 1995 года: свежий, лёгкий и дружелюбный.'],
+  ['Essential', 'Lacoste', 1, 'w', 2, 16, 40, 'gcw', 'ose', 'c', 'бергамот, лист томата, мандарин, роза, перец, сандал', 'Зелёный и свежий, с редкой нотой листа томата. Чистый повседневный аромат.'],
+  ['Black for Him', 'Mexx', 1, 'a', 1, 16, 35, 'cqw', 'se', 'c', 'мандарин, перец, водяная лилия, кедр, амбра, пачули', 'Тихий свежий древесный аромат за смешные деньги. Хорош для учёбы.'],
+  ['Jimmy Choo Man', 'Jimmy Choo', 2, 'a', 2, 18, 40, 'fai', 'oed', 'c', 'лист ананаса, дыня, лаванда, розовый перец, замша, пачули', 'Фруктово-лавандовый с замшевой базой. Аккуратный вариант для офиса.'],
+  ['L’Eau Kenzo pour Homme', 'Kenzo', 1, 'w', 1, 16, 45, 'cqg', 'oesg', 'c', 'юдзу, лимон, зелёный перец, лотос, водная мята, мускус', 'Зелёная «вода» 1999 года: прохладная, лёгкая и летняя.'],
+  ['Explorer Platinum', 'Montblanc', 2, 'a', 2, 18, 45, 'gaw', 'oe', 'c', 'лист фиалки, мускатный шалфей, кедр', 'Сливочный кедр с фиалковым листом. Тихий, но держится весь день.']
 );
 
 // ---------- истории: показываются у «Парфюма дня» и в карточке аромата ----------
@@ -5927,7 +6225,7 @@ function renderMe() {
     </div></details>
 
     <button class="btn sm ghost" data-act="reset" style="color:var(--danger);width:100%">Сбросить прогресс</button>
-    <p class="mono" style="text-align:center;margin-top:20px">mogg · season 01 · <a href="${BOT_URL}" data-act="link" data-u="${BOT_URL}" style="color:inherit">${BOT_TAG}</a> · <a href="privacy.html" style="color:inherit">политика</a></p>`;
+    <p class="mono" style="text-align:center;margin-top:20px">mogg · season 01 · <a href="${BOT_URL}" data-act="link" data-u="${BOT_URL}" style="color:inherit">${BOT_TAG}</a> · <a href="privacy.html" style="color:inherit">политика</a><br><span style="opacity:.7">фото неба: ESO/S. Brunier, CC BY 4.0</span></p>`;
 }
 
 const TAB_PARENT = { journal: 'plan', path: 'me', friends: 'me' }; // подэкраны: какая вкладка внизу подсвечена и куда ведёт «Назад»
@@ -7813,6 +8111,8 @@ const PF_IMG = {"Dior|Sauvage EDT": 31861, "Dior|Sauvage Elixir": 68415, "Chanel
 // Фото флаконов для ароматов, добавленных в базу позже (номера проверены по фото)
 Object.assign(PF_IMG, {"Dior|Eau Sauvage": 231, "Chanel|Pour Monsieur": 615, "Chanel|Antaeus": 616, "Chanel|Sycomore": 4688, "Guerlain|Vetiver": 69, "Aramis|Aramis": 113, "Azzaro|Azzaro Pour Homme": 829, "Paco Rabanne|Pour Homme": 526, "Guerlain|Habit Rouge Parfum": 90802, "Bvlgari|Bvlgari Black": 154, "Calvin Klein|Obsession for Men": 249, "Hermès|Bel Ami": 25, "Hermès|Un Jardin sur le Nil": 18, "Hermès|Terre d’Hermès Eau Givrée": 72439, "Comme des Garçons|2 Man": 391, "Comme des Garçons|Wonderwood": 8991, "Comme des Garçons|Avignon": 1230, "Yves Saint Laurent|M7 Oud Absolu": 13735, "Serge Lutens|Chergui": 2762, "Serge Lutens|Ambre Sultan": 2760, "Serge Lutens|Féminité du Bois": 5749, "L’Artisan Parfumeur|Timbuktu": 1267, "Penhaligon’s|Halfeti": 31396, "Penhaligon’s|The Tragedy of Lord George": 40716, "Penhaligon’s|Endymion": 5674, "Acqua di Parma|Colonia": 1681, "Etat Libre d’Orange|Remarkable People": 30504, "Roja Parfums|Elysium Pour Homme": 46296, "Maison Crivelli|Oud Maracuja": 83842, "Frédéric Malle|Geranium pour Monsieur": 5911, "Diptyque|Fleur de Peau": 48681, "Le Labo|Oud 27": 6329, "Le Labo|Patchouli 24": 6332, "Byredo|Black Saffron": 16220, "Creed|Original Vetiver": 468, "Parfums de Marly|Carlisle": 33514, "Maison Francis Kurkdjian|Amyris Homme": 15566, "Maison Francis Kurkdjian|724": 75754, "Amouage|Epic Man": 6537, "Amouage|Memoir Man": 10145, "Nishane|Hundred Silent Ways": 37602, "BDK Parfums|Gris Charnel": 57038, "Nasomatto|Black Afgano": 6472, "Profumum Roma|Ambra Aurea": 6968, "Ormonde Jayne|Ormonde Man": 4931, "Histoires de Parfums|1899 Hemingway": 18846, "D.S. & Durga|Burning Barbershop": 8807, "Tom Ford|Soleil Blanc": 34893, "Jo Malone|Oud & Bergamot": 12928, "Jo Malone|Lime Basil & Mandarin": 5585, "Antonio Banderas|The Golden Secret": 13549, "Armaf|Club de Nuit Sillage": 64105, "Lattafa|Ana Abiyedh": 59149, "Afnan|Supremacy Silver": 27352, "Swiss Arabian|Shaghaf Oud": 50582, "Rasasi|La Yuqawam": 19668, "Al-Rehab|Choco Musk": 20139, "Lomani|Lomani Pour Homme": 3114});
 const pfKey = (p) => p[1] + '|' + p[0];
+// Фото флаконов: ниша, дизайнерские и бюджетные хиты (третье расширение базы)
+Object.assign(PF_IMG, {"Parfums de Marly|Kalan": 56036, "Nishane|Fan Your Flames": 37603, "Initio|Musk Therapy": 66097, "Amouage|Guidance": 78656, "Louis Vuitton|Nouveau Monde": 49753, "Tom Ford|Oud Minérale": 88818, "Xerjoff|Renaissance": 12126, "Creed|Himalaya": 465, "Byredo|Rose of No Man’s Land": 31931, "Le Labo|Tonka 25": 51697, "Montale|Black Aoud": 1142, "BDK Parfums|Rouge Smoking": 51468, "Kilian|Intoxicated": 25991, "Orto Parisi|Terroni": 45475, "Nasomatto|Pardon": 12130, "Escentric Molecules|Molecule 02": 3606, "Atelier Cologne|Orange Sanguine": 9420, "Maison Francis Kurkdjian|Gentle Fluidity Gold": 53401, "Tom Ford|Tobacco Oud": 21402, "Dior|Sauvage Parfum": 56324, "Chanel|Allure Homme": 523, "Yves Saint Laurent|Y Le Parfum": 102208, "Emporio Armani|Stronger With You Absolutely": 64501, "Prada|L’Homme Intense": 45396, "Givenchy|Gentleman Society": 78639, "Hugo Boss|Boss Bottled Parfum": 75183, "Carolina Herrera|Bad Boy Cobalt": 71888, "Valentino|Born in Roma Coral Fantasy": 71761, "Versace|Eros Parfum": 70090, "Burberry|Hero EDP": 75182, "Hermès|Terre d’Hermès Parfum": 8282, "Dolce & Gabbana|Light Blue Eau Intense Pour Homme": 44035, "Viktor & Rolf|Spicebomb": 13857, "Moschino|Toy Boy": 55858, "Lattafa|Hayaati": 75902, "Lattafa|Oud Mood": 46814, "Lattafa|Bade’e Al Oud Oud for Glory": 64948, "Armaf|Odyssey Homme": 64464, "Armaf|Club de Nuit Milestone": 64104, "Afnan|Turathi Blue": 70839, "Rasasi|Fattan": 53484, "Maison Alhambra|Salvo": 93538, "French Avenue|Liquid Brun": 94713, "Antonio Banderas|King of Seduction": 26412, "Adidas|Ice Dive": 7211, "Hugo Boss|Hugo": 570, "Jaguar|Classic Black": 11793, "Ferrari|Scuderia Ferrari Black": 25064, "Tommy Hilfiger|Tommy": 6314, "Lacoste|Essential": 787, "Mexx|Black for Him": 5734, "Jimmy Choo|Jimmy Choo Man": 25977, "Kenzo|L’Eau Kenzo pour Homme": 79, "Montblanc|Explorer Platinum": 81392});
 const pfPhoto = (p) => { const id = PF_IMG[pfKey(p)]; return id ? `https://fimgs.net/mdimg/perfume/375x500.${id}.jpg` : ''; };
 const pfHue = (p) => [...p[1]].reduce((a, c) => a + c.charCodeAt(0), 0) * 37 % 360;
 function pfPic(p, cls) {
@@ -7826,7 +8126,7 @@ function pfTile(p, extra) {
     <span class="pfb">${esc(p[1])}</span><b>${esc(p[0])}</b><small>${esc(p[10].split(', ').slice(0, 4).join(' · '))}</small></button>`;
 }
 // Ниша — по дому, а не по цене: Dior, Tom Ford, Chanel, Louis Vuitton дорогие, но это люкс-дизайнеры, а не ниша
-const PF_NICHE = new Set(['Creed', 'Parfums de Marly', 'Maison Francis Kurkdjian', 'Le Labo', 'Byredo', 'Xerjoff', 'Initio', 'Amouage', 'Nishane', 'Kilian', 'Diptyque', 'Frédéric Malle', 'Ex Nihilo', 'Memo Paris', 'Orto Parisi', 'Vilhelm Parfumerie', 'Goldfield & Banks', 'Marc-Antoine Barrois', 'Essential Parfums', 'Toskovat’', 'Tiziana Terenzi', 'Mancera', 'Montale', 'Escentric Molecules', 'Juliette Has a Gun', 'Zielinski & Rozen']);
+const PF_NICHE = new Set(['Creed', 'Parfums de Marly', 'Maison Francis Kurkdjian', 'Le Labo', 'Byredo', 'Xerjoff', 'Initio', 'Amouage', 'Nishane', 'Kilian', 'Diptyque', 'Frédéric Malle', 'Ex Nihilo', 'Memo Paris', 'Orto Parisi', 'Vilhelm Parfumerie', 'Goldfield & Banks', 'Marc-Antoine Barrois', 'Essential Parfums', 'Toskovat’', 'Tiziana Terenzi', 'Mancera', 'Montale', 'Escentric Molecules', 'Juliette Has a Gun', 'Zielinski & Rozen', 'BDK Parfums', 'Nasomatto', 'Atelier Cologne']);
 const pfNiche = (p) => PF_NICHE.has(p[1]);
 // Каталог: фильтры по семействам
 const PF_CATS = [
