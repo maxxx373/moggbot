@@ -17,8 +17,8 @@ const SUPPORT_TG = (process.env.SUPPORT_TG || 'paradox112').replace(/^@/, '');
 const SUPPORT_EMAIL = process.env.SUPPORT_EMAIL || 'mogg_help@mail.ru';
 const APP_URL = (process.env.APP_URL || 'https://maxxx373.github.io/moggbot/').replace(/\/?$/, '/');
 const COVER = APP_URL + 'bot/cover.jpg';
-const PRIVACY = APP_URL + 'privacy.html';
-const OFFER = APP_URL + 'offer.html';
+const PRIVACY = 'https://telegra.ph/Politika-konfidencialnosti-mogg-11-19';
+const OFFER = 'https://telegra.ph/Polzovatelskoe-soglashenie-mogg-11-19'; // пользовательское соглашение
 // Секрет, который Telegram присылает в заголовке каждого запроса: чужие запросы к функции игнорируем
 const SECRET = crypto.createHash('sha256').update('mogg-webhook:' + TOKEN).digest('hex').slice(0, 48);
 
@@ -75,10 +75,10 @@ const SCREENS = {
       + '🏋️ Персональная тренировка под твой разбор\n'
       + '💬 Тренер — до 100 сообщений в день вместо 10\n'
       + '🔥 Всё бесплатное остаётся: миссии, протоколы, тренировки, статьи\n\n'
-      + 'Разовая оплата через ЮKassa, <b>без автосписаний</b>. Оформляется внутри приложения.',
+      + 'Разовая оплата <b>без автосписаний</b>: картой, по СБП, SberPay или криптой. Оформляется внутри приложения.',
     keyboard: [
       [{ text: '💎 Оформить Pro', web_app: { url: APP_URL + '?pro=1' } }],
-      [{ text: '📄 Оферта', url: OFFER }, { text: '🔒 Политика', url: PRIVACY }],
+      [{ text: '📄 Соглашение', url: OFFER }, { text: '🔒 Политика', url: PRIVACY }],
       BACK
     ]
   })
@@ -114,7 +114,7 @@ function onUpdate(u) {
     if (cmd === 'support' || cmd === 'help') return screenMsg(chat, 'support');
     if (cmd === 'pro') return screenMsg(chat, 'pro');
     if (cmd === 'collab') return screenMsg(chat, 'collab');
-    if (cmd === 'privacy') return { method: 'sendMessage', chat_id: chat, text: `🔒 Политика конфиденциальности: ${PRIVACY}\n📄 Оферта: ${OFFER}` };
+    if (cmd === 'privacy') return { method: 'sendMessage', chat_id: chat, text: `🔒 Политика конфиденциальности: ${PRIVACY}\n📄 Пользовательское соглашение: ${OFFER}` };
     if (cmd === 'start' || cmd === 'menu') return menuMsg(chat, name);
     // любое другое сообщение — бот не чат, показываем меню с подсказкой
     return menuMsg(chat, name, '<i>Я не отвечаю на сообщения — всё внутри приложения. Нужна помощь — жми «Поддержка».</i>\n\n');
