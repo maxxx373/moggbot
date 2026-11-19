@@ -2048,6 +2048,25 @@ button:active,label.card:active{transform:scale(.97)}
 :root:root[data-theme="dark"] body::before{display:block!important;content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;border:0!important;border-radius:0!important;transform:none!important;width:auto!important;height:auto!important;left:0!important;top:0!important;
   background:linear-gradient(180deg,rgba(5,6,10,.25),rgba(5,6,10,.05) 40%,rgba(5,6,10,.35)),url(sky.webp) center/cover no-repeat!important}
 :root:root[data-theme="dark"] body::after{opacity:.18!important}
+
+/* чуть меньше пестроты: синий, розовый и большие жёлтые плашки на тон спокойнее. Кнопки не трогаем. */
+:root:root{--z-blue:#2D47D6;--z-pink:#E8508A;--m-riso:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='a' x='0' y='0' width='100%25' height='100%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.012' numOctaves='3' seed='5' stitchTiles='stitch' result='m'/%3E%3CfeColorMatrix in='m' type='matrix' values='0 0 0 0 .15  0 0 0 0 .23  0 0 0 0 .84  0 0 0 0 1' result='base'/%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' seed='8' stitchTiles='stitch' result='n'/%3E%3CfeDiffuseLighting in='n' surfaceScale='1' lighting-color='%23fff' result='l'%3E%3CfeDistantLight azimuth='225' elevation='70'/%3E%3C/feDiffuseLighting%3E%3CfeBlend in='base' in2='l' mode='multiply' result='b1'/%3E%3CfeColorMatrix in='m' type='matrix' values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 .9 0 0 0 -.52' result='pale'/%3E%3CfeComposite in='pale' in2='b1' operator='over'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23a)'/%3E%3C/svg%3E");
+  --z-bluebg:linear-gradient(160deg,rgba(255,255,255,.08),transparent 50%),linear-gradient(rgba(42,64,200,.4),rgba(42,64,200,.4)),var(--m-riso) 0 0/300px 300px}
+:root:root .hero{background:var(--z-dots),linear-gradient(rgba(42,64,200,.4),rgba(42,64,200,.4)),var(--m-riso) 0 0/300px 300px,var(--z-blue)!important}
+:root:root .chest{background:var(--z-dots),linear-gradient(120deg,#E25389,#B9356A)!important}
+:root:root .card.fact{background:linear-gradient(180deg,rgba(255,255,255,.12),transparent 40%),#F1CF55!important}
+:root:root .sec .disp{background:linear-gradient(transparent 55%,#F2D25A 55%,#F2D25A 92%,transparent 92%)!important}
+:root:root[data-theme="dark"] .sec .disp{background:linear-gradient(transparent 58%,rgba(232,80,138,.6) 58%,rgba(232,80,138,.6) 90%,transparent 90%)!important}
+
+/* ещё спокойнее: приглушённые краски, как выцветший тираж. Кнопки не трогаем. */
+:root:root{--z-blue:#3A4DB4;--z-pink:#C9668D;--m-riso:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='a' x='0' y='0' width='100%25' height='100%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.012' numOctaves='3' seed='5' stitchTiles='stitch' result='m'/%3E%3CfeColorMatrix in='m' type='matrix' values='0 0 0 0 .2  0 0 0 0 .26  0 0 0 0 .7  0 0 0 0 1' result='base'/%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' seed='8' stitchTiles='stitch' result='n'/%3E%3CfeDiffuseLighting in='n' surfaceScale='1' lighting-color='%23fff' result='l'%3E%3CfeDistantLight azimuth='225' elevation='70'/%3E%3C/feDiffuseLighting%3E%3CfeBlend in='base' in2='l' mode='multiply' result='b1'/%3E%3CfeColorMatrix in='m' type='matrix' values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 .9 0 0 0 -.52' result='pale'/%3E%3CfeComposite in='pale' in2='b1' operator='over'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23a)'/%3E%3C/svg%3E");
+  --z-bluebg:linear-gradient(160deg,rgba(255,255,255,.07),transparent 50%),linear-gradient(rgba(52,68,165,.38),rgba(52,68,165,.38)),var(--m-riso) 0 0/300px 300px}
+:root:root .hero{background:var(--z-dots),linear-gradient(rgba(52,68,165,.38),rgba(52,68,165,.38)),var(--m-riso) 0 0/300px 300px,var(--z-blue)!important}
+:root:root .chest{background:var(--z-dots),linear-gradient(120deg,#C46A8E,#9E5373)!important}
+:root:root .card.fact{background:linear-gradient(180deg,rgba(255,255,255,.12),transparent 40%),#E3CB76!important}
+:root:root .sec .disp{background:linear-gradient(transparent 55%,#E6CF7E 55%,#E6CF7E 92%,transparent 92%)!important}
+:root:root[data-theme="dark"] .sec .disp{background:linear-gradient(transparent 58%,rgba(201,102,141,.55) 58%,rgba(201,102,141,.55) 90%,transparent 90%)!important}
+:root:root .hero .in::before{background:color-mix(in srgb,#E6CF7E 85%,transparent)!important}
 </style>
 </head>
 <body>
