@@ -92,9 +92,11 @@ close-public)
     BLOCK=$(awk -v id="$id" 'index($0,id){f=1} f{print; n++} n>6{exit}' <<<"$SPECS")
     if [ -z "$BLOCK" ]; then echo "- $name: шлюз её не вызывает — оставляю открытой, проверь вручную"; continue; fi
     if ! grep -q service_account_id <<<"$BLOCK$(awk -v id="$id" '{a[NR]=$0} index($0,id){for(i=NR-6;i<NR;i++) print a[i]}' <<<"$SPECS")"; then echo "- $name: шлюз вызывает без сервисного аккаунта — закрывать нельзя, приложение сломается"; continue; fi
-    NEW=$(curl -sf "${H[@]}" "$API/functions/$id:listAccessBindings" | jq '{accessBindings: [.accessBindings[]? | select(.subject.id != "allUsers")]}')
-    OP=$(curl -s "${H[@]}" -X POST "$API/functions/$id:setAccessBindings" -d "$NEW")
-    wait_op "$(jq -r .id <<<"$OP")" && echo "- $name: ✓ прямой доступ закрыт"
+    DEL=$(curl -sf "${H[@]}" "$API/functions/$id:listAccessBindings" | jq '{accessBindingDeltas: [.accessBindings[]? | select(.subject.id == "allUsers") | {action: "REMOVE", accessBinding: .}]}')
+    OP=$(curl -s "${H[@]}" -X POST "$API/functions/$id:updateAccessBindings" -d "$DEL")
+    OPID=$(jq -r '.id // empty' <<<"$OP")
+    if [ -z "$OPID" ]; then echo "- $name: ✗ Yandex Cloud отказал: $(jq -r '.message // .error // "?"' <<<"$OP" | head -c 300)"; continue; fi
+    wait_op "$OPID" && echo "- $name: ✓ прямой доступ закрыт"
   done
   ;;
 *) echo "Неизвестное действие $ACTION"; exit 1 ;;
