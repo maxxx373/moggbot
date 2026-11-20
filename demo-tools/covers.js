@@ -1,11 +1,16 @@
 // все обложки статей и уроков: заголовок не должен рваться посреди слова и вылезать
 const { chromium } = require('playwright');
+const serve = require('./serve');
+const PAGE = process.argv[2] || 'demo.html';
 (async () => {
   const b = await chromium.launch();
   for (const W of [320, 375, 430]) {
     const p = await b.newPage({viewport:{width:W,height:760}, reducedMotion:'reduce'});
-    await p.goto('file:///home/user/moggbot/demo.html'); await p.waitForTimeout(500);
+    await serve(p);
+    await p.goto('http://mogg.test/' + PAGE); await p.waitForTimeout(500);
     await p.evaluate(()=>{ ob.issues=['acne']; ob.budget=3000; ob.goals=['skin']; ob.result=analyze(); acceptPlan(); });
+    await p.evaluate(async ()=>{ artParts=null; artLoaded=0; S.startDate=addDays(today(),-4000); await artsFetch(); });
+    console.log('проверяю статей:', await p.evaluate(()=>ARTICLES.length));
     const bad = await p.evaluate(async () => {
       const out = [];
       for (const it of [...ARTICLES.map(a=>['article',a]), ...ALL_LESSONS.map(l=>['lesson',l])]) {
