@@ -60,7 +60,7 @@
 }
 @keyframes blobs{0%{transform:translate(0,0) rotate(0) scale(1)}50%{transform:translate(5%,-4%) rotate(10deg) scale(1.08)}100%{transform:translate(-4%,5%) rotate(-8deg) scale(.96)}}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html,body{margin:0;color:var(--text);font:15px/1.5 'Manrope',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;-webkit-font-smoothing:antialiased}
+html,body{margin:0;overflow-x:hidden;overflow-x:clip;color:var(--text);font:15px/1.5 'Manrope',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;-webkit-font-smoothing:antialiased}
 body{background:var(--bg);background-image:radial-gradient(120% 60% at 100% 0%,var(--glow1),transparent 60%),radial-gradient(90% 50% at 0% 100%,var(--glow2),transparent 60%);background-attachment:fixed;min-height:100vh;transition:background-color .4s}
 button{font:inherit;color:inherit;border:0;background:none;cursor:pointer;padding:0}
 input{font:inherit;color:var(--text)}
@@ -129,12 +129,12 @@ button:hover .arrow{transform:rotate(45deg)}
 .octa:hover{transform:rotate(22.5deg)}
 .octa svg.o{position:absolute;inset:0;width:100%;height:100%}
 .octa .a{width:18px;height:18px}
-.chipline{font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;padding:5px 9px;border:1px solid var(--card-b);border-radius:8px;color:var(--text)}
+.chipline{white-space:nowrap;font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;padding:5px 9px;border:1px solid var(--card-b);border-radius:8px;color:var(--text)}
 .coll{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .cc{--c:var(--accent);position:relative;overflow:hidden;border-radius:18px;min-height:168px;padding:13px;display:flex;flex-direction:column;border:1px solid var(--card-b);background:linear-gradient(180deg,color-mix(in srgb,var(--c) 26%,transparent),color-mix(in srgb,var(--c) 4%,transparent) 70%)}
 .cc.wide{grid-column:span 2;min-height:150px}
 .cc .gh{position:absolute;right:-6px;bottom:-14px;font-family:var(--disp);font-weight:700;font-size:92px;line-height:.8;color:transparent;-webkit-text-stroke:1px color-mix(in srgb,var(--c) 55%,transparent);pointer-events:none}
-.cc .disp{font-size:24px;margin-top:auto;position:relative}
+.cc .disp{font-size:clamp(18px,6.2vw,24px);margin-top:auto;position:relative;overflow-wrap:break-word}
 .cc .mono{position:relative}
 .dots{display:flex;gap:5px;margin:8px 0 6px;position:relative}
 .dots i{width:9px;height:9px;border-radius:50%;border:1px solid var(--text);opacity:.6}
@@ -365,7 +365,7 @@ button:hover .arrow{transform:rotate(45deg)}
 .sw{display:flex;gap:10px;flex-wrap:wrap}
 .sw button{width:38px;height:38px;border-radius:50%;border:3px solid var(--bg);outline:1.5px solid var(--card-b);transition:transform .2s;font-family:var(--mono);font-size:9px;font-weight:700}
 .sw button.on{outline:2px solid var(--text);transform:scale(1.1)}
-.field{width:100%;height:48px;border-radius:14px;border:1px solid var(--card-b);background:var(--card);padding:0 14px;outline:none}
+.field{width:100%;min-width:0;box-sizing:border-box;height:48px;border-radius:14px;border:1px solid var(--card-b);background:var(--card);padding:0 14px;outline:none}
 .field:focus{border-color:var(--accent)}
 .opt{display:flex;align-items:flex-start;gap:12px;width:100%;text-align:left;padding:15px;border-radius:18px;background:var(--card);border:1px solid var(--card-b);margin-bottom:8px}
 .opt .box{width:24px;height:24px;border-radius:8px;border:1.5px solid var(--card-b);display:grid;place-items:center;flex:none;margin-top:1px;transition:all .2s}
@@ -556,7 +556,9 @@ button:active,label.card:active{transform:scale(.97)}
 .modes button.on{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 14%,transparent)}
 .modes .mi{grid-row:span 2;font-size:24px}
 .modes{grid-template-columns:repeat(3,1fr)}
-.modes button{display:flex;flex-direction:column;align-items:flex-start;gap:3px}
+.modes button{display:flex;flex-direction:column;align-items:flex-start;gap:3px;min-width:0}
+.modes small{overflow-wrap:break-word;hyphens:auto;-webkit-hyphens:auto;max-width:100%}
+@media (max-width:340px){.modes{grid-template-columns:1fr}:root:root:root .sec .disp{font-size:17px!important}:root:root .sec .chipline{font-size:9px;padding:5px 7px;letter-spacing:.04em;transform:none}.sec{gap:8px}}
 .modes b{font-size:14px}
 .modes small{color:var(--hint);font-size:11.5px;line-height:1.3}
 /* тренировки */
@@ -671,6 +673,10 @@ button:active,label.card:active{transform:scale(.97)}
 :root .lvl.gold{box-shadow:inset 0 0 0 1.5px var(--gold)}
 :root .top{gap:8px}
 :root .top .logo{flex:0 0 auto}
+:root .top .logo b{font-size:min(22px,6vw)}
+:root .top.long .logo b{font-size:min(17px,5vw)!important}
+:root .top.sect .lvn{display:none}
+@media (max-width:400px){:root .top .lvn{display:none}:root .top.sect .lvl{display:none}:root .top.sect .tsw{margin-left:auto}}
 :root .top .lvl{flex:0 1 auto;margin-left:auto}
 :root .logo svg{width:38px;height:38px;padding:6px;border-radius:12px;background:#07080c;box-shadow:0 8px 14px -8px rgba(8,12,30,.7);flex:none}
 :root[data-theme="dark"] .logo svg{background:var(--chip)}
@@ -906,7 +912,7 @@ button:active,label.card:active{transform:scale(.97)}
 .st-cover .st-card{background:#07080c;color:#fff;justify-content:flex-end;padding-bottom:26px}
 .st-cover .art{position:absolute;inset:0;z-index:0}
 .st-cover .st-card::before{content:'';position:absolute;inset:0;z-index:1;background:linear-gradient(180deg,rgba(0,0,0,.1) 30%,rgba(0,0,0,.72))}
-.st-cover .disp{font-size:clamp(34px,10.5vw,46px);text-wrap:balance}
+.st-cover .disp{font-size:clamp(26px,8.4vw,42px);text-wrap:balance;overflow-wrap:break-word}
 .st-cover .mono{color:rgba(255,255,255,.8)}
 .st-swipe{display:inline-flex;align-items:center;gap:8px;align-self:flex-start;margin-top:16px;height:40px;padding:0 16px;border-radius:20px;background:var(--accent);color:var(--on-accent);font-weight:800;font-size:13.5px;animation:stnudge 1.6s ease-in-out infinite}
 @keyframes stnudge{50%{transform:translateX(7px)}}
@@ -1629,6 +1635,8 @@ button:active,label.card:active{transform:scale(.97)}
 .slrow .hint{font-size:13px}
 .slrow i{font-style:normal;font-family:var(--mono);font-size:11px;color:var(--accent)}
 .slcard .lbl{margin-bottom:4px}
+.card > .row.between > .btn.sm{flex:none}
+.card > .row.between > :first-child{min-width:0}
 .sheet .seg button{padding:10px 2px;white-space:nowrap;font-size:12.5px}
 
 /* ============================================================
@@ -4440,7 +4448,7 @@ function localReply(text) {
     const list = tasksFor(n).map((x, i) => `${doneOn(today()).includes(x.id) ? '✓' : (i + 1) + '.'} ${x.text}`).join('\n');
     const b = readingBook();
     const pl = ((S.protos && S.protos.active) || []).map((a) => { const t = protoToday(a); return t.over ? `• ${PROTOCOLS[a.id].t}: пройден, забери награду` : `• ${PROTOCOLS[a.id].t}: ${t.reqDone}/${t.req} шагов`; }).join('\n');
-    return { text: `${hard() ? `День ${n}. Миссии:` : `День ${n}, ${bro}. Вот что у нас сегодня:`}\n\n${list}\n\nХарактер: ${charFor(n)[1]}${b ? `\nБонус: 10 страниц «${b.t}»` : ''}${pl ? `\n\nПротоколы (Главная → Мой план):\n${pl}` : ''}\n\n${hard() ? 'Без отговорок.' : pick(['Начни с самого лёгкого — дальше пойдёт само. Отмечай на главной 🤙', 'Тут работы минут на пятнадцать. Закроешь — отпишись, порадуюсь за тебя.', 'Ничего сложного, ты это уже умеешь. Погнали 🔥'])}` };
+    return { text: `${hard() ? `День ${n}. Миссии:` : `День ${n}, ${bro}. Вот что у нас сегодня:`}\n\n${list}\n\nХарактер: ${charFor(n)[1]}${b ? `\nБонус: 10 страниц «${b.t}»` : ''}${pl ? `\n\nПротоколы (вкладка «Упражнения»):\n${pl}` : ''}\n\n${hard() ? 'Без отговорок.' : pick(['Начни с самого лёгкого — дальше пойдёт само. Отмечай на главной 🤙', 'Тут работы минут на пятнадцать. Закроешь — отпишись, порадуюсь за тебя.', 'Ничего сложного, ты это уже умеешь. Погнали 🔥'])}` };
   }
   if (/подбери парфюм|подобрать парфюм|мой парфюм|какой парфюм/.test(t)) {
     if (S.perfume) { const top = pfPick(S.perfume).top; return { text: `По твоим ответам лучше всего зашёл ${top[0].p[1]} ${top[0].p[0]} — совпадение ${top[0].pct}%. ${top[0].p[11]}\n\nЗапасной вариант — ${top[1].p[1]} ${top[1].p[0]}.\n\nВесь список лежит в «План → Парфюм». Только не бери флакон вслепую: сначала отливант и неделю поносить.` }; }
@@ -4971,7 +4979,7 @@ function renderOnboarding() {
     <div class="disp h1" style="margin:8px 0 10px">Точка «до»</div>
     <p class="hint" style="margin:0 0 16px">Дневной свет, лицо прямо, без фильтров. Лучше всего — если снимет друг с метра.</p>
     ${ob.photoErr ? `<div class="banner" style="margin-bottom:14px">⚠️ ${esc(ob.photoErr)}</div>` : ''}
-    <button type="button" class="photo-drop" data-act="photo" data-k="ob-photo" style="margin-bottom:14px;width:100%;color:inherit;font:inherit">
+    <button type="button" class="photo-drop" data-act="photo" data-k="ob-photo" style="margin-bottom:14px;width:100%;color:#fff;font:inherit">
       ${ob.photo ? `<img src="${ob.photo}" alt="">` : `<div class="oval"></div><div style="position:relative">${IC.cam}<div style="font-weight:800;margin-top:6px">Добавить фото</div><div class="hint">камера или галерея</div></div>`}
     </button>
     <button class="btn" data-act="analyze" ${ob.photo ? '' : 'disabled'}>${ob.photo ? 'Сделать разбор' : 'Сначала добавь фото'}</button>`;
@@ -5002,7 +5010,7 @@ function renderOnboarding() {
 // ---------- шапка ----------
 function topbar(title) {
   const r = rank();
-  return `<div class="top${(title || '').length > 8 ? ' long' : ''}"><div class="logo">${IC.logo}<b${(title || '').length > 8 ? ' style="font-size:17px"' : ''}>${title || 'mogg'}<span class="tm">™</span></b></div><span class="lvl ${isOpen('gold') ? 'gold' : ''}">LVL <em>${r.lvl}</em><span class="lvn"> · ${r.name}</span></span>${themeSwitch()}</div>`;
+  return `<div class="top${title ? ' sect' : ''}${(title || '').length > 8 ? ' long' : ''}"><div class="logo">${IC.logo}<b>${title || 'mogg'}<span class="tm">™</span></b></div><span class="lvl ${isOpen('gold') ? 'gold' : ''}">LVL <em>${r.lvl}</em><span class="lvn"> · ${r.name}</span></span>${themeSwitch()}</div>`;
 }
 
 // ---------- главная ----------
@@ -5201,7 +5209,7 @@ function protoCard(a) {
     <div class="disp" style="font-size:28px;margin:8px 0 4px">${pr.t}</div>
     <div class="pbar"><i style="width:${Math.min(1, t.k / pr.days) * 100}%;background:${pl.c}"></i></div>
     ${note ? `<div class="why"><b>Почему у тебя так:</b> ${note}</div>` : ''}
-    ${t.over ? `<div style="margin:14px 0 10px"><b>Протокол пройден 🔥</b><div class="hint" style="margin-top:4px">Сделай фото в тех же условиях, что в начале, и сравни на вкладке «Путь».</div></div><button class="btn" data-act="proto-finish" data-id="${a.id}">Завершить · +100 XP</button>`
+    ${t.over ? `<div style="margin:14px 0 10px"><b>Протокол пройден 🔥</b><div class="hint" style="margin-top:4px">Сделай фото в тех же условиях, что в начале, и сравни во вкладке «Я».</div></div><button class="btn" data-act="proto-finish" data-id="${a.id}">Завершить · +100 XP</button>`
       : `<div class="row between" style="margin:14px 0 8px"><span class="mono">Сегодня</span><span class="mono">${t.reqDone}/${t.req}</span></div>
       ${t.steps.map((s) => `<button class="mission ${dn.includes(s.key) ? 'done' : ''} ${justDone === s.key ? 'just' : ''}" data-act="pstep" data-k="${s.key}"><span class="box">${dn.includes(s.key) ? IC.check : ''}</span><span style="flex:1"><div class="when">${s.w}${s.opt ? ' · по желанию' : ''}</div><div class="t">${s.t}</div></span>${s.x ? `<span class="btn sm ghost" data-act="ex-open" data-x="${s.x}" style="height:32px;padding:0 10px;flex:none">Как ▶</span>` : '<span class="xp">+5</span>'}</button>`).join('')}`}
     <details><summary>Как это работает</summary><p>${pr.why}</p><p><b>Что реально ожидать.</b> ${pr.expect}</p></details>
@@ -6160,7 +6168,7 @@ function renderModal() {
     return `<div class="modal"><div class="sheet exs" style="text-align:left">
       ${aiCard(S.ai)}
       ${fr.length ? `<div class="banner">Добавил в план: ${fr.join(', ')}.</div>` : ''}
-      ${S.ai.exercises && S.ai.exercises.length ? '<div class="banner">Тренировка дня собрана под этот разбор — она на главной и в «Моём плане».</div>' : ''}
+      ${S.ai.exercises && S.ai.exercises.length ? '<div class="banner">Тренировка дня собрана под этот разбор — она на главной и во вкладке «Упражнения».</div>' : ''}
       <button class="btn" data-act="modal-close">Понятно</button>
     </div></div>`;
   }
@@ -6188,7 +6196,7 @@ function renderModal() {
           <div class="row between" style="justify-content:flex-end"><span class="mono">день ${z(dayNum(today()))}</span></div>
           <div class="disp" style="font-size:20px;margin-top:22px">Уровень</div>
           <div class="disp" style="font-size:110px;line-height:.85">${z(r.lvl)}</div>
-          <div class="disp" style="font-size:26px">${r.name}</div>
+          <div class="disp" style="font-size:26px;margin-top:10px">${r.name}</div>
           <div style="margin-top:auto" class="specs">
             <div><div class="k">Серия</div><div class="v">${streak()} 🔥</div></div>
             <div><div class="k">Миссий</div><div class="v">${totalTasks() + charCount()}</div></div>
@@ -6196,7 +6204,7 @@ function renderModal() {
           </div>
         </div>
       </div>
-      <div class="hint" style="margin:12px 0">Сделай скриншот и выложи в сторис. В рабочей версии здесь будет кнопка «Поделиться».</div>
+      <div class="hint" style="margin:12px 0">Сделай скриншот и выложи в сторис.</div>
       <button class="btn ghost" data-act="modal-close">Закрыть</button>
     </div></div>`;
   }
@@ -6451,7 +6459,7 @@ const ACT = {
         ob.photoErr = !a.person ? 'На фото не видно человека. Нужно селфи или фото в полный рост — тогда разбор будет про тебя.' : `${a.quality_note || 'Фото тёмное или размытое.'} Попробуй переснять.`;
         haptic('heavy'); render(); window.scrollTo(0, 0); return;
       } else if (a) {
-        ob.aiErr = aiErr(a.error) + ' План пока по анкете — разбор по фото можно сделать позже в «Моём плане».';
+        ob.aiErr = aiErr(a.error) + ' План пока по анкете — разбор по фото можно сделать позже во вкладке «Я».';
       }
       ob.step = 8; haptic('success'); render(); window.scrollTo(0, 0);
     });
@@ -7437,8 +7445,8 @@ function slLogModal() {
     <div class="mono lbl" style="margin-top:0">Утро какого дня</div>
     <input class="field" type="date" id="sl-d" value="${m.d || today()}" max="${today()}">
     <div class="row" style="gap:10px;margin-top:6px">
-      <div style="flex:1"><div class="mono lbl">Лёг</div><input class="field" type="time" id="sl-b" value="${m.b || def(pr ? pr.bed : 23.5)}"></div>
-      <div style="flex:1"><div class="mono lbl">Проснулся</div><input class="field" type="time" id="sl-w" value="${m.w || def(pr ? pr.wake : 7.5)}"></div>
+      <div style="flex:1;min-width:0"><div class="mono lbl">Лёг</div><input class="field" type="time" id="sl-b" value="${m.b || def(pr ? pr.bed : 23.5)}"></div>
+      <div style="flex:1;min-width:0"><div class="mono lbl">Проснулся</div><input class="field" type="time" id="sl-w" value="${m.w || def(pr ? pr.wake : 7.5)}"></div>
     </div>
     <button class="btn" data-act="sl-log-save" style="margin-top:18px">Сохранить</button>
     <button class="btn sm ghost" data-act="modal-close" style="margin-top:10px;width:100%">Отмена</button>
@@ -7511,7 +7519,7 @@ function auraModal() {
     <div class="disp" style="font-size:28px;margin:6px 0 4px">Аура растёт от серии</div>
     <div class="hint" style="margin-bottom:12px">Каждый день, когда ты закрываешь 3 миссии, аура становится сильнее. Пропустил день — она гаснет, и всё сначала.</div>
     ${AURA.slice(1).map((a) => `<div class="arow ${a.tier === cur.tier ? 'on' : ''}" style="${auraStyle({ ...a, tier: AURA.indexOf(a) })}">${auraOrb(a.from, 'sm')}<div style="flex:1"><b>${a.name}</b><div class="hint" style="font-size:12px">с ${a.from} ${plural(a.from, 'дня', 'дней', 'дней')} подряд</div></div>${s >= a.from ? '<span class="check">' + IC.check + '</span>' : ''}</div>`).join('')}
-    <div class="hint" style="margin-top:10px;font-size:12.5px">Лучшая серия: ${bestStreak()} ${plural(bestStreak(), 'день', 'дня', 'дней')}. Друзья видят твою ауру в рейтинге.</div>
+    <div class="hint" style="margin-top:10px;font-size:12.5px">Лучшая серия: ${bestStreak()} ${plural(bestStreak(), 'день', 'дня', 'дней')}.</div>
     <button class="btn" data-act="modal-close" style="margin-top:14px">Понятно</button></div></div>`;
 }
 ACT['aura-info'] = () => { modal = { kind: 'aura' }; haptic('light'); render(); };
