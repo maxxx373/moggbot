@@ -25,6 +25,12 @@ window.__domcheck = function () {
   }
   const rows = [...root.querySelectorAll('.lesson, .mission, .item, .row, .rstep, .opt')];
   for (const r of rows) { const kids = [...r.children].filter((k) => k.getBoundingClientRect().width && !['absolute', 'fixed'].includes(getComputedStyle(k).position)); for (let i = 0; i + 1 < kids.length; i++) { const a = kids[i].getBoundingClientRect(), c = kids[i + 1].getBoundingClientRect(); if (a.right > c.left + 2 && a.bottom > c.top + 2 && c.bottom > a.top + 2 && a.left < c.right - 2) probs.push('наложение: ' + name(kids[i]) + ' ↔ ' + name(kids[i + 1])); } }
+  // наложение текста: сравниваем реальные прямоугольники строк текста у соседей в строке
+  const textRect = (el) => { const r = document.createRange(); r.selectNodeContents(el); const rs = [...r.getClientRects()].filter((x) => x.width > 1 && x.height > 1); if (!rs.length) return null; return { left: Math.min(...rs.map((x) => x.left)), right: Math.max(...rs.map((x) => x.right)), top: Math.min(...rs.map((x) => x.top)), bottom: Math.max(...rs.map((x) => x.bottom)) }; };
+  for (const row of root.querySelectorAll('.row, .row.between, summary, .sec')) {
+    const kids = [...row.children].filter((k) => k.getBoundingClientRect().width && (k.textContent || '').trim() && !['absolute', 'fixed'].includes(getComputedStyle(k).position));
+    for (let i = 0; i + 1 < kids.length; i++) { const a = textRect(kids[i]), c = textRect(kids[i + 1]); if (a && c && a.right > c.left + 2 && c.right > a.left + 2 && a.bottom > c.top + 2 && c.bottom > a.top + 2) probs.push('текст налезает: ' + name(kids[i]) + ' ↔ ' + name(kids[i + 1])); }
+  }
   if (document.documentElement.scrollWidth > W + 1) probs.push('страница шире экрана на ' + (document.documentElement.scrollWidth - W) + 'px');
   return [...new Set(probs)];
 };

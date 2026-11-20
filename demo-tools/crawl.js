@@ -12,6 +12,9 @@ const SCREENS = [['home'],['plan'],['wardrobe',null,'looks'],['wardrobe',null,'s
   let where = '';
   p.on('pageerror', e => errs.push(where + ' → ' + e.message));
   p.on('dialog', d => d.dismiss());
+  const navs = [];
+  p.on('framenavigated', (f) => { if (f === p.mainFrame() && booted) navs.push(where + ' → ' + f.url().slice(0, 80)); });
+  let booted = false;
   await p.addInitScript(DOMCHECK); await p.goto('file://' + file); await p.waitForTimeout(800);
   await p.evaluate((THEME_ARG) => {
     window.open = () => null;
@@ -22,6 +25,8 @@ const SCREENS = [['home'],['plan'],['wardrobe',null,'looks'],['wardrobe',null,'s
     S.lessons = ['l1']; S.books = { [BOOKS[0].id]: 'reading' }; save();
     window.__snap = JSON.stringify(S);
   }, THEME);
+  booted = true;
+  const boot = await p.evaluate(() => window.__snap);
   const reset = async (scr) => p.evaluate(([t, j, w]) => {
     try { woStop(); } catch (e) {}
     S = JSON.parse(window.__snap); modal = null; reader = null; tab = t; if (j) jtab = j; if (w) wtab = w;
@@ -35,7 +40,9 @@ const SCREENS = [['home'],['plan'],['wardrobe',null,'looks'],['wardrobe',null,'s
   let shotN = 0;
   const check = async () => {
     await p.waitForTimeout(250);
-    const pr = await p.evaluate(() => window.__domcheck());
+    let pr = [];
+    try { pr = await p.evaluate(() => window.__domcheck()); }
+    catch (e) { await p.waitForTimeout(500); await p.goto('file://' + file); await p.waitForTimeout(600); await p.evaluate((sn) => { window.open = () => null; S = JSON.parse(sn); window.__snap = sn; save(); }, boot); return; }
     for (const x of pr) if (!found.has(x)) { found.set(x, where); if (SHOTS && shotN < 60) await p.screenshot({ path: SHOTS + '/c' + (shotN++) + '.png' }), found.set(x, where + '  [c' + (shotN - 1) + ']'); }
   };
   let clicks = 0;
@@ -61,6 +68,7 @@ const SCREENS = [['home'],['plan'],['wardrobe',null,'looks'],['wardrobe',null,'s
     }
   }
   console.log('нажатий:', clicks);
+  if (navs.length) console.log('ПЕРЕХОДЫ СО СТРАНИЦЫ (кнопка уводит из приложения):\n  ' + [...new Set(navs)].join('\n  '));
   console.log([...new Set(errs)].join('\n') || 'ошибок JS нет');
   console.log('\nВЁРСТКА:'); for (const [k, v] of found) console.log(k + '\n     где: ' + v);
   await b.close();

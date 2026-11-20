@@ -6,6 +6,8 @@
 //   SUPPORT_TG     — ник поддержки без @ (по умолчанию paradox112)
 //   SUPPORT_EMAIL  — почта поддержки (по умолчанию mogg_help@mail.ru)
 //   APP_URL        — адрес мини-аппа (по умолчанию https://maxxx373.github.io/moggbot/)
+//   OWNER_ID       — твой Telegram ID: только тебе бот покажет /reports (сообщения о проблемах из приложения)
+//   BUCKET         — бакет с данными (тот же, что у mogg-ai и mogg-pay); у функции должен быть сервисный аккаунт с доступом к нему
 //
 // Первый запуск: открой в браузере ссылку функции с ?setup=1 — бот сам подключит вебхук,
 // команды, описание и кнопку «Открыть» слева от поля ввода.
@@ -17,6 +19,8 @@ const SUPPORT_TG = (process.env.SUPPORT_TG || 'paradox112').replace(/^@/, '');
 const SUPPORT_EMAIL = process.env.SUPPORT_EMAIL || 'mogg_help@mail.ru';
 const APP_URL = (process.env.APP_URL || 'https://maxxx373.github.io/moggbot/').replace(/\/?$/, '/');
 const COVER = APP_URL + 'bot/cover.jpg';
+const OWNER_ID = +(process.env.OWNER_ID || 0);
+const BUCKET = process.env.BUCKET || '';
 const PRIVACY = 'https://telegra.ph/Politika-konfidencialnosti-mogg-11-19';
 const OFFER = 'https://telegra.ph/Polzovatelskoe-soglashenie-mogg-11-19'; // пользовательское соглашение
 // Секрет, который Telegram присылает в заголовке каждого запроса: чужие запросы к функции игнорируем
@@ -105,8 +109,27 @@ const inPlace = (msg, s) => {
     : { method: 'editMessageText', ...base, text: s.caption, link_preview_options: { is_disabled: true } };
 };
 
+// ---------- сообщения о проблемах (только владельцу) ----------
+async function reportsMsg(chat, iam) {
+  if (!BUCKET || !iam) return { method: 'sendMessage', chat_id: chat, text: 'Для /reports у функции бота нужны BUCKET и сервисный аккаунт с доступом к бакету.' };
+  let list = [];
+  try {
+    const r = await fetch(`https://storage.yandexcloud.net/${BUCKET}/reports/latest.json`, { headers: { 'X-YaCloud-SubjectToken': iam }, signal: AbortSignal.timeout(8000) });
+    if (r.ok) list = await r.json();
+  } catch (e) { console.error('reports', e.message); }
+  if (!list.length) return { method: 'sendMessage', chat_id: chat, text: 'Сообщений о проблемах пока нет 🙌' };
+  const fmt = (x) => {
+    const d = new Date(x.at + 3 * 3600000).toISOString().slice(5, 16).replace('T', ' ');
+    let diag = ''; try { const g = JSON.parse(x.diag || '{}'); diag = [g.screen, g.theme, g.where, g.platform, g.errors && g.errors.length ? 'ошибок JS: ' + g.errors.length : ''].filter(Boolean).join(' · '); } catch (e) {}
+    return `<b>${d}</b> · ${esc(x.name || '')}${x.username ? ' @' + esc(x.username) : ''} · id ${x.uid}\n${esc(x.text)}${diag ? `\n<i>${esc(diag)}</i>` : ''}`;
+  };
+  let text = `📮 Последние сообщения о проблемах (${Math.min(10, list.length)} из ${list.length}):\n\n`;
+  for (const x of list.slice(0, 10)) { const add = fmt(x) + '\n\n'; if ((text + add).length > 3900) break; text += add; }
+  return { method: 'sendMessage', chat_id: chat, text, parse_mode: 'HTML', link_preview_options: { is_disabled: true } };
+}
+
 // ---------- обработка апдейтов: возвращает действие для ответа ----------
-function onUpdate(u) {
+async function onUpdate(u, iam) {
   if (u.message) {
     const m = u.message, chat = m.chat.id, text = (m.text || '').trim(), name = m.from && m.from.first_name;
     if (m.chat.type !== 'private') return null;
@@ -115,6 +138,7 @@ function onUpdate(u) {
     if (cmd === 'pro') return screenMsg(chat, 'pro');
     if (cmd === 'collab') return screenMsg(chat, 'collab');
     if (cmd === 'privacy') return { method: 'sendMessage', chat_id: chat, text: `🔒 Политика конфиденциальности: ${PRIVACY}\n📄 Пользовательское соглашение: ${OFFER}` };
+    if (cmd === 'reports' && OWNER_ID && m.from && m.from.id === OWNER_ID) return reportsMsg(chat, iam);
     if (cmd === 'start' || cmd === 'menu') return menuMsg(chat, name);
     // любое другое сообщение — бот не чат, показываем меню с подсказкой
     return menuMsg(chat, name, '<i>Я не отвечаю на сообщения — всё внутри приложения. Нужна помощь — жми «Поддержка».</i>\n\n');
@@ -170,10 +194,10 @@ module.exports.handler = async (event, context) => {
   let out = null;
   try {
     const body = event.isBase64Encoded ? Buffer.from(event.body || '', 'base64').toString('utf8') : event.body;
-    out = onUpdate(JSON.parse(body || '{}'));
+    out = await onUpdate(JSON.parse(body || '{}'), context && context.token && context.token.access_token);
   } catch (e) { console.error(e); }
   // Telegram'у всегда отвечаем 200, иначе он будет повторять запрос; действие — в теле ответа
   return out ? json(200, out) : { statusCode: 200, body: 'ok' };
 };
 // для локальных тестов
-module.exports._t = { menu, SCREENS, onUpdate, setup, SECRET, api };
+module.exports._t = { menu, SCREENS, onUpdate, setup, SECRET, api, reportsMsg };

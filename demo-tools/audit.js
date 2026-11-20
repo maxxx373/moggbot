@@ -31,7 +31,7 @@ const SCREENS = [['home'],['plan'],['wardrobe'],['perfume'],['coach'],['me'],
       // наложение: соседние текстовые блоки внутри одной строки
       const rows=[...document.querySelectorAll('#app .lesson, #app .mission, #app .item, #app .row')];
       for (const r of rows) { const kids=[...r.children].filter(k=>k.getBoundingClientRect().width); for (let i=0;i+1<kids.length;i++){ const a=kids[i].getBoundingClientRect(), c=kids[i+1].getBoundingClientRect(); if (getComputedStyle(kids[i]).position==='absolute'||getComputedStyle(kids[i+1]).position==='absolute') continue; if (a.right>c.left+2 && a.bottom>c.top+2 && c.bottom>a.top+2) probs.push('наложение: '+name(kids[i])+' ↔ '+name(kids[i+1])); } }
-      const lv=document.querySelector('.top .lvl'); if (lv && lv.clientWidth<60) probs.push('плашка уровня сжата до '+lv.clientWidth+'px');
+      const lv=document.querySelector('.top .lvl'); if (lv && getComputedStyle(lv).display!=='none' && lv.clientWidth<60) probs.push('плашка уровня сжата до '+lv.clientWidth+'px');
       return [...new Set(probs)];
     });
     const key = theme+':'+t+(j?':'+j:'');
