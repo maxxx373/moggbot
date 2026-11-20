@@ -49,7 +49,7 @@ const fakeAI = () => ({
     window.__snap = JSON.stringify(S); window.P2 = P;
     try { pfQ = P('pf.q'); } catch (e) {}
   }, [fakeAI()]);
-  const SCREENS = [['home'], ['plan'], ['wardrobe', null, 'looks'], ['wardrobe', null, 'school'], ['perfume'], ['coach'], ['me'], ...['basics', 'mind', 'social', 'books', 'shelf', 'feed'].map((j) => ['journal', j])];
+  const SCREENS = [['home'], ['plan'], ['care'], ['wardrobe', null, 'looks'], ['wardrobe', null, 'school'], ['perfume'], ['coach'], ['me'], ...['basics', 'mind', 'social', 'books', 'shelf', 'feed'].map((j) => ['journal', j])];
   const hits = new Map();
   const look = async (where) => {
     const r = await p.evaluate(() => { const els = [...document.querySelectorAll('[data-pwn]')].map((e) => e.getAttribute('data-pwn')); const x = window.__xss || []; window.__xss = []; return [...new Set([...els, ...x])]; });

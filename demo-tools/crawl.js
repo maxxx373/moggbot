@@ -3,7 +3,7 @@ const { chromium } = require('playwright');
 const file = process.argv[2], THEME = process.argv[3] || 'light', WIDTH = +(process.argv[4] || 375), SHOTS = process.argv[5];
 const fs = require('fs'); const DOMCHECK = fs.readFileSync(__dirname + '/domcheck.js', 'utf8');
 const found = new Map();
-const SCREENS = [['home'],['plan'],['wardrobe',null,'looks'],['wardrobe',null,'school'],['perfume'],['coach'],['me'],
+const SCREENS = [['home'],['plan'],['care'],['wardrobe',null,'looks'],['wardrobe',null,'school'],['perfume'],['coach'],['me'],
   ...['basics','mind','social','books','shelf','feed'].map(j=>['journal',j])];
 (async () => {
   const b = await chromium.launch();
