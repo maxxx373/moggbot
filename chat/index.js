@@ -22,6 +22,19 @@ const PERSONAS = {
 // как характер называется в основном бэкенде (там свои старые режимы)
 const UP_TONE = { friend: 'friend', chill: 'soft', critic: 'critic', sudar: 'friend' };
 
+// Системные правила ИИ — только серверные. Клиентские rules игнорируем: иначе любой может прислать свои правила
+// и заставить нейросеть писать что угодно от имени mogg (копия AI_RULES из index.html).
+const SERVER_RULES = 'Ты Макс, друг пользователя в mogg. Отвечай ТОЛЬКО под этого человека: опирайся на profile (цели, отмеченные проблемы, разбор фото, сон, бюджет) и не давай общих советов «для всех». Каждый совет связывай с конкретной причиной из profile.priorities («у тебя …, поэтому …»). Не предлагай то, чего нет в его целях и проблемах, если он сам не спросил. Учитывай бюджет: при 0 ₽ — только бесплатные шаги. Не оценивай черты лица и рост — только то, что можно изменить.';
+// restyle — не больше 30 запросов в час на человека (на один экземпляр функции) и до 1500 символов: чтобы нашу нейросеть не использовали как бесплатный сервис
+const RL = new Map();
+function rateOk(uid, max) {
+  const now = Date.now(), a = (RL.get(uid) || []).filter((t) => now - t < 3600000);
+  if (a.length >= max) return false;
+  a.push(now); RL.set(uid, a); if (RL.size > 5000) RL.clear();
+  return true;
+}
+const initUid = (init) => { try { return JSON.parse(new URLSearchParams(init).get('user')).id || 0; } catch (e) { return 0; } };
+
 // Запросы из браузера — только с домена приложения
 const ORIGIN = process.env.APP_ORIGIN || 'https://maxxx373.github.io';
 const CORS = { 'Access-Control-Allow-Origin': ORIGIN, 'Vary': 'Origin', 'Access-Control-Allow-Headers': 'Content-Type', 'Access-Control-Allow-Methods': 'POST, OPTIONS' };
@@ -38,7 +51,7 @@ function validInit(init) {
   const secret = crypto.createHmac('sha256', 'WebAppData').update(TOKEN).digest();
   const calc = crypto.createHmac('sha256', secret).update(dc).digest('hex');
   const auth = +p.get('auth_date') || 0;
-  return safeEq(calc, hash) && Date.now() / 1000 - auth < 7 * 86400;
+  return safeEq(calc, hash) && Date.now() / 1000 - auth < 2 * 86400; // подпись действует 2 суток
 }
 
 async function restyle(text, persona, iam) {
@@ -67,15 +80,19 @@ module.exports.handler = async (event, context) => {
 
   if (b.action === 'restyle') {
     if (!validInit(b.initData)) return out({ error: 'not_telegram' }, 403);
-    return out({ text: await restyle(String(b.text || '').slice(0, 3000), persona, iam) });
+    const text = String(b.text || '');
+    if (text.length > 1500 || !rateOk(initUid(b.initData), 30)) return out({ text });
+    return out({ text: await restyle(text, persona, iam) });
   }
   if (b.action !== 'chat') return out({ error: 'bad_action' }, 400);
   if (!validInit(b.initData)) return out({ error: 'not_telegram' }, 403);
   if (typeof b.message !== 'string' || b.message.length > 4000) return out({ error: 'bad_message' }, 400);
 
   // основной ответ — от mogg-ai, со всеми его лимитами и проверками
-  const up = { ...b, tone: UP_TONE[persona] };
-  if (up.context) up.context = { ...up.context, tone: UP_TONE[persona] };
+  const up = { ...b, tone: UP_TONE[persona], rules: SERVER_RULES };
+  if (up.context && typeof up.context === 'object') up.context = { ...up.context, tone: UP_TONE[persona], rules: SERVER_RULES };
+  if (Array.isArray(up.history)) up.history = up.history.slice(-12).map((x) => ({ from: x && x.from === 'me' ? 'me' : 'ai', text: String((x && x.text) || '').slice(0, 2000) }));
+  else delete up.history;
   let j;
   try {
     // в основной бэкенд — с токеном сервисного аккаунта (работает и когда функция закрыта для публики)
@@ -85,4 +102,4 @@ module.exports.handler = async (event, context) => {
   if (j && j.text && persona !== 'friend') j.text = await restyle(j.text, persona, iam);
   return out(j);
 };
-module.exports._t = { validInit, restyle, PERSONAS };
+module.exports._t = { validInit, restyle, PERSONAS, SERVER_RULES, rateOk };

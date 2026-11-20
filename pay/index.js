@@ -52,7 +52,7 @@ function tgUser(init) {
   const dc = [...p.entries()].sort(([a], [b]) => (a < b ? -1 : 1)).map(([k, v]) => `${k}=${v}`).join('\n');
   const secret = crypto.createHmac('sha256', 'WebAppData').update(TOKEN).digest();
   if (!safeEq(crypto.createHmac('sha256', secret).update(dc).digest('hex'), hash)) return null;
-  if (Date.now() / 1000 - (+p.get('auth_date') || 0) > 7 * 86400) return null;
+  if (Date.now() / 1000 - (+p.get('auth_date') || 0) > 2 * 86400) return null;
   try { return JSON.parse(p.get('user')); } catch (e) { return null; }
 }
 
@@ -70,8 +70,25 @@ async function addPro(iam, uid, days) {
   await putJSON(iam, `acc/${uid}.json`, acc);
   return acc.pro_until;
 }
-const refCode = (uid) => Number(uid).toString(36);
-const refUid = (code) => (/^[0-9a-z]{1,12}$/.test(code || '') ? parseInt(code, 36) : 0);
+// Реферальный код — случайный (Telegram ID в ссылке не светится). refme/<uid> → код, refcode/<код> → uid
+const REF_RE = /^[0-9a-z]{6,16}$/;
+async function refCode(iam, uid) {
+  const me = await getJSON(iam, `refme/${uid}.json`);
+  if (me && REF_RE.test(me.code || '')) return me.code;
+  for (let i = 0; i < 5; i++) {
+    const code = BigInt('0x' + crypto.randomBytes(6).toString('hex')).toString(36).padStart(8, '0').slice(-8);
+    if (await getJSON(iam, `refcode/${code}.json`)) continue;
+    await putJSON(iam, `refcode/${code}.json`, { uid: +uid });
+    await putJSON(iam, `refme/${uid}.json`, { code });
+    return code;
+  }
+  throw new Error('ref code');
+}
+async function refUid(iam, code) {
+  if (!REF_RE.test(code || '')) return 0;
+  const r = await getJSON(iam, `refcode/${code}.json`);
+  return r && +r.uid > 0 ? +r.uid : 0;
+}
 const clip = (x, n) => String(x == null ? '' : x).slice(0, n);
 
 // ---------- Platega ----------
@@ -122,10 +139,10 @@ module.exports.handler = async (event, context) => {
     try {
       if (b.action === 'ref-info') {
         const st = (await getJSON(iam, `refby/${user.id}.json`)) || { invited: [], days: 0 };
-        return out({ code: refCode(user.id), invited: st.invited.length, days: st.days, per: REF_DAYS, max: REF_MAX });
+        return out({ code: await refCode(iam, user.id), invited: st.invited.length, days: st.days, per: REF_DAYS, max: REF_MAX });
       }
       if (b.action === 'ref-claim') {
-        const inviter = refUid(b.code);
+        const inviter = await refUid(iam, b.code);
         if (!inviter || inviter === user.id) return out({ error: 'bad_code' });
         if (await getJSON(iam, `refd/${user.id}.json`)) return out({ error: 'already' });
         // по ссылке друга считается только новый человек: ещё не платил и не был приглашён

@@ -26,7 +26,9 @@ const days = (uid) => { const a = store.get(`acc/${uid}.json`); return a ? Math.
 (async () => {
   const A = { id: 1001, first_name: 'Аня' }, B = { id: 2002, first_name: 'Боря' }, C = { id: 3003, first_name: 'Вова' }, D = { id: 4004, first_name: 'Гена' };
   const info = await call(A, { action: 'ref-info' });
-  ok(info.code === (1001).toString(36) && info.invited === 0, 'ref-info: код и 0 друзей');
+  ok(/^[0-9a-z]{8}$/.test(info.code) && info.code !== (1001).toString(36) && info.invited === 0, 'ref-info: случайный код (не Telegram ID) и 0 друзей');
+  ok((await call(A, { action: 'ref-info' })).code === info.code, 'код постоянный — при повторном запросе тот же');
+  ok((await call(B, { action: 'ref-claim', code: (1001).toString(36) + 'zz' })).error === 'bad_code', 'выдуманный код не работает');
   ok((await call(A, { action: 'ref-claim', code: info.code })).error === 'bad_code', 'сам себя пригласить нельзя');
   ok((await call(B, { action: 'ref-claim', code: '!!' })).error === 'bad_code', 'кривой код отклонён');
   const r1 = await call(B, { action: 'ref-claim', code: info.code });
@@ -43,7 +45,7 @@ const days = (uid) => { const a = store.get(`acc/${uid}.json`); return a ? Math.
   ok(i2.invited === 3 && i2.days === 14, `статистика: приглашено ${i2.invited}, получено ${i2.days} дней`);
   // Pro продлевается от конца текущей подписки
   store.set('acc/5005.json', JSON.stringify({ pro_until: Date.now() + 10 * 864e5, other: 'keep' }));
-  await call({ id: 5005 }, { action: 'ref-claim', code: (1001).toString(36) });
+  await call({ id: 5005 }, { action: 'ref-claim', code: info.code });
   ok(days(5005) === 17 && JSON.parse(store.get('acc/5005.json')).other === 'keep', 'Pro добавляется к текущей подписке, остальные поля аккаунта не трогаются');
   // сообщения о проблемах
   ok((await call(B, { action: 'report', text: ' ' })).error === 'empty', 'пустое сообщение отклонено');
@@ -52,6 +54,9 @@ const days = (uid) => { const a = store.get(`acc/${uid}.json`); return a ? Math.
   for (let i = 0; i < 5; i++) await call(B, { action: 'report', text: 'ещё ' + i });
   ok((await call(B, { action: 'report', text: 'спам' })).error === 'limit', 'не больше 5 сообщений в сутки');
   ok((await call(B, { action: 'report', text: 'x'.repeat(5000) })).error === 'limit' && true, 'длинный текст обрезается (проверено лимитом)');
+  // старая подпись (3 дня назад) не принимается
+  const oldInit = (() => { const p = new URLSearchParams({ auth_date: String(Math.floor(Date.now() / 1000) - 3 * 86400), user: JSON.stringify(B) }); const dc = [...p.entries()].sort(([a], [b]) => (a < b ? -1 : 1)).map(([k, v]) => `${k}=${v}`).join('\n'); p.set('hash', crypto.createHmac('sha256', crypto.createHmac('sha256', 'WebAppData').update(TOKEN).digest()).update(dc).digest('hex')); return p.toString(); })();
+  ok(JSON.parse((await pay.handler({ httpMethod: 'POST', headers: {}, body: JSON.stringify({ initData: oldInit, action: 'report', text: 'старый' }) }, { token: { access_token: 'iam' } })).body).error === 'not_telegram', 'подпись старше 2 суток отклонена');
   // неподписанный запрос
   const bad = JSON.parse((await pay.handler({ httpMethod: 'POST', headers: {}, body: JSON.stringify({ initData: 'user=%7B%22id%22%3A1%7D&hash=00', action: 'report', text: 'hi' }) }, {})).body);
   ok(bad.error === 'not_telegram', 'запрос без подписи Telegram отклонён');

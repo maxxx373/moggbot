@@ -52,7 +52,9 @@ async function open(b, user, start, lsKeyFill) {
 (async () => {
   const b = await chromium.launch();
   const A = { id: 1001, first_name: 'Аня', username: 'anya' }, B = { id: 2002, first_name: 'Боря' };
-  const code = (1001).toString(36);
+  // 0. Аня получает свою ссылку у сервера
+  const code = JSON.parse((await pay.handler({ httpMethod: 'POST', headers: {}, body: JSON.stringify({ initData: initData(A), action: 'ref-info' }) }, { token: { access_token: 'iam' } })).body).code;
+  ok(/^[0-9a-z]{8}$/.test(code), 'сервер выдал Ане случайный код ' + code);
   // 1. Боря открывает по ссылке Ани — видит подарок на первом экране
   const pb = await open(b, B, 'r_' + code);
   ok(await pb.evaluate(() => /Тебя пригласил друг/.test(document.body.innerText)), 'по ссылке друга на первом экране — «Тебя пригласил друг»');
@@ -71,7 +73,7 @@ async function open(b, user, start, lsKeyFill) {
   await pa.evaluate(() => { ob.issues = ['acne']; ob.budget = 3000; ob.goals = ['skin']; ob.result = analyze(); acceptPlan(); tab = 'me'; render(); });
   await pa.waitForTimeout(1500);
   const card = await pa.evaluate(() => { const c = document.querySelector('.refcard'); return c && c.innerText; });
-  ok(card && card.includes('t.me/justmoggbot?startapp=r_' + 'rt'.replace('rt', (1001).toString(36))) && /Пришло друзей: 1/.test(card) && /получено 7 дней Pro/.test(card), 'у Ани в «Я»: своя ссылка и «Пришло друзей: 1 · получено 7 дней Pro»');
+  ok(card && card.includes('t.me/justmoggbot?startapp=r_' + code) && !card.includes('r_' + (1001).toString(36)) && /Пришло друзей: 1/.test(card) && /получено 7 дней Pro/.test(card), 'у Ани в «Я»: своя ссылка и «Пришло друзей: 1 · получено 7 дней Pro»');
   await pa.click('[data-act="ref-share"]');
   ok(await pa.evaluate(() => (window.__opened || '').startsWith('https://t.me/share/url?url=' + encodeURIComponent('https://t.me/justmoggbot?startapp=r_'))), '«Отправить другу» открывает выбор чата Telegram со ссылкой');
   // 3. Сообщить о проблеме

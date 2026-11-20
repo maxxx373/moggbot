@@ -12,6 +12,7 @@ const SCREENS = [['home'],['plan'],['wardrobe',null,'looks'],['wardrobe',null,'s
   let where = '';
   p.on('pageerror', e => errs.push(where + ' → ' + e.message));
   p.on('dialog', d => d.dismiss());
+  const cspv = new Set(); p.on('console', (m) => { if (/Content Security Policy|Refused to/.test(m.text())) cspv.add(m.text().slice(0, 200)); });
   const navs = [];
   p.on('framenavigated', (f) => { if (f === p.mainFrame() && booted) navs.push(where + ' → ' + f.url().slice(0, 80)); });
   let booted = false;
@@ -68,6 +69,7 @@ const SCREENS = [['home'],['plan'],['wardrobe',null,'looks'],['wardrobe',null,'s
     }
   }
   console.log('нажатий:', clicks);
+  console.log(cspv.size ? 'БЛОКИРОВКИ CSP:\n  ' + [...cspv].join('\n  ') : 'блокировок CSP нет');
   if (navs.length) console.log('ПЕРЕХОДЫ СО СТРАНИЦЫ (кнопка уводит из приложения):\n  ' + [...new Set(navs)].join('\n  '));
   console.log([...new Set(errs)].join('\n') || 'ошибок JS нет');
   console.log('\nВЁРСТКА:'); for (const [k, v] of found) console.log(k + '\n     где: ' + v);
