@@ -3,7 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,maximum-scale=1">
-<!-- Политика безопасности: приложение может грузить код и отправлять данные только на свои и перечисленные адреса -->
+<!-- Политика безопасности: приложение может грузить код и отправлять данные только на свои и перечисленные адреса.
+     Выполняется только НАШ встроенный скрипт — по отпечатку sha256 в script-src. После ЛЮБОЙ правки скрипта
+     пересчитай отпечаток: python3 demo-tools/csp.py index.html — иначе приложение не запустится. -->
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-udxV4cZR7cyYFwbDaZU1yAfHd/i5K4B2bhMY1Q2HeZY=' 'wasm-unsafe-eval' https://telegram.org https://mc.yandex.ru https://yastatic.net https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: blob: https://fimgs.net https://assets.vogue.com https://images.unsplash.com https://mc.yandex.ru https://mc.yandex.com https://yastatic.net; media-src 'self' data: blob:; connect-src 'self' data: blob: https://d5dbq08e56ddpjl1h37u.0ly8ed4d.apigw.yandexcloud.net https://mc.yandex.ru https://mc.yandex.com https://cdn.jsdelivr.net; worker-src 'self' blob:; frame-src https://mc.yandex.ru https://mc.yandex.com; object-src 'none'; base-uri 'self'; form-action 'none'">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <title>mogg · демо</title>
