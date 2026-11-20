@@ -1,0 +1,40 @@
+# Развёртывание функций mogg в Yandex Cloud. Запускается только вручную (Actions → «Yandex Cloud» → Run workflow)
+# или через API людьми с правом записи в репозиторий. Ключ — в секрете YC_SA_KEY, в логи не попадает.
+name: Yandex Cloud
+on:
+  workflow_dispatch:
+    inputs:
+      action:
+        description: 'info — посмотреть, deploy — развернуть, close-public — закрыть прямой доступ'
+        type: choice
+        options: [info, deploy, close-public]
+        default: info
+      functions:
+        description: 'Какие функции разворачивать (через запятую)'
+        default: 'mogg-chat,mogg-pay,mogg-bot'
+      owner_id:
+        description: 'Telegram ID владельца для /reports в боте'
+        default: ''
+      folder_id:
+        description: 'ID каталога (пусто — каталог сервисного аккаунта)'
+        default: ''
+permissions:
+  contents: read
+concurrency: yc
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with: { ref: main }
+      - name: Установить yc
+        run: curl -sSL https://storage.yandexcloud.net/yandexcloud-yc/install.sh | bash -s -- -i /opt/yc -n && echo /opt/yc/bin >> "$GITHUB_PATH"
+      - name: Выполнить
+        env:
+          YC_SA_KEY: ${{ secrets.YC_SA_KEY }}
+          OWNER_ID: ${{ inputs.owner_id }}
+          FOLDER_ID: ${{ inputs.folder_id }}
+          ACTION: ${{ inputs.action }}
+          FUNCS: ${{ inputs.functions }}
+        run: bash .github/scripts/yc.sh "$ACTION" "$FUNCS"
