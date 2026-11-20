@@ -1637,6 +1637,7 @@ button:active,label.card:active{transform:scale(.97)}
 .slcard .lbl{margin-bottom:4px}
 .card > .row.between > .btn.sm{flex:none}
 .card > .row.between > :first-child{min-width:0}
+@media (max-width:360px){.card > .row.between b.disp{font-size:18px!important}}
 .sheet .seg button{padding:10px 2px;white-space:nowrap;font-size:12.5px}
 
 /* ============================================================
@@ -1937,6 +1938,7 @@ button:active,label.card:active{transform:scale(.97)}
 :root:root :is(.pfcats,.sacats) button{background:var(--z-paper2)!important;color:var(--z-ink)!important;border:0!important;box-shadow:inset 0 0 0 1.5px var(--z-ink)!important}
 :root:root :is(.pfcats,.sacats) button.on{background:var(--z-ink)!important;color:var(--z-yellow)!important}
 :root:root .jt button.on{background:#17150F!important;color:#FFD43B!important}
+.reflink{font-family:var(--mono);font-size:13px;padding:11px 12px;border-radius:12px;background:rgba(255,255,255,.08);border:1px dashed rgba(255,255,255,.28);word-break:break-all;user-select:all;-webkit-user-select:all}
 :root:root .chip.on:not(:is(.card,.sheet) *){background:#17150F!important;color:#FFD43B!important;box-shadow:inset 0 0 0 1.5px #17150F!important}
 :root:root[data-theme="dark"] .chip.on:not(:is(.card,.sheet) *){background:#FFD43B!important;color:#17150F!important;box-shadow:inset 0 0 0 1.5px #FFD43B!important}
 /* исправления читаемости и вылезаний */
@@ -4707,6 +4709,7 @@ function renderPro() {
     </div>
     ${m.receipt ? `<div class="mono lbl">E-mail для чека</div><input class="field" id="payEmail" type="email" inputmode="email" autocomplete="email" placeholder="you@mail.ru" value="${esc(S.email || '')}">` : ''}
     <button class="btn" data-act="pro-pay" style="margin-top:16px" ${payReady ? '' : 'disabled'}>${payReady ? `Оплатить ${m.price} ₽` : 'Оплата скоро появится'}</button>
+    <button class="btn sm ghost" data-act="ref-open-me" style="width:100%;margin-top:10px">🎁 Или пригласи друга — ${REF_DAYS} дней Pro бесплатно</button>
     <div class="hint" style="font-size:11.5px;margin-top:10px;text-align:center">Картой, по СБП, через SberPay или криптовалютой — через сервис Platega. Нажимая «Оплатить», ты принимаешь <a href="${DOC_TERMS}" data-ext target="_blank" rel="noopener" style="color:var(--accent)">пользовательское соглашение</a> и <a href="${DOC_PRIVACY}" data-ext target="_blank" rel="noopener" style="color:var(--accent)">политику конфиденциальности</a>.</div>
   </div></div>`;
 }
@@ -4791,6 +4794,7 @@ function acceptPlan() {
   S.chat.push({ from: 'ai', text: `Привет${tgUser && tgUser.first_name ? ', ' + tgUser.first_name : ''}! Я ${coachName()} — твой друг в mogg 👋\n\nЧто качаем: ${r.focus.map((p) => PILLARS[p].name.toLowerCase()).join(', ')}. Каждый день — три небольших дела на внешность и одно на характер. Ничего сложного, обещаю.\n\nЗа всё капает опыт, с уровнями открываются новые фишки. Пиши мне как другу: спроси «что сегодня», «мой путь», «подбери парфюм» — или просто расскажи, как день.` });
   tab = 'home'; haptic('success'); confetti(); save(); render(); window.scrollTo(0, 0);
   track('onboarded', { photo: !!ob.photo });
+  setTimeout(refClaim, 2500);
 }
 
 // ---------- сон: вопросы и подбор программы ----------
@@ -4987,6 +4991,7 @@ function renderOnboarding() {
     <div class="tiles" style="margin-bottom:14px">
       ${[['#ffb07c', 'ВНЕШНОСТЬ', 'кожа, стиль, тело'], ['#b79cff', 'ХАРАКТЕР', 'слово, дисциплина, сила'], ['#6ee7c8', 'ОБЩЕНИЕ', 'уверенность с людьми'], ['#7dd3fc', 'РАЗУМ', 'книги и фокус']].map(([c, a, b]) => `<div class="tint" style="--c:${c}"><div class="mono">${a}</div><small style="display:block;margin-top:4px;font-size:13px;color:var(--text);font-weight:600">${b}</small></div>`).join('')}
     </div>
+    ${refPending() ? `<div class="banner" style="margin-bottom:12px">🎁 Тебя пригласил друг. Пройди анкету — и вы оба получите ${REF_DAYS} дней mogg Pro.</div>` : ''}
     <button class="btn" data-act="next">Начать ${IC.send}</button>
     <p class="hint" style="text-align:center;font-size:12px;margin:12px 4px 0">Нажимая «Начать», ты принимаешь <a href="${DOC_TERMS}" data-ext target="_blank" rel="noopener" style="color:inherit;text-decoration:underline">пользовательское соглашение</a> и <a href="${DOC_PRIVACY}" data-ext target="_blank" rel="noopener" style="color:inherit;text-decoration:underline">политику конфиденциальности</a></p>`;
   if (s === 1) return `<div class="ob-fill">${stepsBar(1)}
@@ -5370,7 +5375,7 @@ function courseView(key) {
     ${c.lessons.map((l, i) => `<button class="lesson ${read.includes(l.id) ? 'read' : ''}" data-act="open" data-kind="lesson" data-id="${l.id}"><span class="num" style="${read.includes(l.id) ? '' : `color:${PALETTE[i % PALETTE.length]}`}">${z(i + 1)}</span><span style="flex:1"><div class="t">${l.t}</div><div class="mono" style="margin-top:4px">${l.min} мин чтения</div></span>${read.includes(l.id) ? `<span class="check">${IC.check}</span>` : `<span class="arrow">${IC.arrow}</span>`}</button>`).join('')}`;
 }
 function bookCover(b, small) {
-  return `<div class="cover" style="background:linear-gradient(160deg,${b.c[1]},${b.c[0]} 70%);${small ? 'padding:8px 6px 8px 12px' : ''}">${small ? '' : `<span class="mono">${b.a}</span>`}<div class="disp" style="${small ? 'font-size:11px' : ''}">${b.t}</div></div>`;
+  return `<div class="cover" style="background:linear-gradient(160deg,${b.c[1]},${b.c[0]} 70%);${small ? 'padding:8px 5px 8px 10px' : ''}">${small ? '' : `<span class="mono">${b.a}</span>`}<div class="disp" style="${small ? 'font-size:9px;line-height:1.1;overflow-wrap:break-word;hyphens:auto;-webkit-hyphens:auto' : ''}">${b.t}</div></div>`;
 }
 function booksView() {
   const st = S.books || {}, cur = readingBook(), pt = (S.pages || {})[today()] || 0;
@@ -6210,6 +6215,7 @@ function renderModal() {
   if (modal.kind === 'wo' && wo) return renderWorkout();
   if (modal.kind === 'routine') return renderRoutine();
   if (modal.kind === 'pro') return renderPro();
+  if (modal.kind === 'report') return reportModal();
   if (modal.kind === 'ai' && S.ai) {
     const fr = (modal.fresh || []).map((id) => PROTOCOLS[id].t);
     return `<div class="modal"><div class="sheet exs" style="text-align:left">
@@ -6324,12 +6330,14 @@ function renderMe() {
   return `${renderPath()}
     ${nu ? `<div class="card teaser"><div class="row"><span class="lock">${IC.lock}</span><span class="mono">Следующая награда · ур. ${nu.lvl}</span></div><div class="row" style="margin-top:10px"><span style="font-size:28px">${nu.ic}</span><div style="flex:1"><b style="font-size:16px">${nu.name}</b><div class="hint">${nu.d}</div></div></div><div class="bar2"><i style="width:${Math.min(100, (r.x - r.cur) / (LV(nu.lvl) - r.cur) * 100)}%"></i></div><div class="row between" style="margin-top:6px"><span class="mono">${r.x} XP</span><span class="mono">ещё ${LV(nu.lvl) - r.x} XP</span></div></div>` : ''}
     ${fc ? `<div class="sec"><span class="disp">Открытые фишки</span><span class="chipline">[ за уровни ]</span></div>${fc}` : ''}
+    ${refCard()}
     <div class="sec"><span class="disp">Коллекция<span class="tm">™</span></span><span class="chipline">[ ${S.plan.focus.length} линии ]</span></div>
     ${renderCollection()}
     <div style="height:12px"></div>
     ${myPlanExtras()}
+    ${reportCard()}
     ${AI_ENDPOINT ? remindCard() : ''}
-    <div class="card"><div class="row between"><span class="disp" style="font-size:22px">Оформление</span><span class="mono">тема · снег · акцент</span></div>
+    <div class="card"><div class="disp" style="font-size:22px">Оформление</div><div class="mono" style="margin-top:4px">тема · снег · акцент</div>
       <div style="margin-top:14px">${themeSwitch(true)}</div>
       <button class="opt ${S.snow ? 'on' : ''}" data-act="snow" style="margin-top:12px"><span class="box">${S.snow ? IC.check : ''}</span><span>❄️ Снег<span class="hint" style="display:block;font-size:12.5px">Копится на кнопках. Нажми на кнопку — осыплется.</span></span></button>
       <div class="mono lbl">Акцент</div>
@@ -6355,6 +6363,7 @@ function renderTabs() {
 }
 
 function render() {
+  navNote();
   applyTheme();
   const app = document.getElementById('app');
   if (!S.onboarded) {
@@ -6812,6 +6821,8 @@ function start() {
   // Кнопка «Оформить Pro» в боте открывает приложение сразу на окне подписки
   // узнаём, подключена ли оплата
   fetch(PAY_ENDPOINT).then((r) => r.json()).then((j) => { payReady = !!j.ready; if (modal && modal.kind === 'pro') render(); }).catch(() => {});
+  try { const m = /^r_([0-9a-z]{1,12})$/.exec(tg.initDataUnsafe.start_param || ''); if (m && !S.onboarded && !refPending()) { refSet({ code: m[1] }); track('ref_open'); } } catch (e) {}
+  setTimeout(refClaim, 3000);
   try { const sp = tg.initDataUnsafe.start_param; if (sp === 'paid') setTimeout(() => payCheck().then(() => toast('Проверили оплату — если Pro не включился, нажми «Я оплатил» через минуту')), 1500); else if (sp === 'payfail') setTimeout(() => toast('Оплата не прошла. Можно попробовать ещё раз'), 1500); } catch (e) {}
   let wantPro = /[?&]pro=1/.test(location.search) || (() => { try { return tg.initDataUnsafe.start_param === 'pro'; } catch (e) { return false; } })();
   const show = () => { if (shown) return; shown = true; render(); hydratePhotos(); if (wantPro && S.onboarded) { wantPro = false; track('pro_from_bot'); proOpen(); } };
@@ -7559,6 +7570,105 @@ function storyCard() {
       <button class="btn sm" data-act="story">📲 Выложить в историю</button></div></div>`;
 }
 ACT.story = () => shareStreak();
+
+// ---------- рефералка ----------
+// Ссылка: t.me/justmoggbot?startapp=r_<код>. Код — Telegram ID в 36-ричной записи. Начисление — на сервере (mogg-pay: ref-claim).
+const REF_DAYS = 7, SUPPORT_URL = 'https://t.me/paradox112';
+const REF_KEY = KEY + '_ref'; // код пригласившего храним отдельно: после анкеты профиль S создаётся заново
+const refLink = () => `${BOT_URL}?startapp=r_${tgUser && tgUser.id ? Number(tgUser.id).toString(36) : 'demo'}`;
+const refPending = () => { try { const v = JSON.parse(localStorage.getItem(REF_KEY) || 'null'); return v && !v.done ? v.code : null; } catch (e) { return null; } };
+const refSet = (v) => { try { localStorage.setItem(REF_KEY, JSON.stringify(v)); } catch (e) {} };
+let REF = null, refLoading = false;
+function refLoad() {
+  if (REF || refLoading || !(tg && tg.initData)) return;
+  refLoading = true;
+  aiCall('ref-info', {}, 10000, PAY_ENDPOINT).then((r) => { refLoading = false; if (r && !r.error) { REF = r; if (tab === 'me' && !modal) render(); } });
+}
+async function refClaim() {
+  const code = refPending();
+  if (!code || !S.onboarded || !(tg && tg.initData)) return;
+  const r = await aiCall('ref-claim', { code }, 15000, PAY_ENDPOINT);
+  if (r && r.ok) {
+    refSet({ code, done: true });
+    track('ref_claim'); haptic('success'); confetti();
+    toast(`🎁 Подарок от друга: +${r.days || REF_DAYS} дней mogg Pro`);
+    meRefresh();
+  } else if (r && r.error && !['network', 'server', 'off', 'http_500', 'http_502', 'http_504'].includes(r.error)) refSet({ code, done: true, err: r.error });
+}
+function refCard() {
+  const link = refLink(), live = !!(tgUser && tgUser.id);
+  refLoad();
+  return `<div class="card refcard">
+    <b class="disp" style="font-size:22px;display:block">Пригласи друга</b><div class="mono" style="color:var(--accent);margin-top:4px">+${REF_DAYS} дней Pro тебе и другу</div>
+    <div class="hint" style="margin:6px 0 12px">Друг открывает mogg по твоей ссылке и проходит анкету — вы оба получаете ${REF_DAYS} дней Pro. До 20 друзей.</div>
+    <div class="reflink">${link.replace('https://', '')}</div>
+    ${live ? '' : '<div class="hint" style="font-size:11.5px;margin-top:6px">Это пример — в боте здесь будет твоя личная ссылка.</div>'}
+    <div class="row" style="gap:8px;margin-top:12px"><button class="btn sm" data-act="ref-share" style="flex:1">Отправить другу</button><button class="btn sm ghost" data-act="ref-copy" style="flex:1">Скопировать</button></div>
+    ${REF ? `<div class="hint" style="margin-top:10px;font-size:12.5px">Пришло друзей: <b>${REF.invited}</b>${REF.days ? ` · получено ${REF.days} ${plural(REF.days, 'день', 'дня', 'дней')} Pro` : ''}</div>` : ''}
+  </div>`;
+}
+ACT['ref-share'] = () => {
+  const text = `Качаю себя в mogg: миссии каждый день, разбор по фото, стиль и тренировки. Заходи по моей ссылке — получим по ${REF_DAYS} дней Pro 🎁`;
+  const u = 'https://t.me/share/url?url=' + encodeURIComponent(refLink()) + '&text=' + encodeURIComponent(text);
+  track('ref_share'); haptic('light');
+  try { if (tg && tg.initData && tg.openTelegramLink) return tg.openTelegramLink(u); } catch (e) {}
+  window.open(u, '_blank');
+};
+ACT['ref-copy'] = async () => {
+  const l = refLink();
+  try { await navigator.clipboard.writeText(l); haptic('success'); toast('Ссылка скопирована'); }
+  catch (e) {
+    const ta = document.createElement('textarea'); ta.value = l; ta.style.cssText = 'position:fixed;opacity:0'; document.body.appendChild(ta); ta.select();
+    try { document.execCommand('copy'); toast('Ссылка скопирована'); } catch (e2) { toast('Не получилось — зажми ссылку и скопируй'); }
+    ta.remove();
+  }
+};
+ACT['ref-open-me'] = () => { modal = null; tab = 'me'; render(); setTimeout(() => { const c = document.querySelector('.refcard'); if (c) c.scrollIntoView({ block: 'center', behavior: 'smooth' }); }, 60); };
+
+// ---------- сообщить о проблеме ----------
+// Вместе с текстом уходят технические данные: где был человек, экран, тема, версия Telegram и последние ошибки JS.
+const ERRS = [], NAV = [];
+const errNote = (m) => { ERRS.push(String(m || '').slice(0, 160)); if (ERRS.length > 8) ERRS.shift(); };
+window.addEventListener('error', (e) => errNote(e.message));
+window.addEventListener('unhandledrejection', (e) => errNote(e.reason && (e.reason.message || e.reason)));
+const navNote = () => { const k = tab + (reader ? ':' + reader.kind : '') + (modal ? ':' + modal.kind : ''); if (NAV[NAV.length - 1] !== k) { NAV.push(k); if (NAV.length > 8) NAV.shift(); } };
+const diagInfo = () => ({
+  where: NAV.filter((x) => !/report/.test(x)).slice(-4).join(' → '), screen: innerWidth + 'x' + innerHeight + '@' + (devicePixelRatio || 1), theme: S.theme || 'light',
+  platform: (tg && tg.platform) || 'web', tg: (tg && tg.version) || '', day: S.startDate ? dayNum(today()) : 0, lvl: rank().lvl, pro: !!(ME && ME.pro),
+  errors: ERRS.slice(-5), build: document.lastModified, ua: navigator.userAgent.slice(0, 180)
+});
+function reportCard() {
+  return `<button type="button" class="card row" data-act="report-open" style="width:100%;text-align:left"><div class="iconbtn" style="font-size:20px">🛠</div><div style="flex:1"><b>Сообщить о проблеме</b><div class="hint">Что-то сломалось или неудобно — напиши, починим</div></div><span class="arrow">${IC.arrow}</span></button>`;
+}
+function reportModal() {
+  const m = modal, sent = m.st === 'ok';
+  return `<div class="modal"><div class="sheet exs" style="text-align:left">
+    <div class="row between" style="justify-content:flex-end"><button class="wox" data-act="modal-close" aria-label="Закрыть">✕</button></div>
+    ${sent ? `<div class="disp" style="font-size:30px;margin:6px 0 8px">Спасибо 🙌</div>
+      <div class="hint">Сообщение у нас. Посмотрим и починим — если нужно, напишем тебе в Telegram.</div>
+      <button class="btn" data-act="modal-close" style="margin-top:16px">Готово</button>`
+    : `<div class="disp" style="font-size:30px;margin:6px 0 8px">Что случилось?</div>
+      <div class="hint">Опиши, что сломалось или что неудобно: где это было и что ты нажимал. Так быстрее найдём.</div>
+      <textarea class="field" id="repText" rows="5" maxlength="2000" style="height:auto;min-height:130px;padding:12px 14px;margin-top:12px;resize:none;font:inherit;line-height:1.45" placeholder="Например: во вкладке «Гардероб» не добавляется фото">${esc(m.text || '')}</textarea>
+      <div class="hint" style="font-size:11.5px;margin-top:6px">Вместе с сообщением отправим твой ник в Telegram (чтобы ответить) и технические данные: экран, тему, раздел и ошибки приложения.</div>
+      ${m.st === 'fail' ? `<div class="banner" style="margin-top:12px">${m.err === 'limit' ? 'Сегодня ты уже отправил 5 сообщений.' : m.err === 'not_telegram' ? 'Отправка работает только в приложении внутри Telegram.' : 'Не получилось отправить.'} Напиши нам напрямую — ответим там.</div>` : ''}
+      <button class="btn" data-act="report-send" style="margin-top:14px" ${m.busy ? 'disabled' : ''}>${m.busy ? 'Отправляю…' : 'Отправить'}</button>
+      <button class="btn sm ghost" data-act="link" data-u="${SUPPORT_URL}" style="width:100%;margin-top:10px">Написать в поддержку в Telegram</button>`}
+  </div></div>`;
+}
+document.addEventListener('input', (e) => { if (e.target && e.target.id === 'repText' && modal && modal.kind === 'report') modal.text = e.target.value; });
+ACT['report-open'] = () => { modal = { kind: 'report', text: '' }; haptic('light'); render(); setTimeout(() => { const t = document.getElementById('repText'); if (t) t.focus(); }, 80); };
+ACT['report-send'] = async () => {
+  const el = document.getElementById('repText'), text = ((el && el.value) || modal.text || '').trim();
+  if (text.length < 3) { toast('Опиши проблему хотя бы парой слов'); if (el) el.focus(); return; }
+  modal.text = text; modal.busy = true; modal.st = ''; render();
+  const r = tg && tg.initData ? await aiCall('report', { text, diag: diagInfo() }, 15000, PAY_ENDPOINT) : { error: 'not_telegram' };
+  if (!modal || modal.kind !== 'report') return;
+  modal.busy = false;
+  if (r && r.ok) { modal.st = 'ok'; haptic('success'); track('report'); } else { modal.st = 'fail'; modal.err = r && r.error; }
+  render();
+};
+
 ACT['feed-more'] = () => { feedMore += 30; haptic('light'); render(); };
 
 function auraModal() {
@@ -9016,7 +9126,7 @@ Object.assign(ACT, {
 
 start();
 </script>
-<div id="demoTime" style="position:fixed;right:10px;bottom:calc(env(safe-area-inset-bottom) + 92px);z-index:80;opacity:.92;display:flex;gap:4px;font:700 11px/1 system-ui,sans-serif">
+<div id="demoTime" style="position:fixed;right:4px;top:42%;z-index:80;opacity:.85;display:flex;flex-direction:column;gap:4px;font:700 11px/1 system-ui,sans-serif">
 <button onclick="S.dayOffset=(S.dayOffset||0)+5/24;save();render();toast('Демо: '+now().toLocaleString('ru-RU',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'})+' · день '+dayNum(today()))" style="padding:6px 8px;border-radius:10px;background:#ff2d87;color:#fff;border:0">+5 ч</button>
 <button onclick="S.dayOffset=(S.dayOffset||0)+1;save();render();toast('Демо: день '+dayNum(today()))" style="padding:6px 8px;border-radius:10px;background:#ff2d87;color:#fff;border:0">+1 день</button></div>
 </body>
