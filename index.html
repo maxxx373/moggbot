@@ -3,8 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,maximum-scale=1">
-<!-- Политика безопасности: приложение может грузить код и отправлять данные только на свои и перечисленные адреса -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' https://telegram.org https://mc.yandex.ru https://yastatic.net https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: blob: https://fimgs.net https://assets.vogue.com https://images.unsplash.com https://mc.yandex.ru https://mc.yandex.com https://yastatic.net; media-src 'self' data: blob:; connect-src 'self' data: blob: https://d5dbq08e56ddpjl1h37u.0ly8ed4d.apigw.yandexcloud.net https://mc.yandex.ru https://mc.yandex.com https://cdn.jsdelivr.net; worker-src 'self' blob:; frame-src https://mc.yandex.ru https://mc.yandex.com; object-src 'none'; base-uri 'self'; form-action 'none'">
+<!-- Политика безопасности: приложение может грузить код и отправлять данные только на свои и перечисленные адреса.
+     Выполняется только НАШ встроенный скрипт — по отпечатку sha256 в script-src. После ЛЮБОЙ правки скрипта
+     пересчитай отпечаток: python3 demo-tools/csp.py index.html — иначе приложение не запустится. -->
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-kNSHvc/10Q4gWbT+J4nZwA2MZ9H3WIMo3UeQzoveWQw=' 'wasm-unsafe-eval' https://telegram.org https://mc.yandex.ru https://yastatic.net https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: blob: https://fimgs.net https://assets.vogue.com https://images.unsplash.com https://mc.yandex.ru https://mc.yandex.com https://yastatic.net; media-src 'self' data: blob:; connect-src 'self' data: blob: https://d5dbq08e56ddpjl1h37u.0ly8ed4d.apigw.yandexcloud.net https://mc.yandex.ru https://mc.yandex.com https://cdn.jsdelivr.net; worker-src 'self' blob:; frame-src https://mc.yandex.ru https://mc.yandex.com; object-src 'none'; base-uri 'self'; form-action 'none'">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <title>mogg</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -3607,10 +3609,18 @@ const artIndex = () => { ART_BY = Object.fromEntries(ARTICLES.map((a) => [a.id, 
 artIndex();
 // Подгрузка статей из articles/: части по 100 штук, берём только те, что уже нужны по расписанию (+ запас)
 let artParts = null, artLoaded = 0;
+// Статья из файла — недоверенные данные: пропускаем только известные поля, текст экранируем, теги/картинки — из списков
+function artClean(a) {
+  if (!a || typeof a !== 'object' || !/^[a-z]{1,4}\d{1,6}$/.test(a.id || '')) return null;
+  const txt = (x, n) => esc(String(x == null ? '' : x).slice(0, n));
+  const body = (Array.isArray(a.body) ? a.body : []).slice(0, 80).map((x) => typeof x === 'string' ? txt(x, 3000) : x && typeof x.h === 'string' ? { h: txt(x.h, 200) } : x && typeof x.q === 'string' ? { q: txt(x.q, 400) } : null).filter(Boolean);
+  if (!body.length || typeof a.t !== 'string') return null;
+  return { id: a.id, tag: TAG_C[a.tag] ? a.tag : 'Стиль', img: IMG[a.img] ? a.img : 'street', art: ARTS[a.art] ? a.art : 'a1', t: txt(a.t, 160), body };
+}
 function artsAdd(list) {
   let n = 0;
-  (list || []).forEach((a) => {
-    if (!a || !a.id || !Array.isArray(a.body) || ART_BY[a.id]) return;
+  (Array.isArray(list) ? list : []).map(artClean).forEach((a) => {
+    if (!a || ART_BY[a.id]) return;
     a.min = Math.max(1, Math.round(bodyWords(a.body) / 250));
     if (!COVER_IMG[a.id] && IMG[a.img]) COVER_IMG[a.id] = IMG[a.img].replace('photo-', '');
     ARTICLES.push(a); n++;
@@ -3620,7 +3630,7 @@ function artsAdd(list) {
 }
 async function artsFetch() {
   try {
-    if (!artParts) { const r = await fetch('articles/index.json', { cache: 'no-cache' }); artParts = (await r.json()).parts || []; }
+    if (!artParts) { const r = await fetch('articles/index.json', { cache: 'no-cache' }); artParts = ((await r.json()).parts || []).filter((x) => /^part-\d{3}\.json$/.test(x)); }
     const need = () => (S.startDate ? artReleased(dayNum(today()), 24) : 3) + 30;
     let added = 0;
     while (artLoaded < artParts.length && (artLoaded === 0 || ART_IDS.length < need())) {
@@ -3905,7 +3915,9 @@ const IMG = {
   mind2: 'photo-1714510380386-df1dc3111533', social2: 'photo-1743794259789-db81e5342f64'
 };
 const imgUrl = (k, w) => IMG[k] ? `https://images.unsplash.com/${IMG[k]}?w=${w || 800}&q=70&auto=format&fit=crop` : '';
-const pic = (k, w, cls) => IMG[k] ? `<img class="${cls || 'ph'}" src="${imgUrl(k, w)}" alt="" decoding="async" onerror="this.remove()">` : '';
+// картинки с data-rm убираем, если не загрузились (вместо onerror в разметке — строгая CSP запрещает inline-обработчики)
+document.addEventListener('error', (e) => { const t = e.target; if (t && t.tagName === 'IMG' && t.hasAttribute('data-rm')) t.remove(); }, true);
+const pic = (k, w, cls) => IMG[k] ? `<img class="${cls || 'ph'}" src="${imgUrl(k, w)}" alt="" decoding="async" data-rm>` : '';
 // Обложки статей: вместо стоковых фото — градиент-аура и крупный стикер. Палитра выбирается по id, чтобы соседние карточки отличались.
 const COVER_PAL = [['#ff5a1c', '#ff2d87', '#8b5cff', '#2a0a3a'], ['#2f6bff', '#1fdcff', '#3dffc0', '#06123a'], ['#b8e600', '#22e08a', '#1fdcff', '#052a1c'], ['#8b5cff', '#ff4fd8', '#ffb23d', '#1c0838'], ['#ffc21a', '#ff5a1c', '#ff2d87', '#3a1206'], ['#1fdcff', '#8b5cff', '#ff4fa3', '#0a0f38']];
 const COVER_EM = { f1: '🕶', f2: '🧥', f3: '💎', f4: '📐', f5: '☀️', x1: '🧼', x2: '👕', x3: '🧍', x4: '💈', x5: '🌙', x6: '💪', x7: '🔬', x8: '🤝', x9: '🪒', x10: '👃', x11: '🥗', x12: '👀' };
@@ -4041,7 +4053,7 @@ function needsOf(src) {
   const ai = s.ai;
   if (ai) {
     (ai.issues || []).forEach((id) => label(id) && add(id, 4.5, 'по фото: ' + label(id)));
-    (ai.metrics || []).forEach((m) => { const v = +m.value; if (!(v < 70)) return; (METRIC_TAGS[m.key] || []).forEach((t) => add(t, v < 50 ? 5 : 2.5, `по фото: ${(METRIC_N[m.key] || m.key).toLowerCase()} ${v}/100`)); });
+    (ai.metrics || []).forEach((m) => { const v = +m.value; if (!(v < 70)) return; (METRIC_TAGS[m.key] || []).forEach((t) => add(t, v < 50 ? 5 : 2.5, `по фото: ${esc(METRIC_N[m.key] || m.key).toLowerCase()} ${v}/100`)); });
   }
   const tp = s.train && s.train.prog;
   if (tp) { add('g:body', 2.5, 'силовые: ' + tp.goalName); add('tr_' + tp.goal, 3, 'силовые: ' + tp.goalName); }
@@ -4571,8 +4583,8 @@ function aiCard(a) {
       ${a.summary ? `<div class="rep-quote">${esc(a.summary)}</div>` : ''}
     </div>
     <div class="card"><div class="row between"><span class="disp" style="font-size:22px">Шкалы</span><span class="mono">${a.metrics.length} параметров</span></div>
-      ${a.metrics.map((m, i) => `<div class="mbar" style="--c:${mColor(m.value)};--w:${m.value}%;animation-delay:${i * 70}ms"><div class="row between"><b>${METRIC_N[m.key] || m.key}</b><span class="mv">${m.value}<small>/100</small></span></div><div class="ml">${mLabel(m.value)}</div><div class="mt"><i></i></div>${m.note ? `<div class="mn">${esc(m.note)}</div>` : ''}</div>`).join('')}
-      <div class="rep-sum">${a.metrics.map((m) => `<span style="color:${mColor(m.value)}">● ${METRIC_N[m.key] || m.key}</span>`).join('')}</div>
+      ${a.metrics.map((m0, i) => { const m = { ...m0, value: Math.max(0, Math.min(100, Math.round(+m0.value) || 0)) }; return `<div class="mbar" style="--c:${mColor(m.value)};--w:${m.value}%;animation-delay:${i * 70}ms"><div class="row between"><b>${esc(METRIC_N[m.key] || m.key)}</b><span class="mv">${m.value}<small>/100</small></span></div><div class="ml">${mLabel(m.value)}</div><div class="mt"><i></i></div>${m.note ? `<div class="mn">${esc(m.note)}</div>` : ''}</div>`; }).join('')}
+      <div class="rep-sum">${a.metrics.map((m) => `<span style="color:${mColor(+m.value || 0)}">● ${esc(METRIC_N[m.key] || m.key)}</span>`).join('')}</div>
     </div>
     ${(a.strengths_d || []).length ? `<div class="sec"><span class="disp" style="color:#3ddc97">Сильные стороны</span><span class="chipline">[ ${a.strengths_d.length} ]</span></div>
       ${a.strengths_d.map((s, i) => `<div class="rep-pt" style="--c:#3ddc97"><span class="n">${i + 1}</span><div><b>${esc(s.title)}</b><p>${esc(s.text)}</p></div></div>`).join('')}` : ''}
@@ -4681,7 +4693,8 @@ function meRefresh(check) {
   const was = ME && ME.pro;
   return aiCall('me', { check: !!check }, 12000).then((r) => {
     if (r && !r.error) {
-      ME = r;
+      const num = (x) => (Number.isFinite(+x) ? +x : 0);
+      ME = { ...r, price: num(r.price) || 149, days: num(r.days) || 30, chat_left: num(r.chat_left), chat_limit: num(r.chat_limit), analyze_left: num(r.analyze_left), pro_until: num(r.pro_until), pro: !!r.pro, paywall: !!r.paywall, receipt: !!r.receipt };
       if (check && r.pro && !was && r.paywall) { modal = null; confetti(); haptic('success'); toast('mogg Pro активирован 🔥'); track('paid'); }
       render();
     }
@@ -5258,7 +5271,7 @@ function protoCard(a) {
     <div class="row between" style="justify-content:flex-end"><span class="mono">${t.over ? 'пройден' : `день ${t.k} из ${pr.days}`}</span></div>
     <div class="disp" style="font-size:28px;margin:8px 0 4px">${pr.t}</div>
     <div class="pbar"><i style="width:${Math.min(1, t.k / pr.days) * 100}%;background:${pl.c}"></i></div>
-    ${note ? `<div class="why"><b>Почему у тебя так:</b> ${note}</div>` : ''}
+    ${note ? `<div class="why"><b>Почему у тебя так:</b> ${esc(note)}</div>` : ''}
     ${t.over ? `<div style="margin:14px 0 10px"><b>Протокол пройден 🔥</b><div class="hint" style="margin-top:4px">Сделай фото в тех же условиях, что в начале, и сравни во вкладке «Я».</div></div><button class="btn" data-act="proto-finish" data-id="${a.id}">Завершить · +100 XP</button>`
       : `<div class="row between" style="margin:14px 0 8px"><span class="mono">Сегодня</span><span class="mono">${t.reqDone}/${t.req}</span></div>
       ${t.steps.map((s) => `<button class="mission ${dn.includes(s.key) ? 'done' : ''} ${justDone === s.key ? 'just' : ''}" data-act="pstep" data-k="${s.key}"><span class="box">${dn.includes(s.key) ? IC.check : ''}</span><span style="flex:1"><div class="when">${s.w}${s.opt ? ' · по желанию' : ''}</div><div class="t">${s.t}</div></span>${s.x ? `<span class="btn sm ghost" data-act="ex-open" data-x="${s.x}" style="height:32px;padding:0 10px;flex:none">Как ▶</span>` : '<span class="xp">+5</span>'}</button>`).join('')}`}
@@ -6497,7 +6510,7 @@ const ACT = {
     }, 1000);
   },
   'shelf-cap'(el) { shelfCap = +el.dataset.v; haptic('light'); render(); },
-  link(el) { const u = el.dataset.u; try { if (tg && /^https:\/\/t\.me\//.test(u) && tg.openTelegramLink) return tg.openTelegramLink(u); if (tg && tg.openLink) return tg.openLink(u); } catch (e) {} window.open(u, '_blank'); },
+  link(el) { const u = el.dataset.u; if (!/^https:\/\//.test(u || '')) return; try { if (tg && /^https:\/\/t\.me\//.test(u) && tg.openTelegramLink) return tg.openTelegramLink(u); if (tg && tg.openLink) return tg.openLink(u); } catch (e) {} window.open(u, '_blank', 'noopener'); },
   lib(el) { jtab = el.dataset.v; tab = 'journal'; reader = null; haptic('light'); render(); window.scrollTo(0, 0); },
   analyze() {
     if (!ob.photo) return toast('Добавь фото — без него план не будет личным'); // без фото дальше не пускаем
@@ -6821,7 +6834,7 @@ function start() {
   // Кнопка «Оформить Pro» в боте открывает приложение сразу на окне подписки
   // узнаём, подключена ли оплата
   fetch(PAY_ENDPOINT).then((r) => r.json()).then((j) => { payReady = !!j.ready; if (modal && modal.kind === 'pro') render(); }).catch(() => {});
-  try { const m = /^r_([0-9a-z]{1,12})$/.exec(tg.initDataUnsafe.start_param || ''); if (m && !S.onboarded && !refPending()) { refSet({ code: m[1] }); track('ref_open'); } } catch (e) {}
+  try { const m = /^r_([0-9a-z]{6,16})$/.exec(tg.initDataUnsafe.start_param || ''); if (m && !S.onboarded && !refPending()) { refSet({ code: m[1] }); track('ref_open'); } } catch (e) {}
   setTimeout(refClaim, 3000);
   try { const sp = tg.initDataUnsafe.start_param; if (sp === 'paid') setTimeout(() => payCheck().then(() => toast('Проверили оплату — если Pro не включился, нажми «Я оплатил» через минуту')), 1500); else if (sp === 'payfail') setTimeout(() => toast('Оплата не прошла. Можно попробовать ещё раз'), 1500); } catch (e) {}
   let wantPro = /[?&]pro=1/.test(location.search) || (() => { try { return tg.initDataUnsafe.start_param === 'pro'; } catch (e) { return false; } })();
@@ -7575,14 +7588,14 @@ ACT.story = () => shareStreak();
 // Ссылка: t.me/justmoggbot?startapp=r_<код>. Код — Telegram ID в 36-ричной записи. Начисление — на сервере (mogg-pay: ref-claim).
 const REF_DAYS = 7, SUPPORT_URL = 'https://t.me/paradox112';
 const REF_KEY = KEY + '_ref'; // код пригласившего храним отдельно: после анкеты профиль S создаётся заново
-const refLink = () => `${BOT_URL}?startapp=r_${tgUser && tgUser.id ? Number(tgUser.id).toString(36) : 'demo'}`;
+const refLink = () => (REF && REF.code ? `${BOT_URL}?startapp=r_${REF.code}` : tg && tg.initData ? '' : `${BOT_URL}?startapp=r_demo`);
 const refPending = () => { try { const v = JSON.parse(localStorage.getItem(REF_KEY) || 'null'); return v && !v.done ? v.code : null; } catch (e) { return null; } };
 const refSet = (v) => { try { localStorage.setItem(REF_KEY, JSON.stringify(v)); } catch (e) {} };
 let REF = null, refLoading = false;
 function refLoad() {
   if (REF || refLoading || !(tg && tg.initData)) return;
   refLoading = true;
-  aiCall('ref-info', {}, 10000, PAY_ENDPOINT).then((r) => { refLoading = false; if (r && !r.error) { REF = r; if (tab === 'me' && !modal) render(); } });
+  aiCall('ref-info', {}, 10000, PAY_ENDPOINT).then((r) => { refLoading = false; if (r && !r.error && /^[0-9a-z]{6,16}$/.test(r.code || '')) { REF = { code: r.code, invited: Math.max(0, +r.invited || 0), days: Math.max(0, +r.days || 0) }; if (tab === 'me' && !modal) render(); } });
 }
 async function refClaim() {
   const code = refPending();
@@ -7596,26 +7609,27 @@ async function refClaim() {
   } else if (r && r.error && !['network', 'server', 'off', 'http_500', 'http_502', 'http_504'].includes(r.error)) refSet({ code, done: true, err: r.error });
 }
 function refCard() {
-  const link = refLink(), live = !!(tgUser && tgUser.id);
+  const link = refLink(), live = !!(tg && tg.initData);
   refLoad();
   return `<div class="card refcard">
     <b class="disp" style="font-size:22px;display:block">Пригласи друга</b><div class="mono" style="color:var(--accent);margin-top:4px">+${REF_DAYS} дней Pro тебе и другу</div>
     <div class="hint" style="margin:6px 0 12px">Друг открывает mogg по твоей ссылке и проходит анкету — вы оба получаете ${REF_DAYS} дней Pro. До 20 друзей.</div>
-    <div class="reflink">${link.replace('https://', '')}</div>
+    <div class="reflink">${link ? link.replace('https://', '') : 'Готовим твою ссылку…'}</div>
     ${live ? '' : '<div class="hint" style="font-size:11.5px;margin-top:6px">Это пример — в боте здесь будет твоя личная ссылка.</div>'}
-    <div class="row" style="gap:8px;margin-top:12px"><button class="btn sm" data-act="ref-share" style="flex:1">Отправить другу</button><button class="btn sm ghost" data-act="ref-copy" style="flex:1">Скопировать</button></div>
+    <div class="row" style="gap:8px;margin-top:12px"><button class="btn sm" data-act="ref-share" style="flex:1" ${link ? '' : 'disabled'}>Отправить другу</button><button class="btn sm ghost" data-act="ref-copy" style="flex:1" ${link ? '' : 'disabled'}>Скопировать</button></div>
     ${REF ? `<div class="hint" style="margin-top:10px;font-size:12.5px">Пришло друзей: <b>${REF.invited}</b>${REF.days ? ` · получено ${REF.days} ${plural(REF.days, 'день', 'дня', 'дней')} Pro` : ''}</div>` : ''}
   </div>`;
 }
 ACT['ref-share'] = () => {
+  if (!refLink()) return;
   const text = `Качаю себя в mogg: миссии каждый день, разбор по фото, стиль и тренировки. Заходи по моей ссылке — получим по ${REF_DAYS} дней Pro 🎁`;
   const u = 'https://t.me/share/url?url=' + encodeURIComponent(refLink()) + '&text=' + encodeURIComponent(text);
   track('ref_share'); haptic('light');
   try { if (tg && tg.initData && tg.openTelegramLink) return tg.openTelegramLink(u); } catch (e) {}
-  window.open(u, '_blank');
+  window.open(u, '_blank', 'noopener');
 };
 ACT['ref-copy'] = async () => {
-  const l = refLink();
+  const l = refLink(); if (!l) return;
   try { await navigator.clipboard.writeText(l); haptic('success'); toast('Ссылка скопирована'); }
   catch (e) {
     const ta = document.createElement('textarea'); ta.value = l; ta.style.cssText = 'position:fixed;opacity:0'; document.body.appendChild(ta); ta.select();
@@ -8990,7 +9004,7 @@ function stKbSection() {
 }
 function stShowsStrip() {
   const read = S.stk || [], shows = ST_KB.filter((x) => x.c === 'show' && /^\d{4}$/.test(x.y || '')).sort((a, b) => a.y - b.y);
-  return `<div class="sashows">${shows.map((x) => { const ph = ST_SHOW_IMG[x.id]; return `<button class="sashow ${ph ? 'ph' : ''} ${read.includes(x.id) ? 'read' : ''}" data-act="sa-kb" data-id="${x.id}">${ph ? `<img src="${stShowUrl(ph[0], 480)}" alt="" loading="lazy" decoding="async" onerror="this.remove()">` : ''}<span class="y">${x.y}</span><b>${esc(x.t)}</b><small>${esc(x.s)}</small>${read.includes(x.id) ? '<i>✓</i>' : ''}</button>`; }).join('')}</div>`;
+  return `<div class="sashows">${shows.map((x) => { const ph = ST_SHOW_IMG[x.id]; return `<button class="sashow ${ph ? 'ph' : ''} ${read.includes(x.id) ? 'read' : ''}" data-act="sa-kb" data-id="${x.id}">${ph ? `<img src="${stShowUrl(ph[0], 480)}" alt="" loading="lazy" decoding="async" data-rm>` : ''}<span class="y">${x.y}</span><b>${esc(x.t)}</b><small>${esc(x.s)}</small>${read.includes(x.id) ? '<i>✓</i>' : ''}</button>`; }).join('')}</div>`;
 }
 function renderStyleSchool() {
   const g = stGuru(), arts = ARTICLES.filter((x) => ['Мода', 'Тренд', 'Стиль'].includes(x.tag));
@@ -9032,7 +9046,7 @@ function stKbModal() {
   return `<div class="modal"><div class="sheet exs sasheet">
     <div class="disp" style="font-size:28px;margin:4px 0 4px">${esc(x.t)}</div>
     <div class="hint" style="font-size:13px;margin-bottom:10px">${esc(x.s)}${x.y && /^\d{4}$/.test(x.y) ? ' · ' + x.y : ''}</div>
-    ${ST_SHOW_IMG[x.id] ? `<div class="sagal">${ST_SHOW_IMG[x.id].map((k) => `<img src="${stShowUrl(k, 640)}" alt="" loading="lazy" decoding="async" onerror="this.remove()">`).join('')}</div><div class="sacred">Фото: Vogue Runway · листай вбок</div>` : ''}
+    ${ST_SHOW_IMG[x.id] ? `<div class="sagal">${ST_SHOW_IMG[x.id].map((k) => `<img src="${stShowUrl(k, 640)}" alt="" loading="lazy" decoding="async" data-rm>`).join('')}</div><div class="sacred">Фото: Vogue Runway · листай вбок</div>` : ''}
     ${x.type ? stTypeBody(x.type) : ''}
     ${(x.b || []).map((t) => `<p style="font-size:14.5px;line-height:1.55;margin:0 0 10px">${esc(t)}</p>`).join('')}
     ${x.dict ? `<div class="sadict">${x.dict.map(([w, d]) => `<div><b>${esc(w)}</b><span>${esc(d)}</span></div>`).join('')}</div>` : ''}
