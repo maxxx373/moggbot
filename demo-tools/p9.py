@@ -59,3 +59,8 @@ rep("  link(el) { const u = el.dataset.u; try {", "  link(el) { const u = el.dat
 rep("} catch (e) {} window.open(u, '_", "} catch (e) {} window.open(u, '_")
 s = s.replace("window.open(u, '_blank');", "window.open(u, '_blank', 'noopener');")
 open(p,'w',encoding='utf-8').write(s)
+s=open(p,encoding='utf-8').read()
+# 8. заметка рядом с CSP: отпечаток скрипта пересчитывать после каждой правки
+rep("<!-- Политика безопасности: приложение может грузить код и отправлять данные только на свои и перечисленные адреса -->",
+    "<!-- Политика безопасности: приложение может грузить код и отправлять данные только на свои и перечисленные адреса.\n     Выполняется только НАШ встроенный скрипт — по отпечатку sha256 в script-src. После ЛЮБОЙ правки скрипта\n     пересчитай отпечаток: python3 demo-tools/csp.py index.html — иначе приложение не запустится. -->")
+open(p,'w',encoding='utf-8').write(s)
