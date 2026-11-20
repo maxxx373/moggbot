@@ -6,6 +6,11 @@
 //  2) Platega после оплаты шлёт колбэк (POST с заголовком X-Secret) — функция продлевает Pro
 //     в той же записи пользователя, которую читает основной бэкенд (acc/<id>.json, поле pro_until);
 //  3) { action: 'check', initData } — проверить последний платёж вручную, если колбэк не дошёл.
+//  4) рефералка: { action: 'ref-info' } — свой код и сколько друзей пришло;
+//     { action: 'ref-claim', code } — новый пользователь пришёл по ссылке друга: обоим +REF_DAYS дней Pro
+//     (один раз на человека, у пригласившего — не больше REF_MAX друзей);
+//  5) { action: 'report', text, diag } — сообщение о проблеме из приложения (reports/…, последние 50 — в reports/latest.json,
+//     их показывает бот по команде /reports владельцу).
 //
 // Переменные окружения:
 //   BOT_TOKEN          — токен бота (проверка подписи Telegram initData)
@@ -14,6 +19,7 @@
 //   BUCKET             — бакет с данными пользователей (тот же, что у mogg-ai)
 //   PRICE, DAYS        — цена в рублях и срок Pro в днях (по умолчанию 149 и 30)
 //   BOT_LINK           — куда вернуть человека после оплаты (по умолчанию t.me/justmoggbot)
+//   REF_DAYS, REF_MAX  — дней Pro за друга (по умолчанию 7) и максимум оплачиваемых друзей на человека (по умолчанию 20)
 // У функции должен быть сервисный аккаунт с доступом к бакету — токен берётся из context.token.
 
 const crypto = require('crypto');
@@ -25,6 +31,8 @@ const BUCKET = process.env.BUCKET || '';
 const PRICE = +(process.env.PRICE || 149);
 const DAYS = +(process.env.DAYS || 30);
 const BOT_LINK = process.env.BOT_LINK || 'https://t.me/justmoggbot';
+const REF_DAYS = +(process.env.REF_DAYS || 7);
+const REF_MAX = +(process.env.REF_MAX || 20);
 const API = 'https://app.platega.io';
 const DAY = 86400000;
 
@@ -54,6 +62,17 @@ const s3 = (iam, method, key, body) => fetch(`https://storage.yandexcloud.net/${
 });
 async function getJSON(iam, key) { const r = await s3(iam, 'GET', key); if (r.status === 404) return null; if (!r.ok) throw new Error('s3 get ' + r.status); return r.json(); }
 async function putJSON(iam, key, obj) { const r = await s3(iam, 'PUT', key, obj); if (!r.ok) throw new Error('s3 put ' + r.status); }
+
+// Продлить Pro на days дней (от текущего конца подписки или от сейчас)
+async function addPro(iam, uid, days) {
+  const acc = (await getJSON(iam, `acc/${uid}.json`)) || {};
+  acc.pro_until = Math.max(Date.now(), +acc.pro_until || 0) + days * DAY;
+  await putJSON(iam, `acc/${uid}.json`, acc);
+  return acc.pro_until;
+}
+const refCode = (uid) => Number(uid).toString(36);
+const refUid = (code) => (/^[0-9a-z]{1,12}$/.test(code || '') ? parseInt(code, 36) : 0);
+const clip = (x, n) => String(x == null ? '' : x).slice(0, n);
 
 // ---------- Platega ----------
 const platega = (path, body) => fetch(API + path, {
@@ -97,6 +116,47 @@ module.exports.handler = async (event, context) => {
 
   const user = tgUser(b.initData);
   if (!user || !user.id) return out({ error: 'not_telegram' }, 403);
+
+  if (b.action === 'ref-info' || b.action === 'ref-claim' || b.action === 'report') {
+    if (!BUCKET) return out({ error: 'off' });
+    try {
+      if (b.action === 'ref-info') {
+        const st = (await getJSON(iam, `refby/${user.id}.json`)) || { invited: [], days: 0 };
+        return out({ code: refCode(user.id), invited: st.invited.length, days: st.days, per: REF_DAYS, max: REF_MAX });
+      }
+      if (b.action === 'ref-claim') {
+        const inviter = refUid(b.code);
+        if (!inviter || inviter === user.id) return out({ error: 'bad_code' });
+        if (await getJSON(iam, `refd/${user.id}.json`)) return out({ error: 'already' });
+        // по ссылке друга считается только новый человек: ещё не платил и не был приглашён
+        if (await getJSON(iam, `paylast/${user.id}.json`)) return out({ error: 'not_new' });
+        await putJSON(iam, `refd/${user.id}.json`, { by: inviter, at: Date.now() });
+        const st = (await getJSON(iam, `refby/${inviter}.json`)) || { invited: [], days: 0 };
+        if (!st.invited.includes(user.id)) st.invited.push(user.id);
+        const paid = st.invited.length <= REF_MAX;
+        if (paid) { await addPro(iam, inviter, REF_DAYS); st.days += REF_DAYS; }
+        await putJSON(iam, `refby/${inviter}.json`, st);
+        const until = await addPro(iam, user.id, REF_DAYS);
+        console.log('ref', inviter, '->', user.id, paid ? '' : '(лимит пригласившего)');
+        return out({ ok: true, days: REF_DAYS, pro_until: until });
+      }
+      if (b.action === 'report') {
+        const text = clip(b.text, 2000).trim();
+        if (text.length < 3) return out({ error: 'empty' });
+        // не больше 5 сообщений в сутки от одного человека
+        const rl = (await getJSON(iam, `reportrl/${user.id}.json`)) || { at: [] };
+        rl.at = rl.at.filter((t) => Date.now() - t < DAY);
+        if (rl.at.length >= 5) return out({ error: 'limit' });
+        rl.at.push(Date.now()); await putJSON(iam, `reportrl/${user.id}.json`, rl);
+        const rec = { at: Date.now(), uid: user.id, name: clip([user.first_name, user.last_name].filter(Boolean).join(' '), 80), username: clip(user.username, 40), text, diag: clip(typeof b.diag === 'string' ? b.diag : JSON.stringify(b.diag || {}), 3000) };
+        await putJSON(iam, `reports/${new Date().toISOString().slice(0, 10)}/${rec.at}-${user.id}.json`, rec);
+        const last = (await getJSON(iam, 'reports/latest.json')) || [];
+        last.unshift(rec); await putJSON(iam, 'reports/latest.json', last.slice(0, 50));
+        return out({ ok: true });
+      }
+    } catch (e) { console.error(b.action, e.message); return out({ error: 'server' }, 500); }
+  }
+
   if (!MERCHANT || !SECRET || !BUCKET) return out({ error: 'pay_off' });
 
   if (b.action === 'create') {
@@ -123,4 +183,4 @@ module.exports.handler = async (event, context) => {
   }
   return out({ error: 'bad_action' }, 400);
 };
-module.exports._t = { tgUser, applyPaid };
+module.exports._t = { tgUser, applyPaid, addPro, refCode, refUid };
