@@ -6,7 +6,7 @@
 <!-- Политика безопасности: приложение может грузить код и отправлять данные только на свои и перечисленные адреса.
      Выполняется только НАШ встроенный скрипт — по отпечатку sha256 в script-src. После ЛЮБОЙ правки скрипта
      пересчитай отпечаток: python3 demo-tools/csp.py index.html — иначе приложение не запустится. -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-lamyaP4lQTLzvcAB8P+Gizm3czjKod1UVNaWqmL4c50=' 'wasm-unsafe-eval' https://telegram.org https://mc.yandex.ru https://yastatic.net https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: blob: https://fimgs.net https://assets.vogue.com https://images.unsplash.com https://mc.yandex.ru https://mc.yandex.com https://yastatic.net; media-src 'self' data: blob:; connect-src 'self' data: blob: https://d5dbq08e56ddpjl1h37u.0ly8ed4d.apigw.yandexcloud.net https://mc.yandex.ru https://mc.yandex.com https://cdn.jsdelivr.net; worker-src 'self' blob:; frame-src https://mc.yandex.ru https://mc.yandex.com; object-src 'none'; base-uri 'self'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-VL8XkDCha8BNvzt2VGaWrGZ4pHzaaP5v/BEHBe5lOG4=' 'wasm-unsafe-eval' https://telegram.org https://mc.yandex.ru https://yastatic.net https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: blob: https://fimgs.net https://assets.vogue.com https://images.unsplash.com https://mc.yandex.ru https://mc.yandex.com https://yastatic.net; media-src 'self' data: blob:; connect-src 'self' data: blob: https://d5dbq08e56ddpjl1h37u.0ly8ed4d.apigw.yandexcloud.net https://mc.yandex.ru https://mc.yandex.com https://cdn.jsdelivr.net; worker-src 'self' blob:; frame-src https://mc.yandex.ru https://mc.yandex.com; object-src 'none'; base-uri 'self'; form-action 'none'">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <title>mogg · демо</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -1544,18 +1544,36 @@ button:active,label.card:active{transform:scale(.97)}
 .pfcats button.on{background:linear-gradient(135deg,#ff4fa3,#8b5cff);color:#fff;border-color:transparent}
 .pfsheet{max-height:86vh;overflow-y:auto}
 @media (max-width:360px){:root .tabs .tab{font-size:8.5px;letter-spacing:0}}
-/* таббар в две строки: сверху 3 главные вкладки, снизу 4 — иконка и подпись в линию */
-:root:root .tabs .in{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:3px;padding:6px!important;border-radius:26px!important}
-:root:root .tabs .tab{grid-column:span 3;flex-direction:row;justify-content:center;gap:4px;padding:9px 2px;font-size:11px;letter-spacing:0;min-width:0;white-space:nowrap}
-:root:root .tabs .tab.main{grid-column:span 4;font-size:12.5px;gap:6px;padding:10px 2px}
-:root:root .tabs .tab span{overflow:hidden;text-overflow:ellipsis}
-:root:root .tabs .tab svg{width:16px;height:16px;flex:none}
-:root:root .tabs .tab.main svg{width:18px;height:18px}
-:root:root .tabs .tab.on{transform:rotate(-2deg)}
 .tab[data-tab="care"]{--t1:#ff8fb1;--t2:#ffb07c;--tt:#2a0c14}
-.app{padding-bottom:150px}
+.tab[data-tab="menu"]{--t1:#ffd43b;--t2:#ff9f1c;--tt:#17150F}
+/* внизу — одна кнопка «☰ Меню» и название текущего раздела */
+:root:root .tabs .in{width:auto;max-width:none;padding:6px!important;border-radius:999px!important}
+:root:root .tabs .tab.tabmenu{flex:none;flex-direction:row;gap:9px;padding:12px 18px 12px 16px;border-radius:999px!important;font-size:15px;font-weight:800;letter-spacing:.01em;background:var(--z-yellow,#FFD43B)!important;color:#17150F!important;transform:none!important}
+:root:root .tabs .tab.tabmenu svg{width:22px;height:22px;color:#17150F!important}
+:root:root .tabs .tab.tabmenu em{font-style:normal;font-size:12.5px;font-weight:700;padding:5px 11px;border-radius:999px;background:#17150F;color:#FFD43B;margin-left:2px}
+/* боковое меню */
+.dwrap{position:fixed;inset:0;z-index:60;background:rgba(0,0,0,.55);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);animation:fade .2s}
+.drawer{position:absolute;top:0;right:0;bottom:0;width:min(86vw,360px);background:#17150F;color:#EFE9DA;padding:calc(env(safe-area-inset-top) + 16px) 14px calc(env(safe-area-inset-bottom) + 16px);overflow-y:auto;box-shadow:-20px 0 40px rgba(0,0,0,.4);border-radius:26px 0 0 26px;animation:dslide .32s cubic-bezier(.2,.9,.25,1)}
+@keyframes dslide{from{transform:translateX(100%)}to{transform:none}}
+.drawer .dtop{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.drawer .dtop b{font-family:var(--disp);font-size:22px;text-transform:uppercase;letter-spacing:.02em}
+.drawer .dx{width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,.1);color:#EFE9DA;display:grid;place-items:center;font-size:18px}
+.drawer .dme{display:flex;align-items:center;gap:12px;width:100%;text-align:left;padding:12px;border-radius:18px;background:linear-gradient(135deg,#FFD43B,#ff9f1c);color:#17150F;margin-bottom:14px}
+.drawer .dme .av{width:46px;height:46px;border-radius:50%;background:#17150F;color:#FFD43B;display:grid;place-items:center;font-family:var(--disp);font-size:20px;flex:none}
+.drawer .dme small{display:block;font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;opacity:.75;margin-top:2px}
+.drawer .dme .bar{height:5px;border-radius:3px;background:rgba(23,21,15,.2);margin-top:7px;overflow:hidden}.drawer .dme .bar i{display:block;height:100%;background:#17150F;border-radius:3px}
+.drawer .dlbl{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:#A29B8B;margin:14px 4px 6px}
+.drawer .ditem{display:flex;align-items:center;gap:12px;width:100%;text-align:left;padding:9px 8px;border-radius:16px;color:#EFE9DA;transition:background .15s}
+.drawer .ditem:active{background:rgba(255,255,255,.08)}
+.drawer .ditem.on{background:rgba(255,212,59,.14);box-shadow:inset 0 0 0 1.5px rgba(255,212,59,.5)}
+.drawer .ditem .di{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;flex:none;background:var(--dc);color:#17150F}
+.drawer .ditem .di svg{width:21px;height:21px}
+.drawer .ditem b{display:block;font-size:15px}.drawer .ditem small{display:block;font-size:12px;color:#A29B8B;margin-top:1px}
+.drawer .ditem .chev{margin-left:auto;opacity:.45;font-size:18px}
+.drawer .dfoot{display:flex;align-items:center;justify-content:space-between;margin-top:16px;padding:12px 8px 0;border-top:1px solid rgba(255,255,255,.1)}
+
 /* узкие телефоны: в нижней строке иконка над подписью */
-@media (max-width:374px){:root:root .tabs .tab:not(.main){flex-direction:column;gap:2px;font-size:10px;padding:6px 2px}:root:root .tabs .tab.main{font-size:11px;gap:4px}:root:root .tabs .tab.main svg{width:15px;height:15px}}
+
 /* ---------- минималистичный фон с душой: ровная подложка + два мягких свечения + лёгкое зерно ---------- */
 .aurora{display:none!important}
 :root body{background:var(--bgmin-top) linear-gradient(180deg,var(--bgmin-top) 0,var(--bgmin) 420px) no-repeat!important;background-color:var(--bgmin)!important;background-attachment:scroll!important}
@@ -3982,6 +4000,7 @@ const IC = {
   book: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2z"/><path d="M4 21V5"/></svg>',
   lock: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>',
   perfume: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="9" width="14" height="12" rx="3"/><path d="M9 9V6h6v3M10 3h4v3h-4zM9 14h6"/></svg>',
+  menu: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M4 6.5h16M4 12h16M4 17.5h16"/></svg>',
   care: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2h4"/><path d="M12 2v4"/><path d="M14 4h3"/><rect x="9" y="6" width="6" height="3" rx="1"/><rect x="6.5" y="9" width="11" height="13" rx="3.5"/><path d="M10 15.5h4"/></svg>',
   hanger: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 6.5a2 2 0 1 1 2.6 1.9c-.4.1-.6.5-.6.9V11"/><path d="M12 11l8.6 6.2c.8.6.4 1.8-.6 1.8H4c-1 0-1.4-1.2-.6-1.8z"/></svg>',
   cam: '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="14" rx="3"/><circle cx="12" cy="13" r="3.5"/><path d="M8 6l1.5-2h5L16 6"/></svg>'
@@ -5298,7 +5317,7 @@ function protoCard(a) {
     <div class="disp" style="font-size:28px;margin:8px 0 4px">${pr.t}</div>
     <div class="pbar"><i style="width:${Math.min(1, t.k / pr.days) * 100}%;background:${pl.c}"></i></div>
     ${note ? `<div class="why"><b>Почему у тебя так:</b> ${esc(note)}</div>` : ''}
-    ${t.over ? `<div style="margin:14px 0 10px"><b>Протокол пройден 🔥</b><div class="hint" style="margin-top:4px">Сделай фото в тех же условиях, что в начале, и сравни во вкладке «Я».</div></div><button class="btn" data-act="proto-finish" data-id="${a.id}">Завершить · +100 XP</button>`
+    ${t.over ? `<div style="margin:14px 0 10px"><b>Протокол пройден 🔥</b><div class="hint" style="margin-top:4px">Сделай фото в тех же условиях, что в начале, и сравни в «Профиле» (меню ☰).</div></div><button class="btn" data-act="proto-finish" data-id="${a.id}">Завершить · +100 XP</button>`
       : `<div class="row between" style="margin:14px 0 8px"><span class="mono">Сегодня</span><span class="mono">${t.reqDone}/${t.req}</span></div>
       ${t.steps.map((s) => `<button class="mission ${dn.includes(s.key) ? 'done' : ''} ${justDone === s.key ? 'just' : ''}" data-act="pstep" data-k="${s.key}"><span class="box">${dn.includes(s.key) ? IC.check : ''}</span><span style="flex:1"><div class="when">${s.w}${s.opt ? ' · по желанию' : ''}</div><div class="t">${s.t}</div></span>${s.x ? `<span class="btn sm ghost" data-act="ex-open" data-x="${s.x}" style="height:32px;padding:0 10px;flex:none">Как ▶</span>` : '<span class="xp">+5</span>'}</button>`).join('')}`}
     <details><summary>Как это работает</summary><p>${pr.why}</p><p><b>Что реально ожидать.</b> ${pr.expect}</p></details>
@@ -6274,6 +6293,7 @@ function renderModal() {
   if (modal.kind === 'routine') return renderRoutine();
   if (modal.kind === 'pro') return renderPro();
   if (modal.kind === 'report') return reportModal();
+  if (modal.kind === 'menu') return menuDrawer();
   if (modal.kind === 'ai' && S.ai) {
     const fr = (modal.fresh || []).map((id) => PROTOCOLS[id].t);
     return `<div class="modal"><div class="sheet exs" style="text-align:left">
@@ -6413,10 +6433,11 @@ function renderMe() {
     <p class="mono" style="text-align:center;margin-top:20px">mogg · season 01 · <a href="${BOT_URL}" data-act="link" data-u="${BOT_URL}" style="color:inherit">${BOT_TAG}</a> · <a href="${DOC_TERMS}" data-ext target="_blank" rel="noopener" style="color:inherit">соглашение</a> · <a href="${DOC_PRIVACY}" data-ext target="_blank" rel="noopener" style="color:inherit">политика</a><br><span style="opacity:.7">фото неба: ESO/S. Brunier, CC BY 4.0</span></p>`;
 }
 
+const MENU_TABS = ['wardrobe', 'perfume', 'me', 'journal', 'path', 'friends']; // разделы, которые открываются из меню
 const TAB_PARENT = { journal: 'plan', path: 'me', friends: 'me' }; // подэкраны: какая вкладка внизу подсвечена и куда ведёт «Назад»
 function renderTabs() {
   const on = TAB_PARENT[tab] || tab;
-  return `<nav class="tabs"><div class="in">${[['home', 'Сегодня', IC.home, 1], ['plan', 'Упражнения', IC.bolt, 1], ['care', 'Уход', IC.care, 1], ['wardrobe', 'Гардероб', IC.hanger], ['perfume', 'Парфюм', IC.perfume], ['coach', 'Чат', IC.coach], ['me', 'Я', IC.me]].map(([k, l, ic, main]) => `<button class="tab ${main ? 'main' : ''} ${on === k ? 'on' : ''}" data-act="go" data-tab="${k}">${ic}<span>${l}</span></button>`).join('')}</div></nav>`;
+  return `<nav class="tabs"><div class="in">${''}<button class="tab tabmenu on" data-act="menu-open" data-tab="menu" aria-label="Меню: все разделы">${IC.menu}<span>Меню</span><em>${(MENU_ITEMS.find(([k]) => k === (TAB_PARENT[tab] && tab !== 'journal' ? TAB_PARENT[tab] : tab)) || [0, 'mogg'])[1]}</em></button></div></nav>`;
 }
 
 function render() {
@@ -7627,6 +7648,41 @@ function storyCard() {
       <button class="btn sm" data-act="story">📲 Выложить в историю</button></div></div>`;
 }
 ACT.story = () => shareStreak();
+// ---------- меню «три полоски»: все разделы ----------
+const MENU_ITEMS = [
+  ['home', 'Сегодня', 'Миссии дня, серия и уровень', IC.home, '#d4ff1a'],
+  ['plan', 'Упражнения', 'Тренировки и программа', IC.bolt, '#7d9bff'],
+  ['care', 'Уход', 'Кожа, волосы, средства', IC.care, '#ff8fb1'],
+  ['wardrobe', 'Гардероб', 'Образы и школа стиля', IC.hanger, '#3dffc0'],
+  ['perfume', 'Парфюм', 'Подбор и база ароматов', IC.perfume, '#ff7ccf'],
+  ['journal', 'Библиотека', 'Статьи, курсы и книги', IC.book, '#ffb07c'],
+  ['coach', 'Чат', 'Тренер Макс на связи', IC.coach, '#ffa36b'],
+  ['me', 'Профиль', 'Прогресс, награды, настройки', IC.me, '#b79cff']
+];
+function menuDrawer() {
+  const r = rank(), on = TAB_PARENT[tab] && tab !== 'journal' ? TAB_PARENT[tab] : tab, name = (tgUser && tgUser.first_name) || 'Ты';
+  const pct = r.next ? Math.round((r.x - r.cur) / (r.next - r.cur) * 100) : 100;
+  return `<div class="dwrap" data-act="menu-close"><aside class="drawer" data-act="noop" role="dialog" aria-label="Все разделы">
+    <div class="dtop"><b>Разделы</b><button class="dx" data-act="menu-close" aria-label="Закрыть">✕</button></div>
+    <button class="dme" data-act="menu-go" data-tab="me"><span class="av">${esc(name.slice(0, 1).toUpperCase())}</span><span style="flex:1;min-width:0"><b style="font-size:16px">${esc(name)}</b><small>LVL ${r.lvl} · ${r.name} · серия ${streak()} 🔥</small><span class="bar"><i style="width:${pct}%"></i></span></span></button>
+    ${MENU_ITEMS.map(([k, t, d, ic, c]) => `<button class="ditem ${on === k ? 'on' : ''}" data-act="menu-go" data-tab="${k}" style="--dc:${c}"><span class="di">${ic}</span><span><b>${t}</b><small>${d}</small></span><span class="chev">›</span></button>`).join('')}
+    <div class="dlbl">Ещё</div>
+    <button class="ditem" data-act="menu-go" data-tab="me" data-then="ref" style="--dc:#FFD43B"><span class="di">🎁</span><span><b>Пригласить друга</b><small>+${REF_DAYS} дней Pro тебе и другу</small></span><span class="chev">›</span></button>
+    <button class="ditem" data-act="report-open" style="--dc:#EFE9DA"><span class="di">🛠</span><span><b>Сообщить о проблеме</b><small>Починим быстро</small></span><span class="chev">›</span></button>
+    <div class="dfoot"><span style="font-size:13px;color:#A29B8B">Тема оформления</span>${themeSwitch()}</div>
+  </aside></div>`;
+}
+ACT.noop = () => {};
+ACT['menu-open'] = () => { modal = { kind: 'menu' }; haptic('light'); render(); };
+ACT['menu-close'] = () => { modal = null; render(); };
+ACT['menu-go'] = (el) => {
+  const k = el.dataset.tab, then = el.dataset.then;
+  modal = null; reader = null;
+  if (k === 'journal') { jtab = 'feed'; }
+  tab = k; haptic('light'); render();
+  if (k === 'coach') scrollChat(); else window.scrollTo(0, 0);
+  if (then === 'ref') setTimeout(() => { const c = document.querySelector('.refcard'); if (c) c.scrollIntoView({ block: 'center', behavior: 'smooth' }); }, 60);
+};
 
 // ---------- рефералка ----------
 // Ссылка: t.me/justmoggbot?startapp=r_<код>. Код — Telegram ID в 36-ричной записи. Начисление — на сервере (mogg-pay: ref-claim).
