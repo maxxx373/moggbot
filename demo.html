@@ -6,7 +6,7 @@
 <!-- Политика безопасности: приложение может грузить код и отправлять данные только на свои и перечисленные адреса.
      Выполняется только НАШ встроенный скрипт — по отпечатку sha256 в script-src. После ЛЮБОЙ правки скрипта
      пересчитай отпечаток: python3 demo-tools/csp.py index.html — иначе приложение не запустится. -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-SYCVEU30wNwqtPx8+9hR/3ifCE3dlfq51DuJR+uf4Sc=' 'wasm-unsafe-eval' https://telegram.org https://mc.yandex.ru https://yastatic.net https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: blob: https://fimgs.net https://assets.vogue.com https://images.unsplash.com https://mc.yandex.ru https://mc.yandex.com https://yastatic.net; media-src 'self' data: blob:; connect-src 'self' data: blob: https://d5dbq08e56ddpjl1h37u.0ly8ed4d.apigw.yandexcloud.net https://mc.yandex.ru https://mc.yandex.com https://cdn.jsdelivr.net; worker-src 'self' blob:; frame-src https://mc.yandex.ru https://mc.yandex.com; object-src 'none'; base-uri 'self'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-lamyaP4lQTLzvcAB8P+Gizm3czjKod1UVNaWqmL4c50=' 'wasm-unsafe-eval' https://telegram.org https://mc.yandex.ru https://yastatic.net https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: blob: https://fimgs.net https://assets.vogue.com https://images.unsplash.com https://mc.yandex.ru https://mc.yandex.com https://yastatic.net; media-src 'self' data: blob:; connect-src 'self' data: blob: https://d5dbq08e56ddpjl1h37u.0ly8ed4d.apigw.yandexcloud.net https://mc.yandex.ru https://mc.yandex.com https://cdn.jsdelivr.net; worker-src 'self' blob:; frame-src https://mc.yandex.ru https://mc.yandex.com; object-src 'none'; base-uri 'self'; form-action 'none'">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <title>mogg · демо</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -1544,7 +1544,18 @@ button:active,label.card:active{transform:scale(.97)}
 .pfcats button.on{background:linear-gradient(135deg,#ff4fa3,#8b5cff);color:#fff;border-color:transparent}
 .pfsheet{max-height:86vh;overflow-y:auto}
 @media (max-width:360px){:root .tabs .tab{font-size:8.5px;letter-spacing:0}}
-:root .tabs .tab[data-tab="plan"]{flex:1.45;letter-spacing:0}
+/* таббар в две строки: сверху 3 главные вкладки, снизу 4 — иконка и подпись в линию */
+:root:root .tabs .in{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:3px;padding:6px!important;border-radius:26px!important}
+:root:root .tabs .tab{grid-column:span 3;flex-direction:row;justify-content:center;gap:4px;padding:9px 2px;font-size:11px;letter-spacing:0;min-width:0;white-space:nowrap}
+:root:root .tabs .tab.main{grid-column:span 4;font-size:12.5px;gap:6px;padding:10px 2px}
+:root:root .tabs .tab span{overflow:hidden;text-overflow:ellipsis}
+:root:root .tabs .tab svg{width:16px;height:16px;flex:none}
+:root:root .tabs .tab.main svg{width:18px;height:18px}
+:root:root .tabs .tab.on{transform:rotate(-2deg)}
+.tab[data-tab="care"]{--t1:#ff8fb1;--t2:#ffb07c;--tt:#2a0c14}
+.app{padding-bottom:150px}
+/* узкие телефоны: в нижней строке иконка над подписью */
+@media (max-width:374px){:root:root .tabs .tab:not(.main){flex-direction:column;gap:2px;font-size:10px;padding:6px 2px}:root:root .tabs .tab.main{font-size:11px;gap:4px}:root:root .tabs .tab.main svg{width:15px;height:15px}}
 /* ---------- минималистичный фон с душой: ровная подложка + два мягких свечения + лёгкое зерно ---------- */
 .aurora{display:none!important}
 :root body{background:var(--bgmin-top) linear-gradient(180deg,var(--bgmin-top) 0,var(--bgmin) 420px) no-repeat!important;background-color:var(--bgmin)!important;background-attachment:scroll!important}
@@ -3971,6 +3982,7 @@ const IC = {
   book: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2z"/><path d="M4 21V5"/></svg>',
   lock: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>',
   perfume: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="9" width="14" height="12" rx="3"/><path d="M9 9V6h6v3M10 3h4v3h-4zM9 14h6"/></svg>',
+  care: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2h4"/><path d="M12 2v4"/><path d="M14 4h3"/><rect x="9" y="6" width="6" height="3" rx="1"/><rect x="6.5" y="9" width="11" height="13" rx="3.5"/><path d="M10 15.5h4"/></svg>',
   hanger: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 6.5a2 2 0 1 1 2.6 1.9c-.4.1-.6.5-.6.9V11"/><path d="M12 11l8.6 6.2c.8.6.4 1.8-.6 1.8H4c-1 0-1.4-1.2-.6-1.8z"/></svg>',
   cam: '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="14" rx="3"/><circle cx="12" cy="13" r="3.5"/><path d="M8 6l1.5-2h5L16 6"/></svg>'
 };
@@ -4277,7 +4289,7 @@ function renderRoutine() {
     <div class="row between" style="justify-content:flex-end"><button class="wox" data-act="modal-close" aria-label="Закрыть">✕</button></div>
     <div class="seg" style="margin:12px 0 14px">${[['am', '☀️ Утро'], ['pm', '🌙 Вечер']].map(([k, l]) => `<button class="${part === k ? 'on' : ''}" data-act="r-part" data-v="${k}">${l}</button>`).join('')}</div>
     ${st.map((s, i) => `<button class="rstep ${dn.includes(i) ? 'done' : ''}" data-act="r-step" data-i="${i}"><span class="rn">${dn.includes(i) ? '✓' : i + 1}</span><span style="flex:1"><div class="rt">${s.t}${s.opt ? ' <span class="hint" style="font-weight:400;font-size:12px">· по желанию</span>' : ''}</div><div class="rh">${s.h}</div>${s.pr ? `<div class="rh" style="color:var(--text);opacity:.85">→ ${s.pr.b} · ${s.pr.n}</div>` : ''}${s.sec && !dn.includes(i) ? `<div class="rtimer" data-act="r-timer" data-s="${s.sec}" data-i="${i}">⏱ запустить таймер · ${s.sec} с</div>` : ''}</span></button>`).join('')}
-    <div class="hint" style="margin-top:8px;font-size:12.5px">Отметь все шаги — +10 XP. Средства подобраны под твой бюджет, все варианты — во вкладке «Я» → Средства.</div>
+    <div class="hint" style="margin-top:8px;font-size:12.5px">Отметь все шаги — +10 XP. Средства подобраны под твой бюджет, все варианты — во вкладке «Уход» → Средства.</div>
     <button class="btn" data-act="modal-close" style="margin-top:12px">Готово</button>
   </div></div>`;
 }
@@ -5295,6 +5307,8 @@ function protoCard(a) {
     ${t.over ? '' : `<button class="btn sm ghost" data-act="proto-drop" data-id="${a.id}" style="width:100%;margin-top:12px">Отложить протокол</button>`}
   </div>`;
 }
+const CARE_P = ['skin', 'hair'];
+const isCareProto = (id) => !!PROTOCOLS[id] && CARE_P.includes(PROTOCOLS[id].p);
 function renderPlan() {
   // «Упражнения»: только то, что нужно делать по программе, тренировки и кусочек библиотеки
   const P = S.protos, act = P.active;
@@ -5302,8 +5316,7 @@ function renderPlan() {
   const status = (id) => act.some((a) => a.id === id) ? 'активен' : P.queue.includes(id) ? 'в очереди' : P.done.some((d) => d.id === id) ? 'пройден ✓' : '';
   return `${topbar('Упражнения')}
     <div class="sec"><span class="disp">По программе</span><span class="chipline">[ сегодня ]</span></div>
-    ${act.length ? act.map(protoCard).join('') : '<div class="card"><b>Активных протоколов нет</b><div class="hint" style="margin-top:4px">Выбери программу в списке «Все протоколы» внизу.</div></div>'}
-    ${routineCard()}
+    ${act.filter((a) => !isCareProto(a.id)).length ? act.filter((a) => !isCareProto(a.id)).map(protoCard).join('') : '<div class="card"><b>Активных программ нет</b><div class="hint" style="margin-top:4px">Выбери программу в списке «Все протоколы» внизу. Уход за кожей и волосами — во вкладке «Уход».</div></div>'}
     ${S.sleep && S.sleep.prog ? sleepCard(S.sleep.prog) : `<button type="button" class="card row" data-act="sl-open" style="width:100%;text-align:left"><div class="iconbtn" style="font-size:20px">🌙</div><div style="flex:1"><b>Подобрать программу сна</b><div class="hint">5 вопросов — и план отбоя под тебя</div></div></button>`}
     ${woCards()}
     ${S.train && S.train.prog ? trainCard(S.train.prog) : `<button type="button" class="card row" data-act="tr-open" style="width:100%;text-align:left"><div class="iconbtn" style="font-size:20px">🏋️</div><div style="flex:1"><b>Подобрать силовую программу</b><div class="hint">6 вопросов — дни, упражнения, подходы под тебя</div></div></button>`}
@@ -5311,10 +5324,28 @@ function renderPlan() {
       <div class="exgrid">${exIds.map((id) => `<button class="excard" data-act="ex-open" data-x="${id}"><div class="pv">${EX_ANIM[id]()}</div><b>${EXERCISES[id].t}</b><small>${EXERCISES[id].dose}</small></button>`).join('')}</div>` : ''}
     ${readCard()}
     <button type="button" class="card row" data-act="lib" data-v="feed" style="width:100%;text-align:left"><div class="iconbtn" style="font-size:20px">📚</div><div style="flex:1"><b>Вся библиотека</b><div class="hint">${artsOpen().length} статей, курсы, книги и полка средств</div></div><span class="arrow">${IC.arrow}</span></button>
-    <details class="card allp"><summary><span class="disp" style="font-size:20px">Все протоколы</span><span class="mono">${PROTO_ORDER.length}</span></summary>
-    <div>${PROTO_ORDER.map((id) => { const pr = PROTOCOLS[id], st = status(id); return `<div class="item"><div style="flex:1"><b style="font-size:14.5px">${pr.t}</b><div class="hint" style="font-size:12px">${pr.days} дней</div></div>${st && st !== 'пройден ✓' ? `<span class="mono">${st}</span>` : `<button class="btn sm ghost" data-act="proto-add" data-id="${id}" style="height:32px">${st ? 'Ещё раз' : 'Начать'}</button>`}</div>`; }).join('')}</div></details>`;
+    <details class="card allp"><summary><span class="disp" style="font-size:20px">Все протоколы</span><span class="mono">${PROTO_ORDER.filter((id) => !isCareProto(id)).length}</span></summary>
+    <div>${PROTO_ORDER.filter((id) => !isCareProto(id)).map((id) => { const pr = PROTOCOLS[id], st = status(id); return `<div class="item"><div style="flex:1"><b style="font-size:14.5px">${pr.t}</b><div class="hint" style="font-size:12px">${pr.days} дней</div></div>${st && st !== 'пройден ✓' ? `<span class="mono">${st}</span>` : `<button class="btn sm ghost" data-act="proto-add" data-id="${id}" style="height:32px">${st ? 'Ещё раз' : 'Начать'}</button>`}</div>`; }).join('')}</div></details>`;
 }
 // «Мой план» во вкладке «Я»: разбор по фото и список средств (переехали из бывшего «Плана»)
+function renderCare() {
+  const P = S.protos, act = P.active.filter((a) => isCareProto(a.id)), d = today();
+  const status = (id) => P.active.some((a) => a.id === id) ? 'активен' : P.queue.includes(id) ? 'в очереди' : P.done.some((x) => x.id === id) ? 'пройден ✓' : '';
+  const tile = (part, ic, name) => { const key = d + ':' + part, st = routine(part), dn = ((S.rdone || {})[key] || []).length, full = (S.rfull || {})[key];
+    return `<button class="tint" data-act="r-open" data-v="${part}" style="--c:${part === 'am' ? '#ffb07c' : '#b79cff'};text-align:left"><div class="mono">${ic} ${name}</div><b>${full ? '✓' : dn + '/' + st.length}</b><small>${full ? 'готово · +10 XP' : 'шагов · с таймером'}</small></button>`; };
+  const careArts = artsOpen().filter((a) => a.tag === 'Уход' || a.tag === 'Волосы').reverse().slice(0, 6);
+  const free = PROTO_ORDER.filter((id) => isCareProto(id) && !P.active.some((a) => a.id === id));
+  return `${topbar('Уход')}
+    <div class="sec"><span class="disp">Сегодня</span><span class="chipline">[ рутина ]</span></div>
+    <div class="tiles" style="margin-bottom:12px">${tile('am', '☀️', 'Утро')}${tile('pm', '🌙', 'Вечер')}</div>
+    <div class="sec"><span class="disp">Протоколы</span><span class="chipline">[ кожа · волосы ]</span></div>
+    ${act.length ? act.map(protoCard).join('') : '<div class="card"><b>Нет активных протоколов ухода</b><div class="hint" style="margin-top:4px">Выбери, с чем работаем, — дадим шаги на каждый день.</div></div>'}
+    ${free.length ? `<div class="card">${free.map((id) => { const pr = PROTOCOLS[id], st = status(id); return `<div class="item"><span style="font-size:20px">${PILLARS[pr.p].code === 'HAIR' ? '💈' : '🧴'}</span><div style="flex:1"><b style="font-size:14.5px">${pr.t}</b><div class="hint" style="font-size:12px">${pr.days} дней</div></div>${st && st !== 'пройден ✓' ? `<span class="mono">${st}</span>` : `<button class="btn sm ghost" data-act="proto-add" data-id="${id}" style="height:32px">${st ? 'Ещё раз' : 'Начать'}</button>`}</div>`; }).join('')}</div>` : ''}
+    ${myPlanExtras()}
+    ${((S.plan && S.plan.shopping) || []).length ? '' : `<button type="button" class="card row" data-act="lib" data-v="shelf" style="width:100%;text-align:left"><div class="iconbtn" style="font-size:20px">🛒</div><div style="flex:1"><b>Подобрать средства</b><div class="hint">Что работает на самом деле — под твой бюджет</div></div><span class="arrow">${IC.arrow}</span></button>`}
+    ${careArts.length ? `<div class="sec"><span class="disp">Почитать</span><span class="chipline">[ уход · волосы ]</span></div>
+    <div class="strip">${careArts.map((a) => `<button class="phcard" data-act="open" data-kind="article" data-id="${a.id}" style="text-align:left">${cover(a)}<div style="font-weight:800;font-size:17px;line-height:1.2;margin-top:4px">${a.t}</div></button>`).join('')}</div>` : ''}`;
+}
 function myPlanExtras() {
   const shop = (S.plan && S.plan.shopping) || [];
   const st = { none: ['st-none', 'Заказать'], ordered: ['st-ordered', 'В пути'], arrived: ['st-arrived', 'Пришло'] };
@@ -6361,7 +6392,6 @@ function renderMe() {
     <div class="sec"><span class="disp">Коллекция<span class="tm">™</span></span><span class="chipline">[ ${S.plan.focus.length} линии ]</span></div>
     ${renderCollection()}
     <div style="height:12px"></div>
-    ${myPlanExtras()}
     ${reportCard()}
     ${AI_ENDPOINT ? remindCard() : ''}
     <div class="card"><div class="disp" style="font-size:22px">Оформление</div><div class="mono" style="margin-top:4px">тема · снег · акцент</div>
@@ -6386,7 +6416,7 @@ function renderMe() {
 const TAB_PARENT = { journal: 'plan', path: 'me', friends: 'me' }; // подэкраны: какая вкладка внизу подсвечена и куда ведёт «Назад»
 function renderTabs() {
   const on = TAB_PARENT[tab] || tab;
-  return `<nav class="tabs"><div class="in">${[['home', 'Сегодня', IC.home], ['plan', 'Упражнения', IC.bolt], ['wardrobe', 'Гардероб', IC.hanger], ['perfume', 'Парфюм', IC.perfume], ['coach', 'Чат', IC.coach], ['me', 'Я', IC.me]].map(([k, l, ic]) => `<button class="tab ${on === k ? 'on' : ''}" data-act="go" data-tab="${k}">${ic}${l}</button>`).join('')}</div></nav>`;
+  return `<nav class="tabs"><div class="in">${[['home', 'Сегодня', IC.home, 1], ['plan', 'Упражнения', IC.bolt, 1], ['care', 'Уход', IC.care, 1], ['wardrobe', 'Гардероб', IC.hanger], ['perfume', 'Парфюм', IC.perfume], ['coach', 'Чат', IC.coach], ['me', 'Я', IC.me]].map(([k, l, ic, main]) => `<button class="tab ${main ? 'main' : ''} ${on === k ? 'on' : ''}" data-act="go" data-tab="${k}">${ic}<span>${l}</span></button>`).join('')}</div></nav>`;
 }
 
 function render() {
@@ -6404,7 +6434,7 @@ function render() {
   if (ensureProtos()) save();
   if (tab === 'path' || tab === 'friends') tab = 'me'; // «Путь» внутри «Я», друзей больше нет
   app.className = 'app t-' + tab + (app.classList.contains('enter') ? ' enter' : '');
-  const screens = { home: renderHome, coach: renderCoach, journal: renderJournal, path: renderPath, me: renderMe, plan: renderPlan, wardrobe: renderWardrobe, friends: renderFriends, perfume: renderPerfume };
+  const screens = { care: renderCare, home: renderHome, coach: renderCoach, journal: renderJournal, path: renderPath, me: renderMe, plan: renderPlan, wardrobe: renderWardrobe, friends: renderFriends, perfume: renderPerfume };
   app.innerHTML = screens[tab]() + renderTabs();
   document.getElementById('overlay').innerHTML = renderReader();
   armReader();
@@ -6542,7 +6572,7 @@ const ACT = {
         ob.photoErr = !a.person ? 'На фото не видно человека. Нужно селфи или фото в полный рост — тогда разбор будет про тебя.' : `${a.quality_note || 'Фото тёмное или размытое.'} Попробуй переснять.`;
         haptic('heavy'); render(); window.scrollTo(0, 0); return;
       } else if (a) {
-        ob.aiErr = aiErr(a.error) + ' План пока по анкете — разбор по фото можно сделать позже во вкладке «Я».';
+        ob.aiErr = aiErr(a.error) + ' План пока по анкете — разбор по фото можно сделать позже во вкладке «Уход».';
       }
       ob.step = 8; haptic('success'); render(); window.scrollTo(0, 0);
     });
